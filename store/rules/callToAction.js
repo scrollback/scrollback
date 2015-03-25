@@ -26,7 +26,7 @@ module.exports = function(core, config, store) {
 
 		cta = cta || store.get("app", "cta");
 
-		if (appUtils.isGuest(user)) {
+		if (user && appUtils.isGuest(user)) {
 			if (dismissed.indexOf("signin") === -1) {
 				changes.app.cta = "signin";
 			} else {
@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 
 		rel = rel || store.getRelation(room, user) || {};
 
-		if (!appUtils.isGuest(user) && (/(chat|room)/).test(mode)) {
+		if (user && !appUtils.isGuest(user) && (/(chat|room)/).test(mode)) {
 			if (dismissed.indexOf("follow") === -1 && ((/(visitor|none)/).test(rel.role) || !rel.role)) {
 				changes.app.cta = "follow";
 			} else {

@@ -31,7 +31,8 @@ server-config.js
 client-config.js
 
 /leveldb-storage/data/
-/leveldb-storage/data-test/
+/leveldb-storage/data-*
+/leveldb-storage/backup-*
 /ircClient/myConfig.js
 /ircClient/Data
 /test/config.js

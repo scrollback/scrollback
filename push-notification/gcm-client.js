@@ -36,7 +36,8 @@ module.exports = function(c, conf, st) {
 
 	function saveUser() {
 		var userObj = store.getUser(), uuid;
-		if (appUtils.isGuest(userObj.id)) return;
+
+		if (!userObj.id || appUtils.isGuest(userObj.id)) return;
 
 		if (!userObj.params) userObj.params = {};
 		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
@@ -62,14 +63,14 @@ module.exports = function(c, conf, st) {
 			updateDevice = false;
 		});
 	}
-	
+
 	core.on("statechange", function(changes, next) {
 		if (changes.user && device && updateDevice) {
 			saveUser();
 		}
 		next();
 	}, 500);
-	
+
 	core.on("logout", function(payload, next) {
 		if (store.get("context", "env") === "android" && typeof window.Android.unregisterGCM === "function") {
 			window.Android.unregisterGCM();

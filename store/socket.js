@@ -11,8 +11,7 @@ var backOff = 1,
 	pendingActions = {},
 	session, resource, queue = [],
 	initDone = false,
-	actionQueue = [],
-	user;
+	actionQueue = [];
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -74,7 +73,6 @@ module.exports = function(c, conf, s) {
 				while (queue.length) {
 					queue.splice(0, 1)[0]();
 				}
-				user = init.user.id;
 				core.emit("setstate", {
 					app: {
 						connectionStatus: "online"
@@ -101,7 +99,7 @@ module.exports = function(c, conf, s) {
 function sendAction(action) {
 	if (!action.id) action.id = generate.uid();
 	action.session = session;
-	action.from = user;
+	action.from = store.get("user");
 	client.send(JSON.stringify(action));
 }
 

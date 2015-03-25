@@ -56,7 +56,10 @@ module.exports = function(core, config, store) {
 		var nav = store.get("nav"),
 			user = store.get("user");
 
-		if ((changes.nav && ("dialog" in changes.nav || (nav.dialog && changes.nav.dialogState === "update"))) || (nav.dialog !== currentDialog)) {
+		if ((nav.dialog !== currentDialog) || (changes.nav &&
+		    (("dialog" in changes.nav && changes.nav.dialog !== nav.dialog) ||
+		     ("dialogState" in changes.nav && changes.nav.dialogState !== nav.dialogState) ||
+		     (nav.dialog && changes.nav.dialogUpdate === "true")))) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
 			} else if (currentDialog) {
@@ -69,13 +72,13 @@ module.exports = function(core, config, store) {
 				userChangeCallback = null;
 		}
 
-		if (changes.entities && changes.entities[user] && store.getUser().identities) {
-			if (appUtils.isGuest(store.get("user"))) {
+		if (changes.entities && changes.entities[user] && changes.entities[user].id && store.getUser().identities) {
+			if (appUtils.isGuest(user)) {
 				// User signs up
 				if (nav.dialog === "createroom" ) {
 					// Trying to create room
 					core.emit("setstate", {
-						nav: { dialogState: "update" }
+						nav: { dialogUpdate: "true" }
 					});
 				} else {
 					core.emit("setstate", {
@@ -87,13 +90,14 @@ module.exports = function(core, config, store) {
 				if (nav.dialog === "createroom" ) {
 					// Trying to create room
 					core.emit("setstate", {
-						nav: { dialogState: "update" }
+						nav: { dialogUpdate: "true" }
 					});
 				} else if (/(signup|signin)/.test(nav.dialog)) {
 					core.emit("setstate", {
 						nav: {
 							dialog: null,
-							dialogState: null
+							dialogState: null,
+							dialogUpdate: null
 						}
 					});
 				}
@@ -108,7 +112,11 @@ module.exports = function(core, config, store) {
 			user = store.getUser(),
 			roomName = (/(nonexistent|prefill)/.test(nav.dialogState)) ? nav.room : "";
 
-		if (user && appUtils.isGuest(user.id)) {
+		if (!user.id) {
+			return;
+		}
+
+		if (appUtils.isGuest(user.id)) {
 			if (user.identities && user.identities.length) {
 				dialog.title = "Create a new room";
 				dialog.content = [
@@ -190,7 +198,7 @@ module.exports = function(core, config, store) {
 	core.on("signup-dialog", function(dialog, next) {
 		var user = store.getUser();
 
-		if (user && appUtils.isGuest(user.id)) {
+		if (user.id && appUtils.isGuest(user.id)) {
 			if (user.identities && user.identities.length) {
 				dialog.title = "Finish sign up";
 				dialog.description = "Choose a username";
@@ -223,7 +231,7 @@ module.exports = function(core, config, store) {
 	core.on("signin-dialog", function(dialog, next) {
 		var user = store.get("user");
 		// Ask users to upgrade their session to unrestricted
-		dialog.title = "Login to continue.";
+		dialog.title = "Sign in to continue";
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
@@ -242,13 +250,6 @@ module.exports = function(core, config, store) {
 		}
 	}, 100);
 
-	core.on("noroom-dialog", function(dialog, next) {
-		dialog.title = "This room doesn't exist";
-		dialog.dismiss = false;
-
-		next();
-	}, 1000);
-
 	core.on("disallowed-dialog", function(dialog, next) {
 		dialog.title = "Domain Mismatch";
 		dialog.dismiss = false;
@@ -266,7 +267,11 @@ module.exports = function(core, config, store) {
 	// When modal is dismissed, reset the dialog property
 	$(document).on("modalDismissed", function() {
 		core.emit("setstate", {
-			nav: { dialog: null }
+			nav: {
+				dialog: null,
+				dialogState: null,
+				dialogUpdate: false
+			}
 		});
 
 		currentDialog = null;

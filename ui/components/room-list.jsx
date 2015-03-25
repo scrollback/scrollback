@@ -10,15 +10,15 @@ module.exports = function(core, config, store) {
 
 	RoomList = React.createClass({
 		render: function() {
-		var titles = {
-				visitor: "Recently visited",
-				owner: "My rooms",
-				moderator: "Moderated rooms",
-				follower: "Following",
-				featured: "Featured rooms"
-			},
-			secs = {}, sections = [],
-			type = this.props.type || "list";
+			var titles = {
+					visitor: "Recently visited",
+					owner: "My rooms",
+					moderator: "Moderated rooms",
+					follower: "Following",
+					featured: "Featured rooms"
+				},
+				secs = {}, sections = [],
+				type = this.props.type || "list";
 
 			for (var t in titles) {
 				secs[t] = {
@@ -48,6 +48,7 @@ module.exports = function(core, config, store) {
 
 				secs.featured.items.push({
 					key: "home-" + type + "-room-card-featured-" + room.id,
+					updateTime: room.updateTime,
 					elem: (type === "feed") ? <RoomCard roomId={room.id} threadCount="3" /> : <RoomListItem roomId={room.id} />
 				});
 			});
@@ -57,7 +58,7 @@ module.exports = function(core, config, store) {
 					sections.push({
 						key: "home-" + type + "-" + secs[role].key + (type ? "-" + type : ""),
 						header: secs[role].header,
-						items: secs[role].items
+						items: secs[role].items.sort(function(a, b) { return (b.updateTime || 0) - (a.updateTime || 0); })
 					});
 				}
 			}

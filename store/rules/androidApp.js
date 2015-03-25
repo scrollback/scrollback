@@ -5,7 +5,7 @@ module.exports = function(core, config, store) {
 		var user = changes.user || store.get("user"),
 			env = (changes.context && changes.context.env) ? changes.context.env : store.get("context", "env");
 
-		if (appUtils.isGuest(user) && env === "android") {
+		if (user && appUtils.isGuest(user) && env === "android") {
 			changes.nav = changes.nav || {};
 
 			changes.nav.dialog = "signin";

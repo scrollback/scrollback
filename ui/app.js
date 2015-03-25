@@ -65,6 +65,7 @@
 	require("./modules/settings-user.js")(core, config, store);
 	require("./modules/signin-handler.js")(core, config, store);
 	require("./modules/view-manager.js")(core, config, store);
+	require("./modules/swipes.js")(core, config, store);
 
 	// Render the client
 	require("./components/client.jsx")(core, config, store);

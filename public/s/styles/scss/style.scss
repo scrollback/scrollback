@@ -115,10 +115,7 @@ body {
         }
     }
 
-    &-signin-button {
-        margin: 0;
-        width: 100%;
-    }
+    &-signin-button { width: 100%; }
 
     &-room-list, &-people-list {
         @include flexbox;
@@ -363,6 +360,8 @@ body {
 }
 
 .dialog {
+    z-index: 800;
+
     > form {
         textarea, input, .button { width: 100%; }
     }
@@ -374,6 +373,8 @@ body {
         width: 50em;
     }
 }
+
+.backdrop { z-index: 700; }
 
 .menu {
     width: auto;

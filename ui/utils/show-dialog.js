@@ -16,6 +16,10 @@ module.exports = function(core) {
 			var $modal = $("<div>").addClass("dialog dialog-" + type).attr("data-dialog", type),
 				$dialog, $buttons, $content, $action;
 
+			if (!dialog) {
+				return;
+			}
+
 			if (dialog.element) {
 				$modal.append(dialog.element);
 			} else {
