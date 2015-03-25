@@ -231,7 +231,7 @@ module.exports = function(core, config, store) {
 	core.on("signin-dialog", function(dialog, next) {
 		var user = store.get("user");
 		// Ask users to upgrade their session to unrestricted
-		dialog.title = "Sign in to continue.";
+		dialog.title = "Sign in to continue";
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
