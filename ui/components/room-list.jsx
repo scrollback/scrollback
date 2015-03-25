@@ -10,15 +10,15 @@ module.exports = function(core, config, store) {
 
 	RoomList = React.createClass({
 		render: function() {
-		var titles = {
-				visitor: "Recently visited",
-				owner: "My rooms",
-				moderator: "Moderated rooms",
-				follower: "Following",
-				featured: "Featured rooms"
-			},
-			secs = {}, sections = [],
-			type = this.props.type || "list";
+			var titles = {
+					visitor: "Recently visited",
+					owner: "My rooms",
+					moderator: "Moderated rooms",
+					follower: "Following",
+					featured: "Featured rooms"
+				},
+				secs = {}, sections = [],
+				type = this.props.type || "list";
 
 			for (var t in titles) {
 				secs[t] = {

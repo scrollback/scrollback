@@ -11,6 +11,37 @@ module.exports = function(core, config, store) {
 			return { userInput: "" };
 		},
 
+		getMessageText: function(input) {
+			var currentText = store.get("nav", "currentText"),
+				textObj = store.get("indexes", "textsById", currentText),
+				msg = input || "",
+				user, nick, atStart;
+
+			if (textObj) {
+				nick = textObj.from;
+				user = store.get("user");
+
+				if (/^@\S+[\s+{1}]?/.test(msg)) {
+					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
+					atStart = true;
+				} else {
+					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
+				}
+
+				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
+					if (atStart) {
+						msg = "@" + nick + (msg ? " " + msg : "");
+					} else {
+						msg = (msg ? msg + " " : "") + "@" + nick;
+					}
+				}
+
+				msg = msg ? msg + "&nbsp;" : "";
+			}
+
+			return msg;
+		},
+
 		focusInput: function() {
 			var composeBox = this.refs.composeBox.getDOMNode(),
 				range, selection;
@@ -30,8 +61,6 @@ module.exports = function(core, config, store) {
 				range.collapse(false);
 				range.select();
 			}
-
-			return this;
 		},
 
 		sendMessage: function() {
@@ -67,9 +96,9 @@ module.exports = function(core, config, store) {
 
 		onPaste: function() {
 			setTimeout(function() {
-				var text = format.htmlToText(this.refs.composeBox.getDOMNode().innerHTML);
+				var text = this.refs.composeBox.getDOMNode().innerHTML;
 
-				this.setState({ userInput: format.textToHtml(text) });
+				this.setState({ userInput: text });
 			}.bind(this), 10);
 		},
 
@@ -91,36 +120,10 @@ module.exports = function(core, config, store) {
 
 		componentDidUpdate: function() {
 			this.setPlaceHolder();
-			this.focusInput();
 		},
 
 		render: function() {
-			var currentText = store.get("nav", "currentText"),
-				textObj = store.get("indexes", "textsById", currentText),
-				msg = this.state.userInput || "",
-				user, nick, atStart;
-
-			if (textObj) {
-				nick = textObj.from;
-				user = store.get("user");
-
-				if (/^@\S+[\s+{1}]?/.test(msg)) {
-					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
-					atStart = true;
-				} else {
-					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
-				}
-
-				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
-					if (atStart) {
-						msg = "@" + nick + (msg ? " " + msg : "");
-					} else {
-						msg = (msg ? msg + " " : "") + "@" + nick;
-					}
-				}
-
-				msg = msg ? msg + "&nbsp;" : "";
-			}
+			var msg = this.getMessageText(this.state.userInput);
 
 			return (
 				<div key="chat-area-input" className="chat-area-input">
