@@ -1,7 +1,7 @@
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
-var utils = require('../lib/appUtils.js');
-var mathUtils = require('../lib/mathUtils.js');
+var utils = require('../lib/app-utils.js');
+var mathUtils = require('../lib/math-utils.js');
 var uid = require('../lib/generate.js').uid;
 var config;
 var _ = require('underscore');
@@ -17,43 +17,6 @@ var handlers = {
 	user: function(action, callback) {
 		action.user.createTime = action.old.createTime? action.old.createTime: action.user.createTime;
 		callback();
-	},
-	init: function(action, callback) {
-		var wait = true, userID = action.user.id;
-
-		if(action.old) userID = action.old.id;
-		core.emit("getRooms", {
-			id: uid(),
-			hasOccupant: userID,
-			session: action.session
-		}, function(err, rooms) {
-			if (err || !rooms || !rooms.results || !rooms.results.length) {
-				action.occupantOf = [];
-			} else {
-				action.occupantOf = rooms.results;
-			}
-			if (wait) wait = false;
-			else callback();
-		});
-		if(!utils.isGuest(userID)) {
-			core.emit("getRooms", {
-				id: uid(),
-				hasMember: action.from,
-				session: action.session
-			}, function(err, rooms) {
-				if (err || !rooms || !rooms.results || !rooms.results.length) {
-					action.memberOf = [];
-				} else {
-					action.memberOf = rooms.results;
-				}
-				if (wait) wait = false;
-				else callback();
-			});	
-		}else{
-			action.memberOf = [];
-			if (wait) wait = false;
-			else callback();
-		}
 	},
 	text: function(action, callback) {
 		var text = action.text;
@@ -106,6 +69,11 @@ var handlers = {
 		}, function(err, actions) {
 			if (err || !actions || !actions.results || !actions.results.length) return callback(new Error("TEXT_NOT_FOUND"));
 			action.old = actions.results[0];
+			/*
+				TODO: load user and room from here. Uncomment and test.
+				action.user = actions.user;
+				action.room = actions.room;
+			 */
 			callback();
 		});
 	},
@@ -148,6 +116,7 @@ module.exports = function(c, conf) {
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
+	core.on('init', loadProps, 500);
 	core.on('getThreads', function(action, cb) {
 		if (action.to) basicLoader(action, cb);
 		else {
@@ -216,9 +185,6 @@ function userHandler(action, callback) {
 
 
 function initHandler(action, callback) {
-	function done() {
-		handlers.init(action, callback);
-	}
 	core.emit("getUsers", {
 		id: uid(),
 		ref: "me",
@@ -232,7 +198,7 @@ function initHandler(action, callback) {
 					action.user.assignedBy = action.origin.domain;
 					action.user.requestedNick = action.suggestedNick;
 				}
-				return done();
+				return callback();
 			});
 		} else {
 			old = action.user = data.results[0];
@@ -247,7 +213,7 @@ function initHandler(action, callback) {
 				action.user.assignedBy = action.origin.domain;
 				action.user.requestedNick = action.suggestedNick;
 				action.old = old;
-				return done();
+				return callback();
 			});
 		} else if (action.ref && utils.isGuest(data.results[0].id)) {
 			core.emit("getUsers", {
@@ -259,12 +225,12 @@ function initHandler(action, callback) {
 					return callback(new Error("NICK_TAKEN"));
 				} else {
 					initializerUser(action, function() {
-						done();
+						callback();
 					});
 				}
 			});
 		} else {
-			done();
+			callback();
 		}
 	});
 }
@@ -389,13 +355,13 @@ function generateNick(suggestedNick, callback) {
 	function checkUser(suggestedNick, attemptC, callback) {
 		var ct = 0, result = true;
 		var trying = suggestedNick;
-		
+
 		if (attemptC) {
 			lowBound = upBound;
 			upBound = 1 << attemptC;
 			trying += mathUtils.random(lowBound, upBound);
 		}
-		
+
 		if (attemptC >= config.nickRetries) return callback(names(6));
 		function done(r) {
 			result &= r;
@@ -429,4 +395,45 @@ function generateNick(suggestedNick, callback) {
 
 function generatePick(id) {
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
+}
+
+
+
+ function  loadProps(action, callback) {
+	var wait = true, userID = action.user.id;
+	log("Loading user content", action.user.id);
+	core.emit("getRooms", {
+		id: uid(),
+		hasOccupant: userID,
+		session: action.session
+	}, function(err, rooms) {
+		if (err || !rooms || !rooms.results || !rooms.results.length) {
+			action.occupantOf = [];
+		} else {
+			action.occupantOf = rooms.results;
+		}
+		log("Loading user content: occupants", rooms.results);
+		if (wait) wait = false;
+		else callback();
+	});
+	if(!utils.isGuest(userID)) {
+		core.emit("getRooms", {
+			id: uid(),
+			hasMember: userID,
+			session: action.session
+		}, function(err, rooms) {
+			if (err || !rooms || !rooms.results || !rooms.results.length) {
+				action.memberOf = [];
+			} else {
+				action.memberOf = rooms.results;
+			}
+			log("Loading user content: members", rooms.results);
+			if (wait) wait = false;
+			else callback();
+		});
+	}else{
+		action.memberOf = [];
+		if (wait) wait = false;
+		else callback();
+	}
 }

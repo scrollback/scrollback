@@ -7,16 +7,13 @@
 	function insertWidget() {
 		var sb, style, iframe, container,
 			embed = {},
-			host = config.server.protocol + config.server.host;
+			host = config.server.protocol + "//" + config.server.host;
 
-		window.scrollback = window.scrollback || {};
-
-		sb = window.scrollback;
+		sb = window.scrollback = window.scrollback || {};
 
 		sb.room = sb.room || ((sb.streams && sb.streams.length) ? sb.streams[0] : "scrollback");
 
 		embed.form = sb.form || "toast";
-		embed.theme = "dark";
 		embed.nick = sb.nick || sb.suggestedNick;
 		embed.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
 		embed.origin = {
@@ -34,47 +31,45 @@
 		style = document.createElement("link");
 		style.rel = "stylesheet";
 		style.type = "text/css";
-		style.href = host + "/s/styles/dist/embed.min.css";
+		style.href = host + "/s/dist/styles/embed.min.css";
 
 		document.head.appendChild(style);
+
 		iframe = document.createElement("iframe");
+
 		if (embed.form === "canvas") {
 			container = document.getElementById("scrollback-container");
 		}
-		
+
 		if (!container) {
 			embed.form = sb.embed = "toast";
+
 			document.body.appendChild(iframe);
 		} else {
 			container.appendChild(iframe);
 		}
-		
-
 
 		// TODO: change "embed" to "context"
-		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
+		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
+		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 
-		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");				
-		window.addEventListener("message", function (e) {
+		window.addEventListener("message", function(e) {
 			var data;
-			var minReg = /\bscrollback-minimized\b/;
-
+			
 			if (e.origin === host) {
-				try{
+				try {
 					data = JSON.parse(e.data);
-				}catch(e){
-					console.log("Parse error: ", data);
+				}catch (e) {
 					return;
 				}
-				switch(data.type) {
+
+				switch (data.type) {
 					case "activity":
-						if(data.hasOwnProperty("minimize")) {
+						if (data.hasOwnProperty("minimize")) {
+							iframe.className = iframe.className.replace(/\bscrollback-minimized\b/g, "").trim();
+
 							if (data.minimize) {
-								if(!minReg.test(iframe.className)) {
-									iframe.className = iframe.className + " scrollback-minimized";
-								}
-							} else {
-								iframe.className = iframe.className.replace(minReg, "").trim();
+								iframe.className += " scrollback-minimized";
 							}
 						}
 					break;
@@ -83,7 +78,7 @@
 							type: "domain-response",
 							token: data.token
 						}), host);
-					break;		
+					break;
 				}
 			}
 		}, false);

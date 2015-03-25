@@ -10,7 +10,7 @@ var timeout, host;
 var maxTweets = 1; // max tweets to search in timeout inteval
 var pendingOauths = {};
 var oauthTimeout = 15 * 60 * 1000; // 15 min
-var functionUtils = require('../lib/functionUtils.js');
+var functionUtils = require('../lib/function-utils.js');
 var silentTimeout;
 module.exports = function(coreObj, conf) {
 	config = conf;

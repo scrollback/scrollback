@@ -21,6 +21,7 @@ var merge = require("./merge-config.js");
 var fs = require("fs");
 
 var config = {};
+
 var defaults = {
 	global: {
 		host: "localhost",
@@ -32,7 +33,7 @@ var defaults = {
 			name: 'Scrollback Local'
 		}
 	},
-	appPriorities: { // don't override 
+	appPriorities: { // don't override
 		antiflood: 1000,
 		validation: 900,
 		loader: 850,
@@ -54,12 +55,12 @@ var defaults = {
 			username: "scrollback",
 			password: "scrollback"
 			//port:
-		},
+		}
 	},
 	"browserid-auth": {
-		audience: "localhost:7528"
+		audience: "http://localhost:7528"
 	},
-	env: "production",
+	env: "development",
 	http: {
 		host: "localhost",
 		cookieDomain: "localhost",
@@ -86,15 +87,19 @@ var defaults = {
 	},
 	threader: {
 		host: "localhost",
-		port: 12345,
+		port: 55555,
 		redisDB: 11
+	},
+	"thread-color": {
+		redisDB: 11, // no harm in reusing as long as there is no key collision
+		numColors: 10
 	},
 	twitter: {
 		//consumerKey: ".."
 		//consumerSecret: ".."
 		timeout: 1000 * 60 * 5,
 		silentTimeout: 1000 * 60 * 10,
-		redisDB: 6,
+		redisDB: 6
 	},
 	irc: {
 		port: 8910,
@@ -118,7 +123,7 @@ var defaults = {
 	google: {
 	},
 	storage: {
-		pg: {	
+		pg: {
 			server: "localhost", //server:port
 			db: "scrollback",
 			username: "scrollback",
@@ -130,11 +135,10 @@ var defaults = {
 
 config = (function() {
 	var changes = {};
-	if (fs.existsSync("./server-config.js")) {
+	if (fs.existsSync(__dirname + "/server-config.js")) {
 		changes = require("./server-config.js");
 	}
 	return merge(defaults, changes);
 }());
-
 
 module.exports = config;

@@ -1,0 +1,160 @@
+@include exports("settingspage") {
+    .settings-page {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+
+        &-bar {
+            @extend %clearfix;
+            @include dropshadow(1);
+
+            height: $bar-height;
+            background-color: $light-color;
+            position: relative;
+            z-index: 10;
+
+            &-title {
+                float: left;
+                margin: .625em 1em;
+            }
+
+            &-actions {
+                float: right;
+                margin: .375em .5em;
+
+                .button {
+                    margin: 0 .25em;
+
+                    &:first-of-type { margin-left: 0; }
+
+                    &:last-of-type { margin-right: 0; }
+                }
+            }
+        }
+
+        &-content {
+            padding-bottom: $bar-height;
+            height: 100%;
+            width: 100%;
+            overflow: auto;
+
+            &-list {
+                float: left;
+                margin: 0;
+                height: 100%;
+                width: 15em;
+                background-color: darken($light-color, 5%);
+                border-right: 1px solid rgba(0,0,0,0.05);
+                overflow: auto;
+
+                &-item {
+                    padding: 1em 1.25em;
+                    font-weight: 700;
+                    cursor: pointer;
+
+                    &.current, &:focus, &:hover { background-color: rgba(0,0,0,0.075); }
+
+                    &:active { background-color: rgba(0,0,0,0.1); }
+                }
+            }
+
+            &-view {
+                height: 100%;
+                background-color: $light-color;
+                overflow: auto;
+
+                &-item {
+                    padding: .5em 1em;
+
+                    &:not(.current) { display: none; }
+                }
+            }
+        }
+    }
+
+    .twitter-account-chooser, .profile-user-avatar {
+        position: relative;
+        display: block;
+        height: 80px;
+        width: 80px;
+        margin: 0 .25em;
+        background-size: contain;
+        border-width: 0.5em;
+        border-style: solid;
+        border-color: transparent;
+        display: inline-block;
+        border-radius: $roundness;
+        cursor: pointer;
+
+        &:focus, &:hover { border-color: fade-out($dark-color, .7); }
+
+        &:active { border-color: fade-out($dark-color, .5); }
+
+        &.current { border-color: $accent-color; }
+
+        &:first-child { margin-left: 0; }
+
+        &:last-child { margin-right: 0; }
+
+        img {
+            border-radius: $roundness;
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .settings-item {
+        display: block;
+        padding: 1em;
+
+        .check-item, .radio-item {
+            display: block;
+            padding: .5em 0;
+        }
+
+        .embed-code {
+            min-height: 15em;
+            background-color: darken($light-color, 5%);
+            font-weight: 700;
+            font-family: $font-family-monospace;
+            line-height: 1.2em;
+        }
+
+        input, textarea, .button, .button-secondary, .multientry {
+            margin: 0 0;
+            max-width: 100%;
+        }
+
+        input[type="text"], input[type="url"], textarea { min-width: 21em; }
+
+        textarea {
+            resize: vertical;
+            min-height: 9em;
+        }
+
+        input[type="checkbox"], input[type="radio"] {
+            float: left;
+            margin-right: .5em;
+        }
+
+        input[type="color"] {
+            height: 2.5em;
+            width: 12em;
+            padding: 0 .1em;
+            cursor: pointer;
+        }
+
+        .embed-share-button {
+            margin: 0 .25em;
+
+            &:first-of-type { margin-left: 0; }
+        }
+    }
+
+    .settings-label, .settings-action {
+        display: block;
+        padding: .25em;
+    }
+
+    .settings-label { padding-right: 1em; }
+}

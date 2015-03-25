@@ -1,0 +1,117 @@
+@include exports("appbar") {
+    .appbar {
+        @extend %clearfix;
+        @include transition(.3s $easeOutQuad);
+        @include dropshadow(2);
+
+        position: relative;
+        z-index: 600;
+        min-height: $bar-height;
+        max-height: $bar-height;
+        height: $bar-height;
+        width: 100%;
+        overflow: hidden;
+
+        &-primary {
+            background-color: $accent-color;
+            color: $light-color;
+
+            @for $i from 1 through length($palette) {
+                .color-#{$i - 1} & { background-color: nth($palette, $i); }
+            }
+        }
+
+        &-secondary {
+            border-top: 1px solid rgba(0, 0, 0, .1);
+            background-color: $light-color;
+            color: fade-out($dark-color, .3);
+        }
+
+        &-logotype {
+            float: left;
+            padding: .75em 0;
+        }
+
+        &-title {
+            float: left;
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-weight: 700;
+
+            &-primary {
+                line-height: $bar-height / 1.2;
+                font-size: 1.2em;
+                padding: 0 (.25em / 1.2);
+            }
+
+            &-secondary {
+                line-height: $bar-height;
+                font-size: 1em;
+                padding: 0 .25em;
+            }
+        }
+
+        &-avatar {
+            float: left;
+            margin: .5em 1em;
+            height: $bar-height - 1em;
+            width: $bar-height - 1em;
+            border-radius: 50%;
+            border: 2px solid $light-color;
+            cursor: pointer;
+        }
+
+        &-icon {
+            $icon-width: $bar-height / 1.5;
+
+            @extend %appear;
+
+            float: right;
+            font-size: 1.5em;
+            padding: (1em / 1.5);
+            color: inherit;
+            height: 100%;
+            width: $icon-width;
+            min-width: $icon-width;
+            max-width: $icon-width;
+            line-height: 1;
+
+            &-left { float: left; }
+
+            &:hover, &:focus {
+                background-color: rgba(0,0,0,0.1);
+                color: inherit;
+            }
+
+            &:active, &.popover-active {
+                background-color: rgba(0,0,0,0.2);
+                color: inherit;
+            }
+
+            &-close { @include icon(close); }
+
+            &-back { @include icon(arrow-left); }
+
+            &-menu { @include icon(hamburger); }
+
+            &-more { @include icon(more); }
+
+            &-grid { @include icon(grid); }
+
+            &-search { @include icon(search); }
+
+            &-people { @include icon(people); }
+
+            &-maximize { @include icon(maximize); }
+
+            &-follow {
+                @include icon(star-empty);
+
+                &.following { @include icon(star); }
+            }
+        }
+    }
+}

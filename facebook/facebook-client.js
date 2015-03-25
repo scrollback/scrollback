@@ -1,24 +1,36 @@
 /* jshint browser:true */
-/* global libsb, $, facebookConnectPlugin */
 
-var config = require("../client-config-defaults.js");
-var loginWithAccManager = require("./facebook-am-client.js");
+module.exports = function(core, config, store) {
+	var login;
 
-function loginWithFb() {
-	if (typeof facebookConnectPlugin !== "undefined") {
-		loginWithAccManager();
+	function androidLogin() {
+		if (window.Android && typeof window.Android.facebookLogin === "function") {
+			window.Android.facebookLogin();
+		}
 	}
-	else window.open("https:" + config.server.host + "/r/facebook/login", "_blank", "location=no");
-}
 
-$('.js-cordova-fb-login').click(loginWithFb);
+	function webLogin() {
+		window.open("https://" + config.server.host + "/r/facebook/login", "_blank", "location=no");
+	}
 
-libsb.on('auth', function(auth, next) {
-	auth.buttons.facebook = {
-		text: 'Facebook',
-		prio: 100,
-		action: loginWithFb
+	login = {
+		web: webLogin,
+		embed: webLogin,
+		android: androidLogin
 	};
 
-	next();
-}, 600);
+	core.on("boot", function(state, next) {
+		core.on('auth', function(auth, next) {
+			auth.buttons.facebook = {
+				text: 'Facebook',
+				prio: 100,
+				action: login[store.get("context", "env") || "web"]
+			};
+
+			next();
+		}, 700);
+
+		next();
+	}, 100);
+
+};

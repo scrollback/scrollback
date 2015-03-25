@@ -1,0 +1,62 @@
+@include exports("fab") {
+    $fab-size: $bar-height + .5em;
+    $color: nth($palette, 9);
+
+    .fab {
+        @include icon(add);
+        @include dropshadow(3);
+
+        position: absolute;
+        z-index: 500;
+        right: 0;
+        bottom: 0;
+        margin: (3em / 1.5);
+        font-size: 1.5em;
+        display: block;
+        height: $fab-size / 1.5;
+        width: $fab-size / 1.5;
+        padding: (.75em / 1.5) (1.25em / 1.5);
+        border-radius: 50%;
+        background-color: $color;
+        color: rgba(0,0,0,0.5);
+
+        &:focus, &:hover {
+            background-color: lighten($color, 5%);
+            color: rgba(0,0,0,0.5);
+        }
+
+        &:active {
+            background-color: lighten($color, 10%);
+            color: rgba(0,0,0,0.5);
+        }
+
+        @media #{$mobile-break-point} { margin: (2em / 1.5); }
+
+        &-label {
+            @include dropshadow(2);
+
+            position: absolute;
+            right: 100%;
+            margin: 0 1.5em;
+            padding: .5em;
+            width: 10em;
+            font-size: (.9em / 1.5);
+            text-align: center;
+            border-radius: $roundness;
+            background-color: $info-color;
+            color: $light-color;
+
+            &:after {
+                content: "";
+                position: absolute;
+                left: 100%;
+                top: (1em / 1.5);
+                width: 0;
+                height: 0;
+                border-top: (1em / 1.5) solid transparent;
+                border-bottom: (1em / 1.5) solid transparent;
+                border-left: (1em / 1.5) solid $info-color;
+            }
+        }
+    }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html {{#if manifest}} manifest="/{{manifest}}" {{/if}} lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+	{{{seo.head}}}
+
+	<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,700">
+    <link rel="stylesheet" type="text/css" media="screen" href="/s/dist/styles/style.min.css">
+
+    {{#if analytics.id}}
+		<script>
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', '{{analytics.id}}']);
+			_gaq.push(['_trackPageview']);
+
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		</script>
+	{{/if}}
+
+	{{#if errorception.id}}
+		<script>
+			(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+			c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+			c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+			_.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+			(window,document,"script","{{errorception.id}}");
+		</script>
+	{{/if}}
+</head>
+
+<body class="{{#if cordova}} platform-cordova {{/if}}">
+	<!-- [if lt IE 9]>
+		<div class="ie-warning">
+			<div class="ie-warning-content">
+				<h1>Your browser isn’t supported :-(</h1>
+				<p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+			</div>
+		</div>
+	<![endif]-->
+
+	<!-- SEO -->
+	<main itemscope style="position: absolute; top: -9999em; left: -9999em;">
+		{{{seo.body}}}
+	</main>
+
+	<div id="app-client"></div>
+
+	{{#if cordova}}
+		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
+		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
+	{{/if}}
+
+    <script src="/s/dist/scripts/app.bundle.min.js"></script>
+
+	<script src="//login.persona.org/include.js"></script>
+	<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
+
+	<!--[if IE]>
+		<script src="/s/dist/scripts/polyfills.min.js"></script>
+	<![endif]-->
+
+</body>
+</html>

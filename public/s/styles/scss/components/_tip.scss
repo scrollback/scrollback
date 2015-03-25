@@ -1,0 +1,24 @@
+@include exports("tip") {
+    .tip {
+        padding: 1em;
+        border-radius: $roundness;
+        background-repeat: no-repeat;
+        background-position: 1em 1em;
+
+        &:empty { display: none; }
+
+        $types: (
+            info: $info-color,
+            success: $success-color,
+            warning: $warning-color,
+            error: $error-color
+        );
+
+        @each $type, $color in $types {
+            &.#{$type} {
+                background-color: mix($color, $light-color, 20%);
+                color: darken($color, 20%);
+            }
+        }
+    }
+}

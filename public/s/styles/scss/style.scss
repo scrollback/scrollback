@@ -1,0 +1,413 @@
+/**
+* Stylesheet for the client
+*/
+
+// Import global settings (must be the first)
+@import "settings";
+
+
+// Import base styles from lace
+@import "../../../../bower_components/lace/src/scss/base";
+@import "../../../../bower_components/lace/src/scss/animations";
+@import "../../../../bower_components/lace/src/scss/alertbar";
+@import "../../../../bower_components/lace/src/scss/modal";
+@import "../../../../bower_components/lace/src/scss/popover";
+@import "../../../../bower_components/lace/src/scss/switch";
+@import "../../../../bower_components/lace/src/scss/button";
+@import "../../../../bower_components/lace/src/scss/entry";
+@import "../../../../bower_components/lace/src/scss/multientry";
+@import "../../../../bower_components/lace/src/scss/flexbox";
+@import "../../../../bower_components/lace/src/scss/tooltip";
+@import "../../../../bower_components/lace/src/scss/progressbar";
+@import "../../../../bower_components/lace/src/scss/linked";
+@import "../../../../bower_components/lace/src/scss/filter";
+@import "../../../../bower_components/lace/src/scss/dropshadow";
+@import "../../../../bower_components/lace/src/scss/clearfix";
+@import "../../../../bower_components/lace/src/scss/icons";
+
+
+// Import various components
+@import "components/listview";
+@import "components/gridview";
+@import "components/fab";
+@import "components/appbar";
+@import "components/searchbar";
+@import "components/profile";
+@import "components/card";
+@import "components/badge";
+@import "components/sidebar";
+@import "components/chat";
+@import "components/markdown";
+@import "components/settingspage";
+@import "components/scrollto";
+@import "components/calltoactionbar";
+@import "components/tip";
+
+
+// Element styles
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    @include filter((
+                    role: $roles,
+                    webview: (),
+                    embed: $embeds,
+                    mode: $modes,
+                    platform: $platforms,
+                    state: $states
+    ), ()); /* show hide elements based on filter */
+}
+
+.app-container {
+    @include flexbox;
+    @include flex-direction(row);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+
+    height: 100%;
+    width: 100%;
+
+    word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
+    overflow: hidden; /* fix overflow in firefox */
+    position: fixed; /* make sure that it works on ios when position: absolute */
+}
+
+.sidebar {
+    @include flex-shrink(0);
+
+    .list-item {
+        &:focus, &:hover { background-color: darken($light-color, 5%); }
+
+        &:active { background-color: darken($light-color, 10%); }
+    }
+
+    &-left {
+        .card-header { border-bottom: none; }
+
+        .list-section { background-color: transparent; }
+
+        .list-item {
+            opacity: .75;
+            border-bottom: 0;
+
+            &:focus, &:hover, &:active { opacity: 1; }
+        }
+    }
+
+    &-right {
+        @media #{$screenxxxxx}  {
+            .searchbar {
+                @include transition(.3s $easeOutQuad);
+                @include flex-shrink(0);
+
+                color: $light-color;
+                background-color: $accent-color;
+
+                @for $i from 1 through length($palette) {
+                    .color-#{$i - 1} & { background-color: nth($palette, $i); }
+                }
+
+                &-input { background-color: rgba(0,0,0,.1); }
+            }
+        }
+    }
+
+    &-signin-button { width: 100%; }
+
+    &-room-list, &-people-list {
+        @include flexbox;
+        @include flex-direction(column);
+        @include flex-wrap(nowrap);
+        @include align-items(flex-start);
+
+        height: 100%;
+        width: 100%;
+    }
+
+    &-content {
+        @include flex-grow(1);
+
+        overflow: auto;
+        width: 100%;
+    }
+
+    .list-section {
+        background-color: transparent;
+        box-shadow: none;
+        border-left-width: 0;
+        border-right-width: 0;
+        border-radius: 0;
+    }
+
+    .list-header { opacity: .5; }
+
+    .card-header-icon-more { display: none; }
+}
+
+.sidebar-header {
+    @extend %clearfix;
+    @include transition(.3s $easeOutQuad);
+    @include flex-shrink(0);
+    @include dropshadow(2);
+
+    color: $light-color;
+    background-color: $accent-color;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.06);
+
+    @for $i from 1 through length($palette) {
+        .color-#{$i - 1} & { background-color: nth($palette, $i); }
+    }
+
+    &-logo {
+        float: left;
+        display: block;
+        margin: .75em;
+    }
+}
+
+%embed-active {
+    .appbar-title-container {
+        margin-left: 1em;
+
+        @include transition;
+        @include transform(translate3d(0, 0, 0));
+    }
+}
+
+%embed-inactive {
+    .appbar-title-container { @include transform(translate3d(0, -100%, 0)); }
+
+    .appbar-primary { background-color: $dark-color; }
+
+    .appbar-icon-people { opacity: 0; }
+}
+
+.embed {
+    &-toast, &-canvas {
+        @extend %embed-active;
+
+        &:not(:focus):not(:hover):not(:active) { @extend %embed-inactive; }
+    }
+}
+
+.toast-minimized {
+    @extend %embed-inactive;
+
+    .appbar-icon { display: none; }
+}
+
+.appbar {
+    &-title-container {
+        position: relative;
+        height: 100%;
+        width: 8em;
+        width: calc(100% - 14em);
+        float: left;
+
+        @media #{$screenx} {
+            width: 11em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxx} {
+            width: 18em;
+            width: calc(100% - 14em);
+        }
+
+        @media #{$screenxxxx} {
+            width: 30em;
+            width: calc(100% - 14em);
+        }
+
+        .appbar-title {
+            height: 100%;
+            width: 100%;
+        }
+
+        .appbar-logotype {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            height: 100%;
+        }
+    }
+
+    &-primary {
+        @media #{$screenxxx} {
+            .appbar-icon-menu, .appbar-avatar { display: none; }
+
+            .appbar-title-container { margin-left: 1em; }
+        }
+
+        @media #{$screenxxxxx} {
+            .appbar-icon-people { display: none; }
+        }
+    }
+}
+
+.people-list-item {
+    padding: .5em;
+
+    &-avatar {
+        float: left;
+        display: block;
+        margin: .5em;
+        height: $bar-height - 1em;
+        width: $bar-height - 1em;
+        border-radius: 50%;
+    }
+
+
+    &-nick {
+        line-height: $bar-height;
+        margin: 0 .5em;
+    }
+
+    &-offline { opacity: .7; }
+}
+
+.main {
+    @include flexbox;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include align-items(flex-start);
+    @include flex-grow(1);
+
+    position: relative;
+    height: 100%;
+    overflow: hidden; /* otherwise makes the right sidebar shrink in firefox */
+}
+
+.main-content {
+    @include flex-grow(1);
+
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: darken($light-color, 5%);
+
+    &-inner {
+        padding: .5em 0;
+
+        @media #{$screenxx} { padding: 2em; }
+    }
+
+    &:after {
+        content: "";
+        display: block;
+        height: $bar-height * 1.5;
+    }
+}
+
+.grid-item {
+    .mode-room & {
+        $item-width: 32em;
+
+        @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }
+
+        @for $i from 1 through 10 {
+            @media only screen and (min-width: #{$item-width * $i}) {
+                width: (100% / $i) - 10%;
+                width: calc(#{100% / $i} - 1em);
+            }
+        }
+
+        @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
+    }
+}
+
+.progressbar {
+    @include dropshadow(2);
+
+    background-color: $light-color;
+}
+
+.banner {
+    width: 100%;
+
+    &-iframe {
+        height: 36em;
+        border: 0;
+    }
+
+    &-form-container {
+        background-color: $light-color;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    &-form {
+        width: 36em;
+        max-width: 100%;
+        margin: auto;
+        padding: 1em;
+        text-align: center;
+    }
+}
+
+.thread-list-empty {
+    padding: 1em;
+    opacity: .5;
+}
+
+.thread-feed-empty {
+    padding: 2em 1.5em;
+    opacity: .5;
+}
+
+.dialog {
+    z-index: 800;
+
+    > form {
+        textarea, input, .button { width: 100%; }
+    }
+
+    &-conf, &-pref {
+        max-width: 100%;
+        max-height: 100%;
+        height: 30em;
+        width: 50em;
+    }
+}
+
+.backdrop { z-index: 700; }
+
+.menu {
+    width: auto;
+
+    &-item {
+        white-space: pre;
+
+        &:before {
+            opacity: .7;
+            margin-right: .75em;
+            font-size: 1.2em;
+            vertical-align: -.1em;
+            padding: 0 .2em;
+        }
+    }
+
+    &-userpref {
+        @include icon(configure);
+    }
+
+    &-reportissue {
+        @include icon(info-circled);
+    }
+
+    &-sound-notification-enable {
+        @include icon(audio);
+    }
+
+    &-sound-notification-disable {
+        @include icon(audio-off);
+    }
+
+    &-logout {
+        @include icon(off);
+    }
+}

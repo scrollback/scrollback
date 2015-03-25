@@ -1,20 +1,35 @@
-/* jshint browser:true */
-/* global libsb, $, currentState */
+/* jshint browser: true */
 
-var config = require("../client-config-defaults.js");
+module.exports = function(core, config, store) {
+	var login;
 
-function loginWithGoogle() {
-	window.open("https:" + config.server.host + "/r/google/login", "_blank", "location=no");
-}
+	function androidLogin() {
+		if (window.Android && typeof window.Android.googleLogin === "function") {
+			window.Android.googleLogin();
+		}
+	}
 
-$('.js-cordova-google-login').click(loginWithGoogle);
+	function webLogin() {
+		window.open("https://" + config.server.host + "/r/google/login", "_blank", "location=no");
+	}
 
-libsb.on('auth', function(auth, next) {
-	auth.buttons.google = {
-		text: 'Google',
-		prio: 100,
-		action: loginWithGoogle
+	login = {
+		web: webLogin,
+		embed: webLogin,
+		android: androidLogin
 	};
 
-	next();
-}, 700);
+	core.on("boot", function(state, next) {
+		core.on('auth', function(auth, next) {
+			auth.buttons.google = {
+				text: 'Google',
+				prio: 100,
+				action: login[store.get("context", "env") || "web"]
+			};
+
+			next();
+		}, 700);
+
+		next();
+	}, 100);
+};

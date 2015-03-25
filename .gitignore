@@ -8,6 +8,8 @@
 !.jscsrc
 !.jshintrc
 !.jsbeautifyrc
+!.scss-lint.yml
+!.hound.yml
 
 *.seed
 *.log
@@ -22,35 +24,26 @@
 *.bundle.js
 *.min.js
 
-lib-cov
-pids
-logs
-dump
-data
-results
-
 node_modules
 bower_components
 
-
 server-config.js
-myConfig.js
 client-config.js
-/mysql-storage
-/leveldb-storage/data-test/
+
+/leveldb-storage/data/
+/leveldb-storage/data-*
+/leveldb-storage/backup-*
 /ircClient/myConfig.js
 /ircClient/Data
 /test/config.js
 /test/config-defaults.js
-/public/s/styles/lace
-/public/s/styles/fonts
-/public/s/styles/dist
-/public/s/scripts/lib
-/public/s/tmp/*
+
+/public/s/sb.js
+/public/s/dist
+/public/s/tmp
 
 /mocha-output-selenium.json
 /mocha-output-unit.json
-/public/s/sb.js
 /xunit-mocha.xml
 /patchup-room
 /mocha-output.json

@@ -19,6 +19,15 @@ function getUsersById(ids, callback) {
 		for (i = 0, l = data.length; i < l; i++) {
 			if (!data[i]) return callback();
 		}
+		i=0;
+		data.forEach(function(item) {
+			try {
+				data[i] = JSON.parse(item);
+			} catch (e) {
+				data[i] = null;
+			}
+			i++;
+		});
 		callback(null, data);
 	});
 }
@@ -111,7 +120,9 @@ function updateUser(action, callback) {
 			occupantDB.smembers("user:{{" + action.old.id + "}}:occupantOf", function(err, data) {
 				data.forEach(function(room) {
 					occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
-					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id);
+					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id, function(err, res) {
+						if(err) log.d(err, res);
+					});
 				});
 			});
 			if(action.occupantOf && action.occupantOf.length) {

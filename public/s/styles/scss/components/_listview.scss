@@ -1,0 +1,42 @@
+@mixin listheader {
+    text-transform: uppercase;
+    opacity: .8;
+    font-size: 1em;
+    margin: .5em 1em;
+    font-weight: 700;
+}
+
+@mixin listsection {
+    @include dropshadow(1);
+
+    margin: 0;
+    background-color: $light-color;
+    border: 1px solid rgba(0,0,0,0.1);
+    list-style: none;
+    border-radius: $roundness;
+}
+
+@mixin listitem {
+    @extend %snappy;
+
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: none;
+
+    &:last-child { border-bottom: none; }
+
+    &:focus { outline: none; }
+
+    &-content {
+        font-size: 1.2em;
+        padding: (1em / 1.2);
+    }
+}
+
+@include exports(listview) {
+    .list-header { @include listheader; }
+
+    .list-section { @include listsection; }
+
+    .list-item { @include listitem; }
+}

@@ -1,11 +1,11 @@
 var SbError = require('../../lib/SbError.js');
-var utils = require('../../lib/appUtils.js');
+var utils = require('../../lib/app-utils.js');
 var domainCheck;
 module.exports = function (core, config) {
 	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('room', function (action, callback) {
 		if(!utils.isInternalSession(action.session) && action.old && action.old.id && !domainCheck(action.old, action.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
-		
+
 		if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {
 				action.user.role = "guest";

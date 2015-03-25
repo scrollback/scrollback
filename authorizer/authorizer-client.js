@@ -1,86 +1,86 @@
-/* global libsb, $ */
-var formField = require("../lib/formField.js");
-var handleAuthErrors = require('./handleAuthErrors.js');
+/* global $ */
 
-libsb.on('config-show', function (tabs, next) {
-	var room = tabs.room;
+var formField = require("../ui/utils/form-field.js"),
+	handleAuthErrors = require('./handleAuthErrors.js');
 
-	var guestPermRead = false,
-		guestPermWrite = false,
-		registeredPermRead = false,
-		registeredPermWrite = false,
-		followerPermRead = false,
-		followerPermWrite = false;
+module.exports = function(core) {
+	core.on('conf-show', function(tabs, next) {
+		var room = tabs.room,
+			guestPermRead = false,
+			guestPermWrite = false,
+			registeredPermRead = false,
+			registeredPermWrite = false,
+			followerPermRead = false,
+			followerPermWrite = false,
+			readLevel, writeLevel;
 
-	if (!room.guides) room.guides = {};
-	if (!room.guides.authorizer) room.guides.authorizer = {};
+		room.guides = room.guides || {};
+		room.guides.authorizer = room.guides.authorizer || {};
 
-	if (!room.guides.authorizer.readLevel) room.guides.authorizer.readLevel = 'guest';
-	if (!room.guides.authorizer.writeLevel) room.guides.authorizer.writeLevel = 'guest';
+		room.guides.authorizer.readLevel = room.guides.authorizer.readLevel || 'guest';
+		room.guides.authorizer.writeLevel = room.guides.authorizer.writeLevel || 'guest';
 
+		readLevel = room.guides.authorizer.readLevel; // guest, registered, follower
+		writeLevel = room.guides.authorizer.writeLevel;
 
-	var readLevel = room.guides.authorizer.readLevel; // guest, registered, follower
-	var writeLevel = room.guides.authorizer.writeLevel;
+		switch (readLevel) {
+		case 'guest':
+			guestPermRead = true;
+			break;
+		case 'registered':
+			registeredPermRead = true;
+			break;
+		case 'follower':
+			followerPermRead = true;
+		}
 
-	switch (readLevel) {
-	case 'guest':
-		guestPermRead = true;
-		break;
-	case 'registered':
-		registeredPermRead = true;
-		break;
-	case 'follower':
-		followerPermRead = true;
-	}
+		switch (writeLevel) {
+		case 'guest':
+			guestPermWrite = true;
+			break;
+		case 'registered':
+			registeredPermWrite = true;
+			break;
+		case 'follower':
+			followerPermWrite = true;
+		}
 
-	switch (writeLevel) {
-	case 'guest':
-		guestPermWrite = true;
-		break;
-	case 'registered':
-		registeredPermWrite = true;
-		break;
-	case 'follower':
-		followerPermWrite = true;
-	}
+		var div = $('<div>').append(
+			//		formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
+			formField('Who can post messages?', 'radio', "authorizer-write", [['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]])
+		);
 
-	var div = $('<div>').append(
-		//		formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
-		formField('Who can post messages?', 'radio', "authorizer-write", [
-			['authorizer-post-guest', 'Anyone (Public)', guestPermWrite],
-			['authorizer-post-users', 'Logged in users', registeredPermWrite],
-			['authorizer-post-followers', 'Followers', followerPermWrite]
-			])
-	);
+		tabs.authorizer = {
+			html: div,
+			text: "Permissions"
+		};
 
-	tabs.authorizer = {
-		html: div,
-		text: "Permissions",
-		prio: 700
-	};
-	next();
-}, 500);
+		next();
+	}, 700);
 
-libsb.on('config-save', function (room, next) {
-	var mapRoles = {
-		guest: 'guest',
-		users: 'registered',
-		followers: 'follower'
-	};
-	var readLevel = 'guest'; //mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)];
-	var writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
-	if (!room.guides) room.guides = {};
+	core.on('conf-save', function(room, next) {
+		var mapRoles = {
+				guest: 'guest',
+				users: 'registered',
+				followers: 'follower'
+			},
+			readLevel = 'guest', //mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)],
+			writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
 
-	room.guides.authorizer = {
-		readLevel: readLevel,
-		writeLevel: writeLevel
-	};
-	next();
-}, 500);
+		room.guides = room.guides || {};
 
-libsb.on('error-dn', function (error, next) {
-	if (error.message === "ERR_NOT_ALLOWED") {
-		handleAuthErrors(error);
-	}
-	next();
-}, 1000);
+		room.guides.authorizer = {
+			readLevel: readLevel,
+			writeLevel: writeLevel
+		};
+		next();
+	}, 500);
+
+	core.on('error-dn', function(error, next) {
+		if (error.message === "ERR_NOT_ALLOWED") {
+			handleAuthErrors(error);
+		}
+
+		next();
+	}, 1000);
+};

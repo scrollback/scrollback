@@ -6,7 +6,8 @@ libsb.on("navigate", function(state, next) {
 	var regex;
 
 	if (state.cordova && state.source === 'boot') {
-		regex = new RegExp("(^https?:" + config.server.host + ")(($)|(\/)).*");
+		regex = new RegExp("\/\/" + config.server.host + ")(($)|(\/)).*");
+
 		window.openExternal = function openExternal(elem) {
 			window.open(elem.href, "_system", "location=yes");
 			return false;
