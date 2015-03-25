@@ -115,11 +115,13 @@ function onTextUp(text, next) {
 			items: [text]
 		},
 		key, newState = {texts:{}};
-	next();
+	next(); // calling next here so that it gets an id.
 	pendingActions[text.id] = text;
 	key = keyFromText(text);
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
+	
+//	next();
 	
 //	Optimistically adding new threads is made complex
 //	by the unavailability of an id on the text-up.
@@ -152,20 +154,20 @@ function onTextDn(text, next) {
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {
-		oldKey = keyFromText(pendingActions[text.id]);
-		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
 		oldRange = {
 			start: pendingActions[text.id].time,
 			end: pendingActions[text.id].time,
 			items: []
 		};
 		newState.texts[text.to].push(oldRange);
-		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
-	}
-	
-	if(text.thread === text.id) {
-		console.log("this text starts a new thread", text);
 		
+		oldKey = keyFromText(pendingActions[text.id]);
+		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
+		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
+		
+	}
+		
+	if(text.thread === text.id) {		
 		newState.threads = {};
 		newState.threads[text.to] = [{
 			start: text.time, end: text.time, items: [{
