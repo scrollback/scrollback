@@ -29,11 +29,6 @@ module.exports = function(core, conf) {
 		var regList = [];
 		log.d(userList);
 		userList.forEach(function(userObj) {
-			log.d("user object", typeof userObj);
-			log.d("next condition params", userObj.params);
-			log.d("next condition params.push", userObj.params.pushNotifications);
-			log.d("next condition params.push.dev.",  userObj.params.pushNotifications.devices);
-			
 			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				var devices = userObj.params.pushNotifications.devices;
 				log.d("devices object: ", devices);
