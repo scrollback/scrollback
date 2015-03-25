@@ -164,7 +164,7 @@ function onTextDn(text, next) {
 		oldKey = keyFromText(pendingActions[text.id]);
 		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
 		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
-		
+		delete pendingActions[text.id];
 	}
 		
 	if(text.thread === text.id) {		
