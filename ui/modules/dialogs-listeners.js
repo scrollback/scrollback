@@ -72,7 +72,7 @@ module.exports = function(core, config, store) {
 				userChangeCallback = null;
 		}
 
-		if (changes.entities && changes.entities[user] && changes.entities[user].id && store.getUser().identities) {
+		if (changes.entities && changes.entities[user] && store.getUser().identities) {
 			if (appUtils.isGuest(user)) {
 				// User signs up
 				if (nav.dialog === "createroom" ) {
