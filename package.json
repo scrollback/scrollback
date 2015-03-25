@@ -61,7 +61,6 @@
     "newrelic": "latest",
     "nodemailer": "latest",
     "oauth": "latest",
-    "objectlevel": "git://github.com/scrollback/objectlevel.git",
     "pg": "latest",
     "react": "latest",
     "redis": "latest",
