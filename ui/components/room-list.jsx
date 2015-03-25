@@ -58,7 +58,7 @@ module.exports = function(core, config, store) {
 					sections.push({
 						key: "home-" + type + "-" + secs[role].key + (type ? "-" + type : ""),
 						header: secs[role].header,
-						items: secs[role].items.sort(function(a, b) { return (b.updateTime || 0) - (a.updateTime || 0); })
+						items: secs[role].items.sort(function(a, b) { return (a.createTime || 0) - (b.createTime || 0); })
 					});
 				}
 			}
