@@ -84,19 +84,19 @@ module.exports = function(core, config, store) {
 			title = 'Scrollback';
 		} else if (state.nav.mode == 'room') {
 			if (state.nav.room.indexOf(':') !== -1) {
-				return; // Not ready with the new room yet.
+				return next(); // Not ready with the new room yet.
 			}
 			url = '/' + state.nav.room;
 			title = format.titleCase(state.nav.room) + ' on Scrollback';
 		} else if (state.nav.mode == 'chat') {
 			if (state.nav.room.indexOf(':') !== -1) {
-				return; // Not ready with the new room yet.
+				return next(); // Not ready with the new room yet.
 			}
 			title = (store.get('indexes', 'threadsById', state.nav.thread) || {}).title;
 			url = '/' + state.nav.room + '/' + (state.nav.thread ? state.nav.thread : 'all') +
 				(title? '/' + format.urlComponent(title): '');
 		}
-		
+
 		document.title = title;
 
 		if (state.nav.mode === 'room' && state.nav.threadRange.time) {
@@ -120,7 +120,7 @@ module.exports = function(core, config, store) {
 		}
 
 		if (url == location.pathname && objUtils.equal(params, getParams(location.search.substr(1)))) {
-			return;
+			return next();
 		}
 
 		for (var key in params) {

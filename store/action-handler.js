@@ -24,7 +24,7 @@ function entitiesFromRooms(list, entities, userId) {
 		var rkey = e.id + "_" + userId,
 			relation = entities[rkey] || {},
 			entity = entities[e.id] || {};
-		
+
 		relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
 		entity = entityOps.relatedEntityToEntity(e);
 		entities[e.id] = entity;
@@ -41,7 +41,7 @@ function keyFromText(text) {
 	} else if(text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
 		key = key + "_" + text.threads[0].id;
 	}
-	
+
 	return key;
 }
 
@@ -111,7 +111,7 @@ function onAwayBack(action, next) {
 function onTextUp(text, next) {
 	var textRange = {
 			start: text.time,
-			end: null,
+			end: text.time,
 			items: [text]
 		},
 		key, newState = {texts:{}};
@@ -120,9 +120,9 @@ function onTextUp(text, next) {
 	key = keyFromText(text);
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
-	
+
 //	next();
-	
+
 //	Optimistically adding new threads is made complex
 //	by the unavailability of an id on the text-up.
 //	if(text.thread == text.id) {
@@ -136,7 +136,7 @@ function onTextUp(text, next) {
 //			}]
 //		}];
 //	}
-	
+
 	core.emit("setstate", newState);
 
 }
@@ -144,13 +144,13 @@ function onTextUp(text, next) {
 function onTextDn(text, next) {
 	var textRange = {
 			start: text.time,
-			end: null,
+			end: text.time,
 			items: [text]
 		}, oldRange,
 		key, newState = {texts:{}}, oldKey = "";
 
 	key = keyFromText(text);
-	
+
 	newState.texts[text.to] = [textRange];
 	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {
@@ -160,14 +160,14 @@ function onTextDn(text, next) {
 			items: []
 		};
 		newState.texts[text.to].push(oldRange);
-		
+
 		oldKey = keyFromText(pendingActions[text.id]);
 		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
 		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
 		delete pendingActions[text.id];
 	}
-		
-	if(text.thread === text.id) {		
+
+	if(text.thread === text.id) {
 		newState.threads = {};
 		newState.threads[text.to] = [{
 			start: text.time, end: text.time, items: [{
@@ -178,7 +178,7 @@ function onTextDn(text, next) {
 			}]
 		}];
 	}
-	
+
 	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
