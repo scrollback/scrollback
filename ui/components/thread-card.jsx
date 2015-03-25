@@ -86,8 +86,6 @@ module.exports = function(core, config, store) {
 			var thread = this.props.thread,
 				chats = [];
 
-			console.log(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)));
-
 			(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).forEach(function(chat) {
 				if (chat.tags && (chat.tags.indexOf("hidden") > -1 || chat.tags.indexOf("abusive") > -1)) {
 					return;

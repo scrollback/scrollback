@@ -27,13 +27,16 @@ module.exports = function(core, conf) {
 			calls gcm_notify with a list of GCM registration ids and the payload.
 		*/
 		var regList = [];
+		log.d(userList);
 		userList.forEach(function(userObj) {
 			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				var devices = userObj.params.pushNotifications.devices;
-
+				log.d("devices object: ", devices);
 				if (devices instanceof Array) return;
+				log.d("not an array: ", devices);
 				Object.keys(devices).forEach(function(uuid) {
 					var device = devices[uuid];
+					log.d("device: ", uuid);
 					if (device.hasOwnProperty('regId') && device.enabled === true) {
 						regList.push({
 							user: userObj,
@@ -81,9 +84,11 @@ module.exports = function(core, conf) {
 			var usersList;
 			log.d("Got users of the room:", d);
 			if (!d || !d.results) return;
+			
 			usersList = d.results.filter(function(e) {
-				return (e.id !== text.from) && (text.mentions.indexOf(e.id) >= 0);
+				return (e.id !== text.from) && (text.mentions.indexOf(e.id) < 0);
 			});
+			log.d("Users: ", usersList);
 			notifyUsers(usersList, payload);
 		});
 	}
