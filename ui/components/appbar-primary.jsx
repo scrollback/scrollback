@@ -68,10 +68,6 @@ module.exports = function(core, config, store) {
 				nav, relation, title,
 				classNames = "appbar-icon appbar-icon-follow";
 
-			if (store.get("nav", "mode") === "home" && (!user.id || appUtils.isGuest(user.id))) {
-				return <div />;
-			}
-
 			nav = store.get("nav");
 			user = store.getUser() || {};
 			relation = store.getRelation();
