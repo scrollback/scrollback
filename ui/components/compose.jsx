@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var format = require("../../lib/format.js");
+var format = require("../../lib/format.js"),
+	appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -18,7 +19,7 @@ module.exports = function(core, config, store) {
 				user, nick, atStart;
 
 			if (textObj) {
-				nick = textObj.from;
+				nick = appUtils.formatUserName(textObj.from);
 				user = store.get("user");
 
 				if (/^@\S+[\s+{1}]?/.test(msg)) {
@@ -91,7 +92,7 @@ module.exports = function(core, config, store) {
 				composeBox = this.refs.composeBox.getDOMNode(),
 				text = (composeBox.innerText || composeBox.textContent);
 
-			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + format.username(store.get("user"));
+			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + appUtils.formatUserName(store.get("user"));
 		},
 
 		onPaste: function() {
