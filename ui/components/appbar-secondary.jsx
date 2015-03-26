@@ -12,7 +12,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var threadId = store.get("nav", "thread"),
 				threadObj = store.get("indexes", "threadsById", threadId),
-				title = threadObj ? threadObj.title : threadId ? threadId : "All discussions";
+				title = threadObj ? threadObj.title : threadId ? threadId : "All messages";
 
 			return (
 				<div key="appbar-secondary" className="appbar appbar-secondary" data-mode="chat">

@@ -81,7 +81,6 @@ module.exports = function(core, config, store) {
 
 		if (state.nav.mode == 'home') {
 			url = '/me';
-			title = 'Scrollback';
 		} else if (state.nav.mode == 'room') {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return next(); // Not ready with the new room yet.
@@ -92,12 +91,12 @@ module.exports = function(core, config, store) {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return next(); // Not ready with the new room yet.
 			}
-			title = (store.get('indexes', 'threadsById', state.nav.thread) || {}).title;
+			title = state.nav.thread ? (store.get('indexes', 'threadsById', state.nav.thread) || { title: state.nav.room }).title : 'All messages';
 			url = '/' + state.nav.room + '/' + (state.nav.thread ? state.nav.thread : 'all') +
 				(title? '/' + format.urlComponent(title): '');
 		}
 
-		document.title = title;
+		document.title = title || "Scrollback";
 
 		if (state.nav.mode === 'room' && state.nav.threadRange.time) {
 			params.t = state.nav.threadRange.time;
@@ -136,7 +135,6 @@ module.exports = function(core, config, store) {
 		if (changes.nav && (changes.nav.mode || changes.nav.dialog)) {
 			history.pushState(state.nav, null, url);
 		} else {
-//			console.log('replacestate', state.nav);
 			history.replaceState(state.nav, null, url);
 		}
 		next();
@@ -144,7 +142,6 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	window.addEventListener('popstate', function(event) {
-		console.log('popstate', event.state);
 		core.emit('setstate', {nav: event.state});
 	});
 };
