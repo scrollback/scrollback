@@ -49,12 +49,14 @@ module.exports = function(core, config, store) {
 							<AppbarSecondary />
 
 							<div className="main-content" data-mode="home search room">
-								<Banner />
+								<div className="main-content-inner-wrap">
+									<Banner />
 
-								<div className="main-content-inner">
-									<RoomList type="feed" />
+									<div className="main-content-inner">
+										<RoomList type="feed" />
 
-									<ThreadList type="feed" />
+										<ThreadList type="feed" />
+									</div>
 								</div>
 							</div>
 

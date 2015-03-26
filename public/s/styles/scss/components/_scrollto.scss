@@ -1,36 +1,29 @@
 @include exports(scrollto) {
     .scroll-to {
         @extend %transition;
+        @extend %button;
         @extend %button.info;
         @include dropshadow(2);
 
+        z-index: 400;
         left: 50%;
-        margin: 1em;
+        margin: 1.5em;
         margin-left: -6em;
         width: 12em;
-        padding: .75em 1em;
         border-radius: 2em;
-        text-align: center;
-        z-index: 400;
         opacity: 0;
         pointer-events: none;
         text-transform: none;
-        cursor: pointer;
-        font-size: .9em;
+
+        &:before { margin-right: .5em; }
 
         &.visible {
             opacity: 1;
             pointer-events: auto;
         }
 
-        &.chat-area-scroll-to {
-            position: absolute;
-            top: -6em;
-        }
+        &-top { @include icon(up-big); }
 
-        &.thread-feed-scroll-to {
-            position: absolute;
-            top: $bar-height * 2;
-        }
+        &-bottom { @include icon(down-big); }
     }
 }
