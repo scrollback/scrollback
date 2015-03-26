@@ -286,10 +286,22 @@ body {
 .main-content {
     @include flex-grow(1);
 
+    position: relative;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: darken($light-color, 5%);
+
+    &:after {
+        content: "";
+        display: block;
+        height: $bar-height * 1.5;
+    }
+
+    &-inner-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
 
     &-inner {
         padding: .5em 0;
@@ -297,10 +309,18 @@ body {
         @media #{$screenxx} { padding: 2em; }
     }
 
-    &:after {
-        content: "";
-        display: block;
-        height: $bar-height * 1.5;
+    &-chat {
+        .scroll-to-bottom {
+            position: absolute;
+            top: -6em;
+        }
+    }
+
+    &-threads {
+        .scroll-to-top {
+            position: absolute;
+            top: 0;
+        }
     }
 }
 
