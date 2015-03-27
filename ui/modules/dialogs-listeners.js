@@ -237,7 +237,7 @@ module.exports = function(core, config, store) {
 		userChangeCallback = function() {
 			var user = store.getUser();
 
-			if (store.get("nav", "dialog") === "signin" && user && user.isRestricted) {
+			if (store.get("nav", "dialog") === "signin" && user && !user.isRestricted) {
 				core.emit("setstate", {
 					nav: { dialog: null }
 				});
