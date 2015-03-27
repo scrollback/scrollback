@@ -48,7 +48,7 @@ module.exports = function(c, conf, s) {
 	
 	core.on("init-up", function(init, next) {
 		if(!init.origin) init.origin = {};
-		init.origin.domain = parentHost || domain;
+		init.origin.domain = domain;
 		init.origin.path = embedPath || path;
 		init.origin.verified = verified;
 		if(suggestedNick) init.suggestedNick = suggestedNick;
@@ -60,6 +60,7 @@ module.exports = function(c, conf, s) {
 function sendDomainChallenge() {
 	token = Math.random();
 	verificationStatus = false;
+	domain = parentHost;
 	parentHost = embedProtocol + "//" + parentHost;
 	parentWindow.postMessage(JSON.stringify({
 		type: "domain-challenge",
