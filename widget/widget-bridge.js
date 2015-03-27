@@ -48,8 +48,8 @@ module.exports = function(c, conf, s) {
 	
 	core.on("init-up", function(init, next) {
 		if(!init.origin) init.origin = {};
-		init.origin.domain = parentHost;
-		init.origin.path = embedPath;
+		init.origin.domain = parentHost || domain;
+		init.origin.path = embedPath || path;
 		init.origin.verified = verified;
 		if(suggestedNick) init.suggestedNick = suggestedNick;
 		next();

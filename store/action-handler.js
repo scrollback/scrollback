@@ -144,7 +144,7 @@ function onTextUp(text, next) {
 function onTextDn(text, next) {
 	var textRange = {
 			start: text.time,
-			end: text.time,
+			end: ((text.thread === text.id)?null: text.time),
 			items: [text]
 		}, oldRange,
 		key, newState = {texts:{}}, oldKey = "";
