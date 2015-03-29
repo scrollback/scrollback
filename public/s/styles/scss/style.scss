@@ -411,23 +411,13 @@ body {
         }
     }
 
-    &-userpref {
-        @include icon(configure);
-    }
+    &-userpref { @include icon(configure); }
 
-    &-reportissue {
-        @include icon(info-circled);
-    }
+    &-reportissue { @include icon(info-circled); }
 
-    &-sound-notification-enable {
-        @include icon(audio);
-    }
+    &-sound-notification-enable { @include icon(audio); }
 
-    &-sound-notification-disable {
-        @include icon(audio-off);
-    }
+    &-sound-notification-disable { @include icon(audio-off); }
 
-    &-logout {
-        @include icon(off);
-    }
+    &-logout { @include icon(off); }
 }
