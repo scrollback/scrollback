@@ -291,16 +291,16 @@ body {
     height: 100%;
     background-color: darken($light-color, 5%);
 
-    &:after {
-        content: "";
-        display: block;
-        height: $bar-height * 1.5;
-    }
-
     &-inner-wrap {
         width: 100%;
         height: 100%;
         overflow: auto;
+
+        &:after {
+            content: "";
+            display: block;
+            height: $bar-height * 2.5;
+        }
     }
 
     &-inner {
