@@ -10,8 +10,9 @@
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
 	// Polyfills
-	require("../lib/custom-events.polyfill.js");
 	require("../lib/css-supports.polyfill.js");
+	require("../lib/custom-events.polyfill.js");
+	require("../lib/request-animation-frame.polyfill.js");
 
 	// Third party libraries
 	require("../bower_components/sockjs/sockjs.js");
