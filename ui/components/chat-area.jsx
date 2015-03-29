@@ -2,7 +2,6 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		browserSupports = require("../../lib/browser-supports.js"),
 		ChatItem = require("./chat-item.jsx")(core, config, store),
 		Compose = require("./compose.jsx")(core, config, store),
 		Endless = require("../../bower_components/endless/endless.js"),
@@ -55,7 +54,7 @@ module.exports = function(core, config, store) {
 			}
 
 			// Enhance chat area layout in modern browsers
-			if (browserSupports.CSS("display", "flex")) {
+			if (window.CSS.supports("display", "flex")) {
 				chatAreaClassNames += " chat-area-enhanced";
 			}
 
