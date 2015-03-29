@@ -5,77 +5,70 @@ var appUtils = require("../../lib/app-utils.js");
 module.exports = function(core, config, store) {
 	var keys = [ "view", "mode" ],
 		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas" ],
-		oldClassName, timer;
+		oldClassName;
 
 	// Listen to navigate and add class names
 	core.on("statechange", function(changes, next) {
-		if (timer) {
-		    window.clearTimeout(timer);
+		var newClassList = [],
+			currentClassName, newClassName,
+			relation, value, nav, thread, form, minimize;
+
+		nav = store.get("nav");
+
+		for (var i = 0, l = keys.length; i < l; i++) {
+			value = nav[keys[i]];
+
+			if (value) {
+				newClassList.push(keys[i] + "-" + value);
+			}
 		}
 
-		// Delay computing class name to improve performance
-		timer = window.setTimeout(function() {
-			var newClassList = [],
-				currentClassName, newClassName,
-				relation, value, nav, thread, form, minimize;
+		if (nav.mode === "chat" && nav.thread) {
+			thread = store.get("indexes", "threadsById", nav.thread);
 
-			nav = store.get("nav");
+			if (thread && thread.color) {
+				newClassList.push("color-" + thread.color);
+			}
+		}
 
-			for (var i = 0, l = keys.length; i < l; i++) {
-				value = nav[keys[i]];
+		relation = store.getRelation();
 
-				if (value) {
-					newClassList.push(keys[i] + "-" + value);
-				}
+		if (relation && relation.role) {
+			newClassList.push("role-" + relation.role);
+		} else {
+			newClassList.push("role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user"));
+		}
+
+		if (store.get("context", "env") === "embed") {
+			form = store.get("context", "embed", "form");
+
+			if (form) {
+				newClassList.push("embed-" + form);
 			}
 
-			if (nav.mode === "chat" && nav.thread) {
-				thread = store.get("indexes", "threadsById", nav.thread);
+			minimize = store.get("context", "embed", "minimize");
 
-				if (thread && thread.color) {
-					newClassList.push("color-" + thread.color);
-				}
+			if (minimize) {
+				newClassList.push(form + "-minimized");
+			}
+		}
+
+		// Sort and join class names for comparison
+		newClassName = newClassList.sort().join(" ");
+
+		// Compare with old class name
+		if (oldClassName !== newClassName) {
+			currentClassName = document.body.className;
+
+			for (var j = 0, k = types.length; j < k; j++) {
+				currentClassName = currentClassName.replace(new RegExp("\\b" + types[j] + "-" + "\\S+", "g"), "").trim();
 			}
 
-			relation = store.getRelation();
+			document.body.className = newClassName + " " + currentClassName;
 
-			if (relation && relation.role) {
-				newClassList.push("role-" + relation.role);
-			} else {
-				newClassList.push("role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user"));
-			}
-
-			if (store.get("context", "env") === "embed") {
-				form = store.get("context", "embed", "form");
-
-				if (form) {
-					newClassList.push("embed-" + form);
-				}
-
-				minimize = store.get("context", "embed", "minimize");
-
-				if (minimize) {
-					newClassList.push(form + "-minimized");
-				}
-			}
-
-			// Sort and join class names for comparison
-			newClassName = newClassList.sort().join(" ");
-
-			// Compare with old class name
-			if (oldClassName !== newClassName) {
-				currentClassName = document.body.className;
-
-				for (var j = 0, k = types.length; j < k; j++) {
-					currentClassName = currentClassName.replace(new RegExp("\\b" + types[j] + "-" + "\\S+", "g"), "").trim();
-				}
-
-				document.body.className = newClassName + " " + currentClassName;
-
-				// Store the old class name
-				oldClassName = newClassName;
-			}
-		}, 50);
+			// Store the old class name
+			oldClassName = newClassName;
+		}
 
 		next();
 	}, 1000);
