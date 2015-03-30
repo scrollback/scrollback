@@ -60,24 +60,23 @@ module.exports = function(core, config, store) {
 			var currentText = store.get("nav", "currentText"),
 				textObj = store.get("indexes", "textsById", currentText),
 				msg = input || "",
-				user, nick, atStart;
+				nick, user, mention, atStart;
 
 			if (textObj) {
 				nick = appUtils.formatUserName(textObj.from);
 				user = appUtils.formatUserName(store.get("user"));
 
-				if (/^@\S+[\s+{1}]?/.test(msg)) {
-					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
-					atStart = true;
-				} else {
-					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
-				}
+				atStart = (/^@\S+[\s+{1}]?/.test(msg));
 
-				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
+				msg = msg.replace(/(^@\S+[\s+{1}]?)|(@\S+[\s+{1}]?$)/, "").trim();
+
+				mention = "@" + nick;
+
+				if (msg.indexOf(mention) === -1 && user !== nick) {
 					if (atStart) {
-						msg = "@" + nick + (msg ? " " + msg : "");
+						msg = mention + (msg ? " " + msg : "");
 					} else {
-						msg = (msg ? msg + " " : "") + "@" + nick;
+						msg = (msg ? msg + " " : "") + mention;
 					}
 				}
 
@@ -87,7 +86,7 @@ module.exports = function(core, config, store) {
 			return msg;
 		},
 
-		onChange: function(statechanged) {
+		onUpdate: function(statechanged) {
 			var html = React.findDOMNode(this.refs.composeBox).innerHTML,
 				newHtml;
 
@@ -121,7 +120,7 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes, next) {
 			if (changes.user || (changes.nav && changes.nav.currentText)) {
-				this.onChange(true);
+				this.onUpdate(true);
 			}
 
 			next();
@@ -146,7 +145,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
 						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onInput={this.onChange}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onInput={this.onUpdate}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
 						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
