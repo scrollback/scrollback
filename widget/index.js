@@ -67,7 +67,7 @@ function addStyles() {
 	style = document.createElement("link");
 	style.rel = "stylesheet";
 	style.type = "text/css";
-	style.href = host + "/s/styles/dist/embed.css";
+	style.href = host + "/s/dist/styles/embed.min.css";
 	document.head.appendChild(style);
 }
 
@@ -77,14 +77,10 @@ domReady(function() {
 
 function constructEmbed(options) {
 	var embed = {};
-
-	embed.roomName = options.roomName;
+	embed.room = options.room;
 	embed.form = options.form || "toast";
 	if (options.nick) embed.nick = options.nick;
 	embed.minimize = (typeof options.minimize === "boolean") ? options.minimize : false;
-	if(options.tab) embed.tab = options.tab;
-	if(options.mode) embed.mode = options.mode;
-	if(options.time) embed.time = options.time;
 	if(options.jws) embed.jws = options.jws;
 	if(typeof options.createRoom == "boolean")embed.createRoom = options.createRoom;
 	if(typeof options.createUser == "boolean")embed.createUser = options.createUser;
@@ -99,28 +95,16 @@ function constructEmbed(options) {
 function addWidget(self) {
 	var iframe, options = self.options,
 		embed = self.embed, params = [];
-
-	["tab", "time","dialog"].forEach(function(ops) {
-		if(embed[ops]) {
-			params.push(ops + "=" + embed[ops]);
-			delete embed[ops];
-		}
-	});
-
+	
 	params.push("embed=" + encodeURIComponent(JSON.stringify(embed)));
 
 	iframe = document.createElement("iframe");
-	iframe.src = host + "/" + options.roomName + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
+	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
 	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
 
-
-	console.log("IFRAME:", iframe.src);
 	widgets[iframe.dataset.id] = self;
-	// temp thing. implement better way to position these things.
-	if (Object.keys(widgets).length > 1) {
-		iframe.style.left = 50;
-	}
+	
 	domReady(function() {
 		var container = document.getElementById(self.options.container);
 		if (!container) {
@@ -135,8 +119,7 @@ function addWidget(self) {
 }
 
 function scrollback(opts, callback) {
-	var widget = {},
-		ready, self = {
+	var widget = {}, self = {
 			pendingCallbacks: {},
 			options: {},
 			state: {},
@@ -146,7 +129,7 @@ function scrollback(opts, callback) {
 		};
 
 	self.options = opts;
-	// for now.
+	// for now allowing only one widget per page.
 	if (iframeCount >= 1) throw new Error("Error: Cannot have multiple widgets on the same page.");
 
 	self.embed = constructEmbed(opts);
@@ -156,14 +139,14 @@ function scrollback(opts, callback) {
 		post.id = guid();
 		post.type = type;
 		post.data = data;
-		console.log(this);
 		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
 		self.pendingCallbacks[post.id] = cb;
 	};
-	widget.navigation = require("./navigation.js")(self);
-	/*widget.following = require("./following.js")(self);
+	/*widget.setState = require("./set-state.js")(self);
 	widget.options = require("./options.js")(self);
 	widget.signin = require("./signin.js")(self);*/
+	
+	widget.following = require("./following.js")(self);
 	self.widget = widget;
 
 	self.iframe = addWidget(self);
@@ -188,19 +171,13 @@ function scrollback(opts, callback) {
 					token: message.token
 				}), host);
 				break;
-			case "navigate":
-				if (message.state.connectionStatus && !ready) {
-					ready = true;
-					if(callback) callback(null, widget);
-				}
-				self.state = message.state;
-				break;
 			case "following":
 
 				break;
-			case "membership":
-				self.membership = message.data;
-				break;
+			case "ready":
+				if(callback) callback(widget);
+				callback = null;
+				return;
 		}
 
 		if (this.pendingCallbacks[message.id]) {
@@ -210,5 +187,4 @@ function scrollback(opts, callback) {
 	};
 }
 
-
-window.scrollback = scrollback;
+window.$sb = scrollback;

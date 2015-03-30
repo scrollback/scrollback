@@ -27,7 +27,6 @@ module.exports = function(c, conf, s) {
 			embedPath = embed.origin.path;
 			embedProtocol = embed.origin.protocol;
 			suggestedNick = embed.nick;
-			console.log("Values:", parentHost, embedProtocol, embedPath, embed);
 			sendDomainChallenge();
 			bootNext = next;
 		} else {
@@ -37,6 +36,11 @@ module.exports = function(c, conf, s) {
 	
 	
 	core.on("statechange", function(changes, next) {
+		if(changes.app && changes.app.bootComplete && store.getContext("embed")) {
+			parentWindow.postMessage(JSON.stringify({
+				type: "ready"
+			}), parentHost);
+		}
 		if(changes.context && changes.context.embed && typeof changes.context.embed.minimize == "boolean") {
 			parentWindow.postMessage(JSON.stringify({
 				type: "activity",
@@ -47,10 +51,19 @@ module.exports = function(c, conf, s) {
 	}, 500);
 	
 	core.on("init-up", function(init, next) {
+		var context = store.getContext("embed"), jws;
+		if(context  && context .jws) jws = context.jws;
 		if(!init.origin) init.origin = {};
 		init.origin.domain = parentHost;
 		init.origin.path = embedPath;
 		init.origin.verified = verified;
+		if(jws && !init.auth) {
+			init.auth = {
+				auth : {
+					jws: jws
+				}
+			};
+		}
 		if(suggestedNick) init.suggestedNick = suggestedNick;
 		next();
 	}, 999);

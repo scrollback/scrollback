@@ -3,7 +3,11 @@ module.exports = function(self) {
 		var room, following = {},
 			follow,
 			callback;
-		if (arguments.length >= 3) {
+		
+		
+		if(!argumemts[0] && argumemts.length!== 1) throw new Error("INVALID ARGUMENTS: invalid argument count");
+		if(typeof arguments[0] !== "string") throw new Error("INVALID ARGUMENTS: room name must be string. instead found it to be" + typeof arguments[0]);
+		/*if (arguments.length >= 3) {
 			throw new Error("INVALID ARGUMENTS: Too many arguments");
 		} else if (arguments.length == 2) {
 			if (typeof arguments[0] == "string" && typeof arguments[1] == "boolean") {
@@ -24,11 +28,11 @@ module.exports = function(self) {
 				room = arguments[0] || self.state.roomName;
 				return (self.membership.indexOf(room) >= 0);
 			}
-		}
+		}*/
 
 		following = {
-			room: room,
-			follow: follow
+			room: arguments[0],
+			follow: true
 		};
 		self.emit("following", following, callback);
 	};
