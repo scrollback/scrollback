@@ -86,11 +86,11 @@ module.exports = function(core, config, store) {
 			return msg;
 		},
 
-		onUpdate: function(statechanged) {
+		onUpdate: function(e) {
 			var html = React.findDOMNode(this.refs.composeBox).innerHTML,
 				newHtml;
 
-			newHtml = (statechanged === true) ? this.getMessageText(html) : html;
+			newHtml = (e && e.type === "statechange") ? this.getMessageText(html) : html;
 
 			if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
 				this.setState({ userInput: newHtml });
@@ -120,7 +120,7 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes, next) {
 			if (changes.user || (changes.nav && changes.nav.currentText)) {
-				this.onUpdate(true);
+				this.onUpdate({ type: "statechange" });
 			}
 
 			next();
