@@ -87,8 +87,10 @@ module.exports = function(core, config, store) {
 
 				if (typeof text === "object") {
 					showtime = (i === items.length - 1 || items[i + 1].time - text.time > 60 * 1000);
-					continues = (i !== items.length - 1 && items[i + 1].from === text.from);
-					continuation = (i !== 0 && items[i - 1].from === text.from);
+					continues = (i !== items.length - 1 && items[i + 1].from === text.from &&
+								!(text.tags && text.tags.indexOf("hidden") > -1));
+					continuation = (i !== 0 && items[i - 1].from === text.from &&
+								!(items[i - 1].tags && items[i - 1].tags.indexOf("hidden") > -1));
 
 					key = "chat-list-" + nav.room + "-" + (nav.thread || "all") + "-" + text.id + "-" + text.time;
 
@@ -97,7 +99,7 @@ module.exports = function(core, config, store) {
 					}
 
 					chatitems.push(<ChatItem text={text} key={key} showtime={showtime}
-						continues={continues} continuation={continuation}/>);
+						continues={continues} continuation={continuation} />);
 
 				}
 			});

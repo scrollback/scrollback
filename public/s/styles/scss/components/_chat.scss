@@ -163,9 +163,9 @@
             }
         }
 
-		&-continues { padding-bottom: 0; }
+		&-continues { padding-bottom: .25em; }
 
-		&-continuation { padding-top: 0; }
+		&-continuation { padding-top: .25em; }
 
         &-message {
             @media #{$screenxx} { display: inline; }
@@ -184,7 +184,7 @@
         }
 
         &-tag {
-            &-hidden, &-abusive {
+            &-hidden {
                 font-style: italic;
                 opacity: .5;
 

@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var appUtils = require("../lib/app-utils.js");
+var stringUtils = require("../lib/string-utils.js"),
+	appUtils = require("../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("user-menu", function(menu, next) {
@@ -34,11 +35,7 @@ module.exports = function(core, config, store) {
 		dialog.action = {
 			text: "Go back as guest",
 			action: function() {
-				core.emit("setstate", {
-					nav: { dialog: null }
-				}, function() {
-					window.location.reload();
-				});
+				window.location.href = stringUtils.stripQueryParam(window.location.href, "d");
 			}
 		};
 		dialog.dismiss = false;
