@@ -45,7 +45,7 @@ module.exports = function(core, config, store) {
 				to: nav.room,
 				from: store.get("user"),
 				text: text,
-				time: new Date().getTime(),
+				time: Date.now(),
 				thread: nav.thread
 			});
 
