@@ -90,7 +90,6 @@ module.exports = function(core, config, store) {
 			var html = React.findDOMNode(this.refs.composeBox).innerHTML,
 				newHtml;
 
-			// Add a delay so that state gets updated
 			newHtml = (statechanged === true) ? this.getMessageText(html) : html;
 
 			if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
