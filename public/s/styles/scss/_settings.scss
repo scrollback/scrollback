@@ -11,7 +11,6 @@ $accent-color: #3ca !default;
 
 // Misc
 $roundness: 2px !default;
-$mobile-break-point: "only screen and (max-width: 27em)" !default;
 
 $palette: (#2ba, #e48, #3c6, #76f, #e63, #5ad, #95b, #ed0, #e92, #ae3) !default;
 
@@ -36,8 +35,8 @@ $width-metaxxxx: 30% !default;
 $bar-height: 3.5em !default;
 
 $settings: (general, irc, twitter, threader, authorizer, requests, spam, seo, customization, embed, profile, email, notification) !default;
-$modes: (home, room, chat, normal, search, conf, pref, noroom, profile) !default;
-$roles: (guest, user, follower, member, owner) !default;
+$modes: (home, room, chat, search) !default;
+$roles: (guest, user, follower, owner) !default;
 $embeds: (toast, canvas) !default;
-$platforms: (normal, cordova) !default;
+$contexts: (normal, android, ios) !default;
 $states: (online, offline, connecting) !default;

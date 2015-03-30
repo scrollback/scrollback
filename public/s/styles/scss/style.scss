@@ -53,12 +53,11 @@ html, body {
 body {
     @include filter((
                     role: $roles,
-                    webview: (),
                     embed: $embeds,
                     mode: $modes,
-                    platform: $platforms,
+                    context: $contexts,
                     state: $states
-    ), ()); /* show hide elements based on filter */
+    )); /* show hide elements based on filter */
 }
 
 .app-container {
