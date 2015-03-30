@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 
 	Banner = React.createClass({
 		onSubmit: function(e) {
-			var roomNameEntry = this.refs.roomNameEntry.getDOMNode(),
+			var roomNameEntry = React.findDOMNode(this.refs.roomNameEntry),
 				roomName;
 
 			e.preventDefault();

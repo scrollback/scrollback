@@ -12,6 +12,50 @@ module.exports = function(core, config, store) {
 			return { userInput: "" };
 		},
 
+		focusInput: function() {
+			var composeBox = React.findDOMNode(this.refs.composeBox),
+				range, selection;
+
+			composeBox.focus();
+
+			if (document.createRange) {
+				range = document.createRange();
+				range.selectNodeContents(composeBox);
+				range.collapse(false);
+				selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+			} else if (document.selection) {
+				range = document.body.createTextRange();
+				range.moveToElementText(composeBox);
+				range.collapse(false);
+				range.select();
+			}
+		},
+
+		sendMessage: function() {
+			var text = format.htmlToText(this.state.userInput),
+				nav = store.get("nav");
+
+			if (!text) {
+				return;
+			}
+
+			core.emit("text-up", {
+				to: nav.room,
+				from: store.get("user"),
+				text: text,
+				time: new Date().getTime(),
+				thread: nav.thread
+			});
+
+			this.replaceState(this.getInitialState());
+		},
+
+		getPlaceHolder: function() {
+			return ("Reply as " + appUtils.formatUserName(store.get("user")));
+		},
+
 		getMessageText: function(input) {
 			var currentText = store.get("nav", "currentText"),
 				textObj = store.get("indexes", "textsById", currentText),
@@ -43,68 +87,35 @@ module.exports = function(core, config, store) {
 			return msg;
 		},
 
-		focusInput: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
-				range, selection;
+		onChange: function(e) {
+			var html = e.target.innerHTML,
+				type = e.type,
+				newHtml;
 
-			composeBox.focus();
+			// Add a delay so that state gets updated
+			setTimeout(function() {
+				newHtml = (type === "blur") ? this.getMessageText(html) : html;
 
-			if (document.createRange) {
-				range = document.createRange();
-				range.selectNodeContents(composeBox);
-				range.collapse(false);
-				selection = window.getSelection();
-				selection.removeAllRanges();
-				selection.addRange(range);
-			} else if (document.selection) {
-				range = document.body.createTextRange();
-				range.moveToElementText(composeBox);
-				range.collapse(false);
-				range.select();
-			}
-		},
+				if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
+					this.setState({ userInput: newHtml });
+					this.focusInput();
+				}
 
-		sendMessage: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
-				text = format.htmlToText(composeBox.innerHTML),
-				nav = store.get("nav");
-
-			if (!text) {
-				return;
-			}
-
-			core.emit("text-up", {
-				to: nav.room,
-				from: store.get("user"),
-				text: text,
-				time: new Date().getTime(),
-				thread: nav.thread
-			});
-
-			this.replaceState(this.getInitialState());
-
-			// FIXME: figure out why replaceState is not working
-			composeBox.innerText = composeBox.textContent = this.getInitialState().userInput;
-		},
-
-		setPlaceHolder: function() {
-			var composePlaceholder = this.refs.composePlaceholder.getDOMNode(),
-				composeBox = this.refs.composeBox.getDOMNode(),
-				text = (composeBox.innerText || composeBox.textContent);
-
-			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + appUtils.formatUserName(store.get("user"));
+				// Reset current text
+				if (type === "blur") {
+					core.emit("setstate", {
+						nav: { currentText: null }
+					});
+				}
+			}.bind(this), (type === "blur") ? 200 : 0);
 		},
 
 		onPaste: function() {
 			setTimeout(function() {
-				var text = this.refs.composeBox.getDOMNode().innerHTML;
+				var text = React.findDOMNode(this.refs.composeBox).innerHTML;
 
 				this.setState({ userInput: text });
 			}.bind(this), 10);
-		},
-
-		onBlur: function(e) {
-			this.setState({ userInput: e.target.innerHTML });
 		},
 
 		onKeyDown: function(e) {
@@ -112,28 +123,24 @@ module.exports = function(core, config, store) {
 				e.preventDefault();
 
 				this.sendMessage();
+			} else {
+				this.onChange(e);
 			}
 		},
 
 		componentDidMount: function() {
-			this.setPlaceHolder();
-		},
-
-		componentDidUpdate: function() {
-			this.setPlaceHolder();
+			this.focusInput();
 		},
 
 		render: function() {
-			var msg = this.getMessageText(this.state.userInput);
-
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: msg}}
-							 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
+						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onBlur={this.onChange} onInput={this.onChange}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
-						<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
+						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
