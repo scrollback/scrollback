@@ -98,16 +98,14 @@ module.exports = function(core, config, store) {
 
 				if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
 					this.setState({ userInput: newHtml });
-					this.focusInput();
-				}
-
-				// Reset current text
-				if (type === "blur") {
-					core.emit("setstate", {
-						nav: { currentText: null }
-					});
 				}
 			}.bind(this), (type === "blur") ? 200 : 0);
+		},
+
+		onFocus: function() {
+			core.emit("setstate", {
+				nav: { currentText: null }
+			});
 		},
 
 		onPaste: function() {
@@ -132,12 +130,18 @@ module.exports = function(core, config, store) {
 			this.focusInput();
 		},
 
+		componentDidUpdate: function() {
+			if (store.get("nav", "currentText")) {
+				this.focusInput();
+			}
+		},
+
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
 						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onBlur={this.onChange} onInput={this.onChange}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onChange} onInput={this.onChange}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
 						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
