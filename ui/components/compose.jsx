@@ -106,7 +106,8 @@ module.exports = function(core, config, store) {
 			setTimeout(function() {
 				var text = React.findDOMNode(this.refs.composeBox).innerHTML;
 
-				this.setState({ userInput: text });
+				// Strip formatting
+				this.setState({ userInput: format.textToHtml(format.htmlToText(text)) });
 			}.bind(this), 10);
 		},
 
