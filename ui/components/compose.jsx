@@ -87,25 +87,20 @@ module.exports = function(core, config, store) {
 			return msg;
 		},
 
-		onChange: function(e) {
-			var html = e.target.innerHTML,
-				type = e.type,
+		onChange: function(statechanged) {
+			var html = React.findDOMNode(this.refs.composeBox).innerHTML,
 				newHtml;
 
 			// Add a delay so that state gets updated
-			setTimeout(function() {
-				newHtml = (type === "blur") ? this.getMessageText(html) : html;
+			newHtml = (statechanged === true) ? this.getMessageText(html) : html;
 
-				if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
-					this.setState({ userInput: newHtml });
-				}
-			}.bind(this), (type === "blur") ? 200 : 0);
-		},
+			if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
+				this.setState({ userInput: newHtml });
 
-		onFocus: function() {
-			core.emit("setstate", {
-				nav: { currentText: null }
-			});
+				core.emit("setstate", {
+					nav: { currentText: null }
+				});
+			}
 		},
 
 		onPaste: function() {
@@ -121,13 +116,22 @@ module.exports = function(core, config, store) {
 				e.preventDefault();
 
 				this.sendMessage();
-			} else {
-				this.onChange(e);
 			}
 		},
 
 		componentDidMount: function() {
+			var self = this;
+
 			this.focusInput();
+
+			/* FIXME: need to remove the listener on componentWillUnmount */
+			core.on("statechange", function(changes, next) {
+				if (changes.user || (changes.nav && changes.nav.currentText)) {
+					self.onChange(true);
+				}
+
+				next();
+			}, 100);
 		},
 
 		componentDidUpdate: function() {
@@ -139,7 +143,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
 						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onChange} onInput={this.onChange}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onInput={this.onChange}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
 						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
