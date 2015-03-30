@@ -149,7 +149,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
 						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
-							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onInput={this.onUpdate}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onKeyUp={this.onUpdate}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
 						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
