@@ -132,12 +132,16 @@ module.exports = function(core, config, store) {
 			core.on("statechange", this.onStateChange, 100);
 		},
 
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
+		},
+
 		componentDidUpdate: function() {
 			this.focusInput();
 		},
 
-		componentWillUnmount: function() {
-			core.off("statechange", this.onStateChange);
+		shouldComponentUpdate: function(nextProps, nextState) {
+			return this.state.userInput !== nextState.userInput;
 		},
 
 		render: function() {
