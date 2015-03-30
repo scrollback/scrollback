@@ -131,9 +131,7 @@ module.exports = function(core, config, store) {
 		},
 
 		componentDidUpdate: function() {
-			if (store.get("nav", "currentText")) {
-				this.focusInput();
-			}
+			this.focusInput();
 		},
 
 		render: function() {
