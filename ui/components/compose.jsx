@@ -12,39 +12,8 @@ module.exports = function(core, config, store) {
 			return { userInput: "" };
 		},
 
-		getMessageText: function(input) {
-			var currentText = store.get("nav", "currentText"),
-				textObj = store.get("indexes", "textsById", currentText),
-				msg = input || "",
-				user, nick, atStart;
-
-			if (textObj) {
-				nick = appUtils.formatUserName(textObj.from);
-				user = store.get("user");
-
-				if (/^@\S+[\s+{1}]?/.test(msg)) {
-					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
-					atStart = true;
-				} else {
-					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
-				}
-
-				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
-					if (atStart) {
-						msg = "@" + nick + (msg ? " " + msg : "");
-					} else {
-						msg = (msg ? msg + " " : "") + "@" + nick;
-					}
-				}
-
-				msg = msg ? msg + "&nbsp;" : "";
-			}
-
-			return msg;
-		},
-
 		focusInput: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
+			var composeBox = React.findDOMNode(this.refs.composeBox),
 				range, selection;
 
 			composeBox.focus();
@@ -65,8 +34,7 @@ module.exports = function(core, config, store) {
 		},
 
 		sendMessage: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
-				text = format.htmlToText(composeBox.innerHTML),
+			var text = format.htmlToText(this.state.userInput),
 				nav = store.get("nav");
 
 			if (!text) {
@@ -77,34 +45,69 @@ module.exports = function(core, config, store) {
 				to: nav.room,
 				from: store.get("user"),
 				text: text,
-				time: new Date().getTime(),
+				time: Date.now(),
 				thread: nav.thread
 			});
 
 			this.replaceState(this.getInitialState());
-
-			// FIXME: figure out why replaceState is not working
-			composeBox.innerText = composeBox.textContent = this.getInitialState().userInput;
 		},
 
-		setPlaceHolder: function() {
-			var composePlaceholder = this.refs.composePlaceholder.getDOMNode(),
-				composeBox = this.refs.composeBox.getDOMNode(),
-				text = (composeBox.innerText || composeBox.textContent);
+		getPlaceHolder: function() {
+			return ("Reply as " + appUtils.formatUserName(store.get("user")));
+		},
 
-			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + appUtils.formatUserName(store.get("user"));
+		getMessageText: function(input) {
+			var currentText = store.get("nav", "currentText"),
+				textObj = store.get("indexes", "textsById", currentText),
+				msg = input || "",
+				nick, user, mention, atStart;
+
+			if (textObj) {
+				nick = appUtils.formatUserName(textObj.from);
+				user = appUtils.formatUserName(store.get("user"));
+
+				atStart = (/^@\S+[\s+{1}]?/.test(msg));
+
+				msg = msg.replace(/(^@\S+[\s+{1}]?)|(@\S+[\s+{1}]?$)/, "").trim();
+
+				mention = "@" + nick;
+
+				if (msg.indexOf(mention) === -1 && user !== nick) {
+					if (atStart) {
+						msg = mention + (msg ? " " + msg : "");
+					} else {
+						msg = (msg ? msg + " " : "") + mention;
+					}
+				}
+
+				msg = msg ? msg + "&nbsp;" : "";
+			}
+
+			return msg;
+		},
+
+		onUpdate: function(e) {
+			var html = React.findDOMNode(this.refs.composeBox).innerHTML,
+				newHtml;
+
+			newHtml = (e && e.type === "statechange") ? this.getMessageText(html) : html;
+
+			if (newHtml.trim() !== html.trim() || newHtml.trim() !== this.state.userInput.trim()) {
+				this.setState({ userInput: newHtml });
+
+				core.emit("setstate", {
+					nav: { currentText: null }
+				});
+			}
 		},
 
 		onPaste: function() {
 			setTimeout(function() {
-				var text = this.refs.composeBox.getDOMNode().innerHTML;
+				var text = React.findDOMNode(this.refs.composeBox).innerHTML;
 
-				this.setState({ userInput: text });
+				// Strip formatting
+				this.setState({ userInput: format.textToHtml(format.htmlToText(text)) });
 			}.bind(this), 10);
-		},
-
-		onBlur: function(e) {
-			this.setState({ userInput: e.target.innerHTML });
 		},
 
 		onKeyDown: function(e) {
@@ -115,25 +118,41 @@ module.exports = function(core, config, store) {
 			}
 		},
 
+		onStateChange: function(changes, next) {
+			if (changes.user || (changes.nav && changes.nav.currentText)) {
+				this.onUpdate({ type: "statechange" });
+			}
+
+			next();
+		},
+
 		componentDidMount: function() {
-			this.setPlaceHolder();
+			this.focusInput();
+
+			core.on("statechange", this.onStateChange, 100);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		},
 
 		componentDidUpdate: function() {
-			this.setPlaceHolder();
+			this.focusInput();
+		},
+
+		shouldComponentUpdate: function(nextProps, nextState) {
+			return this.state.userInput !== nextState.userInput;
 		},
 
 		render: function() {
-			var msg = this.getMessageText(this.state.userInput);
-
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: msg}}
-							 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
+						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: this.state.userInput}}
+							 onPaste={this.onPaste} onKeyDown={this.onKeyDown} onKeyUp={this.onUpdate}
 							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
 						</div>
-						<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
+						<div ref="composePlaceholder" className="chat-area-input-placeholder">{this.state.userInput ? "" : this.getPlaceHolder()}</div>
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
