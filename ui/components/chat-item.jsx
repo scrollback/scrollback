@@ -61,7 +61,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var nav =  store.get("nav"),
 				text = format.mdToHtml(this.props.text.text),
-				time = format.friendlyTime(this.props.text.time, new Date().getTime()),
+				time = format.friendlyTime(this.props.text.time, Date.now()),
 				timeStamp, nick, classNames = "chat-item";
 
 			if (this.props.text.tags) {
