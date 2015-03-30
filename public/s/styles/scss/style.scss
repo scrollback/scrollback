@@ -291,16 +291,16 @@ body {
     height: 100%;
     background-color: darken($light-color, 5%);
 
-    &:after {
-        content: "";
-        display: block;
-        height: $bar-height * 1.5;
-    }
-
     &-inner-wrap {
         width: 100%;
         height: 100%;
         overflow: auto;
+
+        &:after {
+            content: "";
+            display: block;
+            height: $bar-height * 2.5;
+        }
     }
 
     &-inner {
@@ -411,23 +411,13 @@ body {
         }
     }
 
-    &-userpref {
-        @include icon(configure);
-    }
+    &-userpref { @include icon(configure); }
 
-    &-reportissue {
-        @include icon(info-circled);
-    }
+    &-reportissue { @include icon(info-circled); }
 
-    &-sound-notification-enable {
-        @include icon(audio);
-    }
+    &-sound-notification-enable { @include icon(audio); }
 
-    &-sound-notification-disable {
-        @include icon(audio-off);
-    }
+    &-sound-notification-disable { @include icon(audio-off); }
 
-    &-logout {
-        @include icon(off);
-    }
+    &-logout { @include icon(off); }
 }
