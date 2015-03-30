@@ -64,7 +64,7 @@ module.exports = function(core, config, store) {
 
 			if (textObj) {
 				nick = appUtils.formatUserName(textObj.from);
-				user = store.get("user");
+				user = appUtils.formatUserName(store.get("user"));
 
 				if (/^@\S+[\s+{1}]?/.test(msg)) {
 					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
@@ -119,23 +119,26 @@ module.exports = function(core, config, store) {
 			}
 		},
 
-		componentDidMount: function() {
-			var self = this;
+		onStateChange: function(changes, next) {
+			if (changes.user || (changes.nav && changes.nav.currentText)) {
+				this.onChange(true);
+			}
 
+			next();
+		},
+
+		componentDidMount: function() {
 			this.focusInput();
 
-			/* FIXME: need to remove the listener on componentWillUnmount */
-			core.on("statechange", function(changes, next) {
-				if (changes.user || (changes.nav && changes.nav.currentText)) {
-					self.onChange(true);
-				}
-
-				next();
-			}, 100);
+			core.on("statechange", this.onStateChange, 100);
 		},
 
 		componentDidUpdate: function() {
 			this.focusInput();
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		},
 
 		render: function() {
