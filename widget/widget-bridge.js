@@ -23,7 +23,7 @@ module.exports = function(c, conf, s) {
 		var embed;
 		if (changes.context && changes.context.env == "embed") {
 			embed = changes.context.embed;
-			parentHost = embed.origin.host;
+			domain = parentHost = embed.origin.host;
 			embedPath = embed.origin.path;
 			embedProtocol = embed.origin.protocol;
 			suggestedNick = embed.nick;
@@ -54,14 +54,12 @@ module.exports = function(c, conf, s) {
 		var context = store.getContext("embed"), jws;
 		if(context  && context .jws) jws = context.jws;
 		if(!init.origin) init.origin = {};
-		init.origin.domain = parentHost;
+		init.origin.domain = domain;
 		init.origin.path = embedPath;
 		init.origin.verified = verified;
 		if(jws && !init.auth) {
 			init.auth = {
-				auth : {
-					jws: jws
-				}
+				jws: jws
 			};
 		}
 		if(suggestedNick) init.suggestedNick = suggestedNick;
@@ -73,7 +71,7 @@ module.exports = function(c, conf, s) {
 function sendDomainChallenge() {
 	token = Math.random();
 	verificationStatus = false;
-	parentHost = embedProtocol + "//" + parentHost;
+	parentHost = embedProtocol + "//" + domain;
 	parentWindow.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token

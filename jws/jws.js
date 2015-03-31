@@ -113,16 +113,16 @@ var verify = (function() {
 		var availableKeys, i=0;
 		if(!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
 		availableKeys = keys[action.origin.domain];
-
+		console.log("Available keys.",availableKeys);
 		function testKey() {
 			if (i == availableKeys.length) return callback(false);
 			jwt.verify(action.auth.jws, availableKeys[i], function(err, decoded) {
-					if (!err && decoded) {
-						return callback(true, decoded);
-					}
-					testKey(i++);
+				console.log("++++++++++++++++++++++",err, decoded);
+				if (!err && decoded) {
+					return callback(true, decoded);
 				}
-			);
+				testKey(i++);
+			});
 		}
 
 		if(availableKeys && availableKeys.length !== 0) {

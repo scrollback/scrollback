@@ -47,12 +47,24 @@ function keyFromText(text) {
 
 function onInit(init, next) {
 	var entities = {};
+	var newstate = {};
+	if(init.response) {
+		switch(init.response.message) {
+			case "AUTH:UNREGISTRED":
+				newstate.nav = {
+					dialog : "signup"
+				};
+				break;
+		}
+	}
+	
 	if (!init.user.id) {
 		entities[store.get("user")] = init.user;
-		core.emit("setstate", {entities:entities});
+		newstate.entities = entities;
+		core.emit("setstate", newstate);
 		return next();
 	}
-
+	
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
 	if (init.memberOf) entities = entitiesFromRooms(init.memberOf, entities, init.user.id);
 	entities[init.user.id] = init.user;
