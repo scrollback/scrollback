@@ -86,7 +86,7 @@ module.exports = function(core, config, store) {
 			sound = (user && user.params && user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
 
 		if (user && text.mentions && text.mentions.indexOf(user.id) > -1) {
-			if (store.get("nav", "mode") === "chat") {
+			if (store.get("nav", "mode") === "chat" && store.get("nav", "room") === text.to) {
 				browserNotify(text.text, true, sound);
 			}
 
@@ -108,7 +108,7 @@ module.exports = function(core, config, store) {
 					}
 				});
 			}
-		} else if (store.get("nav", "mode") === "chat") {
+		} else if (store.get("nav", "mode") === "chat" && store.get("nav", "room") === text.to) {
 			browserNotify(text.text, false, sound);
 		}
 
