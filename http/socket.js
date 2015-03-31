@@ -173,7 +173,7 @@ sock.on('connection', function(socket) {
 			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
-                console.log("sending response", data);
+                log.d("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
 			}
@@ -314,7 +314,7 @@ function censorAction(action, filter) {
 }
 
 function emit(action, callback) {
-	var outAction, myAction;
+	var outAction, myAction, error;
 	log("Sending out: ", action);
 
 	function dispatch(conn, a) {
@@ -323,10 +323,18 @@ function emit(action, callback) {
 
 	if (action.type == 'init') {
 		if (sConns[action.session]) {
+			if(action.response) {
+				error = action.response;
+				action.response = {
+					message: action.response.message
+				};
+			}
 			sConns[action.session].forEach(function(conn) {
 				conn.user = action.user;
 				dispatch(conn, action);
 			});
+			
+			if(error) action.response = error;
 		}
 		return callback();
 	} else if (action.type == 'user') {

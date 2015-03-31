@@ -186,7 +186,7 @@ gulp.task("embed-legacy", function() {
 });
 
 gulp.task("embed-apis", function() {
-	return bundle("embed/index.js", { debug: debug })
+	return bundle("widget/index.js", { debug: debug })
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("sb.js"))
