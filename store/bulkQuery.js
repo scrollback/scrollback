@@ -13,16 +13,16 @@ module.exports = function createBulkQuery(core, store, type) {
 		if(type == "texts") {
 			roomId = roomId.split("_");
 			if(store.getTexts(roomId[0], roomId[1], null, -3)[0] !== "missing") return;
-			process.nextTick(function () {
+//			process.nextTick(function () {
 				queryCount++;
 				core.emit("getTexts", {to:roomId[0], thread: roomId[1], time: null, before: 3}, done);
-			});
+//			});
 		} else {
 			if(store.getThreads(roomId, null, -3)[0] !== "missing") return;
-			process.nextTick(function () {
+//			process.nextTick(function () {
 				queryCount++;
 				core.emit("getThreads", {to:roomId, time: null, before: 3}, done);
-			});
+//			});
 		}
 	}
 	

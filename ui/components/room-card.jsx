@@ -77,7 +77,7 @@ module.exports = function(core, config, store) {
 				return (
 					<div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>
-						<span className="card-thread-by">{thread.from}</span>
+						<span className="card-thread-by">{appUtils.formatUserName(thread.from)}</span>
 					</div>
 				);
 			});
