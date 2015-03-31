@@ -5,6 +5,7 @@ module.exports = function(core, config, store) {
 		if (mode !== "chat") {
 			changes.nav = changes.nav || {};
 			changes.nav.selectedTexts = [];
+			changes.nav.currentText = null;
 		}
 
 		next();
