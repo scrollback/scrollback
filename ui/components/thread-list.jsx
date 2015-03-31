@@ -173,7 +173,7 @@ module.exports = function(core, config, store) {
 			if (!items.length) {
 				empty = (
 				        <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>
-							{loading ? "Loading threads..." : "There are no threads yet :-("}
+							{loading ? "Loading discussions..." : "There are no discussions yet :-("}
 						</div>
 						);
 			}
