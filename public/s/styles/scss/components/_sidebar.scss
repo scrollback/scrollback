@@ -17,6 +17,7 @@
         will-change: transform;
 
         &-content {
+            padding-bottom: $bar-height;
             max-height: 100%;
             overflow: auto;
             -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */

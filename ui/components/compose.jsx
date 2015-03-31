@@ -1,73 +1,50 @@
 /* jshint browser: true */
 
-var format = require("../../lib/format.js"),
-	appUtils = require("../../lib/app-utils.js");
+var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		TextArea = require("./textarea.jsx")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
-		getInitialState: function() {
-			return { userInput: "" };
-		},
-
-		getMessageText: function(input) {
+		getMessageText: function(msg) {
 			var currentText = store.get("nav", "currentText"),
 				textObj = store.get("indexes", "textsById", currentText),
-				msg = input || "",
-				user, nick, atStart;
+				nick, user, mention;
+
+			msg = msg || "";
 
 			if (textObj) {
 				nick = appUtils.formatUserName(textObj.from);
-				user = store.get("user");
+				user = appUtils.formatUserName(store.get("user"));
 
-				if (/^@\S+[\s+{1}]?/.test(msg)) {
-					msg = msg.replace(/^@\S+[\s+{1}]?/, "");
-					atStart = true;
-				} else {
-					msg = msg.replace(/@\S+[\s+{1}]?$/, "");
+				mention = "@" + nick;
+
+				if (msg.indexOf(mention) === -1 && nick != user) {
+					msg = msg.replace(/(?:^@[a-z0-9\-]+\s?)|(?:\s*(?:\s@[a-z0-9\-]+)?\s*$)/, function(match, index) {
+						if (index === 0) {
+							return mention;
+						} else {
+							return " " + mention;
+					    }
+					});
 				}
 
-				if (msg.indexOf("@" + nick) < 0 && user !== nick) {
-					if (atStart) {
-						msg = "@" + nick + (msg ? " " + msg : "");
-					} else {
-						msg = (msg ? msg + " " : "") + "@" + nick;
-					}
-				}
-
-				msg = msg ? msg + "&nbsp;" : "";
+				msg += " ";
+			} else {
+				msg = msg.replace(/(^@[a-z0-9\-]+\s?)|(@[a-z0-9\-]+\s?$)/, "").trim();
 			}
 
 			return msg;
 		},
 
-		focusInput: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
-				range, selection;
-
-			composeBox.focus();
-
-			if (document.createRange) {
-				range = document.createRange();
-				range.selectNodeContents(composeBox);
-				range.collapse(false);
-				selection = window.getSelection();
-				selection.removeAllRanges();
-				selection.addRange(range);
-			} else if (document.selection) {
-				range = document.body.createTextRange();
-				range.moveToElementText(composeBox);
-				range.collapse(false);
-				range.select();
-			}
-		},
-
 		sendMessage: function() {
-			var composeBox = this.refs.composeBox.getDOMNode(),
-				text = format.htmlToText(composeBox.innerHTML),
-				nav = store.get("nav");
+			var composeBox = this.refs.composeBox,
+				nav = store.get("nav"),
+				text;
+
+			text = composeBox.val();
 
 			if (!text) {
 				return;
@@ -77,34 +54,15 @@ module.exports = function(core, config, store) {
 				to: nav.room,
 				from: store.get("user"),
 				text: text,
-				time: new Date().getTime(),
+				time: Date.now(),
 				thread: nav.thread
 			});
 
-			this.replaceState(this.getInitialState());
+			core.emit("setstate", {
+				nav: { currentText: null }
+			});
 
-			// FIXME: figure out why replaceState is not working
-			composeBox.innerText = composeBox.textContent = this.getInitialState().userInput;
-		},
-
-		setPlaceHolder: function() {
-			var composePlaceholder = this.refs.composePlaceholder.getDOMNode(),
-				composeBox = this.refs.composeBox.getDOMNode(),
-				text = (composeBox.innerText || composeBox.textContent);
-
-			composePlaceholder.innerText = composePlaceholder.textContent = text ? "" : "Reply as " + appUtils.formatUserName(store.get("user"));
-		},
-
-		onPaste: function() {
-			setTimeout(function() {
-				var text = this.refs.composeBox.getDOMNode().innerHTML;
-
-				this.setState({ userInput: text });
-			}.bind(this), 10);
-		},
-
-		onBlur: function(e) {
-			this.setState({ userInput: e.target.innerHTML });
+			composeBox.val("");
 		},
 
 		onKeyDown: function(e) {
@@ -115,25 +73,28 @@ module.exports = function(core, config, store) {
 			}
 		},
 
-		componentDidMount: function() {
-			this.setPlaceHolder();
-		},
-
 		componentDidUpdate: function() {
-			this.setPlaceHolder();
+			var composeBox = this.refs.composeBox,
+				text, newText;
+
+			text = composeBox.val();
+
+			newText = this.getMessageText(text);
+
+			if (newText.trim() !== text.trim()) {
+				composeBox.val(newText);
+			}
+
+			composeBox.focus();
 		},
 
 		render: function() {
-			var msg = this.getMessageText(this.state.userInput);
-
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<div contentEditable autoFocus dangerouslySetInnerHTML={{__html: msg}}
-							 onPaste={this.onPaste} onBlur={this.onBlur} onKeyDown={this.onKeyDown} onInput={this.setPlaceHolder}
-							 ref="composeBox" tabIndex="1" className="chat-area-input-entry">
-						</div>
-						<div ref="composePlaceholder" className="chat-area-input-placeholder"></div>
+						<TextArea placeholder={"Reply as " + appUtils.formatUserName(store.get("user"))}
+								  onKeyDown={this.onKeyDown} ref="composeBox"
+								  className="chat-area-input-entry" tabIndex="1" autoFocus />
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
