@@ -17,10 +17,11 @@ module.exports = function() {
 		},
 
 		val: function(value) {
-			var textBox = React.findDOMNode(this.refs.textBox);
+			var contentBox = React.findDOMNode(this.refs.contentBox),
+				textBox = React.findDOMNode(this.refs.textBox);
 
 			if (typeof value === "string") {
-				textBox.value = value;
+				contentBox.innerText = contentBox.textContent = textBox.value = value;
 			} else {
 				return textBox.value;
 			}

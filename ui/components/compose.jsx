@@ -4,7 +4,7 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		TextArea = require("./textarea.js")(core, config, store),
+		TextArea = require("./textarea.jsx")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
