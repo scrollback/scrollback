@@ -238,7 +238,7 @@ config() {
     if [[ -f client-config.sample.js ]]; then
         printf $(cp client-config.sample.js client-config.js)
     else
-        printf $(printf "module.exports = {};" > client-config.js)
+        $(echo "module.exports = {};" > client-config.js)
     fi
 }
 
@@ -279,12 +279,15 @@ postgres_schemas() {
 }
 
 postgres_osx_create() {
-    printf "Creating user: 'scrollback' without password..."
-    printf $(createuser scrollback)
-    printf "Creating database: 'scrollback'"
-    printf $(createdb -U `whoami` -w -O scrollback scrollback )
-    printf "Creating database: 'logs'"
-    printf $(createdb -U `whoami` -w -O scrollback logs)
+    printf "Creating user: 'scrollback' with password 'scrollback':"
+    $(echo "localhost:5432:scrollback:scrollback:scrollback" > ~/.pgpass)
+    $(echo "localhost:5432:logs:scrollback:scrollback" > ~/.pgpass)
+    $(chmod 0600 ~/.pgpass)
+    printf $(createuser -d scrollback)
+    printf "Creating database: 'scrollback':"
+    printf $(createdb -U scrollback -O scrollback scrollback)
+    printf "Creating database: 'logs':"
+    printf $(createdb -U scrollback -O scrollback logs)
 }
 
 postgres_create_linux() {
