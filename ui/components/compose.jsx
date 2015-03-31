@@ -57,6 +57,10 @@ module.exports = function(core, config, store) {
 				thread: nav.thread
 			});
 
+			core.emit("setstate", {
+				nav: { currentText: null }
+			});
+
 			composeBox.val("");
 		},
 
