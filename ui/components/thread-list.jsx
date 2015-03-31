@@ -173,13 +173,13 @@ module.exports = function(core, config, store) {
 			if (!items.length) {
 				empty = (
 				        <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>
-							{loading ? "Loading threads..." : "There are no threads yet :-("}
+							{loading ? "Loading discussions..." : "There are no discussions yet :-("}
 						</div>
 						);
 			}
 
 			if (type === "feed") {
-				scrollToClassNames = "thread-feed-scroll-to scroll-to";
+				scrollToClassNames = "scroll-to scroll-to-top";
 
 				if (nav.threadRange && nav.threadRange.time) {
 					scrollToClassNames += " visible";
@@ -187,7 +187,7 @@ module.exports = function(core, config, store) {
 
 				return (
 						<div className="main-content-threads">
-							{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
+							<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>
 							<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 							{empty}
 						</div>

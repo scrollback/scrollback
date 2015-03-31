@@ -29,6 +29,7 @@
 // Import various components
 @import "components/listview";
 @import "components/gridview";
+@import "components/textarea";
 @import "components/fab";
 @import "components/appbar";
 @import "components/searchbar";
@@ -53,12 +54,11 @@ html, body {
 body {
     @include filter((
                     role: $roles,
-                    webview: (),
                     embed: $embeds,
                     mode: $modes,
-                    platform: $platforms,
+                    context: $contexts,
                     state: $states
-    ), ()); /* show hide elements based on filter */
+    )); /* show hide elements based on filter */
 }
 
 .app-container {
@@ -286,10 +286,22 @@ body {
 .main-content {
     @include flex-grow(1);
 
+    position: relative;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: darken($light-color, 5%);
+
+    &-inner-wrap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+
+        &:after {
+            content: "";
+            display: block;
+            height: $bar-height * 2.5;
+        }
+    }
 
     &-inner {
         padding: .5em 0;
@@ -297,10 +309,18 @@ body {
         @media #{$screenxx} { padding: 2em; }
     }
 
-    &:after {
-        content: "";
-        display: block;
-        height: $bar-height * 1.5;
+    &-chat {
+        .scroll-to-bottom {
+            position: absolute;
+            top: -6em;
+        }
+    }
+
+    &-threads {
+        .scroll-to-top {
+            position: absolute;
+            top: 0;
+        }
     }
 }
 
@@ -391,23 +411,13 @@ body {
         }
     }
 
-    &-userpref {
-        @include icon(configure);
-    }
+    &-userpref { @include icon(configure); }
 
-    &-reportissue {
-        @include icon(info-circled);
-    }
+    &-reportissue { @include icon(info-circled); }
 
-    &-sound-notification-enable {
-        @include icon(audio);
-    }
+    &-sound-notification-enable { @include icon(audio); }
 
-    &-sound-notification-disable {
-        @include icon(audio-off);
-    }
+    &-sound-notification-disable { @include icon(audio-off); }
 
-    &-logout {
-        @include icon(off);
-    }
+    &-logout { @include icon(off); }
 }

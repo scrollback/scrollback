@@ -9,6 +9,11 @@
 	// jQuery library
 	window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
 
+	// Polyfills
+	require("../lib/css-supports.polyfill.js");
+	require("../lib/custom-events.polyfill.js");
+	require("../lib/request-animation-frame.polyfill.js");
+
 	// Third party libraries
 	require("../bower_components/sockjs/sockjs.js");
 	require("../bower_components/velocity/velocity.min.js");
@@ -21,9 +26,6 @@
 	require("../bower_components/lace/src/js/jquery.progressbar.js");
 
 	// jQuery plugins
-	require("./plugins/jquery.isOnScreen.js");
-	require("./plugins/jquery.scrollToBottom.js");
-	require("./plugins/jquery.setCursorEnd.js");
 	require("./plugins/jquery.validInput.js");
 
 	// Core

@@ -3,6 +3,7 @@ var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,
 	validator = new (require('valid'))(),
+	appUtils = require("../lib/app-utils.js"),
 	colors, redis;
 
 var threaderValidator = {
@@ -88,8 +89,11 @@ function processReply(data){
 		var id = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
-			if (!message.thread) {
+			if (!message.thread && appUtils.isIRCSession(message.session)) {
 				message.thread = id;
+				if(!message.title) {
+					message.title = message.text;
+				}
 			}
 			/*
 			// Code for adding spam, nonsense, normal etc. labels

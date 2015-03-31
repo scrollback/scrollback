@@ -69,7 +69,7 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var room = store.getRoom(this.props.roomId),
-				roomCover = room.cover || getRoomPics(this.props.roomId).cover,
+				roomCover = (room.guides && room.guides.customization && room.guides.customization.cover) ? room.guides.customization.cover : getRoomPics(this.props.roomId).cover,
 				roomPicture = room.picture || getRoomPics(this.props.roomId).picture,
 				user, menu, threads;
 

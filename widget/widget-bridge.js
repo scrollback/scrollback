@@ -55,7 +55,7 @@ module.exports = function(c, conf, s) {
 		if(context  && context .jws) jws = context.jws;
 		if(!init.origin) init.origin = {};
 		init.origin.domain = domain;
-		init.origin.path = embedPath;
+		init.origin.path = embedPath || path;
 		init.origin.verified = verified;
 		if(jws && !init.auth) {
 			init.auth = {
@@ -71,7 +71,8 @@ module.exports = function(c, conf, s) {
 function sendDomainChallenge() {
 	token = Math.random();
 	verificationStatus = false;
-	parentHost = embedProtocol + "//" + domain;
+	domain = parentHost;
+	parentHost = embedProtocol + "//" + parentHost;
 	parentWindow.postMessage(JSON.stringify({
 		type: "domain-challenge",
 		token: token

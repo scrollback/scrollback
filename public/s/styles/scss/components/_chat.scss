@@ -54,23 +54,7 @@
             width: 100%;
             box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
 
-            &-placeholder {
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-
-                position: absolute;
-                top: 0;
-                left: 0;
-                padding: 1em;
-                padding-right: 4em;
-                color: fade-out($dark-color, .5);
-                pointer-events: none;
-
-                @media #{$screenxxxx} { padding: 1em 3em; }
-            }
+            .textarea-container { border: 0; }
 
             &-inner {
                 width: 100%;
@@ -81,7 +65,7 @@
             }
 
             &-entry {
-                @extend .entry;
+                @extend %entry;
 
                 border-width: 1px 0 0 0;
                 border-radius: 0;
@@ -112,17 +96,6 @@
                 @for $i from 1 through length($palette) {
                     .color-#{$i - 1} & { color: nth($palette, $i); }
                 }
-            }
-
-            &-entry:empty + &-send {
-                @include icon(emoticon);
-
-                color: $dark-color;
-                opacity: .5;
-
-                &:focus, &:hover { opacity: .8; }
-
-                   &:active { opacity: 1; }
             }
         }
     }
@@ -163,9 +136,9 @@
             }
         }
 
-		&-continues { padding-bottom: 0; }
+		&-continues { padding-bottom: .25em; }
 
-		&-continuation { padding-top: 0; }
+		&-continuation { padding-top: .25em; }
 
         &-message {
             @media #{$screenxx} { display: inline; }
@@ -184,7 +157,7 @@
         }
 
         &-tag {
-            &-hidden, &-abusive {
+            &-hidden {
                 font-style: italic;
                 opacity: .5;
 

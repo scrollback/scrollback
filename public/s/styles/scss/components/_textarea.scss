@@ -1,0 +1,28 @@
+@include exports("textarea") {
+    .textarea-container {
+        @extend %entry;
+
+        position: relative;
+
+        > textarea, > pre {
+            margin: 0;
+            width: 100%;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        > textarea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            resize: none;
+            overflow: auto;
+        }
+
+        > pre {
+            display: block;
+            visibility: hidden;
+        }
+    }
+}

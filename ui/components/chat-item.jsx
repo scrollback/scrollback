@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var format = require("../../lib/format.js"),
+	appUtils = require("../../lib/app-utils.js"),
 	showMenu = require("../utils/show-menu.js");
 
 module.exports = function(core, config, store) {
@@ -60,7 +61,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var nav =  store.get("nav"),
 				text = format.mdToHtml(this.props.text.text),
-				time = format.friendlyTime(this.props.text.time, new Date().getTime()),
+				time = format.friendlyTime(this.props.text.time, Date.now()),
 				timeStamp, nick, classNames = "chat-item";
 
 			if (this.props.text.tags) {
@@ -80,7 +81,7 @@ module.exports = function(core, config, store) {
 			if (this.props.continuation) {
 				classNames += " chat-item-continuation";
 			} else {
-				nick = <div className="chat-item-nick">{format.username(this.props.text.from)}</div>;
+				nick = <div className="chat-item-nick">{appUtils.formatUserName(this.props.text.from)}</div>;
 			}
 
 			return (
