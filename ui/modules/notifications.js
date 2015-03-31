@@ -86,7 +86,9 @@ module.exports = function(core, config, store) {
 			sound = (user && user.params && user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
 
 		if (user && text.mentions && text.mentions.indexOf(user.id) > -1) {
-			browserNotify(text.text, true, sound);
+			if (store.get("nav", "mode") === "chat" && store.get("nav", "room") === text.to) {
+				browserNotify(text.text, true, sound);
+			}
 
 			if (store.getUser().params.notifications.desktop) {
 				desktopnotify.show({
@@ -95,17 +97,18 @@ module.exports = function(core, config, store) {
 					icon: "/s/img/scrollback-dark.png",
 					tag: text.id,
 					action: function() {
-						// TODO: navigate to message
 						core.emit("setstate", {
 							nav: {
+								mode: "chat",
 								room: text.to,
-								time: text.time
+								thread: text.thread,
+								textRange: { time: text.time }
 							}
 						});
 					}
 				});
 			}
-		} else {
+		} else if (store.get("nav", "mode") === "chat" && store.get("nav", "room") === text.to) {
 			browserNotify(text.text, false, sound);
 		}
 
