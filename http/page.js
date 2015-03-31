@@ -59,7 +59,6 @@ function init (app) {
 		}
 
 		if (/^\/s\//.test(req.path)) {
-			console.log("static");
 			return next();
 		}
 

@@ -9,7 +9,7 @@ module.exports = function(c, conf) {
 	config = conf;
 
 	if (!config.client_id || !config.client_secret) {
-		console.log("Missing google params:");
+		log.d("Missing google params:");
 		return;
 	}
 	core.on("http/init", function(payload, callback) {
@@ -45,6 +45,7 @@ module.exports = function(c, conf) {
 
 						if (!data.results.length) {
 							action.user = {};
+							action.user.id = action.old.id;
 							action.user.identities = ["mailto:" + body.email];
 							action.user.picture = body.picture;
 							log.d("Google user object:", body.email);

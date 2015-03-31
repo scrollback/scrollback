@@ -187,4 +187,4 @@ function scrollback(opts, callback) {
 	};
 }
 
-window.$sb = scrollback;
+window.scrollback = scrollback;

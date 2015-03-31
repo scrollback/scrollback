@@ -39,6 +39,7 @@ function loginUser(token, action, callback) {
 
 				if (!data.results.length) {
 					action.user = {};
+					action.user.id = action.old.id;
 					action.user.identities = ["mailto:" + user.email];
 					fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
 					gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
@@ -78,7 +79,7 @@ function loginUser(token, action, callback) {
 						user: action.user,
 						session: "internal-facebook"
 					}, function(err, action) {
-						console.log("Action done:", err, action);
+						log.d("Action done:", err, action);
 					});
 				}
 
