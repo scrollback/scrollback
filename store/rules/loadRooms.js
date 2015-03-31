@@ -25,6 +25,7 @@ module.exports = function(core, config, store) {
 				
 			} else {
 				console.log('setting missing', roomId);
+				if(!updatingState.context) updatingState.context = 
 				updatingState.entities[roomId] = "missing";
 			}
 			core.emit("setstate", updatingState);

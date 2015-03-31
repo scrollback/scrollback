@@ -79,7 +79,9 @@ module.exports = function(core, config, store) {
 			var id = $(this).attr("data-settings-list");
 
 			core.emit("setstate", {
-				nav: { dialogState: id }
+				nav: { dialogState:{
+					settingsItem: id
+				} }
 			});
 		});
 
@@ -88,11 +90,13 @@ module.exports = function(core, config, store) {
 			if (/^(room|user)$/.test(state)) {
 				continue;
 			}
+			
+			dialogState = dialogState || {};
 
-			dialogState = dialogState || state;
+			dialogState.settingsItem = dialogState.settingsItem || state;
 
-			if (nav.dialogState && nav.dialogState === state) {
-				dialogState = state;
+			if (nav.dialogState && nav.dialogState.settingsItem === state) {
+				dialogState.settingsItem = state;
 
 				break;
 			}
@@ -104,8 +108,8 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		if (changes.nav && changes.nav.dialogState && store.get("nav", "dialog")) {
-			setPage(store.get("nav", "dialogState"));
+		if (changes.nav && changes.nav.dialogState && changes.nav.dialogState.settingsItem && store.get("nav", "dialog")) {
+			setPage(store.get("nav", "dialogState", "settingsItem"));
 		}
 
 		next();

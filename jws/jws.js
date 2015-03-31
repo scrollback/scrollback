@@ -88,7 +88,8 @@ function jwsHandler(action, callback) {
 						} else {
 							action.old = action.user;
 							action.user = {};
-							action.user.identities = [payload.sub];
+							action.user.id = action.old.id;
+							action.user.identities = ["mailto:"+payload.sub];
 							action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(payload.sub).digest('hex') + '/?d=retro';
 							action.user.params = {};
 							action.user.params.pictures = [action.user.picture];

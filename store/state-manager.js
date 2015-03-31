@@ -14,6 +14,9 @@ module.exports = function(c, conf, s, st) {
 
 	core.on("setstate", function(changes, next) {
 		applyChanges(changes, allChanges);
+		applyChanges(changes, state);
+		buildIndex(state, changes);
+		
 		if(timer) clearTimeout(timer);
 		timer = setTimeout(fireStateChange, 100);
 		next();
@@ -21,9 +24,7 @@ module.exports = function(c, conf, s, st) {
 };
 
 function fireStateChange() {
-	applyChanges(allChanges, state);
 	buildIndex(allChanges);
-	buildIndex(state, allChanges);
 	
 	numChanges = 0;
 	core.emit("statechange", allChanges);

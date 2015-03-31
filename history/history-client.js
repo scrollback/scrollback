@@ -67,7 +67,13 @@ module.exports = function(core, config, store) {
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {
 				if (params[propMap[section][prop]]) {
-					state[section][prop] = params[propMap[section][prop]];
+					try {
+						if (prop === "dialogState") params[propMap[section][prop]] = decodeURIComponent(JSON.parse(state[section][prop]));
+						else state[section][prop] = params[propMap[section][prop]];
+					} catch(e) {
+						state[section][prop] = {};
+					}
+					
 				}
 			}
 		}
@@ -113,7 +119,8 @@ module.exports = function(core, config, store) {
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {
 				if (state[section][prop]) {
-					params[propMap[section][prop]] = state[section][prop];
+					if(prop === "dialogState") params[propMap[section][prop]] = encodeURIComponent(JSON.stringify(state[section][prop]));
+					else params[propMap[section][prop]] = state[section][prop];
 				}
 			}
 		}

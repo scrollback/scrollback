@@ -20,7 +20,12 @@ module.exports = function(core, config, store) {
 					changes.nav.mode = "home";
 				} else {
 					changes.nav.dialog = "createroom";
-					changes.nav.dialogState = "nonexistent";
+					if (!changes.nav.dialogState) changes.nav.dialogState = {};
+					changes.nav.dialogState.nonexistent = true;
+					if (room.indexOf(":")>=0) {
+						changes.nav.dialogState.prefill = room.substring(room.indexOf(":")+1);
+						changes.nav.dialogState.roomIdentity = room;
+					}
 				}
 			}
 		}

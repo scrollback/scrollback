@@ -11,7 +11,8 @@ module.exports = function(core, config, store) {
 
 			if (user && appUtils.isGuest(user)) {
 				changes.nav.dialog = "signin";
-				changes.nav.dialogState = "mobile-app";
+				if(!changes.nav.dialogState) changes.nav.dialogState = {};
+				changes.nav.dialogState.mobileApp = true;
 			} else if (dialog === "signin") {
 				changes.nav.dialog = null;
 				changes.nav.dialogState = null;

@@ -2,7 +2,7 @@
 
 var core, config, store, parentHost, parentWindow,
 	embedPath, embedProtocol, verificationStatus,
-	verificationTimeout, verified, bootNext, domain, path, token, isEmbed = false, suggestedNick;
+	verificationTimeout, verified, bootNext, domain, jws, path, token, isEmbed = false, suggestedNick;
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -25,6 +25,7 @@ module.exports = function(c, conf, s) {
 			embed = changes.context.embed;
 			domain = parentHost = embed.origin.host;
 			embedPath = embed.origin.path;
+			jws = embed.jws;
 			embedProtocol = embed.origin.protocol;
 			suggestedNick = embed.nick;
 			sendDomainChallenge();
@@ -66,6 +67,10 @@ module.exports = function(c, conf, s) {
 		next();
 	}, 999);
 	
+	core.on("room-up", function(roomUp, next) {
+		
+		next();
+	}, 1000);
 };
 
 function sendDomainChallenge() {
@@ -120,7 +125,7 @@ function parseResponse(data) {
 }
 
 function onMessage(e) {
-	var data = e.data, action, actionUp = {};
+	var data = e.data, action;
 	data = parseResponse(data);
 	action = data.data;
 
@@ -134,16 +139,6 @@ function onMessage(e) {
 			} else {
 				core.emit("part-up", {to: action.room});
 			}
-		break;
-	case "signin":
-			actionUp.auth = {};
-			actionUp.auth.jws = action.jws;
-
-			if (action.nick) {
-				action.auth.nick = action.nick; // TODO: can be used to generated nick suggestions.
-			}
-
-			core.emit("init-up", actionUp);
 		break;
 	}
 }
