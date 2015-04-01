@@ -54,11 +54,24 @@ module.exports = function(core, config, store) {
 
 	core.on("statechange", function(changes, next) {
 		var nav = store.get("nav"),
-			user = store.get("user");
+			user = store.get("user"),
+			dialogStateChanged = false;
+
+		if (changes.nav.dialogState) {
+			if (nav.dialogState) {
+				for (var prop in changes.nav.dialogState) {
+					if (changes.nav.dialogState[prop] !== nav.dialogState[prop]) {
+						dialogStateChanged = true;
+						break;
+					}
+				}
+			} else {
+				dialogStateChanged = true;
+			}
+		}
 
 		if ((nav.dialog !== currentDialog) || (changes.nav &&
-		    (("dialog" in changes.nav && changes.nav.dialog !== nav.dialog) ||
-		     ("dialogState" in changes.nav && changes.nav.dialogState) ||
+		    (("dialog" in changes.nav && changes.nav.dialog !== nav.dialog) || dialogStateChanged ||
 		     (nav.dialog && changes.nav.dialogUpdate === "true")))) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
