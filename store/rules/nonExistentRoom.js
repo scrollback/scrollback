@@ -6,10 +6,6 @@ module.exports = function(core, config, store) {
 		mode = (changes.nav && changes.nav.mode) ? changes.nav.mode : nav.mode;
 		room = (changes.nav && changes.nav.room) ? changes.nav.room : nav.room;
 
-		if (!/(chat|room)/.test(mode)) {
-			return next();
-		}
-
 		if (room) {
 			roomObj = (changes.entities && changes.entities[room]) ? changes.entities[room] : store.get("entities", room);
 
