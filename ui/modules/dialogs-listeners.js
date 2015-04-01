@@ -110,7 +110,7 @@ module.exports = function(core, config, store) {
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),
 			user = store.getUser(),
-			roomName = nav.dialogState.nonexistent?(nav.dialogState.prefill|| nav.room) : "";
+			roomName = (nav.dialogState && nav.dialogState.prefill) ? nav.dialogState.prefill : "";
 
 		if (!user.id) {
 			return;
@@ -175,7 +175,7 @@ module.exports = function(core, config, store) {
 				return;
 			}
 		} else {
-			if (nav.dialogState.nonexistent) {
+			if (nav.dialogState && nav.dialogState.nonexistent) {
 				dialog.title = "There is no room called '" + nav.room + "' :-(";
 				dialog.description = "Would you like to create the room?";
 			} else {
