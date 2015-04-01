@@ -13,7 +13,7 @@ function browserAuth(action, callback) {
 	var assertion;
 	if (action.response || !action.auth || !action.auth.browserid) return callback();
 	assertion = action.auth.browserid;
-	
+
 	log.d("assertion", assertion, config);
 	request.post("https://verifier.login.persona.org/verify", {
 		form: {
@@ -32,18 +32,19 @@ function browserAuth(action, callback) {
 			action.response = new Error("AUTH_FAIL_SERVER/" + body);
 			return callback();
 		}
-		
+
 		if (body.status !== 'okay') {
 			action.response = new Error("AUTH_FAIL/" + body.reason);
 			return callback();
 		}
-		
+
 		identity = "mailto:" + body.email;
 		core.emit("getUsers", {
 			identity: identity,
 			session: "internal-browserid-auth"
 		}, function(err, user) {
 			if (!user.results || user.results.length === 0) {
+				action.old = action.user;
 				action.user = {};
 				action.user.id = action.old.id;
 				action.user.identities = [identity];
@@ -54,12 +55,13 @@ function browserAuth(action, callback) {
                 action.response = new Error("AUTH:UNREGISTRED");
 				return callback();
 			}
-			
-			if(action.user.id!= user.results[0].id) {
+
+			if (action.user.id !== user.results[0].id) {
 				action.old = action.user;
-			}else{
+			} else {
 				action.old = {};
 			}
+
 			action.user = user.results[0];
 			callback();
 		});
