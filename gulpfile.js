@@ -242,7 +242,6 @@ gulp.task("manifest", function() {
 			"/socket /s/socket-fallback",
 			"/ /fallback.html"
 		],
-		preferOnline: true,
 		timestamp: true,
 		filename: "manifest.appcache"
 	}))
