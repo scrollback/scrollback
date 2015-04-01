@@ -54,6 +54,8 @@ function init (app) {
 	});
 
 	app.get("/*", function(req, res, next) {
+		var platform;
+
 		if (/^\/t\//.test(req.path)) {
 			return next();
 		}
@@ -67,14 +69,12 @@ function init (app) {
 			return res.redirect(301, 'https://' + config.host + req.path + queryString);
 		}
 
-		var platform = req.query.platform;
-		
-		clientData.appVersion = req.query["app-version"] || "defaults";
-		clientData.manifest = (platform ? platform.toLowerCase() : "manifest") + ".appcache";
-		clientData.cordova = (!!(platform && (/cordova/i).test(platform))) ||
-			(platform === "android"); // fixing backward compatibitly issue
-		
-		if(clientData.cordova) return serverStaticFile(res);
+		platform = req.query.platform;
+
+		if (platform && (/(cordova|android)/i).test(platform)) {
+			return serverStaticFile(res);
+		}
+
 		seo.getSEOHtml(req, function(r) {
 			clientData.seo = r;
 			res.end(clientTemp(clientData));

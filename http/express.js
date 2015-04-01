@@ -33,18 +33,17 @@ function init() {
 	app.set('view options', {
 		debug: true
 	});
-
-	/**
-	 * We need to serve the correct mimetype for the manifest.appcache file.
-	 * Even though latest browsers don't require this, older versions of browsers do.
-	 * Also, we need to make sure that the manifest.appcache is not cached.
-	 */
 	app.use(function(req, res, next) {
 		if ((req.url).match(/.*\.appcache$/)) {
+			// We need to serve the correct mimetype for the manifest.appcache file.
+			// Even though latest browsers don't require this, older versions of browsers do.
+			// Firefox doesn't use appcache if we add Cache-Control: no-cache.
 			res.header('Content-Type', 'text/cache-manifest');
-			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-			res.header('Expires', '0');
+			res.header('Expires', new Date(Date.now() + 86400000).toUTCString());
 			res.header('Pragma', 'no-cache');
+		} else {
+			// Firefox doesn't load latest resources if we don't do this.
+			res.header('Cache-Control', 'no-cache');
 		}
 
 		next();
@@ -55,11 +54,11 @@ function init() {
 	app.use(express.static(__dirname + "/../" + config.home, {
 		maxAge: 86400000
 	}));
-	
-	if(process.env.NODE_ENV === "dev") {
+
+	if (process.env.NODE_ENV === "dev") {
 		app.use(express.static(__dirname + '/../test/public'));
 	}
-	
+
 	app.use(express.cookieParser());
 	app.use(express.query());
 	app.use(express.bodyParser());
@@ -81,8 +80,6 @@ function init() {
 
 	return app;
 }
-
-
 
 module.exports = function(core, conf) {
 	config = conf;
