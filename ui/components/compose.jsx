@@ -89,12 +89,26 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			var connection = store.get("app", "connectionStatus"),
+				placeholder, disabled;
+
+			if (connection === "connecting") {
+				placeholder = "Connecting...";
+				disabled = true;
+			} else if (connection === "online") {
+				placeholder = "Reply as " + appUtils.formatUserName(store.get("user"));
+				disabled = false;
+			} else {
+				placeholder = "You are offline";
+				disabled = true;
+			}
+
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<TextArea placeholder={"Reply as " + appUtils.formatUserName(store.get("user"))}
+						<TextArea autoFocus placeholder={placeholder} disabled={disabled} tabIndex="1"
 								  onKeyDown={this.onKeyDown} ref="composeBox"
-								  className="chat-area-input-entry" tabIndex="1" autoFocus />
+								  className="chat-area-input-entry" />
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
