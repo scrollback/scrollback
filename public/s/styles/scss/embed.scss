@@ -6,37 +6,38 @@ $offset-right: 30px !default;
 $bar-height: 49px !default;
 
 .scrollback-stream {
-	background: transparent;
+    background: transparent;
 
-	&.scrollback-toast {
-		@include prefix(box-shadow, 0 0 5px 1px rgba(0, 0, 0, .1));
-		@include prefix(transition, .15s ease);
-		@include prefix(transform, translate3d(0, $bar-height, 0));
+    &.scrollback-toast {
+        @include prefix(box-shadow, 0 0 5px 1px rgba(0, 0, 0, .1));
+        @include prefix(transition, .15s ease);
+        @include prefix(transform, translate3d(0, $bar-height, 0));
 
-		position: fixed;
-		bottom: $bar-height;
-		right: $offset-right;
-		height: $widget-height;
-		width: $widget-width;
-		max-height: 100%;
-		max-width: 100%;
-		border: 1px solid #ccc;
-		border: 1px solid rgba(0, 0, 0, .2);
-		border-bottom: none;
-		z-index: 999;
+        position: fixed;
+        bottom: $bar-height;
+        right: $offset-right;
+        height: $widget-height;
+        width: $widget-width;
+        max-height: 100%;
+        max-width: 100%;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-bottom: none;
+        z-index: 999;
+        will-change: transform;
 
-		&.scrollback-minimized {
+        &.scrollback-minimized {
             @include prefix(transform, translate3d(0, $widget-height, 0));
 
             @media only screen and (max-height: $widget-height) { @include prefix(transform, translate3d(0, 100%, 0)); }
         }
 
-		@media only screen and (max-width: $widget-width + ($offset-right * 2)) { right: 0; }
-	}
+        @media only screen and (max-width: $widget-width + ($offset-right * 2)) { right: 0; }
+    }
 
-	&.scrollback-canvas {
-		height: 100%;
-		width: 100%;
-		border: none;
-	}
+    &.scrollback-canvas {
+        height: 100%;
+        width: 100%;
+        border: none;
+    }
 }
