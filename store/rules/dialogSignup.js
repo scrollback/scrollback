@@ -18,14 +18,12 @@ module.exports = function(core, config, store) {
 		if (userId) {
 			if (appUtils.isGuest(userId)) {
 				// User is not signed in
-				if (dialog) {
-					if (userObj.identities) {
-						// Trying to sign up
-						changes.nav.dialogState.signingup = true;
+				if (userObj.identities) {
+					// Trying to sign up
+					changes.nav.dialogState.signingup = true;
 
-						if (dialog === "signin") {
-							changes.nav.dialog = "signup";
-						}
+					if (!dialog || dialog === "signin") {
+						changes.nav.dialog = "signup";
 					}
 				}
 			} else {

@@ -29,27 +29,29 @@ module.exports = function(core, config, store) {
 				if (res === "ok") {
 					room = store.get("nav", "room");
 					roomObj = store.getRoom(room);
-					if(nav.dialogState && nav.dialogState.roomIdentity ){
-						identities = [nav.dialogState.roomIdentity];
-					}else{
+
+					if (nav.dialogState && nav.dialogState.roomIdentity) {
+						identities = [ nav.dialogState.roomIdentity ];
+					} else {
 						identities = [];
 					}
-					
+
 					newRoom = {
 						id: name,
 						description: "",
 						params: {},
 						guides: {},
-						identities: identities	
+						identities: identities
 					};
 
-					
 					if (room) {
 						newRoom.guides = roomObj.guides || {};
 					}
-					if(identities) {
+
+					if (identities) {
 						context = store.getContext();
-						if(context.embed){
+
+						if (context.embed) {
 							newRoom.guides.allowedDomains = [context.embed.origin.host];
 						}
 					}

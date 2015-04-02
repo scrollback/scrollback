@@ -1,6 +1,7 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var nav = store.get("nav"),
+			mode = (changes.nav && changes.nav.mode) ? changes.nav.mode : nav.mode,
 			room = (changes.nav && changes.nav.room) ? changes.nav.room : nav.room,
 			roomObj;
 
@@ -12,7 +13,7 @@ module.exports = function(core, config, store) {
 
 				if (changes.nav && changes.nav.dialog === null && nav.dialog === "createroom") {
 					changes.nav.mode = "home";
-				} else {
+				} else if (mode === "room") {
 					changes.nav.dialog = "createroom";
 					changes.nav.dialogState = changes.nav.dialogState || {};
 					changes.nav.dialogState.nonexistent = true;

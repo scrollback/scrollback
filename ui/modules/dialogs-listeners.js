@@ -36,13 +36,6 @@ module.exports = function(core, config, store) {
 							dialogState: null
 						}
 					});
-				} else {
-					core.emit("setstate", {
-						nav: {
-							dialog: null,
-							dialogState: null
-						}
-					});
 				}
 
 				if (typeof callback === "function") {
