@@ -46,19 +46,19 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var data = {
 					signin: {
-						text: "Personalize your profile",
-						label: "Sign in",
+						text: "Change your username",
+						label: "Sign up",
 						action: this.showUserMenu
 					},
 
 					follow: {
-						text: "Stay in touch with this room",
+						text: "Stay in touch with " + store.get("nav", "room"),
 						label: "Follow",
 						action: this.followRoom
 					},
 
 					androidapp: {
-						text: "Engage on the go",
+						text: "Get messages instantly",
 						label: "Install app",
 						action: this.installApp
 					}
