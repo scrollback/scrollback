@@ -1,6 +1,4 @@
-var log = require("../lib/logger.js");
-module.exports = function(core, config) {
-	log.d("Censor app config: ", config);
+module.exports = function(core) {
 	core.on("getTexts", function(query, next) {
 		if (/^internal/.test(query.session)) return next();
 
