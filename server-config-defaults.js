@@ -109,7 +109,7 @@ var defaults = {
 		path: "/data",
 		disableQueries: true
 	},
-	recommendation:{
+	featured:{
 		redisDB: 13
 	},
 	search:{
