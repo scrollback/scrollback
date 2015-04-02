@@ -2,8 +2,8 @@
 var core = new (require('ebus'))();
 var assert = require('assert');
 var config = require('../server-config-defaults.js');
-require('./recommendation.js')(core, config.recommendation);
-describe('Recommendation tests', function() {
+require('./featured.js')(core, config.featured);
+describe('Featured tests', function() {
 
 	it("getRooms API: (get featured rooms)", function(done) {
 		core.emit("getRooms", {featured: true}, function(err, results) {
