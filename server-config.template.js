@@ -9,12 +9,7 @@ module.exports = {
 	},
 	http: {
 		host: "$branch.stage.scrollback.io",
-		cookieDomain: "localhost",
-		port: "$port",
-		home: "public", // the directory containing static files
-		time: 60000,
-		limit: 30,
-		index: "/me" //index URL redirect
+		port: "$port"
 	},
     "browserid-auth": {
 		audience: "https://$branch.stage.scrollback.io"
