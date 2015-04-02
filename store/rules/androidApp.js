@@ -20,5 +20,5 @@ module.exports = function(core, config, store) {
 		}
 
 		next();
-	}, 900);
+	}, 500);
 };

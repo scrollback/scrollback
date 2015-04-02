@@ -11,6 +11,7 @@ module.exports = function(core, config, store) {
 	require("./rules/ctaFollow.js")(core, config, store);
 	require("./rules/ctaSignIn.js")(core, config, store);
 	require("./rules/dismissCta.js")(core, config, store);
+	require("./rules/dialogSignup.js")(core, config, store);
 	require("./rules/nonExistentRoom.js")(core, config, store);
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/resetDialogState.js")(core, config, store);

@@ -54,7 +54,6 @@ module.exports = function(core, config, store) {
 
 	core.on("statechange", function(changes, next) {
 		var nav = store.get("nav"),
-			user = store.get("user"),
 			dialogStateChanged = false;
 
 		if (changes.nav && changes.nav.dialogState) {
@@ -72,7 +71,7 @@ module.exports = function(core, config, store) {
 
 		if ((nav.dialog !== currentDialog) || (changes.nav &&
 		    (("dialog" in changes.nav && changes.nav.dialog !== nav.dialog) || dialogStateChanged ||
-		     (nav.dialog && changes.nav.dialogUpdate === "true")))) {
+		     (nav.dialog && changes.nav.dialogState)))) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
 			} else if (currentDialog) {
@@ -85,52 +84,22 @@ module.exports = function(core, config, store) {
 				userChangeCallback = null;
 		}
 
-		if (changes.entities && changes.entities[user] && store.getUser().identities) {
-			if (appUtils.isGuest(user)) {
-				// User signs up
-				if (nav.dialog === "createroom" ) {
-					// Trying to create room
-					core.emit("setstate", {
-						nav: { dialogUpdate: "true" }
-					});
-				} else {
-					core.emit("setstate", {
-						nav: { dialog: "signup" }
-					});
-				}
-			} else if (changes.user) {
-				// User signs in
-				if (nav.dialog === "createroom" ) {
-					// Trying to create room
-					core.emit("setstate", {
-						nav: { dialogUpdate: "true" }
-					});
-				} else if (/(signup|signin)/.test(nav.dialog)) {
-					core.emit("setstate", {
-						nav: {
-							dialog: null,
-							dialogState: null,
-							dialogUpdate: null
-						}
-					});
-				}
-			}
-		}
-
 		next();
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),
 			user = store.getUser(),
-			roomName = (nav.dialogState && nav.dialogState.prefill) ? nav.dialogState.prefill : "";
+			signingup = store.get("nav", "dialogState", "signingup"),
+			nonexistent = store.get("nav", "dialogState", "nonexistent"),
+			roomName = store.get("nav", "dialogState", "prefill") || "";
 
 		if (!user.id) {
 			return;
 		}
 
 		if (appUtils.isGuest(user.id)) {
-			if (user.identities && user.identities.length) {
+			if (signingup) {
 				dialog.title = "Create a new room";
 				dialog.content = [
 					"<p><b>Step 1:</b> Choose a username<input type='text' id='createroom-dialog-user' autofocus></p>",
@@ -188,7 +157,7 @@ module.exports = function(core, config, store) {
 				return;
 			}
 		} else {
-			if (nav.dialogState && nav.dialogState.nonexistent) {
+			if (nonexistent) {
 				dialog.title = "There is no room called '" + nav.room + "' :-(";
 				dialog.description = "Would you like to create the room?";
 			} else {
@@ -209,32 +178,28 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("signup-dialog", function(dialog, next) {
-		var user = store.getUser();
+		var signingup = store.get("nav", "dialogState", "signingup");
 
-		if (user.id && appUtils.isGuest(user.id)) {
-			if (user.identities && user.identities.length) {
-				dialog.title = "Finish sign up";
-				dialog.description = "Choose a username";
-				dialog.content = [
-					"<input type='text' id='signup-dialog-user' autofocus>",
-					"<p>Be creative. People in Scrollback will know you by this name.</p>"
-				];
-				dialog.action = {
-					text: "Create account",
-					action: function() {
-						createAndValidate("user", "#signup-dialog-user", this);
-					}
-				};
-			} else {
-				dialog.title = "Sign in to scrollback";
-
-				core.emit("auth", dialog, function() {
-					next();
-				});
-
-				return;
-			}
+		if (signingup) {
+			dialog.title = "Finish sign up";
+			dialog.description = "Choose a username";
+			dialog.content = [
+				"<input type='text' id='signup-dialog-user' autofocus>",
+				"<p>Be creative. People in Scrollback will know you by this name.</p>"
+			];
+			dialog.action = {
+				text: "Create account",
+				action: function() {
+					createAndValidate("user", "#signup-dialog-user", this);
+				}
+			};
 		} else {
+			dialog.title = "Sign in to scrollback";
+
+			core.emit("auth", dialog, function() {
+				next();
+			});
+
 			return;
 		}
 
@@ -243,6 +208,7 @@ module.exports = function(core, config, store) {
 
 	core.on("signin-dialog", function(dialog, next) {
 		var user = store.get("user");
+
 		// Ask users to upgrade their session to unrestricted
 		dialog.title = "Sign in to continue";
 		dialog.dismiss = false;
@@ -256,6 +222,7 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
+
 		if (user && appUtils.isGuest(user)) {
 			core.emit("auth", dialog, function() {
 				next();
@@ -264,7 +231,7 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("disallowed-dialog", function(dialog, next) {
-		dialog.title = "Domain Mismatch";
+		dialog.title = "Domain mismatch";
 		dialog.dismiss = false;
 
 		next();
@@ -282,8 +249,7 @@ module.exports = function(core, config, store) {
 		core.emit("setstate", {
 			nav: {
 				dialog: null,
-				dialogState: null,
-				dialogUpdate: false
+				dialogState: null
 			}
 		});
 
