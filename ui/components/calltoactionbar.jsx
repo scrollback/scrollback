@@ -37,18 +37,30 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		installApp: function() {
+			window.open("https://play.google.com/store/apps/details?id=io.scrollback.app", "_blank");
+
+			this.hideSelf();
+		},
+
 		render: function() {
 			var data = {
 					signin: {
-						text: "Personalize your profile",
-						label: "Sign in",
+						text: "Change your username",
+						label: "Sign up",
 						action: this.showUserMenu
 					},
 
 					follow: {
-						text: "Stay in touch with this room",
+						text: "Stay in touch with " + store.get("nav", "room"),
 						label: "Follow",
 						action: this.followRoom
+					},
+
+					androidapp: {
+						text: "Get messages instantly",
+						label: "Install app",
+						action: this.installApp
 					}
 				},
 				cta;
