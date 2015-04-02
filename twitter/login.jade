@@ -1,6 +1,5 @@
 html
 	head
-		script(src="/s/dist/scripts/post-message-polyfill.min.js")
 		script.
 			var returnStr = "{\"twitter\": {\"username\": !{'\\"' + profile.screen_name + '\\"'}}}";
 			window.opener.postMessage(returnStr, "*");

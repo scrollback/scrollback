@@ -144,13 +144,6 @@ gulp.task("bower", function() {
 	.on("error", onerror);
 });
 
-gulp.task("copylibs", function() {
-	return gulp.src("lib/post-message-polyfill.js")
-	.pipe(buildscripts())
-	.pipe(rename({ suffix: ".min" }))
-	.pipe(gulp.dest(dirs.scripts));
-});
-
 // Copy and minify polyfills
 gulp.task("polyfills", [ "bower" ], function() {
 	return gulp.src(prefix(dirs.bower + "/", [
@@ -198,7 +191,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "copylibs", "bundle", "embed" ]);
+gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
