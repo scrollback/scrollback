@@ -24,7 +24,6 @@ $bar-height: 49px !default;
 		border: 1px solid rgba(0,0,0,.2);
 		border-bottom: none;
 		z-index: 999;
-        will-change: transform;
 
 		&.scrollback-minimized { height: $bar-height; }
 
