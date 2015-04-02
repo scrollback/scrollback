@@ -62,7 +62,7 @@ module.exports = function(core, config, store) {
 		if (textObj.tags && textObj.tags.indexOf("hidden") > -1) {
 			menu.items.unhidemessage = {
 				prio: 500,
-				text: "Unhide Message",
+				text: "Unhide message",
 				action: function() {
 					var tags = (textObj.tags || []).slice(0);
 
@@ -78,7 +78,7 @@ module.exports = function(core, config, store) {
 		} else {
 			menu.items.hidemessage = {
 				prio: 500,
-				text: "Hide Message",
+				text: "Hide message",
 				action: function() {
 					textObj.tags = (textObj.tags || []).slice(0);
 					textObj.tags.push("hidden");
@@ -87,6 +87,51 @@ module.exports = function(core, config, store) {
 						to: room,
 						ref: textObj.id,
 						tags: textObj.tags
+					});
+				}
+			};
+		}
+
+		next();
+	}, 500);
+
+	core.on("thread-menu", function(menu, next) {
+		var threadObj = menu.threadObj,
+			room = store.get("nav", "room"),
+			rel = store.getRelation();
+
+		if (!(rel && (/(owner|moderator)/).test(rel.role) && threadObj)) {
+			return next();
+		}
+
+		if (threadObj.tags && threadObj.tags.indexOf("hidden") > -1) {
+			menu.items.unhidethread = {
+				prio: 500,
+				text: "Unhide discussion",
+				action: function() {
+					var tags = (threadObj.tags || []).slice(0);
+
+					core.emit("edit-up", {
+						to: room,
+						ref: threadObj.id,
+						tags: tags.filter(function(t) {
+							return t !== "hidden";
+						})
+					});
+				}
+			};
+		} else {
+			menu.items.hidethread = {
+				prio: 500,
+				text: "Hide discussion",
+				action: function() {
+					threadObj.tags = (threadObj.tags || []).slice(0);
+					threadObj.tags.push("hidden");
+
+					core.emit("edit-up", {
+						to: room,
+						ref: threadObj.id,
+						tags: threadObj.tags
 					});
 				}
 			};
