@@ -211,11 +211,7 @@ gulp.task("scss", [ "bower" ], function() {
 	return gulp.src(files.scss)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(sourcemaps.init())
-	.pipe(sass({
-		outputStyle: "expanded",
-		lineNumbers: !gutil.env.production,
-		sourceMap: true
-	}))
+	.pipe(sass())
 	.pipe(combinemq())
 	.pipe(!debug ? autoprefixer() : gutil.noop())
 	.pipe(!debug ? minify() : gutil.noop())
