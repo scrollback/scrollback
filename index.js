@@ -1,5 +1,5 @@
 /*
-	Scrollback: Beautiful text chat for your community.
+	Scrollback: Where communities hangout.
 	Copyright (c) 2014 Askabt Pte. Ltd.
 
 This program is free software: you can redistribute it and/or modify it
@@ -18,31 +18,37 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var plugins = ["validator","browserid-auth", "facebook", "featured", "anti-abuse",
-			   "threader", "thread-color", "authorizer", "redis-storage", "storage",
-			   "entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-			   "push-notification", "google"];
+var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
+				"threader", "thread-color", "authorizer", "redis-storage", "storage",
+				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
+				"push-notification", "google" ];
 
-require('newrelic');
-var log = require('./lib/logger.js');
-var config = require("./server-config-defaults.js"),
-    core = new (require('ebus'))(config.appPriorities);
+require("newrelic");
+
+var log = require("./lib/logger.js"),
+	config = require("./server-config-defaults.js"),
+	core = new (require("ebus"))(config.appPriorities);
+
 log.setEmailConfig(config.email);
-
 
 process.title = config.core.name;
 process.env.NODE_ENV = config.env;
-log.w("This is \"" +  process.env.NODE_ENV + "\" server");
+
+log.w("Running in \"" +  process.env.NODE_ENV + "\" environment");
 
 function start(name) {
-	log.i("starting ", name);
-	var plugin = require("./"+name+"/"+name+".js");
-	if(!config[name]) config[name] = {};
+	var plugin = require("./" + name + "/" + name + ".js");
+
+	config[name] = config[name] || {};
 	config[name].global = config.global;
-	plugin(core, config[name] || {});
+
+	log.i("Starting ", name);
+
+	plugin(core, config[name]);
 }
 
 plugins.forEach(function(name) {
 	start(name);
 });
+
 start("http"); // start http app at last
