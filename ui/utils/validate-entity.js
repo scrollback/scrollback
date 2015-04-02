@@ -7,7 +7,7 @@ module.exports = function(core) {
 		var validation;
 
 		if (typeof callback !== "function") {
-			callback = function() {};
+			return;
 		}
 
 		name = (typeof name === "string") ? name.toLowerCase().trim() : "";
