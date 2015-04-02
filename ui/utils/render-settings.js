@@ -102,7 +102,7 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		setPage(dialogState, $page);
+		setPage(dialogState.settingsItem, $page);
 
 		return $page;
 	}
