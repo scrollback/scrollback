@@ -98,8 +98,8 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div className="column sidebar sidebar-left">
-					<div className="sidebar-content" data-mode="home">
-						<div className="profile">
+					<div className="sidebar-content">
+						<div className="profile" data-mode="home">
 
 							<ProfileCard user={store.getUser()} />
 
@@ -124,13 +124,11 @@ module.exports = function(core, config, store) {
 							</div>
 							*/}
 						</div>
-					</div>
 
-					<div className="sidebar-header" data-mode="room chat">
-						<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
-					</div>
+						<div className="sidebar-header" data-mode="room chat">
+							<img className="sidebar-header-logo" src="/s/img/scrollback-logo-white.png" />
+						</div>
 
-					<div className="sidebar-content">
 						{items}
 
 						<div className="room-list" data-mode="room">

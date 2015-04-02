@@ -9,7 +9,9 @@ module.exports = function(core, config, store) {
 		render: function() {
 			return (
 				<div data-mode="room chat" className="column sidebar sidebar-right">
-					<PeopleList />
+					<div className="sidebar-content">
+						<PeopleList />
+					</div>
 				</div>
 			);
 
