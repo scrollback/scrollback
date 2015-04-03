@@ -2,8 +2,9 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var user = changes.user || store.get("user"),
-			cta = (changes.app && changes.app.cta) ? changes.app.cta : store.get("app", "cta");
+		var future = store.with(changes),
+			user = future.get("user"),
+			cta = future.get("app", "cta");
 
 		changes.app = changes.app || {};
 

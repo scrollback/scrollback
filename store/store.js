@@ -208,9 +208,7 @@ Store.prototype.getFeaturedRooms = function() {
 };
 
 module.exports = function(core, config) {
-	var store;
-
-	store = new Store();
+	var store = new Store();
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);
