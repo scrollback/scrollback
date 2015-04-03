@@ -73,7 +73,7 @@ module.exports = function(core, config, store) {
 					} catch(e) {
 						state[section][prop] = {};
 					}
-					
+
 				}
 			}
 		}
@@ -82,7 +82,7 @@ module.exports = function(core, config, store) {
 
 	core.on('statechange', function(changes, next) {
 		var url, params = {}, paramstr = [],
-			state = { nav: store.get("nav"), context: store.getContext() },
+			state = { nav: store.get("nav"), context: store.get("context") },
 			title;
 
 		if (state.nav.mode == 'home') {

@@ -11,7 +11,7 @@ module.exports = function (core, config, store) {
 		}
 		next();
 	}, 850);
-	
+
 
 	function textResponse(err, texts) {
 		var updatingState = {
@@ -41,9 +41,9 @@ module.exports = function (core, config, store) {
 
 	function handleTextChange(newState) {
 		var textRange = newState.nav.textRange || {},
-			thread = (typeof newState.nav.thread !== 'undefined' ? newState.nav.thread : store.getNav("thread")),
+			thread = (typeof newState.nav.thread !== 'undefined' ? newState.nav.thread : store.get("nav", "thread")),
 			/* threads may be in the process of being reset using null; in this case, use null. */
-			roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
+			roomId = (newState.nav.room ? newState.nav.room : store.get("nav", "room")),
 			time = textRange.time || null,
 			r;
 
@@ -58,7 +58,7 @@ module.exports = function (core, config, store) {
 				}, textResponse);
 			}
 		}
-		
+
 		if (textRange.before) {
 			r = store.getTexts(roomId, thread, time, -textRange.before);
 			if (r[0] == "missing") {

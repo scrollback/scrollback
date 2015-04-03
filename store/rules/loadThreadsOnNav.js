@@ -11,17 +11,17 @@ module.exports = function (core, config, store) {
 		}
 		next();
 	}, 850);
-			
-			
+
+
 	function threadResponse(err, threads) {
 		var updatingState = {
 				threads: {}
 			},
 			range = {};
-		
+
 		if (!err && threads.results && threads.results.length) {
 			updatingState.threads[threads.to] = [];
-			
+
 			if (threads.before) {
 				range.end = threads.time;
 				range.start = threads.results[0].startTime;
@@ -33,14 +33,14 @@ module.exports = function (core, config, store) {
 			}
 			range.items = threads.results;
 			updatingState.threads[threads.to].push(range);
-			
+
 			core.emit("setstate", updatingState);
 		}
 	}
 
 	function handleThreadRangeChange(newState) {
 		var threadRange = newState.nav.threadRange,
-			roomId = (newState.nav.room ? newState.nav.room : store.getNav("room")),
+			roomId = (newState.nav.room ? newState.nav.room : store.get("nav", "room")),
 			time = threadRange.time || null,
 			r;
 

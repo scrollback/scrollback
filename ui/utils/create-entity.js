@@ -34,21 +34,21 @@ module.exports = function(core, config, store) {
 					}else{
 						identities = [];
 					}
-					
+
 					newRoom = {
 						id: name,
 						description: "",
 						params: {},
 						guides: {},
-						identities: identities	
+						identities: identities
 					};
 
-					
+
 					if (room) {
 						newRoom.guides = roomObj.guides || {};
 					}
 					if(identities) {
-						context = store.getContext();
+						context = store.get("context");
 						if(context.embed){
 							newRoom.guides.allowedDomains = [context.embed.origin.host];
 						}

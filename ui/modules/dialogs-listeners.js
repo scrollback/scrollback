@@ -55,6 +55,7 @@ module.exports = function(core, config, store) {
 	core.on("statechange", function(changes, next) {
 		var nav = store.get("nav"),
 			user = store.get("user"),
+			userObj = store.getUser(),
 			dialogStateChanged = false;
 
 		if (changes.nav && changes.nav.dialogState) {
@@ -85,7 +86,7 @@ module.exports = function(core, config, store) {
 				userChangeCallback = null;
 		}
 
-		if (changes.entities && changes.entities[user] && store.getUser().identities) {
+		if (changes.entities && changes.entities[user] && userObj && userObj.identities) {
 			if (appUtils.isGuest(user)) {
 				// User signs up
 				if (nav.dialog === "createroom" ) {
