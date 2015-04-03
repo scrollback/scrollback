@@ -228,7 +228,7 @@ function makeSelectQuery(transform) {
 		});
 		sql.push("order by " + orderby.join(','));
 	}
-	sql.push("LIMIT " + transform.iterate.limit);
+	if(transform.iterate.limit) sql.push("LIMIT " + transform.iterate.limit);
 	return {
 		query: sql.join(" "),
 		values: values
@@ -241,19 +241,29 @@ function addFilters(transform, sql, values, i) {
 	if (transform.filters && transform.filters.length) {
 		sql.push("WHERE");
 		transform.filters.forEach(function(filter) {
-			var f = [name(filter[0])];
-			if (filter[1] != 'in') {
-				f.push(getOperatorString(filter[1]));
-				f.push("$" + i);
-				filters.push(f.join(""));
-				values.push(filter[2]);
-				i++;
-			} else { // IN operator. ( IN ('abc', 'cde'))
-				f.push(getOperatorString(filter[1]));
-				var inString = arrayToStringForInOperator(filter[2], i, values);
-				f.push(inString);
-				i += filter[2].length;
-				filters.push(f.join(""));
+			if(typeof filter.length === 'undefined') {
+				// new style { sql, values } filter
+				filters.push(filter.sql.replace(/\$/g, function() {
+						values.push(filter.values.shift());
+						return "$" + (i++);
+				}));
+			} else {
+				log.d("Legacy filter used: ", filter);
+				// old style [ column, op, value] filter
+				var f = [name(filter[0])];
+				if (filter[1] != 'in') {
+					f.push(getOperatorString(filter[1]));
+					f.push("$" + i);
+					filters.push(f.join(""));
+					values.push(filter[2]);
+					i++;
+				} else { // IN operator. ( IN ('abc', 'cde'))
+					f.push(getOperatorString(filter[1]));
+					var inString = arrayToStringForInOperator(filter[2], i, values);
+					f.push(inString);
+					i += filter[2].length;
+					filters.push(f.join(""));
+				}
 			}
 		});
 		sql.push(filters.join(" AND "));
