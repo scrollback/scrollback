@@ -1,30 +1,26 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var future = store.with(changes),
-			mode = future.get("nav", "mode"),
 			room = future.get("nav", "room"),
-			dialog = future.get("nav", "dialog"),
 			roomObj = future.getRoom();
 
-		if (room) {
-			roomObj = (changes.entities && changes.entities[room]) ? changes.entities[room] : store.get("entities", room);
+		if (roomObj === "missing") {
+			changes.nav = changes.nav || {};
 
-			if (roomObj === "missing") {
-				changes.nav = changes.nav || {};
+			if (store.get("nav", "dialog") === "createroom" && changes.nav.dialog === null) {
+				changes.nav.mode = "home";
+			}
 
-				if (changes.nav && changes.nav.dialog === null && dialog === "createroom") {
-					changes.nav.mode = "home";
-				} else if (mode === "room") {
-					changes.nav.dialog = "createroom";
-					changes.nav.dialogState = changes.nav.dialogState || {};
-					changes.nav.dialogState.nonexistent = true;
+			if (store.get("nav", "mode") === "room" || changes.nav.mode === "room") {
+				changes.nav.dialog = "createroom";
+				changes.nav.dialogState = changes.nav.dialogState || {};
+				changes.nav.dialogState.nonexistent = true;
 
-					if (room.indexOf(":") >= 0) {
-						changes.nav.dialogState.prefill = room.substring(room.indexOf(":") + 1);
-						changes.nav.dialogState.roomIdentity = room;
-					} else {
-						changes.nav.dialogState.prefill = room;
-					}
+				if (room.indexOf(":") >= 0) {
+					changes.nav.dialogState.prefill = room.substring(room.indexOf(":") + 1);
+					changes.nav.dialogState.roomIdentity = room;
+				} else {
+					changes.nav.dialogState.prefill = room;
 				}
 			}
 		}
