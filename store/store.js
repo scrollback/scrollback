@@ -23,12 +23,18 @@ var objUtils = require("../lib/obj-utils.js"),
 		}
 	};
 
-function Store(changes) {
-	this._objs = [ state ];
-
-	if (changes) {
-		this._objs.push(changes);
+function Store(objs) {
+	// Handle situation where called without "new" keyword
+	if (false === (this instanceof Store)) {
+		throw new Error("Must be initialized before use");
 	}
+
+	// Throw error if not given an array as argument
+	if (!Array.isArray(objs)) {
+		throw new Error("Invalid array " + objs);
+	}
+
+	this._objs = objs;
 }
 
 Store.prototype.get = function() {
@@ -48,8 +54,12 @@ Store.prototype.get = function() {
 	}
 };
 
-Store.prototype.with = function(changes) {
-	return new Store(changes);
+Store.prototype.with = function(obj) {
+	var objs = this._objs.slice(0);
+
+	objs.push(obj);
+
+	return new Store(objs);
 };
 
 Store.prototype.getEntity = function(id) {
@@ -208,7 +218,7 @@ Store.prototype.getFeaturedRooms = function() {
 };
 
 module.exports = function(core, config) {
-	var store = new Store();
+	var store = new Store([ state ]);
 
 	require("./state-manager.js")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);
