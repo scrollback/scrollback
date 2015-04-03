@@ -35,14 +35,14 @@ Store.prototype.get = function() {
 	var value, arr,
 		args = [].slice.call(arguments);
 
-	for (var i = 0, l = this._objs.length; i < l; i++) {
-		arr = l > 1 ? args.slice(0) : args;
+	for (var i = this._objs.length, l = 0; i > l; i--) {
+		arr = args.slice(0);
 
-		arr.unshift(this._objs[l - 1]);
+		arr.unshift(this._objs[i - 1]);
 
 		value = objUtils.get.apply(null, arr);
 
-		if (typeof value !== undefined) {
+		if (typeof value !== "undefined") {
 			return objUtils.clone(value);
 		}
 	}
