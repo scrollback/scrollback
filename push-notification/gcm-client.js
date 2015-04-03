@@ -26,7 +26,7 @@ module.exports = function(c, conf, st) {
 				console.log("got device details", event);
 				device = event.detail;
 				updateDevice = true;
-				if (store.getApp("connectionStatus") === "online") {
+				if (store.get("app", "connectionStatus") === "online") {
 					saveUser();
 				}
 			});

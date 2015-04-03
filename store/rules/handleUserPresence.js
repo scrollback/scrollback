@@ -42,11 +42,11 @@ module.exports = function(c, conf, s) {
 			}
 			sendBack(roomObj.id);
 		});
-		
+
 		init.memberOf.forEach(function(roomObj) {
 			sendBack(roomObj.id);
 		});
-		
+
 		next();
 	}, 500);
 };
@@ -58,9 +58,9 @@ function enter(roomId) {
 }
 
 function sendBack(roomId) {
-	var listeningRooms = store.getApp("listeningRooms");
+	var listeningRooms = store.get("app", "listeningRooms");
 	if (listeningRooms.indexOf(roomId) < 0) {
-		if (store.getApp("connectionStatus") === "online") {
+		if (store.get("app", "connectionStatus") === "online") {
 			enter(roomId);
 		} else {
 			queueBack.push(roomId);

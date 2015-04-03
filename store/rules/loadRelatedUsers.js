@@ -34,7 +34,7 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 function loadUsersList(roomId) {
 	var occupantList, memberList, done = false,
 		entities = {},
-		listeningRooms = store.getApp("listeningRooms");
+		listeningRooms = store.get("app", "listeningRooms");
 
 	if (listeningRooms.indexOf(roomId) < 0) listeningRooms.push(roomId);
 

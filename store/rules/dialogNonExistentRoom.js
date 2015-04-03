@@ -1,9 +1,10 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var nav = store.get("nav"),
-			mode = (changes.nav && changes.nav.mode) ? changes.nav.mode : nav.mode,
-			room = (changes.nav && changes.nav.room) ? changes.nav.room : nav.room,
-			roomObj;
+		var future = store.with(changes),
+			mode = future.get("nav", "mode"),
+			room = future.get("nav", "room"),
+			dialog = future.get("nav", "dialog"),
+			roomObj = future.getRoom();
 
 		if (room) {
 			roomObj = (changes.entities && changes.entities[room]) ? changes.entities[room] : store.get("entities", room);
@@ -11,7 +12,7 @@ module.exports = function(core, config, store) {
 			if (roomObj === "missing") {
 				changes.nav = changes.nav || {};
 
-				if (changes.nav && changes.nav.dialog === null && nav.dialog === "createroom") {
+				if (changes.nav && changes.nav.dialog === null && dialog === "createroom") {
 					changes.nav.mode = "home";
 				} else if (mode === "room") {
 					changes.nav.dialog = "createroom";

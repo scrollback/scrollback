@@ -47,11 +47,10 @@ module.exports = function(core, config, store) {
 					if (room) {
 						newRoom.guides = roomObj.guides || {};
 					}
-
 					if (identities) {
-						context = store.getContext();
+						context = store.get("context");
 
-						if (context.embed) {
+						if (context.embed){
 							newRoom.guides.allowedDomains = [context.embed.origin.host];
 						}
 					}

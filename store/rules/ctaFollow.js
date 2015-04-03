@@ -2,17 +2,12 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var user = changes.user || store.get("user"),
-			room = (changes.nav && changes.nav.room) ? changes.nav.room : store.get("nav", "room"),
-			mode = (changes.nav && changes.nav.mode) ? changes.nav.mode : store.get("nav", "mode"),
-			cta = (changes.app && changes.app.cta) ? changes.app.cta : store.get("app", "cta"),
-			rel;
-
-		if (changes.entities) {
-			rel = changes.entities[room + "_" + user];
-		}
-
-		rel = rel || store.getRelation(room, user) || {};
+		var future = store.with(changes),
+			user = future.get("user"),
+			room = future.get("nav", "room"),
+			mode = future.get("nav", "mode"),
+			cta = future.get("app", "cta"),
+			rel = future.getRelation(room, user) || {};
 
 		changes.app = changes.app || {};
 

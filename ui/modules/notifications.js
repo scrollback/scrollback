@@ -90,7 +90,7 @@ module.exports = function(core, config, store) {
 				browserNotify(text.text, true, sound);
 			}
 
-			if (store.getUser().params.notifications.desktop) {
+			if (user.params.notifications.desktop) {
 				desktopnotify.show({
 					title: "New mention in " + text.to,
 					body: (text.from ? text.from.replace(/^guest-/, "") + ": " : "") + text.text,

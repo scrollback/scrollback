@@ -3,8 +3,9 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var ua = navigator.userAgent.toLowerCase(),
-			env = (changes.context && changes.context.env) ? changes.context.env : store.get("context", "env"),
-			cta = (changes.app && changes.app.cta) ? changes.app.cta : store.get("app", "cta");
+			future = store.with(changes),
+			env = future.get("context", "env"),
+			cta = future.get("app", "cta");
 
 		changes.app = changes.app || {};
 
