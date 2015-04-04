@@ -15,7 +15,8 @@ module.exports = function(core, config, store) {
 
 		if (type === "room") {
 			validateEntity("Room", name, function(res, name) {
-				var room, roomObj, newRoom, identities, context;
+				var room, roomObj, newRoom, identities, context,
+					nav = store.get("nav");
 
 				if (res === "wait") {
 					return callback("wait");
@@ -28,8 +29,8 @@ module.exports = function(core, config, store) {
 				if (res === "ok") {
 					room = store.get("nav", "room");
 					roomObj = store.getRoom(room);
-					if(store.getNav("dialogState").roomIdentity){
-						identities = [store.getNav("dialogState").roomIdentity];
+					if(nav.dialogState && nav.dialogState.roomIdentity ){
+						identities = [nav.dialogState.roomIdentity];
 					}else{
 						identities = [];
 					}

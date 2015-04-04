@@ -7,7 +7,10 @@ module.exports = function(core, config, store) {
 	require("./rules/resetNavRanges.js")(core, config, store);
 	require("./rules/loadTextsOnNav.js")(core, config, store);
 	require("./rules/loadThreadsOnNav.js")(core, config, store);
-	require("./rules/callToAction.js")(core, config, store);
+	require("./rules/ctaDownloadApp.js")(core, config, store);
+	require("./rules/ctaFollow.js")(core, config, store);
+	require("./rules/ctaSignIn.js")(core, config, store);
+	require("./rules/dismissCta.js")(core, config, store);
 	require("./rules/nonExistentRoom.js")(core, config, store);
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/resetDialogState.js")(core, config, store);

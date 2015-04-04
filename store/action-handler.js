@@ -197,24 +197,32 @@ function onTextDn(text, next) {
 	next();
 }
 
-function onEdit (editDn, next) {
-	var newText = editDn.old, textRange, key, newState;
-	newText.tags = editDn.tags;
+function onEdit (edit, next) {
+	var text, thread, changes = {},
+		pleb = ["moderator", "owner"].indexOf(store.getRelation().role) >= 0;
+	
+	text = store.get("indexes", "textsById", edit.ref);
+	thread = store.get("indexes", "threadsById", edit.ref);
+	
+	if(text) {
+		if(edit.tags) text.tags = edit.tags;
+		if(edit.text) text.text = edit.text;
+		changes.texts[keyFromText(text)] = [{
+			start: text.time, end: text.time,
+			items: pleb && text.tags.indexOf("hidden")>=0? []: [text]
+		}];
+	}
+	
+	if(thread) {
+		if(edit.tags) thread.tags = edit.tags;
+		if(edit.title) thread.title = edit.title;
+		changes.threads[thread.to] = [{
+			start: thread.startTime, end: thread.startTime,
+			items: pleb && thread.tags.indexOf("thread-hidden")>=0? []: [thread]
+		}];
+	}
 
-	textRange = {
-		start: newText.time,
-		end: newText.time,
-		items: [newText]
-	};
-
-	key = keyFromText(newText);
-	newState = {
-		texts:{}
-	};
-
-	newState.texts[newText.to] = [textRange];
-	newState.texts[key] = [textRange];
-	core.emit("setstate", newState);
+	core.emit("setstate", changes);
 	next();
 }
 

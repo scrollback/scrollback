@@ -6,10 +6,6 @@ module.exports = function(core, config, store) {
 		mode = (changes.nav && changes.nav.mode) ? changes.nav.mode : nav.mode;
 		room = (changes.nav && changes.nav.room) ? changes.nav.room : nav.room;
 
-		if (!/(chat|room)/.test(mode)) {
-			return next();
-		}
-
 		if (room) {
 			roomObj = (changes.entities && changes.entities[room]) ? changes.entities[room] : store.get("entities", room);
 
@@ -20,11 +16,14 @@ module.exports = function(core, config, store) {
 					changes.nav.mode = "home";
 				} else {
 					changes.nav.dialog = "createroom";
-					if (!changes.nav.dialogState) changes.nav.dialogState = {};
+					changes.nav.dialogState = changes.nav.dialogState || {};
 					changes.nav.dialogState.nonexistent = true;
-					if (room.indexOf(":")>=0) {
+
+					if (room.indexOf(":") >= 0) {
 						changes.nav.dialogState.prefill = room.substring(room.indexOf(":")+1);
 						changes.nav.dialogState.roomIdentity = room;
+					} else {
+						changes.nav.dialogState.prefill = room;
 					}
 				}
 			}
