@@ -37,9 +37,75 @@ function Store(objs) {
 	this._objs = objs;
 }
 
+Store.prototype.mergeMethods = {
+	texts: function(baseTexts, texts) {
+		var rooms = Object.keys(texts),
+			ranges;
+
+		rooms.forEach(function(roomThread) {
+			ranges = objUtils.get(baseTexts, "texts", roomThread);
+
+			if (!ranges) {
+				ranges = baseTexts[roomThread] = [];
+			}
+
+			if (texts[roomThread].length) {
+				texts[roomThread].forEach(function(newRange) {
+					baseTexts[roomThread] = rangeOps.merge(ranges, newRange, "time");
+				});
+			}
+		});
+
+		return baseTexts;
+	},
+
+	threads: function(baseThreads, threads) {
+		var rooms = Object.keys(threads),
+			ranges;
+
+		rooms.forEach(function(roomId) {
+			ranges = objUtils.get(baseThreads, "threads", roomId);
+
+			if (!ranges) {
+				ranges = baseThreads[roomId] = [];
+			}
+
+			if (threads[roomId].length) {
+				threads[roomId].forEach(function(newRange) {
+					baseThreads[roomId] = rangeOps.merge(ranges, newRange, "startTime");
+				});
+			}
+		});
+
+		return baseThreads;
+	}
+};
+
+Store.prototype.merge = function(section) {
+	this._merged = this._merged || [];
+
+	if (this._merged.indexOf(section) === -1 && typeof this.mergeMethods[section] === "function") {
+		for (var i = 1, l = this._objs.length; i < l; i++) {
+			if (this._objs[i] && this._objs[i][section]) {
+				this._objs[0][section] = this.mergeMethods[section](this._objs[0][section], this._objs[i][section]);
+			}
+		}
+	}
+
+	this._merged.push(section);
+};
+
 Store.prototype.get = function() {
 	var value, arr,
 		args = [].slice.call(arguments);
+
+	if (typeof this.mergeMethods[args[0]] === "function") {
+		this.merge(args[0]);
+
+		args.unshift(this._objs[0]);
+
+		return objUtils.get.apply(null, args);
+	}
 
 	for (var i = this._objs.length, l = 0; i > l; i--) {
 		arr = args.slice(0);
@@ -49,7 +115,7 @@ Store.prototype.get = function() {
 		value = objUtils.get.apply(null, arr);
 
 		if (typeof value !== "undefined") {
-			return objUtils.clone(value);
+			return value;
 		}
 	}
 };
@@ -171,6 +237,7 @@ Store.prototype.getRelatedUsers = function(id, filter) {
 	}
 
 	users = this.get("indexes", "roomUsers", roomId);
+
 	if (users) {
 		users = users.filter(function(relation) {
 			var userObj, filterKeys, i;

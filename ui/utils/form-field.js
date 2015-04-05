@@ -25,7 +25,7 @@ var formField = function(label, type, id, value) {
 		case "check":
 			$input = $("<div>");
 
-			if (value instanceof Array) {
+			if (Array.isArray(value)) {
 				for (i = 0; i < value.length; i++) {
 					$("<div>").addClass("check-item").append($("<input>").attr({
 							type: "checkbox",
@@ -46,7 +46,7 @@ var formField = function(label, type, id, value) {
 		case "radio":
 			$input = $("<div>");
 
-			if (value instanceof Array) {
+			if (Array.isArray(value)) {
 				for (i = 0; i < value.length; i++) {
 					$("<div>").addClass("radio-item").append($("<input>").attr({
 							type: "radio",

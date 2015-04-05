@@ -63,7 +63,7 @@ function bundle(files, opts) {
 
 	opts = opts || {};
 
-	if (files && files instanceof Array) {
+	if (Array.isArray(files)) {
 		for (var i = 0, l = files.length; i < l; i++) {
 			if (typeof files[i] === "string") {
 				streams.push(bundler(files[i]));
@@ -80,7 +80,7 @@ function bundle(files, opts) {
 function prefix(str, arr, extra) {
 	var prefixed = [];
 
-	if (!(arr && arr instanceof Array)) {
+	if (!Array.isArray(arr)) {
 		return arr;
 	}
 
@@ -89,7 +89,7 @@ function prefix(str, arr, extra) {
 	}
 
 	if (extra) {
-		if (extra instanceof Array) {
+		if (Array.isArray(extra)) {
 			prefixed.concat(extra);
 		} else {
 			prefixed.push(extra);
