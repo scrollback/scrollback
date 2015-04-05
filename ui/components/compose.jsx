@@ -90,6 +90,7 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var connection = store.get("app", "connectionStatus"),
+				autofocus = !(store.get("context", "embed")),
 				placeholder, disabled;
 
 			if (connection === "connecting") {
@@ -106,9 +107,9 @@ module.exports = function(core, config, store) {
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<TextArea autoFocus placeholder={placeholder} disabled={disabled} tabIndex="1"
+						<TextArea autoFocus={autofocus} placeholder={placeholder} disabled={disabled}
 								  onKeyDown={this.onKeyDown} ref="composeBox"
-								  className="chat-area-input-entry" />
+								  tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
