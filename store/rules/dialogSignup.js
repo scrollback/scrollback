@@ -2,15 +2,10 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var dialog = (changes.nav && changes.nav.dialog) ? changes.nav.dialog : store.get("nav", "dialog"),
-			userId = changes.user || store.get("user"),
-			userObj;
-
-		if (changes.entities) {
-			userObj = changes.entities[userId];
-		}
-
-		userObj = userObj || store.getUser("userId");
+		var future = store.with(changes),
+			dialog = future.get("nav", "dialog"),
+			userId = future.get("user"),
+			userObj = future.getUser(userId);
 
 		changes.nav = changes.nav || {};
 		changes.nav.dialogState = changes.nav.dialogState || {};
