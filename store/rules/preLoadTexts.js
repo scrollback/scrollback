@@ -15,14 +15,9 @@ module.exports = function(c, conf, s) {
 			current = store.get(),
 			threadRanges;
 		
-		if(
+		if (
 			(changes.nav && changes.nav.mode ||
-			current.nav && current.nav.mode) == "room" && // don’t bother except in the room mode
-			(
-				changes.threads && changes.threads[room] || // either the threads have changed, or
-				changes.nav && (room = changes.nav.room) && // we are switching rooms, whose
-				current.threads && current.threads[room] // threads were previously loaded
-			)
+			current.nav && current.nav.mode) == "room" // don’t bother except in the room mode
 		) {
 			threadRanges = [].concat(
 				changes.threads && changes.threads[room] || [],
@@ -32,11 +27,20 @@ module.exports = function(c, conf, s) {
 			threadRanges.forEach(function(threadRange) {
 				if(threadRange.items && threadRange.items.length) {
 					threadRange.items.forEach(function(threadObj) {
+						if(store.getTexts(room, threadObj.id, null, -3)[0] !== "missing") return;
 						query(room + '_' + threadObj.id);
 					});
 				}
 			});
-		}
+		} else {
+//        	console.log("Decided not to get texts",
+//				changes.nav && changes.nav.mode,
+//				current.nav && current.nav.mode,
+//				changes.threads && changes.threads[store.getNav("room")],
+//				changes.nav && changes.nav.room,
+//				current.threads && current.threads[changes.nav && changes.nav.room]
+//			);
+        }
 		
 		next();
 	}, 800);

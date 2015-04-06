@@ -104,7 +104,7 @@ module.exports = function(core, config, store) {
 			return next();
 		}
 
-		if (threadObj.tags && threadObj.tags.indexOf("hidden") > -1) {
+		if (threadObj.tags && threadObj.tags.indexOf("thread-hidden") > -1) {
 			menu.items.unhidethread = {
 				prio: 500,
 				text: "Unhide discussion",
@@ -115,8 +115,9 @@ module.exports = function(core, config, store) {
 						to: room,
 						ref: threadObj.id,
 						tags: tags.filter(function(t) {
-							return t !== "hidden";
-						})
+							return t !== "thread-hidden";
+						}),
+						color: threadObj.color // Ugly hack around lack of color info on a discussion
 					});
 				}
 			};
@@ -126,12 +127,13 @@ module.exports = function(core, config, store) {
 				text: "Hide discussion",
 				action: function() {
 					threadObj.tags = (threadObj.tags || []).slice(0);
-					threadObj.tags.push("hidden");
+					threadObj.tags.push("thread-hidden");
 
 					core.emit("edit-up", {
 						to: room,
 						ref: threadObj.id,
-						tags: threadObj.tags
+						tags: threadObj.tags,
+						color: threadObj.color
 					});
 				}
 			};
