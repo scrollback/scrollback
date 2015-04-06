@@ -318,7 +318,8 @@ body {
     width: 100%;
 
     &-iframe {
-        height: 36em;
+        min-height: 36em;
+        height: 70%;
         border: 0;
     }
 
