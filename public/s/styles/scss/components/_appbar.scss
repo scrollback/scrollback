@@ -56,16 +56,6 @@
             }
         }
 
-        &-avatar {
-            float: left;
-            margin: .5em 1em;
-            height: $bar-height - 1em;
-            width: $bar-height - 1em;
-            border-radius: 50%;
-            border: 2px solid $light-color;
-            cursor: pointer;
-        }
-
         &-icon {
             $icon-width: $bar-height / 1.5;
 

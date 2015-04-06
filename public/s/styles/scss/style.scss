@@ -41,6 +41,7 @@
 @import "components/markdown";
 @import "components/settingspage";
 @import "components/scrollto";
+@import "components/userarea";
 @import "components/calltoactionbar";
 @import "components/tip";
 
@@ -166,22 +167,22 @@ body {
         position: relative;
         height: 100%;
         width: 8em;
-        width: calc(100% - 14em);
+        width: calc(100% - 16em);
         float: left;
 
         @media #{$screenx} {
             width: 11em;
-            width: calc(100% - 14em);
+            width: calc(100% - 16em);
         }
 
         @media #{$screenxxx} {
             width: 18em;
-            width: calc(100% - 14em);
+            width: calc(100% - 26em);
         }
 
         @media #{$screenxxxx} {
             width: 30em;
-            width: calc(100% - 14em);
+            width: calc(100% - 26em);
         }
 
         .appbar-title {
@@ -207,6 +208,12 @@ body {
         @media #{$screenxxxxx} {
             .appbar-icon-people { display: none; }
         }
+    }
+
+    .user-area-nick {
+        display: none;
+
+        @media #{$screenxxx} { display: block; }
     }
 }
 

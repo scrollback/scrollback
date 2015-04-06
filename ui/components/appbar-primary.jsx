@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 var showMenu = require("../utils/show-menu.js"),
+	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
 
@@ -74,12 +75,13 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var user = store.getUser(),
-				threadObj, nav, relation, title,
+				threadObj, nav, relation, title, username,
 				classNames = "appbar-icon appbar-icon-follow";
 
 			nav = store.get("nav");
 			user = store.getUser() || {};
 			relation = store.getRelation();
+			username = appUtils.formatUserName(user.id);
 
 			switch (nav.mode) {
 			case "room":
@@ -104,7 +106,10 @@ module.exports = function(core, config, store) {
 						<img className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo.png" />
 						<h1 className="appbar-title appbar-title-primary">{title}</h1>
 					</div>
-					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
+					<div className="user-area" onClick={this.showUserMenu}>
+						<img className="user-area-avatar" alt={username} src={getAvatar(user.picture, 48)} />
+						<div className="user-area-nick">{username}</div>
+					</div>
 					{/* <img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} /> */}
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
