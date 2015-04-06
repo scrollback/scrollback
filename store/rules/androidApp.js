@@ -11,7 +11,7 @@ module.exports = function(core, config, store) {
 
 			if (user && appUtils.isGuest(user)) {
 				changes.nav.dialog = "signin";
-				if(!changes.nav.dialogState) changes.nav.dialogState = {};
+				changes.nav.dialogState = changes.nav.dialogState || {};
 				changes.nav.dialogState.mobileApp = true;
 			} else if (dialog === "signin") {
 				changes.nav.dialog = null;
@@ -20,5 +20,5 @@ module.exports = function(core, config, store) {
 		}
 
 		next();
-	}, 100);
+	}, 900);
 };
