@@ -90,7 +90,7 @@ module.exports = function(core, config, store) {
 			if (/^(room|user)$/.test(state)) {
 				continue;
 			}
-			
+
 			dialogState = dialogState || {};
 
 			dialogState.settingsItem = dialogState.settingsItem || state;

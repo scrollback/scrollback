@@ -41,6 +41,7 @@
 @import "components/markdown";
 @import "components/settingspage";
 @import "components/scrollto";
+@import "components/banner";
 @import "components/userarea";
 @import "components/calltoactionbar";
 @import "components/tip";
@@ -312,29 +313,6 @@ body {
     @include dropshadow(2);
 
     background-color: $light-color;
-}
-
-.banner {
-    width: 100%;
-
-    &-iframe {
-        min-height: 36em;
-        height: 70%;
-        border: 0;
-    }
-
-    &-form-container {
-        background-color: $light-color;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    &-form {
-        width: 36em;
-        max-width: 100%;
-        margin: auto;
-        padding: 1em;
-        text-align: center;
-    }
 }
 
 .thread-list-empty {

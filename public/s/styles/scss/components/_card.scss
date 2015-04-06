@@ -86,8 +86,10 @@
                 height: 8em;
                 width: 8em;
                 margin: 2em;
-                border-radius: 50%;
+                background-size: 100%;
                 background-size: cover;
+                background-position: center center;
+                border-radius: 50%;
                 box-shadow: 0 0 0 2px rgba(255,255,255,.5);
             }
 
