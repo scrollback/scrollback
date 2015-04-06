@@ -22,7 +22,7 @@ module.exports = function(core, config, store) {
 		},
 
 		onSubmit: function(e) {
-			var roomNameEntry = this.refs.roomNameEntry.getDOMNode(),
+			var roomNameEntry = React.findDOMNode(this.refs.roomNameEntry),
 				roomName;
 
 			e.preventDefault();
@@ -69,21 +69,17 @@ module.exports = function(core, config, store) {
 			} else if (mode === "home") {
 				user = store.get("user");
 
-				if (user && store.get("context", "env") !== "android" && appUtils.isGuest(user)) {
-					return <iframe className="banner banner-iframe" src="https://scrollback.github.io/static/banner.html"></iframe>;
-				} else {
-					if (user && !appUtils.isGuest(user)) {
-						userObj = store.getUser();
+				if (user && !appUtils.isGuest(user)) {
+					userObj = store.getUser();
 
-						items.push(
-						        <div className="banner-cover" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 24) + ")" }} key="banner-cover">
-									<div className="banner-cover-logo" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 128) + ")" }}></div>
-										<h3 className="banner-cover-title">{userObj.id}</h3>
-										<p className="banner-cover-description">{userObj.description || "This user has no description."}</p>
-										<a className="button banner-cover-button" onClick={this.showUserSettings}>Configure account</a>
-						        </div>
-						          );
-					}
+					items.push(
+					        <div className="banner-cover" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 24) + ")" }} key="banner-cover">
+								<div className="banner-cover-logo" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 128) + ")" }}></div>
+									<h3 className="banner-cover-title">{userObj.id}</h3>
+									<p className="banner-cover-description">{userObj.description || "This user has no description."}</p>
+									<a className="button banner-cover-button" onClick={this.showUserSettings}>Configure account</a>
+					        </div>
+					          );
 
 					items.push(
 							<div className="banner-form-container" key="banner-form">

@@ -2,6 +2,37 @@
     .banner {
         width: 100%;
 
+        &-landing {
+            display: table;
+            table-layout: fixed;
+            height: 100%;
+            width: 100%;
+            background-image: url(https://scrollback.github.io/static/assets/banner/banner.png);
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            color: $light-color;
+            min-height: 36em;
+            height: 70%;
+
+            &-content {
+                display: table-cell;
+                vertical-align: middle;
+                height: 100%;
+                width: 100%;
+
+                &-inner {
+                    max-width: 27em;
+                    margin: auto;
+                    padding: 1em;
+                }
+            }
+
+            &-form {
+                input { border: 0; }
+            }
+        }
+
         &-cover {
             @extend %clearfix;
 
@@ -38,12 +69,6 @@
 
                 &:active { background-color: rgba(255, 255, 255, .5); }
             }
-        }
-
-        &-iframe {
-            min-height: 36em;
-            height: 70%;
-            border: 0;
         }
 
         &-form-container {

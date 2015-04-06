@@ -2,6 +2,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Landing = require("./landing.jsx")(core, config, store),
 		Banner = require("./banner.jsx")(core, config, store),
 		AppbarPrimary = require("./appbar-primary.jsx")(core, config, store),
 		CallToActionBar = require("./calltoactionbar.jsx")(core, config, store),
@@ -45,6 +46,9 @@ module.exports = function(core, config, store) {
 
 							<div className="main-content" data-mode="home search room">
 								<div className="main-content-inner-wrap">
+
+									<Landing />
+
 									<Banner />
 
 									<div className="main-content-inner">
