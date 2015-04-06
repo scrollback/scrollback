@@ -41,15 +41,20 @@
             text-overflow: ellipsis;
             font-weight: 700;
 
-            &-logotype { padding: .75em; }
+            &-logotype {
+                float: left;
+                padding: .75em;
+            }
 
             &-primary {
+                float: left;
                 line-height: $bar-height / 1.2;
                 font-size: 1.2em;
                 padding: 0 (.25em / 1.2);
             }
 
             &-secondary {
+                float: left;
                 line-height: $bar-height;
                 font-size: 1em;
                 padding: 0 .25em;
