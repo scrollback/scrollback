@@ -84,21 +84,8 @@ body {
         &:active { background-color: darken($light-color, 10%); }
     }
 
-    &-left {
-        .card-header { border-bottom: none; }
-
-        .list-section { background-color: transparent; }
-
-        .list-item {
-            opacity: .75;
-            border-bottom: 0;
-
-            &:focus, &:hover, &:active { opacity: 1; }
-        }
-    }
-
     &-right {
-        @media #{$screenxxxxx}  {
+        @media #{$screenxxxx}  {
             .searchbar {
                 @include transition(.3s $easeOutQuad);
                 @include flex-shrink(0);
@@ -115,9 +102,7 @@ body {
         }
     }
 
-    &-signin-button { width: 100%; }
-
-    &-room-list, &-people-list {
+    &-people-list {
         @include flexbox;
         @include flex-direction(column);
         @include flex-wrap(nowrap);
@@ -143,31 +128,6 @@ body {
     }
 
     .list-header { opacity: .5; }
-
-    .card-header-icon-more { display: none; }
-}
-
-.sidebar-header {
-    @extend %clearfix;
-    @include transition(.3s $easeOutQuad);
-    @include flex-shrink(0);
-    @include dropshadow(2);
-
-    color: $light-color;
-    background-color: $accent-color;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: inset -1px 0 0 rgba(0,0,0,0.06);
-
-    @for $i from 1 through length($palette) {
-        .color-#{$i - 1} & { background-color: nth($palette, $i); }
-    }
-
-    &-logo {
-        float: left;
-        display: block;
-        margin: .75em;
-    }
 }
 
 %embed-active {

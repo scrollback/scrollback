@@ -33,12 +33,12 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			// var user = store.get("user");
+			var user = store.get("user");
 
 			if (store.get("nav", "mode") === "home") {
-				// if (user && store.get("context", "env") !== "android" && appUtils.isGuest(user)) {
-				// 	return <iframe className="banner banner-iframe" src="https://scrollback.github.io/static/banner.html"></iframe>;
-				// } else {
+				if (user && store.get("context", "env") !== "android" && appUtils.isGuest(user)) {
+					return <iframe className="banner banner-iframe" src="https://scrollback.github.io/static/banner.html"></iframe>;
+				} else {
 					return (
 					        <div className="banner banner-form-container">
 								<form className="banner-form" onSubmit={this.onSubmit}>
@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 								</form>
 					        </div>
 					        );
-				// }
+				}
 			} else {
 				return <div />;
 			}

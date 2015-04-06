@@ -41,6 +41,8 @@
             text-overflow: ellipsis;
             font-weight: 700;
 
+            &-logotype { padding: .75em; }
+
             &-primary {
                 line-height: $bar-height / 1.2;
                 font-size: 1.2em;
