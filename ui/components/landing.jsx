@@ -44,7 +44,7 @@ module.exports = function(core, config, store) {
 									<img src="http://scrollback.github.io/static/assets/banner/scrollback-large.png" />
 									<h2>Where communities hang out</h2>
 									<form className="banner-landing-form" onSubmit={this.onSubmit}>
-										<input ref="roomNameEntry" type="text" className="linked go-to-room" placeholder="Go to Room" autofocus />
+										<input ref="roomNameEntry" type="text" className="linked go-to-room" placeholder="Type a room name" autofocus />
 										<input type="submit" className="linked" value="Go" />
 									</form>
 								</div>
