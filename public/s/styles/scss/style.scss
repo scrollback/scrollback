@@ -154,6 +154,10 @@ body {
         @extend %embed-active;
 
         &:not(:focus):not(:hover):not(:active) { @extend %embed-inactive; }
+
+        &.mode-room {
+            .appbar-icon-back { display: none; }
+        }
     }
 }
 
