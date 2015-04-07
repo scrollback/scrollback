@@ -54,7 +54,7 @@
 
             .view-sidebar-right & { @include transform(translate3d(0,0,0)); }
 
-            @media #{$screenxxxxx}  {
+            @media #{$screenxxxx}  {
                 @include transform(translate3d(0,0,0));
 
                 position: relative;

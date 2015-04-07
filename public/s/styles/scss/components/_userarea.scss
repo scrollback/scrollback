@@ -1,0 +1,37 @@
+@include exports("userarea") {
+    .user-area {
+        @extend %clearfix;
+
+        float: right;
+        padding: .5em;
+        cursor: pointer;
+
+        &:hover, &:focus {
+            background-color: rgba(0,0,0,0.1);
+            color: inherit;
+        }
+
+        &:active, &.popover-active {
+            background-color: rgba(0,0,0,0.2);
+            color: inherit;
+        }
+
+        &-nick {
+            float: left;
+            margin: .5em;
+            max-width: 8em;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        &-avatar {
+            float: right;
+            height: $bar-height - 1em;
+            width: $bar-height - 1em;
+            margin: 0 .5em;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+        }
+    }
+}

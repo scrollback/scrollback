@@ -71,7 +71,6 @@
             @extend %clearfix;
 
             height: 12em;
-            background-image: url("https://ununsplash.imgix.net/photo-1416339684178-3a239570f315?fit=crop&fm=jpg&h=800&q=75&w=1050");
             background-size: 100%;
             background-size: cover;
             background-position: center center;
@@ -87,10 +86,11 @@
                 height: 8em;
                 width: 8em;
                 margin: 2em;
-                border-radius: 50%;
-                background-image: url(https://unsplash.imgix.net/photo-1415226581130-91cb7f52f078?fit=crop&fm=jpg&h=800&q=75&w=1050);
+                background-size: 100%;
                 background-size: cover;
-                box-shadow: 0 0 0 2px rgba(255,255,255,.5)
+                background-position: center center;
+                border-radius: 50%;
+                box-shadow: 0 0 0 2px rgba(255,255,255,.5);
             }
 
             &-title {
