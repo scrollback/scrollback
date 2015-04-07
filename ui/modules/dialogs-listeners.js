@@ -52,7 +52,7 @@ module.exports = function(core, config, store) {
 		if (changes.nav && changes.nav.dialogState) {
 			if (nav.dialogState) {
 				for (var prop in changes.nav.dialogState) {
-					if (changes.nav.dialogState[prop] !== nav.dialogState[prop]) {
+					if ((changes.nav.dialogState[prop] || nav.dialogState[prop]) && (changes.nav.dialogState[prop] !== nav.dialogState[prop])) {
 						dialogStateChanged = true;
 						break;
 					}
