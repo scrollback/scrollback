@@ -44,7 +44,7 @@ module.exports = function(c, conf) {
 						if (err || !data) return callback(err);
 
 						if (!data.results.length) {
-							action.old = action.user;
+							action.old = {};
 							action.user = {};
 							action.user.id = action.old.id;
 							action.user.identities = ["mailto:" + body.email];
