@@ -209,7 +209,7 @@ function storeInit(conn, init) {
 		sConns[init.session].forEach(function(c) {
 			var index;
 
-			if (uConns[init.old.id]) {
+			if (init.old.id !== init.user.id && uConns[init.old.id]) {
 				index = uConns[init.old.id].indexOf(c);
 				uConns[init.old.id].splice(index, 1);
 			}
