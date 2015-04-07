@@ -41,6 +41,8 @@
 @import "components/markdown";
 @import "components/settingspage";
 @import "components/scrollto";
+@import "components/banner";
+@import "components/userarea";
 @import "components/calltoactionbar";
 @import "components/tip";
 
@@ -84,21 +86,8 @@ body {
         &:active { background-color: darken($light-color, 10%); }
     }
 
-    &-left {
-        .card-header { border-bottom: none; }
-
-        .list-section { background-color: transparent; }
-
-        .list-item {
-            opacity: .75;
-            border-bottom: 0;
-
-            &:focus, &:hover, &:active { opacity: 1; }
-        }
-    }
-
     &-right {
-        @media #{$screenxxxxx}  {
+        @media #{$screenxxxx}  {
             .searchbar {
                 @include transition(.3s $easeOutQuad);
                 @include flex-shrink(0);
@@ -115,9 +104,7 @@ body {
         }
     }
 
-    &-signin-button { width: 100%; }
-
-    &-room-list, &-people-list {
+    &-people-list {
         @include flexbox;
         @include flex-direction(column);
         @include flex-wrap(nowrap);
@@ -143,31 +130,6 @@ body {
     }
 
     .list-header { opacity: .5; }
-
-    .card-header-icon-more { display: none; }
-}
-
-.sidebar-header {
-    @extend %clearfix;
-    @include transition(.3s $easeOutQuad);
-    @include flex-shrink(0);
-    @include dropshadow(2);
-
-    color: $light-color;
-    background-color: $accent-color;
-    width: 100%;
-    cursor: pointer;
-    box-shadow: inset -1px 0 0 rgba(0,0,0,0.06);
-
-    @for $i from 1 through length($palette) {
-        .color-#{$i - 1} & { background-color: nth($palette, $i); }
-    }
-
-    &-logo {
-        float: left;
-        display: block;
-        margin: .75em;
-    }
 }
 
 %embed-active {
@@ -192,6 +154,10 @@ body {
         @extend %embed-active;
 
         &:not(:focus):not(:hover):not(:active) { @extend %embed-inactive; }
+
+        &.mode-room {
+            .appbar-icon-back { display: none; }
+        }
     }
 }
 
@@ -206,22 +172,22 @@ body {
         position: relative;
         height: 100%;
         width: 8em;
-        width: calc(100% - 14em);
+        width: calc(100% - 16em);
         float: left;
 
         @media #{$screenx} {
             width: 11em;
-            width: calc(100% - 14em);
+            width: calc(100% - 16em);
         }
 
         @media #{$screenxxx} {
             width: 18em;
-            width: calc(100% - 14em);
+            width: calc(100% - 26em);
         }
 
         @media #{$screenxxxx} {
             width: 30em;
-            width: calc(100% - 14em);
+            width: calc(100% - 26em);
         }
 
         .appbar-title {
@@ -244,9 +210,15 @@ body {
             .appbar-title-container { margin-left: 1em; }
         }
 
-        @media #{$screenxxxxx} {
+        @media #{$screenxxxx} {
             .appbar-icon-people { display: none; }
         }
+    }
+
+    .user-area-nick {
+        display: none;
+
+        @media #{$screenxxx} { display: block; }
     }
 }
 
@@ -345,28 +317,6 @@ body {
     @include dropshadow(2);
 
     background-color: $light-color;
-}
-
-.banner {
-    width: 100%;
-
-    &-iframe {
-        height: 36em;
-        border: 0;
-    }
-
-    &-form-container {
-        background-color: $light-color;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    &-form {
-        width: 36em;
-        max-width: 100%;
-        margin: auto;
-        padding: 1em;
-        text-align: center;
-    }
 }
 
 .thread-list-empty {

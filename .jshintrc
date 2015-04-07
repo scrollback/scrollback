@@ -1,7 +1,9 @@
 {
+	"boss": true,
+	"curly": false,
+	"eqeqeq": true,
+	"noarg": true,
 	"node": true,
 	"unused": true,
-	"undef": true,
-	"curly": false,
-	"notypeof": true
+	"undef": true
 }
