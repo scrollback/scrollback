@@ -10,10 +10,6 @@ module.exports = function(core, config, store) {
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
-		toggleSidebarLeft: function() {
-			core.emit("setstate", { nav: { view: "sidebar-left" }});
-		},
-
 		toggleSidebarRight: function() {
 			core.emit("setstate", { nav: { view: "sidebar-right" }});
 		},
@@ -63,19 +59,37 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		goBack: function() {
+			var mode = store.get("nav", "mode");
+
+			if (mode === "chat") {
+				core.emit("setstate", {
+					nav: { mode: "room" }
+				});
+			} else if (mode === "room") {
+				core.emit("setstate", {
+					nav: { mode: "home" }
+				});
+			}
+		},
+
 		render: function() {
 			var user = store.getUser(),
-				nav, relation, title,
+				threadObj, nav, relation, title, username,
 				classNames = "appbar-icon appbar-icon-follow";
 
 			nav = store.get("nav");
 			user = store.getUser() || {};
 			relation = store.getRelation();
+			username = appUtils.formatUserName(user.id);
 
 			switch (nav.mode) {
 			case "room":
-			case "chat":
 				title = nav.room;
+				break;
+			case "chat":
+				threadObj = store.get("indexes", "threadsById", nav.thread);
+				title = threadObj ? threadObj.title : nav.thread ? nav.thread : "All messages";
 				break;
 			case "home":
 				title = "My feed";
@@ -86,13 +100,17 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary" onClick={this.toggleMinimize}>
-					<a data-mode="room chat" data-embed="none" className="appbar-icon appbar-icon-left appbar-icon-menu" onClick={this.toggleSidebarLeft}></a>
-					<img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} onClick={this.toggleSidebarLeft} />
-					<div className="appbar-title-container">
+					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
+					<img data-mode="home" className="appbar-title-logotype" src="/s/img/scrollback-logo-white.png" />
+					<div data-mode="room chat" className="appbar-title-container">
 						<img className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo.png" />
 						<h1 className="appbar-title appbar-title-primary">{title}</h1>
 					</div>
-					<a className="appbar-icon appbar-icon-more" onClick={this.showUserMenu}></a>
+					<div className="user-area" onClick={this.showUserMenu}>
+						<img className="user-area-avatar" alt={username} src={getAvatar(user.picture, 48)} />
+						<div className="user-area-nick">{username}</div>
+					</div>
+					{/* <img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} /> */}
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>

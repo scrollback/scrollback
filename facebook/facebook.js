@@ -38,7 +38,7 @@ function loginUser(token, action, callback) {
 				if (err || !data) return callback(err);
 
 				if (!data.results.length) {
-					action.old = action.user;
+					action.old = {};
 					action.user = {};
 					action.user.id = action.old.id;
 					action.user.identities = ["mailto:" + user.email];
@@ -127,13 +127,13 @@ function handlerRequest(req, res, next) {
 	var path = req.path.substring(3);
 	path = path.split("/");
 	if (path[0] === "facebook") {
-		if (path[1] == "login") {
+		if (path[1] === "login") {
 			return res.render(__dirname + "/login.jade", {
 				client_id: config.client_id,
 				redirect_uri: "https://" + config.global.host + "/r/facebook/return"
 			});
 		}
-		if (path[1] == "return") {
+		if (path[1] === "return") {
 			return res.render(__dirname + "/return.jade", {});
 		}
 	} else {

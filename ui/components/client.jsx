@@ -2,11 +2,10 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Landing = require("./landing.jsx")(core, config, store),
 		Banner = require("./banner.jsx")(core, config, store),
 		AppbarPrimary = require("./appbar-primary.jsx")(core, config, store),
-		AppbarSecondary = require("./appbar-secondary.jsx")(core, config, store),
 		CallToActionBar = require("./calltoactionbar.jsx")(core, config, store),
-		SidebarLeft = require("./sidebar-left.jsx")(core, config, store),
 		SidebarRight = require("./sidebar-right.jsx")(core, config, store),
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		RoomList = require("./room-list.jsx")(core, config, store),
@@ -39,17 +38,17 @@ module.exports = function(core, config, store) {
 		render: function() {
 			return (
 					<div className="app-container">
-						<SidebarLeft />
 
 						<main className="main">
 							<AppbarPrimary />
 
 							<CallToActionBar />
 
-							<AppbarSecondary />
-
 							<div className="main-content" data-mode="home search room">
 								<div className="main-content-inner-wrap">
+
+									<Landing />
+
 									<Banner />
 
 									<div className="main-content-inner">

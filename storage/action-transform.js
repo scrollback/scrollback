@@ -18,25 +18,25 @@ function makePut(type, source) {
 
 exports.text = function (text) {
 	var puts = [], put;
-
-	/* Start Compatibility Block */
-
-//	addThread(text);
-//	addTags(text);
-
-	/* End Compatibility Block */
+	
 	log.d("Text:", text);
 	// insert text
 	if (text.text) {
 		put = makePut("insert", "texts");
 		put.insert = {
-			id: text.id, from: text.from, to: text.to,
-			text: text.text,
+			id: text.id, 
+			from: text.from,
+			to: text.to,
 			time: new Date(text.time),
-			updatetime: new Date(text.time),
+			text: text.text,
 			thread: text.thread,
 			title: text.title,
-			tags: text.tags, mentions: text.mentions
+			tags: text.tags,
+			mentions: text.mentions,
+			upvoters: [],
+			flaggers: [],
+			updatetime: new Date(text.time),
+			updater: text.from
 		};
 		puts.push(put);
 	}
@@ -51,12 +51,14 @@ exports.text = function (text) {
 			id: text.thread,
 			from: text.from,
 			to: text.to,
-			title: text.title,
+			title: text.title || text.text,
+			color: text.color,
 			starttime: new Date(text.time),
-			updatetime: new Date(text.time),
 			length: 1,
-			updater: text.from,
-			color: text.color
+			tags: text.tags,
+			concerns: [],
+			updatetime: new Date(text.time),
+			updater: text.from
 			/* concerns: [text.from].concat(text.mentions) */
 		};
 		/* For existing threads update endTime, length and perhaps title */
@@ -73,30 +75,24 @@ exports.text = function (text) {
 
 
 exports.edit = function (edit) {
-	var puts = [], put = makePut("update", 'texts');
-	put.filters.push(['id', 'eq', edit.ref]);
-	put.update = [];
-	// start compability block.
-//	addOldTags(edit);
-//	addTags(edit);
-//	addThread(edit);
-	// end Compatibility block.
+	var puts = [], put;
+	
 	if (edit.text || edit.tags) {
+		put = makePut("update", 'texts');
+		put.filters.push(['id', 'eq', edit.ref]);
+		if (edit.text) put.update.push(['text', 'set', edit.text]);
+		if (edit.tags) put.update.push(['tags', 'set', edit.tags]);
 		put.update.push(['updatetime', 'set', new Date(edit.time)]);
-	}
-	if (edit.text) {
-		put.update.push(['text', 'set', edit.text]);
-	}
-	if (edit.tags) {
-		put.update.push(['tags', 'set', edit.tags]);
+		puts.push(put);
 	}
 
-	if (edit.title) {
-		var tput = makePut('update', 'threads');
-		tput.filters.push(['id', 'eq', edit.ref]);
-		tput.update.push(['title', 'set', edit.title]);
-		tput.update.push(['updatetime', 'set', new Date(edit.time)]);
-		puts.push(tput);
+	if (edit.title || edit.tags) {
+		put = makePut('update', 'threads');
+		put.filters.push(['id', 'eq', edit.ref]);
+		if(edit.title) put.update.push(['title', 'set', edit.title]);
+		if(edit.tags) put.update.push(['tags', 'set', edit.tags]);
+		put.update.push(['updatetime', 'set', new Date(edit.time)]);
+		puts.push(put);
 	}
 
 	puts.push(put);

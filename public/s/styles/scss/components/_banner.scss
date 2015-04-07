@@ -1,0 +1,88 @@
+@include exports("banner") {
+    .banner {
+        width: 100%;
+
+        &-landing {
+            display: table;
+            table-layout: fixed;
+            height: 100%;
+            width: 100%;
+            background-image: url(https://scrollback.github.io/static/assets/banner/banner.png);
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            color: $light-color;
+            min-height: 36em;
+            height: 70%;
+
+            &-content {
+                display: table-cell;
+                vertical-align: middle;
+                height: 100%;
+                width: 100%;
+
+                &-inner {
+                    max-width: 27em;
+                    margin: auto;
+                    padding: 1em;
+                }
+            }
+
+            &-form {
+                input { border: 0; }
+            }
+        }
+
+        &-cover {
+            @extend %clearfix;
+
+            background-size: 100%;
+            background-size: cover;
+            background-position: center center;
+            color: $light-color;
+            box-shadow: inset 12em 50em 0 rgba(85,85,85,.7);
+            min-height: 12em;
+            padding: 1em;
+            text-align: center;
+
+            &-logo {
+                height: 8em;
+                width: 8em;
+                margin: 1em auto;
+                background-size: 100%;
+                background-size: cover;
+                background-position: center center;
+                border-radius: 50%;
+                box-shadow: 0 0 0 2px rgba(255,255,255,.5);
+            }
+
+            &-description {
+                max-width: 60em;
+                margin: auto;
+            }
+
+            &-button {
+                margin: 1em;
+                background-color: rgba(255, 255, 255, .3);
+
+                &:hover { background-color: rgba(255, 255, 255, .4); }
+
+                &:active { background-color: rgba(255, 255, 255, .5); }
+            }
+        }
+
+        &-form-container {
+            width: 100%;
+            background-color: $light-color;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        &-form {
+            width: 36em;
+            max-width: 100%;
+            margin: auto;
+            padding: 1em;
+            text-align: center;
+        }
+    }
+}

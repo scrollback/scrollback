@@ -29,7 +29,15 @@ exports.getTexts = exports.getThreads = function(query) {
 	
 	if (query.tag) {
 		q.filters.push(["tags", "cts", query.tag]);
-	} 
+	}
+	
+	if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator") {
+		q.filters.push({sql: 'NOT("tags" @> $)', values: [[
+			query.type === 'getThreads'? "thread-hidden": "hidden"
+		]]});
+		
+		log.d("HIDDEN EXCLUDED", query.type, q.filters);
+	}
 	
 	if (query.ref) {
 		if (query.ref instanceof Array) {

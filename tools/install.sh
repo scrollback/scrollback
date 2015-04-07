@@ -235,11 +235,7 @@ install_pkgs() {
 }
 
 config() {
-    if [[ -f client-config.sample.js ]]; then
-        printf $(cp client-config.sample.js client-config.js)
-    else
-        $(echo "module.exports = {};" > client-config.js)
-    fi
+	$(echo "module.exports = {};" > client-config.js)
 }
 
 redis() {

@@ -1,13 +1,28 @@
 /* jshint browser: true */
 
+var appUtils = require("../../lib/app-utils.js"),
+	showMenu = require("../utils/show-menu.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		appUtils = require("../../lib/app-utils.js"),
 		ThreadCard;
 
 	ThreadCard = React.createClass({
 		getInitialState: function() {
 		    return { quickReplyShown: false };
+		},
+
+		showThreadMenu: function(e) {
+			var self = this;
+
+			core.emit("thread-menu", {
+				origin: e.currentTarget,
+				buttons: {},
+				items: {},
+				threadObj: self.props.thread
+			}, function(err, menu) {
+				showMenu("thread-menu", menu);
+			});
 		},
 
 		goToThread: function(e) {
@@ -53,7 +68,7 @@ module.exports = function(core, config, store) {
 		},
 
 		showQuickReply: function() {
-			var quickReply = this.refs.quickReply.getDOMNode();
+			var quickReply = React.findDOMNode(this.refs.quickReply);
 
 			if (/active/.test(quickReply.className)) {
 				return;
@@ -68,7 +83,7 @@ module.exports = function(core, config, store) {
 		},
 
 		hideQuickReply: function() {
-			var quickReply = this.refs.quickReply.getDOMNode();
+			var quickReply = React.findDOMNode(this.refs.quickReply);
 
 			if (!/active/.test(quickReply.className)) {
 				return;
@@ -84,10 +99,18 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var thread = this.props.thread,
-				chats = [];
+				rel = store.getRelation(),
+				classNames = "card thread-card",
+				menu, chats = [];
+
+			if (this.props.thread.tags) {
+				for (var i = 0, l = this.props.thread.tags.length; i < l; i++) {
+					classNames += " card-tag-" + this.props.thread.tags[i];
+				}
+			}
 
 			(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).forEach(function(chat) {
-				if (chat.tags && (chat.tags.indexOf("hidden") > -1 || chat.tags.indexOf("abusive") > -1)) {
+				if (chat.tags && chat.tags.indexOf("hidden") > -1 ) {
 					return;
 				}
 
@@ -101,12 +124,19 @@ module.exports = function(core, config, store) {
 				}
 			});
 
+			if (rel && /(owner|moderator)/.test(rel.role)) {
+				menu = <a className="card-header-icon card-header-icon-more" onClick={this.showThreadMenu}></a>;
+			} else {
+				menu = [];
+			}
+
 			return (
-				<div key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
+				<div key={"thread-card-" + thread.id} className={classNames} data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
 						<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
 						<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
+						{menu}
 					</div>
 					<div className="card-content">{chats}</div>
 					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>
