@@ -2,15 +2,15 @@ module.exports = function createBulkQuery(core, store, type) {
 	var queryCount=0,
 		changes = {},
 		queriedRooms = {};
-	
+
 	changes[type] = {};
-	
+
 	function add(roomId) {
 		if(queriedRooms[roomId]) return;
 		queriedRooms[roomId] = true;
-		
-		
-		if(type == "texts") {
+
+
+		if(type === "texts") {
 			roomId = roomId.split("_");
 			if(store.getTexts(roomId[0], roomId[1], null, -3)[0] !== "missing") return;
 //			console.log('getting more texts', queryCount);
@@ -26,17 +26,17 @@ module.exports = function createBulkQuery(core, store, type) {
 //			});
 		}
 	}
-	
+
 	function done(err, query) {
 		var key;
 		queryCount--;
-//		if(type == 'texts') console.log('query came back', queryCount);
+//		if(type === 'texts') console.log('query came back', queryCount);
 		if(query && query.results && query.results.length) {
 			key = query.to + (query.thread? "_" + query.thread: "");
-			
+
 			(changes[type][key] = changes[type][key] || []).push({
 				start: query.results.length? (
-					query.results[0][type == "texts"? "time": "startTime"]
+					query.results[0][type === "texts"? "time": "startTime"]
 				) : null,
 				end : null,
 				items: query.results
@@ -48,6 +48,6 @@ module.exports = function createBulkQuery(core, store, type) {
 			core.emit("setstate", changes);
 		}
 	}
-	
+
 	return add;
 };

@@ -34,10 +34,10 @@ module.exports = function(c, conf, s) {
 			next();
 		}
 	}, 800);
-	
-	
+
+
 	core.on("statechange", function(changes, next) {
-		if(changes.app && changes.app.bootComplete && store.getContext("embed")) {
+		if(changes.app && changes.app.bootComplete && store.get("context", "embed")) {
 			parentWindow.postMessage(JSON.stringify({
 				type: "ready"
 			}), parentHost);
@@ -50,9 +50,9 @@ module.exports = function(c, conf, s) {
 		}
 		next();
 	}, 500);
-	
+
 	core.on("init-up", function(init, next) {
-		var context = store.getContext("embed"), jws;
+		var context = store.get("context", "embed"), jws;
 		if(context  && context .jws) jws = context.jws;
 		if(!init.origin) init.origin = {};
 		init.origin.domain = domain;
@@ -66,9 +66,9 @@ module.exports = function(c, conf, s) {
 		if(suggestedNick) init.suggestedNick = suggestedNick;
 		next();
 	}, 999);
-	
+
 	core.on("room-up", function(roomUp, next) {
-		
+
 		next();
 	}, 1000);
 };

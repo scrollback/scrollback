@@ -251,7 +251,7 @@ function addFilters(transform, sql, values, i) {
 				log.d("Legacy filter used: ", filter);
 				// old style [ column, op, value] filter
 				var f = [name(filter[0])];
-				if (filter[1] != 'in') {
+				if (filter[1] !== 'in') {
 					f.push(getOperatorString(filter[1]));
 					f.push("$" + i);
 					filters.push(f.join(""));

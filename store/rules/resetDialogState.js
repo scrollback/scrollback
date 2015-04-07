@@ -1,9 +1,9 @@
-module.exports = function(core) {
-	// Reset dialogState when dialog is changed
+module.exports = function(core, config, store) {
+	// Reset dialogState when dialog is reset
 	core.on("setstate", function(changes, next) {
-		if (changes.nav && changes.nav.dialog === null) {
+		if (!store.with(changes).get("nav", "dialog")) {
+			changes.nav = changes.nav || {};
 			changes.nav.dialogState = null;
-			changes.nav.dialogUpdate= null;
 		}
 
 		next();

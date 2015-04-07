@@ -25,11 +25,6 @@
     width: 100%;
     max-width: 100%;
     margin: .5em 0;
-    background-color: $light-color;
-    border-radius: $roundness;
-    border: none;
-    overflow: hidden;
-    cursor: pointer;
 
     &:focus { outline: none; }
 

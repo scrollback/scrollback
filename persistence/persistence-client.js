@@ -41,7 +41,7 @@ module.exports = function (core, config, store) {
 		if(!sid) {
 			console.error('boot@persistence: Session ID is missing.');
 		}
-		
+
 		/* 1. Retrieve all the data from localStorage */
 
 		for(key in localStorage) {
@@ -75,9 +75,9 @@ module.exports = function (core, config, store) {
 					console.error('Unknown localStorage item ' + key);
 			}
 		}
-		
+
 		/* 2. Construct full text and thread objects */
-		
+
 		for(key in textRanges) {
 			textRanges[key].sort(function (a, b) {return (b.start || 0) - (a.start || 0); });
 			texts[key].forEach(function (text) {
@@ -87,7 +87,7 @@ module.exports = function (core, config, store) {
 				})[0].items.push(text);
 			});
 		}
-		
+
 		for(key in threadRanges) {
 			threadRanges[key].sort(function (a, b) {return (b.start || 0) - (a.start || 0); });
 			threads[key].forEach(function (thread) {
@@ -97,29 +97,29 @@ module.exports = function (core, config, store) {
 				})[0].items.push(thread);
 			});
 		}
-		
+
 		changes.entities = entities;
 		changes.texts = textRanges;
 		changes.threads = threadRanges;
-		
+
 		next();
 	}, 100);
-	
+
 	core.on('statechange', function (changes, next) {
 		var key, data={}, sid = store.get('session'), ranges;
-		
+
 		console.log("Session id", sid);
-		
+
 		if(changes.entities) {
 			for(key in changes.entities) {
 				data[sid + ':e:' + key] = store.getEntity(key);
 			}
 		}
-		
+
 		if(changes.texts) {
 			for(key in changes.texts) {
 				ranges = store.get('texts', key);
-				
+
 				changes.texts[key].forEach(function (changeRange) {
 					ranges.forEach(function(stateRange) {
 						if(stateRange.start == changeRange.start || stateRange.end == changeRange.end) {
@@ -127,7 +127,7 @@ module.exports = function (core, config, store) {
 								{start: stateRange.start, end: stateRange.end};
 						}
 					});
-					
+
 					store.getTexts(
 						key.split('_')[0], key.split('_')[1], changeRange.start, changeRange.end - changeRange.start
 					).forEach(function (text) {
@@ -137,11 +137,11 @@ module.exports = function (core, config, store) {
 				});
 			}
 		}
-		
+
 		if(changes.threads) {
 			for(key in changes.threads) {
 				ranges = store.get('threads', key);
-				
+
 				changes.threads[key].forEach(function (changeRange) {
 					ranges.forEach(function(stateRange) {
 						if(stateRange.start == changeRange.start || stateRange.end == changeRange.end) {
@@ -149,7 +149,7 @@ module.exports = function (core, config, store) {
 								{start: stateRange.start, end: stateRange.end}
 						}
 					})
-					
+
 					store.getThreads(
 						key, changeRange.start, changeRange.end - changeRange.start
 					).forEach(function (thread) {
@@ -159,7 +159,7 @@ module.exports = function (core, config, store) {
 				});
 			}
 		}
-		
+
 		try {
 			save(data);
 		} catch (e) {
@@ -168,18 +168,18 @@ module.exports = function (core, config, store) {
 //			clear();
 //			snapshot();
 		}
-		
+
 		next();
 	}, 100);
 
 
 	function getSnapshot() {
-		var room = store.getNav('room'),
+		var room = store.get("nav", 'room'),
 			slice = {
 				texts: {},
 				threads: {},
 				entities: {}
 			}, room ;
 	}
-	
+
 };

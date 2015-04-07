@@ -100,10 +100,17 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var thread = this.props.thread,
 				rel = store.getRelation(),
+				classNames = "card thread-card",
 				menu, chats = [];
 
+			if (this.props.thread.tags) {
+				for (var i = 0, l = this.props.thread.tags.length; i < l; i++) {
+					classNames += " card-tag-" + this.props.thread.tags[i];
+				}
+			}
+
 			(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).forEach(function(chat) {
-				if (chat.tags && (chat.tags.indexOf("hidden") > -1 || chat.tags.indexOf("abusive") > -1)) {
+				if (chat.tags && chat.tags.indexOf("hidden") > -1 ) {
 					return;
 				}
 
@@ -124,7 +131,7 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-				<div key={"thread-card-" + thread.id} className="card thread-card" data-color={thread.color} onClick={this.goToThread}>
+				<div key={"thread-card-" + thread.id} className={classNames} data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
 						<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>

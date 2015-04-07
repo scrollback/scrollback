@@ -16,7 +16,7 @@ module.exports = function(c, conf, s) {
 					room: "scrollbackteam"
 				}
 			}, function() {
-				assert.equal(store.getNav("room"), "scrollbackteam", "Navigation didnot happen");
+				assert.equal(store.get("nav", "room"), "scrollbackteam", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -28,8 +28,8 @@ module.exports = function(c, conf, s) {
 					view: "people"
 				}
 			}, function() {
-				assert.equal(store.getNav("room"), "scrollback", "Navigation didnot happen");
-				assert.equal(store.getNav("view"), "people", "Navigation didnot happen");
+				assert.equal(store.get("nav", "room"), "scrollback", "Navigation didnot happen");
+				assert.equal(store.get("nav", "view"), "people", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -43,8 +43,8 @@ module.exports = function(c, conf, s) {
 					}
 				}
 			}, function() {
-				assert.equal(store.getNav("dialog").prop1, "hi", "Navigation didnot happen");
-				assert.equal(store.getNav("dialog").prop2, "hello", "Navigation didnot happen");
+				assert.equal(store.get("nav", "dialog").prop1, "hi", "Navigation didnot happen");
+				assert.equal(store.get("nav", "dialog").prop2, "hello", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -58,8 +58,8 @@ module.exports = function(c, conf, s) {
 					}
 				}
 			}, function() {
-				assert.equal(store.getContext("embed").domain, "h10.in", "Navigation didnot happen");
-				assert.equal(store.getContext("embed").suggestedNick, "hi", "Navigation didnot happen");
+				assert.equal(store.get("context", "embed").domain, "h10.in", "Navigation didnot happen");
+				assert.equal(store.get("context", "embed").suggestedNick, "hi", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -72,8 +72,8 @@ module.exports = function(c, conf, s) {
 					}
 				}
 			}, function() {
-				assert.equal(store.getNav("dialog").prop1, "what", "Navigation didnot happen");
-				assert.equal(store.getNav("dialog").prop2, "hello", "Navigation didnot happen");
+				assert.equal(store.get("nav", "dialog").prop1, "what", "Navigation didnot happen");
+				assert.equal(store.get("nav", "dialog").prop2, "hello", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -84,9 +84,9 @@ module.exports = function(c, conf, s) {
 					CTAS: ["signin", "logs"]
 				}
 			}, function() {
-				assert.equal(store.getApp("CTAS").length, 2, "Navigation didnot happen");
-				assert.equal(store.getApp("CTAS")[0], "signin", "Navigation didnot happen");
-				assert.equal(store.getApp("CTAS")[1], "logs", "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS").length, 2, "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS")[0], "signin", "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS")[1], "logs", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -97,9 +97,9 @@ module.exports = function(c, conf, s) {
 					CTAS: ["signup", "logs"]
 				}
 			}, function() {
-				assert.equal(store.getApp("CTAS").length, 2, "Navigation didnot happen");
-				assert.equal(store.getApp("CTAS")[0], "signup", "Navigation didnot happen");
-				assert.equal(store.getApp("CTAS")[1], "logs", "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS").length, 2, "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS")[0], "signup", "Navigation didnot happen");
+				assert.equal(store.get("app", "CTAS")[1], "logs", "Navigation didnot happen");
 				done();
 			});
 		});
@@ -110,7 +110,7 @@ module.exports = function(c, conf, s) {
 					CTAS: null
 				}
 			}, function() {
-				assert(!store.getApp("CTAS"), "Navigation didnot happen");
+				assert(!store.get("app", "CTAS"), "Navigation didnot happen");
 				done();
 			});
 		});
@@ -233,5 +233,4 @@ module.exports = function(c, conf, s) {
 			});
 		});
 	});
-
 };

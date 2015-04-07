@@ -1,6 +1,6 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var mode = (changes.mode && changes.nav.mode) ? changes.nav.mode : store.get("nav", "mode");
+		var mode = store.with(changes).get("nav", "mode");
 
 		if (mode !== "chat") {
 			changes.nav = changes.nav || {};
