@@ -51,20 +51,21 @@ function onInit(init, next) {
 	if(init.response) {
 		switch(init.response.message) {
 			case "AUTH:UNREGISTRED":
-				newstate.nav = {
-					dialog : "signup"
-				};
+				newstate.nav = newstate.nav || {};
+				newstate.nav.dialogState = newstate.nav.dialogState || {};
+				newstate.nav.dialogState.signingup = true;
+
 				break;
 		}
 	}
-	
+
 	if (!init.user.id) {
 		entities[store.get("user")] = init.user;
 		newstate.entities = entities;
 		core.emit("setstate", newstate);
 		return next();
 	}
-	
+
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
 	if (init.memberOf) entities = entitiesFromRooms(init.memberOf, entities, init.user.id);
 	entities[init.user.id] = init.user;
