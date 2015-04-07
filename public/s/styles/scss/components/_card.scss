@@ -14,6 +14,11 @@
         overflow: hidden;
         cursor: pointer;
 
+        &-tag-hidden, &-tag-thread-hidden {
+            font-style: italic;
+            opacity: .5;
+        }
+
         &-header {
             @include flexbox;
             @include flex-direction(row);
