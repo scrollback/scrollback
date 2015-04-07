@@ -20,6 +20,10 @@ module.exports = function(core, config, store) {
 				secs = {}, sections = [],
 				type = this.props.type || "list";
 
+			if (store.get("nav", "mode") !== "home") {
+				return <div />;
+			}
+
 			for (var t in titles) {
 				secs[t] = {
 					key: "home-feed-" + t,

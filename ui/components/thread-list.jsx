@@ -68,8 +68,7 @@ module.exports = function(core, config, store) {
 				allItems, beforeItems, afterItems, positionKey,
 				scrollToClassNames, cols, sections, empty, loading;
 
-			// Don't show
-			if (!((nav.mode === "room" && type === "feed") || nav.mode === "chat")) {
+			if (nav.mode !== "room") {
 				return <div />;
 			}
 

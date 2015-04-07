@@ -81,31 +81,9 @@ Store.prototype.mergeMethods = {
 	}
 };
 
-Store.prototype.merge = function(section) {
-	this._merged = this._merged || [];
-
-	if (this._merged.indexOf(section) === -1 && typeof this.mergeMethods[section] === "function") {
-		for (var i = 1, l = this._objs.length; i < l; i++) {
-			if (this._objs[i] && this._objs[i][section]) {
-				this._objs[0][section] = this.mergeMethods[section](this._objs[0][section], this._objs[i][section]);
-			}
-		}
-	}
-
-	this._merged.push(section);
-};
-
 Store.prototype.get = function() {
-	var value, arr,
-		args = [].slice.call(arguments);
-
-	if (typeof this.mergeMethods[args[0]] === "function") {
-		this.merge(args[0]);
-
-		args.unshift(this._objs[0]);
-
-		return objUtils.get.apply(null, args);
-	}
+	var args = [].slice.call(arguments),
+		id, arr, obj, value, merge;
 
 	for (var i = this._objs.length, l = 0; i > l; i--) {
 		arr = args.slice(0);
@@ -115,9 +93,38 @@ Store.prototype.get = function() {
 		value = objUtils.get.apply(null, arr);
 
 		if (typeof value !== "undefined") {
-			return value;
+			break;
 		}
 	}
+
+	if (typeof value === "object") {
+		id = args.join(":");
+		this._merged = this._merged || {};
+
+		merge = ((typeof this.mergeMethods[id] === "function") ? this.mergeMethods[id] : objUtils.extend);
+
+		this._merged[id] = {};
+
+		for (var j = 0, k = this._objs.length; j < k; j++) {
+			arr = args.slice(0);
+			arr.unshift(this._objs[j]);
+			obj = objUtils.get.apply(null, arr);
+
+			if (typeof this._merged[id] === "object" && typeof obj === "object") {
+				if (Array.isArray(obj)) {
+					this._merged[id] = obj.slice(0);
+				} else {
+					this._merged[id] = merge(this._merged[id], obj);
+				}
+			} else {
+				this._merged[id] = obj;
+			}
+		}
+
+		return this._merged[id];
+	}
+
+	return value;
 };
 
 Store.prototype.with = function(obj) {
