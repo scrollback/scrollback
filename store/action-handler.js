@@ -45,6 +45,15 @@ function keyFromText(text) {
 	return key;
 }
 
+function threadFromText(text) {
+	return {
+		id: text.thread, from: text.from, to: text.to,
+		startTime: text.time, color: text.color, tags: null,
+		title: text.title, updateTime: text.time,
+		updater: text.from
+	};
+}
+
 function onInit(init, next) {
 	var entities = {};
 	var newstate = {};
@@ -182,12 +191,7 @@ function onTextDn(text, next) {
 	if(text.thread === text.id) {
 		newState.threads = {};
 		newState.threads[text.to] = [{
-			start: text.time, end: text.time, items: [{
-				id: text.thread, from: text.from, to: text.to,
-				startTime: text.time, color: text.color, tags: null,
-				title: text.title, updateTime: text.time,
-				updater: text.from
-			}]
+			start: text.time, end: text.time, items: [threadFromText(text)]
 		}];
 	}
 
@@ -197,24 +201,38 @@ function onTextDn(text, next) {
 	next();
 }
 
-function onEdit (editDn, next) {
-	var newText = editDn.old, textRange, key, newState;
-	newText.tags = editDn.tags;
+function onEdit (edit, next) {
+	var text, thread, changes = {},
+		pleb = ["moderator", "owner"].indexOf(store.getRelation().role) < 0;
+	
+	text = edit.old;
+	
+	if(text) {
+		text.color = edit.color; // Extremely ugly hack to bring color info that's not part of the text object
+		thread = text.id === text.thread? threadFromText(text): null;
 
-	textRange = {
-		start: newText.time,
-		end: newText.time,
-		items: [newText]
-	};
+		if(edit.tags) text.tags = edit.tags;
+		if(edit.text) text.text = edit.text;
+		changes.texts = changes.texts || {};
+		changes.texts[keyFromText(text)] = changes.texts[text.to] = [{
+			start: text.time, end: text.time,
+			items: pleb && text.tags.indexOf("hidden")>=0? []: [text]
+		}];
+	}
+	
+	if(thread) {
+		if(edit.tags) thread.tags = edit.tags;
+		if(edit.title) thread.title = edit.title;
+		changes.threads = changes.threads || {};
+		changes.threads[thread.to] = [{
+			start: thread.startTime, end: thread.startTime,
+			items: pleb && thread.tags.indexOf("thread-hidden")>=0? []: [thread]
+		}];
+	}
+	
+	console.log("edit change", edit, text, thread, changes);
 
-	key = keyFromText(newText);
-	newState = {
-		texts:{}
-	};
-
-	newState.texts[newText.to] = [textRange];
-	newState.texts[key] = [textRange];
-	core.emit("setstate", newState);
+	core.emit("setstate", changes);
 	next();
 }
 
