@@ -4,5 +4,6 @@
 	"eqeqeq": true,
 	"noarg": true,
 	"node": true,
-	"unused": true
+	"unused": true,
+	"undef": true
 }
