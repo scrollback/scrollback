@@ -8,6 +8,12 @@
     }
 
     .card {
+        background-color: $light-color;
+        border-radius: $roundness;
+        border: 0;
+        overflow: hidden;
+        cursor: pointer;
+
         &-header {
             @include flexbox;
             @include flex-direction(row);

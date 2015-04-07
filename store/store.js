@@ -119,7 +119,7 @@ Store.prototype.getRelation = function(roomId, userId) {
 Store.prototype.getRelatedRooms = function(id, filter) {
 	var user, rooms, self = this;
 
-	if (typeof id == "string") {
+	if (typeof id === "string") {
 		user = id;
 	} else {
 		user = this.get("user");
@@ -137,7 +137,7 @@ Store.prototype.getRelatedRooms = function(id, filter) {
 			if (filter) {
 				filterKeys = Object.keys(filter);
 				for (i = 0; i < filterKeys.length; i++) {
-					if (filter[filterKeys] != roomRelation[filterKeys]) {
+					if (filter[filterKeys] !== roomRelation[filterKeys]) {
 						return false;
 					}
 				}
@@ -161,7 +161,7 @@ Store.prototype.getRelatedRooms = function(id, filter) {
 Store.prototype.getRelatedUsers = function(id, filter) {
 	var roomId, users, self = this;
 
-	if (typeof id == "string") {
+	if (typeof id === "string") {
 		roomId = id;
 	} else if (typeof id === "object") {
 		roomId = this.get("nav", "room");
@@ -179,7 +179,7 @@ Store.prototype.getRelatedUsers = function(id, filter) {
 				filterKeys = Object.keys(filter);
 
 				for (i = 0; i < filterKeys.length; i++) {
-					if (filter[filterKeys] != relation[filterKeys]) {
+					if (filter[filterKeys] !== relation[filterKeys]) {
 						return false;
 					}
 				}
