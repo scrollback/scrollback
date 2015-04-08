@@ -172,10 +172,10 @@ function onTextUp(text, next) {
 function onTextDn(text, next) {
 	var textRange = {
 			start: text.time,
-			end: ((text.thread === text.id)?null: text.time),
+			end: ((text.thread === text.id) ? null : text.time),
 			items: [text]
 		}, oldRange,
-		key, newState = {texts:{}}, oldKey = "";
+		key, newState = {texts:{}}, oldKey = "", currentThreads;
 
 	key = keyFromText(text);
 
@@ -190,15 +190,21 @@ function onTextDn(text, next) {
 		newState.texts[text.to].push(oldRange);
 
 		oldKey = keyFromText(pendingActions[text.id]);
-		if(!newState.texts[oldKey]) newState.texts[oldKey] = [];
-		if(pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
+
+		if (!newState.texts[oldKey]) newState.texts[oldKey] = [];
+		if (pendingActions[text.id].to !== oldKey) newState.texts[oldKey].push(oldRange);
+
 		delete pendingActions[text.id];
 	}
 
-	if(text.thread === text.id) {
+	if (text.thread === text.id) {
+		currentThreads = store.get("threads", text.to);
+
 		newState.threads = {};
 		newState.threads[text.to] = [{
-			start: text.time, end: text.time, items: [threadFromText(text)]
+			start: text.time,
+			end: (currentThreads && currentThreads.length) ? text.time : null,
+			items: [threadFromText(text)]
 		}];
 	}
 
