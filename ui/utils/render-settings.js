@@ -104,7 +104,7 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("statechange", function(changes, next) {
-		if (changes.nav && changes.nav.settingsItem && store.get("nav", "dialog")) {
+		if (changes.nav && changes.nav.settingsItem && /^(conf|pref)$/.test(store.get("nav", "dialog"))) {
 			setPage(store.get("nav", "settingsItem"));
 		}
 
