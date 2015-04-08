@@ -31,7 +31,7 @@ exports.text = function (text) {
 			text: text.text,
 			thread: text.thread,
 			title: text.title,
-			tags: text.tags,
+			tags: text.tags || [],
 			mentions: text.mentions,
 			upvoters: [],
 			flaggers: [],
@@ -55,7 +55,7 @@ exports.text = function (text) {
 			color: text.color,
 			starttime: new Date(text.time),
 			length: 1,
-			tags: text.tags,
+			tags: text.tags || [],
 			concerns: [],
 			updatetime: new Date(text.time),
 			updater: text.from
