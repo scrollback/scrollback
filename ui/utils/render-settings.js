@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 			$list = $("<ul>").addClass("settings-page-content-list"),
 			$view = $("<div>").addClass("settings-page-content-view"),
 			nav = store.get("nav"),
-			dialogState, title;
+			settingsItem, title;
 
 		for (var i in items) {
 			if (/^(room|user)$/.test(i)) {
@@ -79,9 +79,7 @@ module.exports = function(core, config, store) {
 			var id = $(this).attr("data-settings-list");
 
 			core.emit("setstate", {
-				nav: {
-					dialogState: { settingsItem: id }
-				}
+				nav: { settingsItem: id }
 			});
 		});
 
@@ -91,25 +89,23 @@ module.exports = function(core, config, store) {
 				continue;
 			}
 
-			dialogState = dialogState || {};
+			settingsItem = settingsItem || state;
 
-			dialogState.settingsItem = dialogState.settingsItem || state;
-
-			if (nav.dialogState && nav.dialogState.settingsItem === state) {
-				dialogState.settingsItem = state;
+			if (nav.settingsItem === state) {
+				settingsItem = state;
 
 				break;
 			}
 		}
 
-		setPage(dialogState.settingsItem, $page);
+		setPage(settingsItem, $page);
 
 		return $page;
 	}
 
 	core.on("statechange", function(changes, next) {
-		if (changes.nav && changes.nav.dialogState && changes.nav.dialogState.settingsItem && store.get("nav", "dialog")) {
-			setPage(store.get("nav", "dialogState", "settingsItem"));
+		if (changes.nav && changes.nav.settingsItem && /^(conf|pref)$/.test(store.get("nav", "dialog"))) {
+			setPage(store.get("nav", "settingsItem"));
 		}
 
 		next();
