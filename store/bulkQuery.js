@@ -1,3 +1,5 @@
+var objUtils = require("./../lib/obj-utils.js");
+
 module.exports = function createBulkQuery(core, store, type) {
 	var queryCount=0,
 		changes = {},
@@ -45,7 +47,7 @@ module.exports = function createBulkQuery(core, store, type) {
 		}
 		if(queryCount === 0 && Object.keys(changes[type]).length) {
 //			console.log('emitting ', changes);
-			core.emit("setstate", changes);
+			core.emit("setstate", objUtils.clone(changes));
 		}
 	}
 
