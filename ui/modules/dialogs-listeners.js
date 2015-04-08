@@ -6,7 +6,7 @@ module.exports = function(core, config, store) {
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),
 		createEntity = require("../utils/create-entity.js")(core, config, store),
 		showDialog = require("../utils/show-dialog.js")(core, config, store),
-		currentDialog, userChangeCallback;
+		currentDialog, currentDialogState, userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
 		var $entry = $(entry),
@@ -50,9 +50,9 @@ module.exports = function(core, config, store) {
 			dialogStateChanged = false;
 
 		if (changes.nav && changes.nav.dialogState) {
-			if (nav.dialogState) {
+			if (currentDialogState) {
 				for (var prop in changes.nav.dialogState) {
-					if ((changes.nav.dialogState[prop] || nav.dialogState[prop]) && (changes.nav.dialogState[prop] !== nav.dialogState[prop])) {
+					if ((changes.nav.dialogState[prop] || currentDialogState[prop]) && (changes.nav.dialogState[prop] !== currentDialogState[prop])) {
 						dialogStateChanged = true;
 						break;
 					}
@@ -62,9 +62,9 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if ((nav.dialog !== currentDialog) || (changes.nav &&
-		    (("dialog" in changes.nav && changes.nav.dialog !== nav.dialog) || dialogStateChanged ||
-		     (nav.dialog && changes.nav.dialogState)))) {
+		if ((nav.dialog !== currentDialog) ||
+			(changes.nav && "dialog" in changes.nav && changes.nav.dialog !== nav.dialog) ||
+			 dialogStateChanged) {
 			if (nav.dialog) {
 				showDialog(nav.dialog);
 			} else if (currentDialog) {
@@ -82,16 +82,16 @@ module.exports = function(core, config, store) {
 
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),
-			user = store.getUser(),
+			user = store.get("user"),
 			signingup = store.get("nav", "dialogState", "signingup"),
 			nonexistent = store.get("nav", "dialogState", "nonexistent"),
 			roomName = store.get("nav", "dialogState", "prefill") || "";
 
-		if (!user.id) {
+		if (!user) {
 			return;
 		}
 
-		if (appUtils.isGuest(user.id)) {
+		if (appUtils.isGuest(user)) {
 			if (signingup) {
 				dialog.title = "Create a new room";
 				dialog.content = [
@@ -207,7 +207,7 @@ module.exports = function(core, config, store) {
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
-			var user = store.getUser();
+			var user = store.get("user");
 
 			if (store.get("nav", "dialog") === "signin" && user && !user.isRestricted) {
 				core.emit("setstate", {
@@ -231,10 +231,9 @@ module.exports = function(core, config, store) {
 	}, 1000);
 
 	// Keep track of if modal is shown
-	$(document).on("modalInited", function(event, dialog) {
-		if (dialog) {
-			currentDialog = dialog.attr("data-dialog");
-		}
+	$(document).on("modalInited", function() {
+		currentDialog = store.get("nav", "dialog");
+		currentDialogState = store.get("nav", "dialogState");
 	});
 
 	// When modal is dismissed, reset the dialog property

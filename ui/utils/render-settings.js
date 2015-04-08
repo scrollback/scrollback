@@ -79,9 +79,9 @@ module.exports = function(core, config, store) {
 			var id = $(this).attr("data-settings-list");
 
 			core.emit("setstate", {
-				nav: { dialogState:{
-					settingsItem: id
-				} }
+				nav: {
+					dialogState: { settingsItem: id }
+				}
 			});
 		});
 

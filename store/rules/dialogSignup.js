@@ -19,6 +19,8 @@ module.exports = function(core, config, store) {
 		if (userId) {
 			if (appUtils.isGuest(userId)) {
 				// User is not signed in
+				changes.nav.dialogState.signedin = null;
+
 				if (signingup) {
 					// Trying to sign up
 					if ((!dialog && !/(signup|signin)/.test(currentDialog)) || dialog === "signin") {
@@ -27,6 +29,8 @@ module.exports = function(core, config, store) {
 				}
 			} else {
 				// User is signed in
+				changes.nav.dialogState.signedin = true;
+
 				if (/(signup|signin)/.test(dialog)) {
 					changes.nav.dialog = null;
 					changes.nav.dialogState = null;
