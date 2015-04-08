@@ -1,6 +1,7 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var future = store.with(changes),
+			mode = future.get("nav", "mode"),
 			room = future.get("nav", "room"),
 			roomObj = future.getRoom();
 
@@ -11,7 +12,7 @@ module.exports = function(core, config, store) {
 				changes.nav.mode = "home";
 			}
 
-			if (store.get("nav", "mode") === "room" || changes.nav.mode === "room") {
+			if (mode === "room") {
 				changes.nav.dialog = "createroom";
 				changes.nav.dialogState = changes.nav.dialogState || {};
 				changes.nav.dialogState.nonexistent = true;
