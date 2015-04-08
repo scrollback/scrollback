@@ -31,6 +31,26 @@
             &-form {
                 input { border: 0; }
             }
+
+            &-nav {
+                list-style: none;
+                margin: 1em 0;
+
+                li { display: inline-block; }
+
+                a {
+                    display: inline-block;
+                    color: currentColor;
+                    text-transform: uppercase;
+                    border: 0;
+                    padding: 1em;
+                    border-radius: $roundness;
+
+                    &:focus, &:hover { background-color: rgba(255, 255, 255, .3); }
+
+                    &:active { background-color: rgba(255, 255, 255, .4); }
+                }
+            }
         }
 
         &-cover {

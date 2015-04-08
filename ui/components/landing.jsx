@@ -47,6 +47,10 @@ module.exports = function(core, config, store) {
 										<input ref="roomNameEntry" type="text" className="linked go-to-room" placeholder="Type a room name" autofocus />
 										<input type="submit" className="linked" value="Go" />
 									</form>
+									<ul className="banner-landing-nav">
+										<li><a href="http://blog.scrollback.io" target="_blank">Blog</a></li>
+										<li><a href="http://scrollback.github.io/static/features.html" target="_blank">Features</a></li>
+									</ul>
 								</div>
 							</div>
 						</div>
