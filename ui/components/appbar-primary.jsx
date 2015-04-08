@@ -32,7 +32,7 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleMinimize: function(e) {
-			if (e.target.tagName === "A") {
+			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf("user-area") > -1)) {
 				return;
 			}
 
@@ -110,7 +110,6 @@ module.exports = function(core, config, store) {
 						<img className="user-area-avatar" alt={username} src={getAvatar(user.picture, 48)} />
 						<div className="user-area-nick">{username}</div>
 					</div>
-					{/* <img data-mode="home" className="appbar-avatar" alt={user.id} src={getAvatar(user.picture, 48)} /> */}
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
