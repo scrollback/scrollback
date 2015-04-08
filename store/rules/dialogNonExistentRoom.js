@@ -10,9 +10,7 @@ module.exports = function(core, config, store) {
 
 			if (store.get("nav", "dialog") === "createroom" && changes.nav.dialog === null) {
 				changes.nav.mode = "home";
-			}
-
-			if (mode === "room") {
+			} else if (mode === "room") {
 				changes.nav.dialog = "createroom";
 				changes.nav.dialogState = changes.nav.dialogState || {};
 				changes.nav.dialogState.nonexistent = true;
