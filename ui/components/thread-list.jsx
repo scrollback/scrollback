@@ -187,7 +187,7 @@ module.exports = function(core, config, store) {
 
 				return (
 						<div className="main-content-threads">
-							<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>
+							{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
 							<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
 							{empty}
 						</div>
