@@ -3,7 +3,7 @@ var objUtils = require("../lib/obj-utils.js"),
 	state = {
 		"nav": {
 			"mode": "loading",
-			"view": "main",
+			"view": null,
 			"room": null
 		},
 		session: "",
