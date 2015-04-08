@@ -31,7 +31,7 @@ exports.getTexts = exports.getThreads = function(query) {
 		q.filters.push(["tags", "cts", query.tag]);
 	}
 	
-	if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator") {
+	if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator" && query.user.role !== "su") {
 		q.filters.push({sql: 'NOT("tags" @> $)', values: [[
 			query.type === 'getThreads'? "thread-hidden": "hidden"
 		]]});

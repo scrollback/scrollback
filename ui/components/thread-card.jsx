@@ -124,7 +124,7 @@ module.exports = function(core, config, store) {
 				}
 			});
 
-			if (rel && /(owner|moderator)/.test(rel.role)) {
+			if (rel && /(owner|moderator|su)/.test(rel.role)) {
 				menu = <a className="card-header-icon card-header-icon-more" onClick={this.showThreadMenu}></a>;
 			} else {
 				menu = [];

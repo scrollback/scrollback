@@ -105,14 +105,20 @@ function onInit(init, next) {
 }
 
 function onRoomUser(action, next) {
-	var entities = {};
+	var changes = {},entities = {};
 	entities[action.to] = action[action.type === "room" ? "room" : "user"];
-	core.emit("setstate", {
-		entities: entities
-	});
+	changes.entities = entities;
+	if(action.type === "room") dialogReset(changes, action);
+	core.emit("setstate", changes);
 	next();
 }
 
+function dialogReset(changes, action) {
+	if(action.room.id === store.get("nav").room && store.get("nav","dialog") === "createroom") {
+		changes.dialog = null;
+		changes.dialogState = null;
+	}
+}
 function onAwayBack(action, next) {
 	var entities = {}, relation;
 	if(!action.room) action.room = store.getRoom(action.to);
@@ -204,7 +210,7 @@ function onTextDn(text, next) {
 
 function onEdit (edit, next) {
 	var text, thread, changes = {},
-		pleb = ["moderator", "owner"].indexOf(store.getRelation().role) < 0;
+		pleb = ["moderator", "owner", "su"].indexOf(store.getRelation().role) < 0;
 
 	text = edit.old;
 

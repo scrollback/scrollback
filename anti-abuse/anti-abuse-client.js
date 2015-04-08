@@ -55,7 +55,7 @@ module.exports = function(core, config, store) {
 			room = store.get("nav", "room"),
 			rel = store.getRelation();
 
-		if (!(rel && (/(owner|moderator)/).test(rel.role) && textObj)) {
+		if (!(rel && (/(owner|moderator|su)/).test(rel.role) && textObj)) {
 			return next();
 		}
 
