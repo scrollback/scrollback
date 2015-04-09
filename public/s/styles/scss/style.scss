@@ -171,6 +171,13 @@ body {
     .appbar-icon, .user-area { display: none; }
 }
 
+.input-focused {
+    .fab {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
 .appbar {
     &-title-container {
         position: relative;

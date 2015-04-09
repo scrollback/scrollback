@@ -3,9 +3,9 @@ module.exports = function(core, config, store) {
 		var mode = store.with(changes).get("nav", "mode");
 
 		if (mode !== "chat") {
-			changes.nav = changes.nav || {};
-			changes.nav.selectedTexts = [];
-			changes.nav.currentText = null;
+			changes.app = changes.app || {};
+			changes.app.selectedTexts = [];
+			changes.app.currentText = null;
 		}
 
 		next();

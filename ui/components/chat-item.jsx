@@ -22,17 +22,17 @@ module.exports = function(core, config, store) {
 		},
 
 		selectMessage: function(e) {
-			var navChanges = {},
+			var appChanges = {},
 				index, currentText, selectedTexts;
 
 			if (e.target.tagName === "A") {
 				return;
 			}
 
-			currentText = store.get("nav", "currentText");
+			currentText = store.get("app", "currentText");
 
 			if (!/\bchat-item-nick\b/.test(e.target.className)) {
-				selectedTexts = store.get("nav", "selectedTexts") || [];
+				selectedTexts = store.get("app", "selectedTexts") || [];
 
 				index = selectedTexts.indexOf(this.props.text.id);
 
@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 					selectedTexts.push(this.props.text.id);
 				}
 
-				navChanges.selectedTexts = selectedTexts;
+				appChanges.selectedTexts = selectedTexts;
 			}
 
 			if (currentText === this.props.text.id) {
@@ -53,9 +53,9 @@ module.exports = function(core, config, store) {
 				this.showChatMenu(e);
 			}
 
-			navChanges.currentText = currentText;
+			appChanges.currentText = currentText;
 
-			core.emit("setstate", { nav: navChanges });
+			core.emit("setstate", { app: appChanges });
 		},
 
 		render: function() {

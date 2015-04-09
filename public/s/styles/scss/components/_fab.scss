@@ -3,6 +3,7 @@
     $color: nth($palette, 9);
 
     .fab {
+        @extend %transition;
         @include icon(add);
         @include dropshadow(3);
 

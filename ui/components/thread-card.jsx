@@ -93,8 +93,27 @@ module.exports = function(core, config, store) {
 
 			// Remove the flag on threadCard
 			setTimeout(function() {
-				this.setState({ quickReplyShown: false });
+				// Cannot set state if component is unmounted
+				if (this.isMounted()) {
+					this.setState({ quickReplyShown: false });
+				}
 			}.bind(this), 300);
+		},
+
+		onBlur: function() {
+			if (store.get("app", "focusedInput") === "quick-reply-" + this.props.thread.id) {
+				core.emit("setstate", {
+					app: { focusedInput: null }
+				});
+			}
+
+			this.hideQuickReply();
+		},
+
+		onFocus: function() {
+			core.emit("setstate", {
+				app: { focusedInput: "quick-reply-" + this.props.thread.id }
+			});
 		},
 
 		render: function() {
@@ -142,7 +161,7 @@ module.exports = function(core, config, store) {
 					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>
 						<div className="card-quick-reply-content">
 							<div className="card-button card-button-reply">Quick reply</div>
-							<input type="text" className="card-entry card-entry-reply" onKeyDown={this.sendMessage} onBlur={this.hideQuickReply} />
+							<input type="text" className="card-entry card-entry-reply" onKeyDown={this.sendMessage} onBlur={this.onBlur} onFocus={this.onFocus} />
 						</div>
 					</div>
 				</div>

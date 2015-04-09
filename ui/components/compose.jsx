@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 
 	Compose = React.createClass({
 		getMessageText: function(msg) {
-			var currentText = store.get("nav", "currentText"),
+			var currentText = store.get("app", "currentText"),
 				textObj = store.get("indexes", "textsById", currentText),
 				nick, user, mention;
 
@@ -21,7 +21,7 @@ module.exports = function(core, config, store) {
 
 				mention = "@" + nick;
 
-				if (msg.indexOf(mention) === -1 && nick != user) {
+				if (msg.indexOf(mention) === -1 && nick !== user) {
 					msg = msg.replace(/(?:^@[a-z0-9\-]+\s?)|(?:\s*(?:\s@[a-z0-9\-]+)?\s*$)/, function(match, index) {
 						if (index === 0) {
 							return mention;
@@ -59,7 +59,7 @@ module.exports = function(core, config, store) {
 			});
 
 			core.emit("setstate", {
-				nav: { currentText: null }
+				app: { currentText: null }
 			});
 
 			composeBox.val("");
@@ -71,6 +71,20 @@ module.exports = function(core, config, store) {
 
 				this.sendMessage();
 			}
+		},
+
+		onBlur: function() {
+			if (store.get("app", "focusedInput") === "compose") {
+				core.emit("setstate", {
+					app: { focusedInput: null }
+				});
+			}
+		},
+
+		onFocus: function() {
+			core.emit("setstate", {
+				app: { focusedInput: "compose" }
+			});
 		},
 
 		componentDidUpdate: function() {
@@ -108,8 +122,8 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={autofocus} placeholder={placeholder} disabled={disabled}
-								  onKeyDown={this.onKeyDown} ref="composeBox"
-								  tabIndex="1" className="chat-area-input-entry" />
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}
+								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
