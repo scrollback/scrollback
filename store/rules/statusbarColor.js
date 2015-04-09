@@ -1,6 +1,19 @@
 /* jshint browser: true */
 
-var colors = [];
+var colors = [],
+	currentColor;
+
+function setStatusBarColor(color) {
+	if (color !== currentColor && typeof window.Android.setStatusBarColor === "function") {
+		if (color && typeof color === "string") {
+			window.Android.setStatusBarColor(color);
+		} else {
+			window.Android.setStatusBarColor();
+		}
+	}
+
+	currentColor = color;
+}
 
 document.addEventListener("readystatechange", function() {
 	var testDiv, color, rgb;
@@ -35,29 +48,21 @@ module.exports = function(core, config, store) {
 			mode, thread, index, color;
 
 		if (env === "android") {
-			if (typeof window.Android.setStatusBarColor === "function") {
-				if (changes.nav && ("mode" in changes.nav || "thread" in changes.nav)) {
-					mode = future.get("nav", "mode");
+			mode = future.get("nav", "mode");
 
-					if (mode === "chat") {
-						thread = future.get("indexes", "threadsById", future.get("nav", "thread"));
+			if (mode === "chat") {
+				thread = future.get("indexes", "threadsById", future.get("nav", "thread"));
 
-						if (thread) {
-							index = parseInt(thread.color);
+				if (thread) {
+					index = parseInt(thread.color);
 
-							if (!isNaN(index)) {
-								color = colors[index];
-							}
-						}
-					}
-
-					if (color && typeof color === "string") {
-						window.Android.setStatusBarColor(color);
-					} else {
-						window.Android.setStatusBarColor();
+					if (!isNaN(index)) {
+						color = colors[index];
 					}
 				}
 			}
+
+			setStatusBarColor(color);
 		}
 
 		next();
