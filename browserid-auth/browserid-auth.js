@@ -52,7 +52,7 @@ function browserAuth(action, callback) {
 				action.user.params = {};
 				action.user.guides = {};
 				action.user.params.pictures = [action.user.picture];
-                action.response = new Error("AUTH:UNREGISTRED");
+                action.response = new Error("AUTH:UNREGISTERED");
 				return callback();
 			}
 
