@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 
 	Compose = React.createClass({
 		getMessageText: function(msg) {
-			var currentText = store.get("nav", "currentText"),
+			var currentText = store.get("app", "currentText"),
 				textObj = store.get("indexes", "textsById", currentText),
 				nick, user, mention;
 

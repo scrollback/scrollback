@@ -55,7 +55,7 @@ module.exports = function(core, config, store) {
 
 			appChanges.currentText = currentText;
 
-			core.emit("setstate", { nav: appChanges });
+			core.emit("setstate", { app: appChanges });
 		},
 
 		render: function() {
