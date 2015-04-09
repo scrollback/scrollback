@@ -8,6 +8,10 @@ module.exports = function(core) {
 			if (typeof window.Android.onFinishedLoading === "function") {
 				window.Android.onFinishedLoading();
 			}
+
+			if (typeof window.Android.setStatusBarColor === "function") {
+				window.Android.setStatusBarColor();
+			}
 		}
 
 		next();
