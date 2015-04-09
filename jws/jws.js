@@ -40,7 +40,7 @@ function jwsHandler(action, callback) {
 	if (!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
 		if (!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
-		if (payload.iss != action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
+		if (payload.iss !== action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
 
 		core.emit("getUsers", {
 			identity: "mailto:" + payload.sub,
@@ -67,7 +67,7 @@ function jwsHandler(action, callback) {
 						}
 					});
 				} else {
-					if (action.user.id == user.id) {
+					if (action.user.id === user.id) {
 						if (!action.user.allowedDomains) action.user.allowedDomains = [];
 						if (action.user.allowedDomains.indexOf(domain) < 0) {
 							action.user.allowedDomains.push(domain);
@@ -94,7 +94,7 @@ function jwsHandler(action, callback) {
 							action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(payload.sub).digest('hex') + '/?d=retro';
 							action.user.params = {};
 							action.user.params.pictures = [action.user.picture];
-							action.response = new Error("AUTH:UNREGISTRED");
+							action.response = new Error("AUTH:UNREGISTERED");
 							return callback();
 						}
 					});
@@ -117,8 +117,8 @@ var verify = (function() {
 		availableKeys = keys[action.origin.domain];
 
 		function testKey() {
-			if (i == availableKeys.length) return callback(false);
-			jwt.verify(action.auth.jws, availableKeys[i], function(err, decoded) {
+			if (i === availableKeys.length) return callback(false);
+			jwt.verify(action.auth.jws, availableKeys[i], { algorithm: 'HS512' }, function(err, decoded) {
 				if (!err && decoded) {
 					return callback(true, decoded);
 				}

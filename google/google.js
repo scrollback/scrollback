@@ -53,7 +53,7 @@ module.exports = function(c, conf) {
 							action.user.params = {
 								pictures: [googlePic, gravatar]
 							};
-
+							action.response = new Error("AUTH:UNREGISTERED");
 							return callback();
 						}
 
@@ -128,13 +128,13 @@ module.exports = function(c, conf) {
 function handlerRequest(req, res) {
 	var path = req.path.substring(3);
 	path = path.split("/");
-	if (path[0] == "google") {
-		if (path[1] == "login") {
+	if (path[0] === "google") {
+		if (path[1] === "login") {
 			return res.render(__dirname + "/login.jade", {
 				client_id: config.client_id,
 				redirect_uri: "https://" + config.global.host + "/r/google/return"
 			});
-		} else if (path[1] == "return") {
+		} else if (path[1] === "return") {
 			return res.render(__dirname + "/return.jade", {});
 		}
 	}
