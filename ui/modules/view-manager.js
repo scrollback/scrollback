@@ -4,7 +4,7 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var keys = [ "view", "mode" ],
-		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas" ],
+		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas", "input" ],
 		oldClassName;
 
 	// Listen to navigate and add class names
@@ -51,6 +51,10 @@ module.exports = function(core, config, store) {
 			if (minimize) {
 				newClassList.push(form + "-minimized");
 			}
+		}
+
+		if (store.get("app", "focusedInput")) {
+			newClassList.push("input-focused");
 		}
 
 		// Sort and join class names for comparison
