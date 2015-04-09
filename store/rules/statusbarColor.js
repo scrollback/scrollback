@@ -1,19 +1,6 @@
 /* jshint browser: true */
 
-var colors = [],
-	currentColor;
-
-function setStatusBarColor(color) {
-	if (color !== currentColor && typeof window.Android.setStatusBarColor === "function") {
-		if (color && typeof color === "string") {
-			window.Android.setStatusBarColor(color);
-		} else {
-			window.Android.setStatusBarColor();
-		}
-	}
-
-	currentColor = color;
-}
+var colors = [];
 
 document.addEventListener("readystatechange", function() {
 	var testDiv, color, rgb;
@@ -24,7 +11,7 @@ document.addEventListener("readystatechange", function() {
 
 		document.body.appendChild(testDiv);
 
-		for (var i = 0; i < 9; i++) {
+		for (var i = 0; i < 10; i++) {
 			testDiv.className = "test-thread-color-dark-" + i;
 
 			color = getComputedStyle(testDiv).backgroundColor;
@@ -47,22 +34,28 @@ module.exports = function(core, config, store) {
 			env = future.get("context", "env"),
 			mode, thread, index, color;
 
-		if (env === "android") {
-			mode = future.get("nav", "mode");
+		if (env === "android" && typeof window.Android.setStatusBarColor === "function") {
+			if (changes.nav && ("mode" in changes.nav || "thread" in changes.nav)) {
+				mode = future.get("nav", "mode");
 
-			if (mode === "chat") {
-				thread = future.get("indexes", "threadsById", future.get("nav", "thread"));
+				if (mode === "chat") {
+					thread = future.get("indexes", "threadsById", future.get("nav", "thread"));
 
-				if (thread) {
-					index = parseInt(thread.color);
+					if (thread) {
+						index = parseInt(thread.color);
 
-					if (!isNaN(index)) {
-						color = colors[index];
+						if (!isNaN(index)) {
+							color = colors[index];
+						}
 					}
 				}
-			}
 
-			setStatusBarColor(color);
+				if (color && typeof color === "string") {
+					window.Android.setStatusBarColor(color);
+				} else {
+					window.Android.setStatusBarColor();
+				}
+			}
 		}
 
 		next();
