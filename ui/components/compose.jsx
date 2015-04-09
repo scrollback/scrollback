@@ -59,7 +59,7 @@ module.exports = function(core, config, store) {
 			});
 
 			core.emit("setstate", {
-				nav: { currentText: null }
+				app: { currentText: null }
 			});
 
 			composeBox.val("");
