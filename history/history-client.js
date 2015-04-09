@@ -85,15 +85,15 @@ module.exports = function(core, config, store) {
 			state = { nav: store.get("nav"), context: store.get("context") },
 			title;
 
-		if (state.nav.mode == 'home') {
+		if (state.nav.mode === 'home') {
 			url = '/me';
-		} else if (state.nav.mode == 'room') {
+		} else if (state.nav.mode === 'room') {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return next(); // Not ready with the new room yet.
 			}
 			url = '/' + state.nav.room;
 			title = format.titleCase(state.nav.room) + ' on Scrollback';
-		} else if (state.nav.mode == 'chat') {
+		} else if (state.nav.mode === 'chat') {
 			if (state.nav.room.indexOf(':') !== -1) {
 				return next(); // Not ready with the new room yet.
 			}
@@ -125,7 +125,7 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if (url == location.pathname && objUtils.equal(params, getParams(location.search.substr(1)))) {
+		if (url === location.pathname && objUtils.equal(params, getParams(location.search.substr(1)))) {
 			return next();
 		}
 
@@ -149,6 +149,6 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	window.addEventListener('popstate', function(event) {
-		core.emit('setstate', {nav: event.state});
+		core.emit('setstate', { nav: event.state });
 	});
 };

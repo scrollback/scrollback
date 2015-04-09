@@ -108,17 +108,11 @@ function onRoomUser(action, next) {
 	var changes = {},entities = {};
 	entities[action.to] = action[action.type === "room" ? "room" : "user"];
 	changes.entities = entities;
-	if(action.type === "room") dialogReset(changes, action);
+
 	core.emit("setstate", changes);
 	next();
 }
 
-function dialogReset(changes, action) {
-	if(action.room.id === store.get("nav").room && store.get("nav","dialog") === "createroom") {
-		changes.dialog = null;
-		changes.dialogState = null;
-	}
-}
 function onAwayBack(action, next) {
 	var entities = {}, relation;
 	if(!action.room) action.room = store.getRoom(action.to);
