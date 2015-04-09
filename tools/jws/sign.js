@@ -10,10 +10,10 @@ var payload = {
 	"exp": Math.floor((new Date()).getTime()/1000) + 30000
 };
 
-var cert = fs.readFileSync('../../test/server.key'); // get private key
+var key = fs.readFileSync('../../test/server.key'); // 
 
-var token = jwt.sign(payload, cert, {
-	algorithm: 'RS256',
+var token = jwt.sign(payload, key, {
+	algorithm: 'hs512',
 	type: "jws"
 });
 console.log("TOKEN: ", token);
