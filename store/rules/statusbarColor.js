@@ -40,7 +40,7 @@ module.exports = function(core, config, store) {
 					mode = future.get("nav", "mode");
 
 					if (mode === "chat") {
-						thread = store.get("indexes", "threadsById", store.get("nav", "thread"));
+						thread = future.get("indexes", "threadsById", future.get("nav", "thread"));
 
 						if (thread) {
 							index = parseInt(thread.color);
