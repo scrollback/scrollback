@@ -168,7 +168,7 @@ body {
 .toast-minimized {
     @extend %embed-inactive;
 
-    .appbar-icon { display: none; }
+    .appbar-icon, .user-area { display: none; }
 }
 
 .appbar {
