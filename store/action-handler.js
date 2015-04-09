@@ -127,21 +127,34 @@ function onAwayBack(action, next) {
 	core.emit("setstate", {
 		entities: entities
 	});
+
+	// TODO: start thread and text ranges in this room with start: current timestamp, end: null, items: []
+	// for each thread already here
+
 	next();
 }
 
 function onTextUp(text, next) {
-	var textRange = {
-			start: text.time,
-			end: text.time,
-			items: [text]
-		},
-		key, newState = {texts:{}};
+	var newState = { texts: {} },
+		currentTexts = store.get("texts", text.to);
+
 	next(); // calling next here so that it gets an id.
+
 	pendingActions[text.id] = text;
-	key = keyFromText(text);
-	newState.texts[text.to] = [textRange];
-	newState.texts[key] = [textRange];
+
+	newState.texts[text.to] = [{ // put the text in all messages
+		start: text.time,
+		end: (currentTexts && currentTexts.length) ? text.time : null,
+		items: [text]
+	}];
+
+	if (text.thread) {
+		newState.texts[keyFromText(text)] = [{ // put the text in the appropriate thread
+			start: text.time,
+			end: (text.thread !== text.id) ? text.time : null,
+			items: [text]
+		}];
+	}
 
 //	next();
 
@@ -164,23 +177,33 @@ function onTextUp(text, next) {
 }
 
 function onTextDn(text, next) {
-	var textRange = {
+	var oldRange,
+		currentThreads, currentTexts,
+		oldKey = "", newState = { texts: {} };
+
+	currentTexts = store.get("texts", text.to);
+
+	newState.texts[text.to] = [{ // put the text in all messages
+		start: text.time,
+		end: (currentTexts && currentTexts.length) ? text.time : null,
+		items: [text]
+	}];
+
+	if (text.thread) {
+		newState.texts[keyFromText(text)] = [{ // put the text in the appropriate thread
 			start: text.time,
-			end: ((text.thread === text.id) ? null : text.time),
+			end: (text.thread === text.id) ? null : text.time,
 			items: [text]
-		}, oldRange,
-		key, newState = {texts:{}}, oldKey = "", currentThreads;
+		}];
+	}
 
-	key = keyFromText(text);
-
-	newState.texts[text.to] = [textRange];
-	newState.texts[key] = [textRange];
 	if (pendingActions[text.id]) {
 		oldRange = {
 			start: pendingActions[text.id].time,
 			end: pendingActions[text.id].time,
 			items: []
 		};
+
 		newState.texts[text.to].push(oldRange);
 
 		oldKey = keyFromText(pendingActions[text.id]);
