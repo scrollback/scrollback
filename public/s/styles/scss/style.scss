@@ -167,6 +167,13 @@ body {
     .appbar-icon { display: none; }
 }
 
+.input-focused {
+    .fab {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
 .appbar {
     &-title-container {
         position: relative;
