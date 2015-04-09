@@ -159,12 +159,16 @@ body {
             .appbar-icon-back { display: none; }
         }
     }
+
+    &-toast.mode-chat:not(.toast-minimized) {
+        .appbar-title-container { margin-left: 0; }
+    }
 }
 
 .toast-minimized {
     @extend %embed-inactive;
 
-    .appbar-icon { display: none; }
+    .appbar-icon, .user-area { display: none; }
 }
 
 .appbar {
