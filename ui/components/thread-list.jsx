@@ -164,7 +164,7 @@ module.exports = function(core, config, store) {
 
 			if (!items.length) {
 				empty = (
-				        <div className = {"thread-empty"}>
+				        <div className="thread-feed-empty">
 							{loading ? "Loading discussions..." : "There are no discussions yet :-("}
 						</div>
 						);
