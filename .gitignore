@@ -41,6 +41,10 @@ client-config.js
 /public/s/sb.js
 /public/s/dist
 /public/s/tmp
+public/s/scripts/
+public/s/styles/fonts/
+public/s/styles/lace/
+dump.rdb
 
 /mocha-output-selenium.json
 /mocha-output-unit.json
