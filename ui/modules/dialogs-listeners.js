@@ -83,6 +83,7 @@ module.exports = function(core, config, store) {
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),
 			user = store.get("user"),
+			context = store.get("context"),
 			signingup = store.get("nav", "dialogState", "signingup"),
 			nonexistent = store.get("nav", "dialogState", "nonexistent"),
 			roomName = store.get("nav", "dialogState", "prefill") || "";
@@ -90,7 +91,7 @@ module.exports = function(core, config, store) {
 		if (!user) {
 			return;
 		}
-
+		if(context.env === "embed") dialog.dismiss = false;
 		if (appUtils.isGuest(user)) {
 			if (signingup) {
 				dialog.title = "Create a new room";
