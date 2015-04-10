@@ -44,7 +44,32 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var data = {
+			if (!this.state.action) {
+				return <div data-mode="none" className="call-to-action-bar" />;
+			} else {
+				return (
+					<div className="call-to-action-bar" ref="callToActionBar">
+						<p className="call-to-action-bar-info">{this.state.text}</p>
+						<a className="call-to-action-bar-close" onClick={this.hideSelf}></a>
+						<a className="call-to-action-bar-button button info" onClick={this.state.action}>{this.state.label}</a>
+					</div>
+				);
+			}
+		},
+
+		getInitialState: function() {
+			return {
+				text: "",
+				label: "",
+				action: null
+			};
+		},
+
+		onStateChange: function(changes, next) {
+			var data;
+
+			if (changes.app && "cta" in changes.app) {
+				data = {
 					signin: {
 						text: "Change your username",
 						label: "Sign up",
@@ -62,22 +87,20 @@ module.exports = function(core, config, store) {
 						label: "Install app",
 						action: this.installApp
 					}
-				},
-				cta;
+				};
 
-			cta = data[store.get("app", "cta")];
-
-			if (!cta) {
-				return <div className="call-to-action-bar hidden" />;
+				this.setState(data[store.get("app", "cta")] || this.getInitialState());
 			}
 
-			return (
-				<div className="call-to-action-bar" ref="callToActionBar">
-					<p className="call-to-action-bar-info">{cta.text}</p>
-					<a className="call-to-action-bar-close" onClick={this.hideSelf}></a>
-					<a className="call-to-action-bar-button button info" onClick={cta.action}>{cta.label}</a>
-				</div>
-			);
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 
