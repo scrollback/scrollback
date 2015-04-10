@@ -120,7 +120,7 @@ module.exports = function(core, config, store) {
 					this.setState({
 						title: userObj.id,
 						description: userObj.description || "This user has no description.",
-						picture: getAvatar(userObj.picture, 48),
+						picture: getAvatar(userObj.picture, 128),
 						cover: getAvatar(userObj.picture, 24),
 						banner: true,
 						form: true,
