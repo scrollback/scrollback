@@ -2,20 +2,16 @@
 /* global $ */
 
 module.exports = function(core) {
-	var done = false;
-
-	core.on("statechange", function(changes, next) {
-		if (done) {
-			return next();
-		}
-
+	function dismissLoading(changes, next) {
 		if (changes.nav && changes.nav.mode) {
-			done = true;
-
 			// We aren't really certain if the classes are added to body yet
 			$.progressbar("dismiss");
+
+			core.off("statechange", dismissLoading);
 		}
 
 		next();
-	}, 100);
+	}
+
+	core.on("statechange", dismissLoading, 100);
 };
