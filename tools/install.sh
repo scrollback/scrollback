@@ -234,8 +234,9 @@ install_pkgs() {
     printf $(gulp)
 }
 
-config() {
-	$(echo "module.exports = {};" > client-config.js)
+create_config() {
+	# Client config
+    $(echo "module.exports = {};" > client-config.js)
 }
 
 redis() {
@@ -275,24 +276,17 @@ postgres_schemas() {
 }
 
 postgres_osx_create() {
-    printf "Creating user: 'scrollback' with password 'scrollback':"
-    $(echo "localhost:5432:scrollback:scrollback:scrollback" > ~/.pgpass)
-    $(echo "localhost:5432:logs:scrollback:scrollback" > ~/.pgpass)
-    $(chmod 0600 ~/.pgpass)
+    printf("Creating DB user and Scrollback DBs...")
     printf $(createuser -d scrollback)
-    printf "Creating database: 'scrollback':"
     printf $(createdb -U scrollback -O scrollback scrollback)
-    printf "Creating database: 'logs':"
     printf $(createdb -U scrollback -O scrollback logs)
 }
 
 postgres_create_linux() {
-    printf "Creating user: 'scrollback' without password..."
-    $(sudo -u postgres createuser -s scrollback)
-    printf "Creating database: 'scrollback'"
-    $(sudo -u postgres createdb -w -O scrollback scrollback)
-    printf "Creating database: 'logs'"
-    $(sudo -u postgres createdb -w -O scrollback logs)
+    printf("Creating DB user and Scrollback DBs...")
+    printf $(sudo -u postgres createuser -d scrollback)
+    printf $(sudo -u postgres createdb -O scrollback scrollback)
+    printf $(sudo -u postgres createdb -O scrollback logs)
 }
 
 postgres_sysvinit() {
@@ -313,6 +307,12 @@ postgres() {
     printf "Checking for Postgres..."
     postgres_pids=$(pgrep postgres)
     if [[ "$postgres_pids" ]]; then
+        printf "You are running Postgres server on $postgres_pids"
+    else
+        printf "Creating Scrollback DBs Postgres config file:"
+        $(echo "localhost:5432:scrollback:scrollback:scrollback" > ~/.pgpass)
+        $(echo "localhost:5432:logs:scrollback:scrollback" >> ~/.pgpass)
+        $(chmod 0600 ~/.pgpass)
         if [[ ${kernel} == "Darwin" ]]; then
             postgres_osx_start
             postgres_osx_create
@@ -326,8 +326,6 @@ postgres() {
             postgres_create_linux
             postgres_schemas
         fi
-    else
-        printf "You are running Postgres server on $postgres_pids"
     fi
 }
 
@@ -358,7 +356,7 @@ main() {
 
     # Application deps
     install_pkgs
-    config
+    create_config
 
     # Run redis
     redis
