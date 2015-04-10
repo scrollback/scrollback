@@ -81,8 +81,7 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var nav = store.get("nav"),
-			user = store.get("user"),
+		var user = store.get("user"),
 			context = store.get("context"),
 			signingup = store.get("nav", "dialogState", "signingup"),
 			nonexistent = store.get("nav", "dialogState", "nonexistent"),
@@ -92,6 +91,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 		if(context.env === "embed") dialog.dismiss = false;
+		
 		if (appUtils.isGuest(user)) {
 			if (signingup) {
 				dialog.title = "Create a new room";
@@ -152,7 +152,7 @@ module.exports = function(core, config, store) {
 			}
 		} else {
 			if (nonexistent) {
-				dialog.title = "There is no room called '" + nav.room + "' :-(";
+				dialog.title = "There is no room called '" + roomName + "' :-(";
 				dialog.description = "Would you like to create the room?";
 			} else {
 				dialog.title = "Create a new room";
