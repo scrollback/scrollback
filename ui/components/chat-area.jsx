@@ -152,7 +152,7 @@ module.exports = function(core, config, store) {
 				room = store.get("nav", "room"),
 				key = thread ? room + "_" + thread : room;
 
-			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) ||
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
 			    (changes.texts && changes.texts[key] && changes.texts[key].length) ||
 			    (changes.threads && changes.threads[thread])) {
 
