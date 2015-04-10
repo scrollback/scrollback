@@ -10,8 +10,7 @@ module.exports = function(core, config, store) {
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		RoomList = require("./room-list.jsx")(core, config, store),
 		ThreadList = require("./thread-list.jsx")(core, config, store),
-		Client,
-		clientEl = document.getElementById("app-client");
+		Client;
 
 	Client = React.createClass({
 		createRoom: function() {
@@ -76,11 +75,7 @@ module.exports = function(core, config, store) {
 		}
 	});
 
-	core.on("statechange", function(changes, next) {
-		React.render(<Client />, clientEl);
-
-		next();
-	}, 500);
+	React.render(<Client />, document.getElementById("app-client"));
 
 	return Client;
 };
