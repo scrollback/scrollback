@@ -158,7 +158,7 @@ module.exports = function(core, config, store) {
 		},
 
 		componentDidMount: function() {
-			core.on("statechange", this.onStateChange, 500);
+			core.on("statechange", this.onStateChange, 400);
 		},
 
 		componentWillUnmount: function() {
