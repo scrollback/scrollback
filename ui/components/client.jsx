@@ -51,9 +51,9 @@ module.exports = function(core, config, store) {
 									<Banner />
 
 									<div className="main-content-inner">
-										<RoomList type="feed" />
+										<RoomList />
 
-										<ThreadList type="feed" />
+										<ThreadList />
 									</div>
 								</div>
 							</div>

@@ -3,8 +3,6 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		RoomCard = require("./room-card.jsx")(core, config, store),
-		RoomListItem = require("./room-list-item.jsx")(core, config, store),
-		ListView = require("./list-view.jsx")(core, config, store),
 		GridView = require("./grid-view.jsx")(core, config, store),
 		RoomList;
 
@@ -17,8 +15,12 @@ module.exports = function(core, config, store) {
 					follower: "Following",
 					featured: "Featured rooms"
 				},
-				secs = {}, sections = [],
-				type = this.props.type || "list";
+				secs = {}, sections = [];
+
+			// Don't show
+			if (!this.state.show) {
+				return <div data-mode="none" />;
+			}
 
 			for (var t in titles) {
 				secs[t] = {
@@ -36,8 +38,8 @@ module.exports = function(core, config, store) {
 				room.role = room.role || "visitor";
 
 				secs[room.role].items.push({
-					key: "home-" + type + "-room-card-" + room.role + "-" + room.id,
-					elem: (type === "feed") ? <RoomCard roomId={room.id} threadCount="3" /> : <RoomListItem roomId={room.id} />
+					key: "home--room-card-" + room.role + "-" + room.id,
+					elem: <RoomCard roomId={room.id} threadCount="3" />
 				});
 			});
 
@@ -47,31 +49,48 @@ module.exports = function(core, config, store) {
 				}
 
 				secs.featured.items.push({
-					key: "home-" + type + "-room-card-featured-" + room.id,
+					key: "home-room-card-featured-" + room.id,
 					updateTime: room.updateTime,
-					elem: (type === "feed") ? <RoomCard roomId={room.id} threadCount="3" /> : <RoomListItem roomId={room.id} />
+					elem: <RoomCard roomId={room.id} threadCount="3" />
 				});
 			});
 
 			for (var role in secs) {
 				if (secs[role].items.length) {
 					sections.push({
-						key: "home-" + type + "-" + secs[role].key + (type ? "-" + type : ""),
+						key: "home-" + secs[role].key,
 						header: secs[role].header,
 						items: secs[role].items.sort(function(a, b) { return (a.createTime || 0) - (b.createTime || 0); })
 					});
 				}
 			}
 
-			if (type === "feed") {
-				return (
-						<div className="main-content-rooms" data-mode="home">
-							<GridView sections={sections} />
-						</div>
-				);
-			} else {
-				return (<ListView sections={sections} />);
+			return (
+				<div className="main-content-rooms" data-mode="home">
+					<GridView sections={sections} />
+				</div>
+			);
+		},
+
+		getInitialState: function() {
+			return { show: false };
+		},
+
+		onStateChange: function(changes, next) {
+			if ((changes.nav && changes.nav.mode) ||
+			    (changes.indexes && changes.indexes.userRooms)) {
+				this.setState({ show: (store.get("nav", "mode") === "home") });
 			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 
