@@ -156,11 +156,7 @@ module.exports = function(core, config, store) {
 			    (changes.texts && changes.texts[key] && changes.texts[key].length) ||
 			    (changes.threads && changes.threads[thread])) {
 
-				if (store.get("nav", "mode") === "chat") {
-					this.setState({ show: true });
-				} else {
-					this.setState({ show: false });
-				}
+				this.setState({ show: (store.get("nav", "mode") === "chat") });
 			}
 
 			next();

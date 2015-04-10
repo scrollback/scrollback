@@ -69,8 +69,8 @@ module.exports = function(core, config, store) {
 				scrollToClassNames, cols, sections, empty, loading;
 
 			// Don't show
-			if (!((nav.mode === "room" && type === "feed") || nav.mode === "chat")) {
-				return <div />;
+			if (!this.state.show) {
+				return <div data-mode="none" />;
 			}
 
 			cols = this.getCols();
@@ -125,7 +125,7 @@ module.exports = function(core, config, store) {
 			allItems.reverse().forEach(function(thread) {
 				var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
 
-				if (typeof thread == "object") {
+				if (typeof thread === "object") {
 					if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
 						positionKey = key;
 					}
@@ -200,6 +200,30 @@ module.exports = function(core, config, store) {
 					</div>
 				);
 			}
+		},
+
+		getInitialState: function() {
+			return { show: false };
+		},
+
+		onStateChange: function(changes, next) {
+			var room = store.get("nav", "room");
+
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) ||
+			    (changes.threads && changes.threads[room])) {
+
+				this.setState({ show: (store.get("nav", "mode") === "room") });
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 
