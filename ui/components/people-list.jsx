@@ -10,17 +10,12 @@ module.exports = function(core, config, store) {
 		PeopleList;
 
 	PeopleList = React.createClass({
-		getInitialState: function() {
-			return { query: "" };
-		},
-
 		onChange: function(e) {
 			this.setState({ query: e.target.value });
 		},
 
 		render: function() {
-			var room = store.getRoom(),
-				people = store.getRelatedUsers(),
+			var people = this.state.people,
 				headers = {
 					online: [],
 					offline: []
@@ -42,7 +37,7 @@ module.exports = function(core, config, store) {
 
 					if (regex.test(user.id)) {
 						headers[people[i].status].push({
-							key: "people-list-" + room.id + "-" + user.id,
+							key: "people-list-" + user.id,
 							elem: (
 								<div className="people-list-item">
 									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
@@ -78,6 +73,35 @@ module.exports = function(core, config, store) {
 						</div>
 					</div>
 					);
+		},
+
+		getInitialState: function() {
+			return {
+				people: [],
+				query: ""
+			};
+		},
+
+		onStateChange: function(changes, next) {
+			if ((changes.nav && (changes.nav.mode || changes.nav.room)) ||
+			    (changes.indexes && changes.indexes.roomUsers)) {
+
+				if (/^(room|chat)$/.test(store.get("nav", "mode"))) {
+					this.setState({
+						people: store.getRelatedUsers()
+					});
+				}
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 
