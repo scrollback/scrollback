@@ -153,8 +153,7 @@ module.exports = function(core, config, store) {
 				key = thread ? room + "_" + thread : room;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
-			    (changes.texts && changes.texts[key] && changes.texts[key].length) ||
-			    (changes.threads && changes.threads[thread])) {
+			    (changes.texts && changes.texts[key] && changes.texts[key].length)) {
 
 				this.setState({ show: (store.get("nav", "mode") === "chat") });
 			}
