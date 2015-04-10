@@ -1,11 +1,11 @@
 module.exports = {
 	storage: {
 		pg: {
-			username: "scrollback",
-			password: "",
-			db: "scrollback",
-			server: "localhost"
-		}
+            server: "localhost",
+            username: "postgres",
+            password: "scrollback",
+            db: "staging"
+        }
 	},
 	http: {
 		host: "$branch.stage.scrollback.io",
