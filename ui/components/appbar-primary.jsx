@@ -111,7 +111,7 @@ module.exports = function(core, config, store) {
 				room = store.get("nav", "room"),
 				threadObj, nav, relation, title;
 
-			if ((changes.nav && (changes.nav.mode || changes.nav.user)) ||
+			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 

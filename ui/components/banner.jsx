@@ -47,52 +47,102 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var mode = store.get("nav", "mode"),
-				items = [],
-				user, userObj, roomObj, pics;
+			var items = [];
 
-			if (mode === "room") {
-				roomObj = store.getRoom();
+			if (this.state.banner) {
+				items.push(
+				        <div className="banner-cover" style={{ backgroundImage: "url(" + this.state.cover + ")" }} key="banner-cover">
+							<div className="banner-cover-logo" style={{ backgroundImage: "url(" + this.state.picture + ")" }}></div>
+								<h3 className="banner-cover-title">{this.state.title}</h3>
+								<p className="banner-cover-description">{this.state.description}</p>
+								{this.state.button ?
+									<a className="button banner-cover-button"
+									   onClick={this.state.button.action}>{this.state.button.label}</a> : ""}
+				        </div>
+				          );
+			}
 
-				if (roomObj && roomObj.id) {
-					pics = getRoomPics(roomObj.id);
-
-					items.push(
-					        <div className="banner-cover" style={{ backgroundImage: "url(" + pics.cover + ")" }} key="banner-cover">
-								<div className="banner-cover-logo" style={{ backgroundImage: "url(" + pics.picture + ")" }}></div>
-									<h3 className="banner-cover-title">{roomObj.id}</h3>
-									<p className="banner-cover-description">{roomObj.description || "This room has no description."}</p>
-									<a data-role="owner moderator" className="button banner-cover-button" onClick={this.showRoomSettings}>Configure room</a>
-					        </div>
-					          );
-				}
-			} else if (mode === "home") {
-				user = store.get("user");
-
-				if (user && !appUtils.isGuest(user)) {
-					userObj = store.getUser();
-
-					items.push(
-					        <div className="banner-cover" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 24) + ")" }} key="banner-cover">
-								<div className="banner-cover-logo" style={{ backgroundImage: "url(" + getAvatar(userObj.picture, 128) + ")" }}></div>
-									<h3 className="banner-cover-title">{userObj.id}</h3>
-									<p className="banner-cover-description">{userObj.description || "This user has no description."}</p>
-									<a className="button banner-cover-button" onClick={this.showUserSettings}>Configure account</a>
-					        </div>
-					          );
-
-					items.push(
-							<div className="banner-form-container" key="banner-form">
-								<form className="banner-form" onSubmit={this.onSubmit}>
-									<input ref="roomNameEntry" className="banner-form-entry linked" type="text" placeholder="Type a room name" autofocus />
-									<input className="banner-form-submit linked" type="submit" value="Go" />
-								</form>
-							</div>
-					        );
-				}
+			if (this.state.form) {
+				items.push(
+						<div className="banner-form-container" key="banner-form">
+							<form className="banner-form" onSubmit={this.onSubmit}>
+								<input ref="roomNameEntry" className="banner-form-entry linked" type="text" placeholder="Type a room name" autofocus />
+								<input className="banner-form-submit linked" type="submit" value="Go" />
+							</form>
+						</div>
+				        );
 			}
 
 			return <div className="banner">{items}</div>;
+		},
+
+		getInitialState: function() {
+			return {
+				title: "",
+				description: "",
+				picture: "",
+				cover: "",
+				banner: false,
+				form: false,
+				button: null
+			};
+		},
+
+		onStateChange: function(changes, next) {
+			var user = store.get("user"),
+				mode, pics,
+				rel, roomObj, userObj;
+
+			if ((changes.nav && (changes.nav.mode || changes.nav.room)) || changes.user ||
+			    (changes.entities && changes.entities[user])) {
+				mode = store.get("nav", "mode");
+
+				if (mode === "room") {
+					rel = store.getRelation();
+					roomObj = store.getRoom() || {};
+					pics = getRoomPics(roomObj.id);
+
+					this.setState({
+						title: roomObj.id,
+						description: roomObj.description || "This room has no description.",
+						picture: pics.picture,
+						cover: pics.cover,
+						banner: true,
+						form: false,
+						button: (rel && /(owner|moderator)/.test(rel.role)) ? {
+							label: "Configure room",
+							action: this.showRoomSettings
+						} : null
+					});
+				} else if (mode === "home" && user && !appUtils.isGuest(user)) {
+					userObj = store.getUser() || {};
+
+					this.setState({
+						title: userObj.id,
+						description: userObj.description || "This user has no description.",
+						picture: getAvatar(userObj.picture, 48),
+						cover: getAvatar(userObj.picture, 24),
+						banner: true,
+						form: true,
+						button: {
+							label: "Configure account",
+							action: this.showUserSettings
+						}
+					});
+				} else {
+					this.setState(this.getInitialState());
+				}
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 
