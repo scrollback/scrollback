@@ -6,7 +6,7 @@
 
 <body>
     <div>
-        <input id="roomName" type="text" placeholder="room">
+        <input id="room" type="text" placeholder="room">
         <input id="nick" type="text" placeholder="nick">
         <input id="jws" type="text" placeholder="jws">
         <input type="checkbox" value="createRoom" id="createRoom">CreateRoom</input>
@@ -23,7 +23,7 @@
         // change the domain name back to test.scrollback.io if you ever change it.
         document.write('<script src="http' +
         	(location.protocol == 'https:' ? 's' : '') +
-        	'://stage.scrollback.io/s/sb.js"><\/script>');
+        	'://harry.scrollback.io/s/sb.js"><\/script>');
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
@@ -34,17 +34,18 @@
         			opts[e] = $("#" + e).val();
         		});
         		opts.createRoom = $("#createRoom").prop('checked');
+				console.log(opts);
         		return opts;
         	}
         	$("#basic-embed").on("click", function() {
-        		scrollback(embedOpts(['roomName']));
+        		scrollback(embedOpts(['room']));
         	});
 
         	$("#basic-room-nick").on("click", function() {
-        		scrollback(embedOpts(['roomName', "nick"]));
+        		scrollback(embedOpts(['room', "nick"]));
         	});
         	$("#basic-room-jws").on("click", function() {
-        		scrollback(embedOpts(['roomName', "nick", "jws"]));
+        		scrollback(embedOpts(['room', "nick", "jws"]));
         	});
 
         });
