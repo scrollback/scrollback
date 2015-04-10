@@ -59,16 +59,13 @@ function onInit(init, next) {
 	var newstate = {};
 	if(init.response) {
 		switch(init.response.message) {
-			case "AUTH:UNREGISTRED":
+			case "AUTH:UNREGISTERED":
 				newstate.nav = newstate.nav || {};
 				newstate.nav.dialogState = newstate.nav.dialogState || {};
 				newstate.nav.dialogState.signingup = true;
 
 				break;
 		}
-	}
-
-	if (!init.user.id) {
 		entities[store.get("user")] = init.user;
 		newstate.entities = entities;
 		core.emit("setstate", newstate);

@@ -21,7 +21,7 @@ module.exports = function(c, conf, s) {
 	window.onmessage = onMessage;
 	core.on("boot", function(changes, next) {
 		var embed;
-		if (changes.context && changes.context.env == "embed") {
+		if (changes.context && changes.context.env === "embed") {
 			embed = changes.context.embed;
 			domain = parentHost = embed.origin.host;
 			embedPath = embed.origin.path;
@@ -42,7 +42,7 @@ module.exports = function(c, conf, s) {
 				type: "ready"
 			}), parentHost);
 		}
-		if(changes.context && changes.context.embed && typeof changes.context.embed.minimize == "boolean") {
+		if(changes.context && changes.context.embed && typeof changes.context.embed.minimize === "boolean") {
 			parentWindow.postMessage(JSON.stringify({
 				type: "activity",
 				minimize: changes.context.embed.minimize
@@ -101,7 +101,7 @@ function verifyDomainResponse(data) {
 		return;
 	}
 
-	if (data.token == token) {
+	if (data.token === token) {
 		verified = true;
 	} else {
 		verified = false;

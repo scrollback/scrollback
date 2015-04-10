@@ -8,7 +8,7 @@ module.exports = function(c, conf, s) {
 	store = s;
 	core.on("boot", function(changes, next) {
 		var embed;
-		if (changes.context && changes.context.env == "embed") {
+		if (changes.context && changes.context.env === "embed" && changes.context.embed && changes.context.embed.jws) {
 			embed = changes.context.embed;
 			domain = embed.origin.host;
 		}
