@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
-var appUtils = require("../../lib/app-utils.js"),
+var format = require("../../lib/format.js"),
+	appUtils = require("../../lib/app-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
 
 module.exports = function(core, config, store) {
@@ -54,7 +55,7 @@ module.exports = function(core, config, store) {
 				        <div className="banner-cover" style={{ backgroundImage: "url(" + this.state.cover + ")" }} key="banner-cover">
 							<div className="banner-cover-logo" style={{ backgroundImage: "url(" + this.state.picture + ")" }}></div>
 								<h3 className="banner-cover-title">{this.state.title}</h3>
-								<p className="banner-cover-description">{this.state.description}</p>
+								<p className="banner-cover-description">{format.mdToHtml(this.state.description)}</p>
 								{this.state.button ?
 									<a className="button banner-cover-button"
 									   onClick={this.state.button.action}>{this.state.button.label}</a> : ""}
