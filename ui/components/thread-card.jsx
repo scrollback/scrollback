@@ -8,6 +8,10 @@ module.exports = function(core, config, store) {
 		ThreadCard;
 
 	ThreadCard = React.createClass({
+		getInitialState: function() {
+			return { quickReplyShown: false };
+		},
+
 		showThreadMenu: function(e) {
 			var self = this;
 
@@ -115,6 +119,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var thread = this.props.thread,
 				classNames = "card thread-card",
+				rel = store.getRelation(),
 				menu, chats = [];
 
 			if (this.props.thread.tags) {
@@ -123,7 +128,7 @@ module.exports = function(core, config, store) {
 				}
 			}
 
-			this.state.texts.forEach(function(chat) {
+			(store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []).forEach(function(chat) {
 				if (chat.tags && chat.tags.indexOf("hidden") > -1 ) {
 					return;
 				}
@@ -138,7 +143,7 @@ module.exports = function(core, config, store) {
 				}
 			});
 
-			if (this.state.menu) {
+			if (rel && /(owner|moderator|su)/.test(rel.role)) {
 				menu = <a className="card-header-icon card-header-icon-more" onClick={this.showThreadMenu}></a>;
 			} else {
 				menu = [];
@@ -161,51 +166,6 @@ module.exports = function(core, config, store) {
 					</div>
 				</div>
 			);
-		},
-
-		getInitialState: function() {
-			return {
-				quickReplyShown: false,
-				texts: [],
-				menu: false
-			};
-		},
-
-		updateComponentState: function() {
-			var rel = store.getRelation();
-
-			this.setState({
-				texts: (store.getTexts(this.props.roomId, this.props.thread.id, null, -(this.props.textCount || 3)) || []),
-				menu: (rel && /(owner|moderator|su)/.test(rel.role))
-			});
-		},
-
-		onStateChange: function(changes, next) {
-			var room, thread, key;
-
-			if (!this.isMounted()) {
-				return;
-			}
-
-			room = store.get("nav", "room");
-			thread = this.props.threadId;
-			key = thread ? room + "_" + thread : room;
-
-			if (changes.texts && changes.texts[key] && changes.texts[key].length) {
-				this.updateComponentState();
-			}
-
-			next();
-		},
-
-		componentDidMount: function() {
-			this.updateComponentState();
-
-			core.on("statechange", this.onStateChange, 500);
-		},
-
-		componentWillUnmount: function() {
-			core.off("statechange", this.onStateChange);
 		}
 	});
 
