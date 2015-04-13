@@ -15,7 +15,6 @@ module.exports = function(c, conf, st) {
 	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
 
 	core.on("boot", function(state, next) {
-		console.log(state.context.env, lastGCMTime, (new Date().getTime() - gcmTimeValidity), lastGCMTime < (new Date().getTime() - gcmTimeValidity));
 		if (state.context.env === "android" && lastGCMTime < (new Date().getTime() - gcmTimeValidity)) {
 
 			if (window.Android && typeof window.Android.registerGCM === "function") {
@@ -41,7 +40,7 @@ module.exports = function(c, conf, st) {
 
 		if (!userObj.params) userObj.params = {};
 		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
-		if (!userObj.params.pushNotifications.devices || typeof userObj.params.pushNotifications.devices.length == "number") {
+		if (!userObj.params.pushNotifications.devices || typeof userObj.params.pushNotifications.devices.length === "number") {
 			userObj.params.pushNotifications.devices = {};
 		}
 
