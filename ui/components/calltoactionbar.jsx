@@ -51,7 +51,7 @@ module.exports = function(core, config, store) {
 					<div className="call-to-action-bar" ref="callToActionBar">
 						<p className="call-to-action-bar-info">{this.state.text}</p>
 						<a className="call-to-action-bar-close" onClick={this.hideSelf}></a>
-						<a className="call-to-action-bar-button button info" onClick={this.state.action}>{this.state.label}</a>
+						<button className="call-to-action-bar-button info" onClick={this.state.action}>{this.state.label}</button>
 					</div>
 				);
 			}
