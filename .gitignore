@@ -9,6 +9,7 @@
 !.jshintrc
 !.jsbeautifyrc
 !.scss-lint.yml
+!.travis.yml
 !.hound.yml
 
 *.seed
