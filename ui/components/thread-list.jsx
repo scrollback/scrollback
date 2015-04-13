@@ -193,7 +193,7 @@ module.exports = function(core, config, store) {
 			var room = store.get("nav", "room");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.threads && changes.threads[room]) || (changes.tetxs && changes.texts[room])) {
+			    (changes.threads && changes.threads[room]) || (changes.texts && changes.texts[room])) {
 
 				this.setState({ show: (store.get("nav", "mode") === "room") });
 			}
