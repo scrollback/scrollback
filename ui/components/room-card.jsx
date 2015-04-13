@@ -36,37 +36,36 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var room = store.getRoom(this.props.roomId),
-				pics = getRoomPics(this.props.roomId),
-				user, menu, threads;
+			var room = this.props.roomId,
+				user = store.get("user"),
+				pics = getRoomPics(room),
+				menu, threads;
 
-			threads = (store.getThreads(this.props.roomId, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
+			threads = (store.getThreads(room, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
-					<div key={"room-card-thread-" + room.id + "-" + thread.id} className="card-thread">
+					<div key={"room-card-thread-" + room + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>
 						<span className="card-thread-by">{appUtils.formatUserName(thread.from)}</span>
 					</div>
 				);
 			});
 
-			user = store.get("user");
-
-			if (!user || appUtils.isGuest(user)) {
-				menu = [];
-			} else {
+			if (user && !appUtils.isGuest(user)) {
 				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
+			} else {
+				menu = [];
 			}
 
 			return (
-				<div key={"room-card-" + room.id} className="card room-card" onClick={this.goToRoom}>
+				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
 						<div className="card-cover-header card-header">
-							<span className="card-header-badge notification-badge notification-badge-mention">{room.mentions}</span>
-							<span className="card-header-badge notification-badge notification-badge-messages">{room.messages}</span>
+							<span className="card-header-badge notification-badge notification-badge-mention"></span>
+							<span className="card-header-badge notification-badge notification-badge-messages"></span>
 							{menu}
 						</div>
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.picture  + ")" }}></div>
-						<h3 className="card-cover-title">{room.id}</h3>
+						<h3 className="card-cover-title">{room}</h3>
 					</div>
 					<div className="card-content card-content-big">
 						<h4 className="card-content-title">Recent discussions</h4>

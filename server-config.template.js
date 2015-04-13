@@ -2,7 +2,7 @@ module.exports = {
 	storage: {
 		pg: {
 			username: "scrollback",
-			password: "",
+			password: "scrollback",
 			db: "scrollback",
 			server: "localhost"
 		}

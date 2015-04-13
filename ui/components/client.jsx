@@ -10,8 +10,7 @@ module.exports = function(core, config, store) {
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		RoomList = require("./room-list.jsx")(core, config, store),
 		ThreadList = require("./thread-list.jsx")(core, config, store),
-		Client,
-		clientEl = document.getElementById("app-client");
+		Client;
 
 	Client = React.createClass({
 		createRoom: function() {
@@ -52,22 +51,26 @@ module.exports = function(core, config, store) {
 									<Banner />
 
 									<div className="main-content-inner">
-										<RoomList type="feed" />
+										<RoomList />
 
-										<ThreadList type="feed" />
+										<ThreadList />
 									</div>
 								</div>
 							</div>
 
 							<ChatArea />
 
-							<a className="fab" data-mode="home" onClick={this.createRoom}><span className="fab-label">Create room</span></a>
-							<a className="fab" data-mode="room" onClick={this.createThread}><span className="fab-label">Create discussion</span></a>
+							<button className="fab" data-mode="home" onClick={this.createRoom}>
+								<span className="fab-label">Create room</span>
+							</button>
+							<button className="fab" data-mode="room" onClick={this.createThread}>
+								<span className="fab-label">Create discussion</span>
+							</button>
 						</main>
 
 						<SidebarRight />
 
-						<div className="sidebar-overlay" onClick={this.closeSidebar}></div>
+						<div data-mode="room chat" className="sidebar-overlay" onClick={this.closeSidebar}></div>
 
 						<div className="progressbar loading"></div>
 					</div>
@@ -76,11 +79,7 @@ module.exports = function(core, config, store) {
 		}
 	});
 
-	core.on("statechange", function(changes, next) {
-		React.render(<Client />, clientEl);
-
-		next();
-	}, 500);
+	React.render(<Client />, document.getElementById("app-client"));
 
 	return Client;
 };

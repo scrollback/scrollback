@@ -67,6 +67,7 @@
     "request": "latest",
     "secure-random": "latest",
     "sockjs": "latest",
+    "twemoji": "latest",
     "twit": "latest",
     "underscore": "latest",
     "valid": "git://github.com/scrollback/valid.git",

@@ -15,7 +15,7 @@ module.exports = function(core) {
 		}
 
 		if (typeof notifications.sound !== "boolean") {
-			notifications.sound = false;
+			notifications.sound = true;
 		}
 
 		var $soundtoggle = formField("Sound notifications ", "toggle", "sound-notification", notifications.sound);

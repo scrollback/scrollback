@@ -99,35 +99,69 @@ module.exports = function(core, config, store) {
 				composeBox.val(newText);
 			}
 
-			composeBox.focus();
+			if (document.hasFocus()) {
+				composeBox.focus();
+			}
 		},
 
 		render: function() {
-			var connection = store.get("app", "connectionStatus"),
-				autofocus = !(store.get("context", "embed")),
-				placeholder, disabled;
-
-			if (connection === "connecting") {
-				placeholder = "Connecting...";
-				disabled = true;
-			} else if (connection === "online") {
-				placeholder = "Reply as " + appUtils.formatUserName(store.get("user"));
-				disabled = false;
-			} else {
-				placeholder = "You are offline";
-				disabled = true;
-			}
-
 			return (
 				<div key="chat-area-input" className="chat-area-input">
 					<div className="chat-area-input-inner">
-						<TextArea autoFocus={autofocus} placeholder={placeholder} disabled={disabled}
+						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
 								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
 					</div>
 				</div>
 			);
+		},
+
+		getInitialState: function() {
+			return {
+				placeholder: "",
+				autofocus: false,
+				disabled: true
+			};
+		},
+
+		onStateChange: function(changes, next) {
+			var connection, placeholder, disabled;
+
+			if (!this.isMounted()) {
+				return next();
+			}
+
+			if ((changes.nav && changes.nav.mode) ||
+			    (changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
+			    connection = store.get("app", "connectionStatus");
+				if (connection === "connecting") {
+					placeholder = "Connecting...";
+					disabled = true;
+				} else if (connection === "online") {
+					placeholder = "Reply as " + appUtils.formatUserName(store.get("user"));
+					disabled = false;
+				} else {
+					placeholder = "You are offline";
+					disabled = true;
+				}
+
+				this.setState({
+					placeholder: placeholder,
+					autofocus: document.hasFocus(),
+					disabled: disabled
+				});
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 400);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 

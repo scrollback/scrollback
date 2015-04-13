@@ -5,7 +5,6 @@ module.exports = function(core, config, store) {
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
 		ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
 		GridView = require("./grid-view.jsx")(core, config, store),
-		ListView = require("./list-view.jsx")(core, config, store),
 		ThreadList;
 
 	ThreadList = React.createClass({
@@ -18,20 +17,14 @@ module.exports = function(core, config, store) {
 		},
 
 		getCols: function() {
-			var container, card;
-
-			if (this.props.type === "feed") {
-				container = document.querySelector(".main-content-threads");
+			var container = document.querySelector(".main-content-threads"),
 				card = document.querySelector(".main-content-threads .grid-item");
 
-				if (!(container && card)) {
-					return 1;
-				}
-
-				return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
-			} else {
+			if (!(container && card)) {
 				return 1;
 			}
+
+			return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
 		},
 
 		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
@@ -61,16 +54,15 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var nav = store.get("nav"),
-				type = this.props.type || "list",
-				key = "thread-" + type + "-" + nav.room,
+				key = "thread-" + nav.room,
 				items = [], atTop = false, atBottom = true,
 				before, after, beforeCount, afterCount,
 				allItems, beforeItems, afterItems, positionKey,
 				scrollToClassNames, cols, sections, empty, loading;
 
 			// Don't show
-			if (!((nav.mode === "room" && type === "feed") || nav.mode === "chat")) {
-				return <div />;
+			if (!this.state.show) {
+				return <div data-mode="none" />;
 			}
 
 			cols = this.getCols();
@@ -123,16 +115,16 @@ module.exports = function(core, config, store) {
 			allItems = beforeItems.concat(afterItems);
 
 			allItems.reverse().forEach(function(thread) {
-				var key = "thread-" + (type ? "-" + type : "") + "-" + thread.startTime;
+				var key = "thread-" + thread.startTime;
 
-				if (typeof thread == "object") {
+				if (typeof thread === "object") {
 					if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
 						positionKey = key;
 					}
 
 					items.push({
 						key: key,
-						elem: (type === "feed") ? <ThreadCard roomId={nav.room} thread={thread} /> : <ThreadListItem roomId={nav.room} thread={thread} />
+						elem: <ThreadCard roomId={nav.room} thread={thread} />
 					});
 				}
 			});
@@ -153,7 +145,7 @@ module.exports = function(core, config, store) {
 				key: "threads-" + nav.room + "-all",
 				endless: false,
 				items: [{
-					key: "thread" + (type ? "-" + type : "") + "-all",
+					key: "thread-all",
 					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
 				}]
 			}];
@@ -172,34 +164,49 @@ module.exports = function(core, config, store) {
 
 			if (!items.length) {
 				empty = (
-				        <div className = {"thread" + (type ? "-" + type : "") + "-empty"}>
+				        <div className="thread-feed-empty">
 							{loading ? "Loading discussions..." : "There are no discussions yet :-("}
 						</div>
 						);
 			}
 
-			if (type === "feed") {
-				scrollToClassNames = "scroll-to scroll-to-top";
+			scrollToClassNames = "scroll-to scroll-to-top";
 
-				if (nav.threadRange && nav.threadRange.time) {
-					scrollToClassNames += " visible";
-				}
-
-				return (
-						<div className="main-content-threads">
-							{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
-							<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
-							{empty}
-						</div>
-					);
-			} else {
-				return (
-					<div className="main-content-threads">
-						<ListView endlesskey={key} sections={sections} onScroll={this.onScroll} />
-						{empty}
-					</div>
-				);
+			if (nav.threadRange && nav.threadRange.time) {
+				scrollToClassNames += " visible";
 			}
+
+			return (
+				<div className="main-content-threads">
+					{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
+					<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
+					{empty}
+				</div>
+			);
+		},
+
+		getInitialState: function() {
+			return { show: false };
+		},
+
+		onStateChange: function(changes, next) {
+			var room = store.get("nav", "room");
+
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
+			    (changes.threads && changes.threads[room]) || (changes.texts &&
+			    Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
+				this.setState({ show: (store.get("nav", "mode") === "room") });
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 

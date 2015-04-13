@@ -16,7 +16,7 @@
         display: block;
         height: $fab-size / 1.5;
         width: $fab-size / 1.5;
-        padding: (.75em / 1.5) (1.25em / 1.5);
+        padding: .25em .75em;
         border-radius: 50%;
         background-color: $color;
         color: rgba(0,0,0,0.5);
@@ -40,7 +40,7 @@
             right: 100%;
             margin: 0 1.5em;
             padding: .5em;
-            width: 10em;
+            width: 12em;
             font-size: (.9em / 1.5);
             text-align: center;
             border-radius: $roundness;

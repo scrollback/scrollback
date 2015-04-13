@@ -49,8 +49,8 @@ module.exports = function(core, config, store) {
 				content, before, after, beforeItems, afterItems, positionKey;
 
 			// Don't show
-			if (store.get("nav", "mode") !== "chat") {
-				return <div />;
+			if (!this.state.show) {
+				return <div data-mode="none" />;
 			}
 
 			// Enhance chat area layout in modern browsers
@@ -141,6 +141,32 @@ module.exports = function(core, config, store) {
 						</div>
 					</div>
 			);
+		},
+
+		getInitialState: function() {
+			return { show: false };
+		},
+
+		onStateChange: function(changes, next) {
+			var thread = store.get("nav", "thread"),
+				room = store.get("nav", "room"),
+				key = thread ? room + "_" + thread : room;
+
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
+			    (changes.texts && changes.texts[key] && changes.texts[key].length)) {
+
+				this.setState({ show: (store.get("nav", "mode") === "chat") });
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 

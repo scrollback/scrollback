@@ -33,10 +33,7 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var mode = store.get("nav", "mode"),
-				user = store.get("user");
-
-			if (mode === "home" && user && store.get("context", "env") !== "android" && appUtils.isGuest(user)) {
+			if (this.state.showLanding) {
 				return (
 						<div className="banner banner-landing">
 							<div className="banner-landing-content">
@@ -58,6 +55,35 @@ module.exports = function(core, config, store) {
 			} else {
 				return <div data-mode="home" />;
 			}
+		},
+
+		getInitialState: function() {
+			return { showLanding: false };
+		},
+
+		onStateChange: function(changes, next) {
+			var mode, user, env;
+
+			if ((changes.nav && changes.nav.mode) ||
+			    (changes.context && changes.context.env) || changes.user) {
+				mode = store.get("nav", "mode");
+				user = store.get("user");
+				env = store.get("context", "env");
+
+				this.setState({
+					showLanding: !!(mode === "home" && user && env !== "android" && appUtils.isGuest(user))
+				});
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 

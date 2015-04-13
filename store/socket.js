@@ -17,8 +17,9 @@ module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 	store = s;
+
 	connect();
-	console.log(conf);
+
     ["getTexts", "getUsers", "getRooms", "getThreads", "getEntities"].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
@@ -68,7 +69,7 @@ module.exports = function(c, conf, s) {
 		init.to = "me";
 		client.send(JSON.stringify(init));
 		pendingActions[init.id] = function(init) {
-			if (init.type == "init") {
+			if (init.type === "init") {
 				initDone = true;
 				while (queue.length) {
 					queue.splice(0, 1)[0]();
@@ -86,7 +87,7 @@ module.exports = function(c, conf, s) {
 	}, 1);
 
 	core.on("statechange", function(changes, next) {
-		if (changes.app && changes.app.connectionStatus == "online") {
+		if (changes.app && changes.app.connectionStatus === "online") {
 			initDone = true;
 			while (queue.length) {
 				queue.splice(0, 1)[0]();
@@ -146,15 +147,15 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) != -1) {
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
 			pendingQueries[data.id].query.results = data.results;
 			pendingQueries[data.id]();
 			delete pendingQueries[data.id];
 		}
-	} 
-	
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "error"].indexOf(data.type) != -1) {
+	}
+
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "error"].indexOf(data.type) !== -1) {
 		//data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);
