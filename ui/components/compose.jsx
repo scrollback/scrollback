@@ -99,12 +99,14 @@ module.exports = function(core, config, store) {
 				composeBox.val(newText);
 			}
 
-			composeBox.focus();
+			if (document.hasFocus()) {
+				composeBox.focus();
+			}
 		},
 
 		render: function() {
 			var connection = store.get("app", "connectionStatus"),
-				autofocus = !(store.get("context", "embed")),
+				autofocus = document.hasFocus(),
 				placeholder, disabled;
 
 			if (connection === "connecting") {
