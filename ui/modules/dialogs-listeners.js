@@ -78,7 +78,7 @@ module.exports = function(core, config, store) {
 		}
 
 		next();
-	}, 100);
+	}, 1);
 
 	core.on("createroom-dialog", function(dialog, next) {
 		var nav = store.get("nav"),

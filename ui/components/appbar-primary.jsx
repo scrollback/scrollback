@@ -74,29 +74,9 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var user = store.getUser(),
-				threadObj, nav, relation, title, username,
-				classNames = "appbar-icon appbar-icon-follow";
+			var classNames = "appbar-icon appbar-icon-follow";
 
-			nav = store.get("nav");
-			user = store.getUser() || {};
-			relation = store.getRelation();
-			username = appUtils.formatUserName(user.id);
-
-			switch (nav.mode) {
-			case "room":
-				title = nav.room;
-				break;
-			case "chat":
-				threadObj = store.get("indexes", "threadsById", nav.thread);
-				title = threadObj ? threadObj.title : nav.thread ? nav.thread : "All messages";
-				break;
-			case "home":
-				title = "My feed";
-				break;
-			}
-
-			classNames += (relation && relation.role === "follower") ? " following" : "";
+			classNames += this.state.following ? " following" : "";
 
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary" onClick={this.toggleMinimize}>
@@ -104,17 +84,70 @@ module.exports = function(core, config, store) {
 					<img data-mode="home" className="appbar-title-logotype" src="/s/img/scrollback-logo-white.png" />
 					<div data-mode="room chat" className="appbar-title-container">
 						<img className="appbar-logotype appbar-logotype-primary" src="/s/img/scrollback-logo.png" />
-						<h1 className="appbar-title appbar-title-primary">{title}</h1>
+						<h1 className="appbar-title appbar-title-primary">{this.state.title}</h1>
 					</div>
 					<div className="user-area" onClick={this.showUserMenu}>
-						<img className="user-area-avatar" alt={username} src={getAvatar(user.picture, 48)} />
-						<div className="user-area-nick">{username}</div>
+						<img className="user-area-avatar" alt={this.state.username} src={this.state.picture} />
+						<div className="user-area-nick">{this.state.username}</div>
 					</div>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
+		},
+
+		getInitialState: function() {
+			return {
+				title: "",
+				username: "",
+				picture: "",
+				following: false
+			};
+		},
+
+		onStateChange: function(changes, next) {
+			var user = store.get("user"),
+				room = store.get("nav", "room"),
+				threadObj, nav, relation, title;
+
+			if ((changes.nav && changes.nav.mode) || changes.user ||
+			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
+			    (changes.entities && changes.entities[user])) {
+
+				nav = store.get("nav");
+				relation = store.getRelation();
+
+				switch (nav.mode) {
+				case "room":
+					title = nav.room;
+					break;
+				case "chat":
+					threadObj = store.get("indexes", "threadsById", nav.thread);
+					title = threadObj ? threadObj.title : nav.thread ? nav.thread : "All messages";
+					break;
+				case "home":
+					title = "My feed";
+					break;
+				}
+
+				this.setState({
+					title: title,
+					username: appUtils.formatUserName(user),
+					picture: getAvatar(store.getUser().picture, 48),
+					following: !!(relation && relation.role === "follower")
+				});
+			}
+
+			next();
+		},
+
+		componentDidMount: function() {
+			core.on("statechange", this.onStateChange, 500);
+		},
+
+		componentWillUnmount: function() {
+			core.off("statechange", this.onStateChange);
 		}
 	});
 

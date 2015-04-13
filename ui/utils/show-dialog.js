@@ -38,9 +38,9 @@ module.exports = function(core) {
 
 					for (var i in dialog.buttons) {
 						if (typeof dialog.buttons[i].text === "string" && typeof dialog.buttons[i].action === "function") {
-							$("<a>").text(dialog.buttons[i].text)
+							$("<button>").text(dialog.buttons[i].text)
 							.on("click", dialog.buttons[i].action)
-							.addClass("button " + i)
+							.addClass(i)
 							.appendTo($buttons);
 						}
 					}

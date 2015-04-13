@@ -89,6 +89,13 @@
 
                 &:active { background-color: rgba(255, 255, 255, .5); }
             }
+
+            a:link {
+                color: currentColor;
+                opacity: .6;
+
+                &:focus, &:hover, &:active { opacity: 1; }
+            }
         }
 
         &-form-container {

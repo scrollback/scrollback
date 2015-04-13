@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 
 	ThreadCard = React.createClass({
 		getInitialState: function() {
-		    return { quickReplyShown: false };
+			return { quickReplyShown: false };
 		},
 
 		showThreadMenu: function(e) {
@@ -118,8 +118,8 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var thread = this.props.thread,
-				rel = store.getRelation(),
 				classNames = "card thread-card",
+				rel = store.getRelation(),
 				menu, chats = [];
 
 			if (this.props.thread.tags) {
