@@ -99,7 +99,9 @@ module.exports = function(core, config, store) {
 				composeBox.val(newText);
 			}
 
-			composeBox.focus();
+			if (document.hasFocus()) {
+				composeBox.focus();
+			}
 		},
 
 		render: function() {
@@ -124,18 +126,15 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes, next) {
-			var connection, embed, placeholder, disabled;
+			var connection, placeholder, disabled;
 
 			if (!this.isMounted()) {
 				return next();
 			}
 
 			if ((changes.nav && changes.nav.mode) ||
-			    (changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) ||
-			    (changes.context && changes.context.embed) || changes.user) {
+			    (changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
 			    connection = store.get("app", "connectionStatus");
-				embed = (store.get("context", "embed"));
-
 				if (connection === "connecting") {
 					placeholder = "Connecting...";
 					disabled = true;
@@ -149,7 +148,7 @@ module.exports = function(core, config, store) {
 
 				this.setState({
 					placeholder: placeholder,
-					autofocus: !embed,
+					autofocus: document.hasFocus(),
 					disabled: disabled
 				});
 			}
