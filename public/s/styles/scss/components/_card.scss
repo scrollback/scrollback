@@ -54,6 +54,7 @@
                 height: 100%;
                 width: $icon-width;
                 line-height: 1;
+                border: 0;
 
                 &:hover, &:focus {
                     background-color: rgba(0,0,0,0.05);

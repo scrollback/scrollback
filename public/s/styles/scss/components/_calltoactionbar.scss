@@ -34,6 +34,7 @@
             float: right;
             padding: (.75em / .9) 1em;
             color: fade-out($dark-color, .5);
+            border: 0;
 
             &:hover, &:focus { color: fade-out($dark-color, .2); }
 

@@ -24,7 +24,7 @@
         }
 
         &:focus, &:hover {
-            .profile-avatar { @include transform(scale(1.1)); }
+            .profile-avatar { transform: scale(1.1); }
         }
     }
 
@@ -71,8 +71,8 @@
 
         &:focus, &:hover, &:active {
             @include transition(.3s);
-            @include transform(rotate(90deg));
 
+            transform: rotate(90deg);
             color: inherit;
             opacity: 1;
         }

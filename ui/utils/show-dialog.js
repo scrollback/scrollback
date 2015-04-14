@@ -72,6 +72,10 @@ module.exports = function(core) {
 					dialog.action.action.apply($action, [ e ]);
 				});
 
+				if (typeof dialog.dismiss !== "boolean" || dialog.dismiss === true) {
+					$modal.append("<span class='modal-close'>");
+				}
+
 				$modal.append($dialog);
 			}
 

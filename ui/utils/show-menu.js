@@ -40,7 +40,7 @@ module.exports = function(type, menu) {
 	}
 
 	if (typeof menu.buttons === "object" && !$.isEmptyObject(menu.buttons)) {
-		$buttons = $("<div>").addClass("popover-section popover-buttons");
+		$buttons = $("<div>").addClass("popover-section menu-buttons");
 
 		for (var b in menu.buttons) {
 			button = menu.buttons[b];
@@ -54,7 +54,7 @@ module.exports = function(type, menu) {
 		// append buttons in sorted order
 		sortable.forEach(function(button) {
 			if (typeof button[1].text === "string" && typeof button[1].action === "function") {
-				$("<button>").addClass("button " + button[2].toLowerCase().replace(' ', '-'))
+				$("<button>").addClass(button[2].toLowerCase().replace(' ', '-'))
 					.text(button[1].text)
 					.on("click", function() {
 						$popover.popover("dismiss");

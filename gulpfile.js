@@ -206,7 +206,7 @@ gulp.task("scss", [ "bower" ], function() {
 	.pipe(sourcemaps.init())
 	.pipe(sass())
 	.pipe(combinemq())
-	.pipe(!debug ? autoprefixer() : gutil.noop())
+	.pipe(autoprefixer())
 	.pipe(!debug ? minify() : gutil.noop())
 	.pipe(rename({ suffix: ".min" }))
 	.pipe(sourcemaps.write("."))
