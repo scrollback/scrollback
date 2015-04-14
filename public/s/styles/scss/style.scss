@@ -362,10 +362,11 @@ button {
 .backdrop { z-index: 700; }
 
 .menu {
+    border: 0;
     width: auto;
 
     &-item {
-        white-space: pre;
+        white-space: nowrap;
 
         &:before {
             opacity: .7;
