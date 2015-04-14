@@ -72,7 +72,7 @@ module.exports = function(core) {
 					dialog.action.action.apply($action, [ e ]);
 				});
 
-				if (typeof dialog.dismiss !== "boolean" || dialog.dismiss === true) {
+				if (typeof dialog.dismiss !== false) {
 					$modal.append("<span class='modal-close'>");
 				}
 
@@ -80,7 +80,7 @@ module.exports = function(core) {
 			}
 
 			$modal.modal({
-				dismiss: (typeof dialog.dismiss === "boolean") ? dialog.dismiss : true
+				dismiss: (typeof dialog.dismiss !== false)
 			}).find("input[type=text]:not(disabled)").eq(0).focus();
 		});
 	};
