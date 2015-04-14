@@ -16,7 +16,6 @@
 
 	// Third party libraries
 	require("../bower_components/sockjs/sockjs.js");
-	require("../bower_components/velocity/velocity.min.js");
 
 	// UI widgets
 	require("../bower_components/lace/src/js/jquery.alertbar.js");

@@ -66,7 +66,7 @@ module.exports = function(core, config, store) {
 					   $("<h3>").addClass("settings-page-bar-title").text(title),
 					   $("<div>").addClass("settings-page-bar-actions")
 								 .append(
-										 $("<button>").addClass("secondary settings-page-bar-actions-cancel modal-remove")
+										 $("<button>").addClass("secondary settings-page-bar-actions-cancel modal-dismiss")
 												 .text("Cancel"),
 										 $("<button>").addClass("settings-page-bar-actions-save js-" + nav.dialog + "-save")
 												 .text("Save")

@@ -14,12 +14,11 @@
   ],
   "dependencies": {
     "flexie": "~1.0.3",
-    "jquery": "1",
-    "lace": "0.1.8",
+    "lace": "0.1.9",
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
-    "velocity": "~1.2.1",
-    "endless": "0.9.10"
+    "endless": "~0.9.10",
+    "jquery": "~2.1.3"
   }
 }
