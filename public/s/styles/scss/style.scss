@@ -365,7 +365,7 @@ button {
     width: auto;
 
     &-item {
-        white-space: pre;
+        white-space: nowrap;
 
         &:before {
             opacity: .7;
