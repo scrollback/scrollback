@@ -1,56 +1,124 @@
 /*global describe*/
-/*global before*/
-/*global after*/
+/*global beforeEach*/
+/*global afterEach*/
 /*global it*/
 /*global scrollback*/
 /*global uid*/
 /*global SockJS*/
 /*global assert*/
 
-// Test: Action type -- Init
-describe("Init test for guests", function(){
+describe("Action: INIT:", function(){
 	var socket;
-	before(function(done){
+	beforeEach(function(done){
 		socket = new SockJS(scrollback.host+"/socket");
 		socket.onopen=function(){done();};
 	});
-	after(function(done){
+	afterEach(function(done){
 		socket.close();
 		done();
 	});
-	// Test: Init for Guests
-	describe("Testing Init for Guests", function(){
-		it("Sending Init", function(done){
+
+	it("With sane properties", function(done){
+		var sessionId = "web://"+uid();
+		var init = {
+		"id": sessionId,
+		"type": "init",
+		"to": "me",
+		"suggestedNick": "anklebiter",
+		"session": "web://"+uid(),
+		"resource": uid(),
+		"origin": {
+			domain: "scrollback.io", 
+			verified: true }
+		};
+		socket.onmessage = function(message){
+			message = JSON.parse(message.data);
+			assert(message.type!='error', "Init failed!");
+			done();
+		};
+		socket.send(JSON.stringify(init));
+	});
+
+	it("Without 'session'", function(done){
+		var init = {
+		"id": uid(),
+		"type": "init",
+		"to": "me",
+		"resource": uid(),
+		"origin": {
+					domain: "scrollback.io", 
+					verified: true }
+		};
+		socket.onmessage = function(message){
+			message = JSON.parse(message.data);
+			assert(message.type=='error', "INIT without session happened!");
+			done();
+		};
+		socket.send(JSON.stringify(init));
+	});
+
+	it("With existing 'session'", function(done){
+		var pSocket = new SockJS(scrollback.host+"/socket");
+		var sessionId = "web://"+uid();
+		var user;
+		pSocket.onopen=function(){
 			var init = {
 			"id": uid(),
+			"session": "web://"+sessionId,
 			"type": "init",
 			"to": "me",
-			"session": "web://"+uid(),
-			"resource":uid(),
+			"resource": uid(),
 			"origin": {
 						domain: "scrollback.io", 
 						verified: true }
 			};
-			socket.onmessage = function(message){
+			pSocket.onmessage = function(message){
 				message = JSON.parse(message.data);
-				console.log(message);
-				assert(message.type!='error', "Init failed!");
-				done();
+				user = message.user;
+				var init = {
+				"id": uid(),
+				"session": "web://"+sessionId,
+				"type": "init",
+				"to": "me",
+				"resource": uid(),
+				"origin": {
+							domain: "scrollback.io", 
+							verified: true }
+				};
+				socket.onmessage = function(message){
+					message = JSON.parse(message.data);
+					// Expected: Get back existing USER object
+					assert(message.user.id === user.id, "INIT with existing 'session' ID happened!");
+					done();
+				};
+				socket.send(JSON.stringify(init));
 			};
-			socket.send(JSON.stringify(init));
-		});
-		it("", function(){});
-		it("", function(){});
-		it("", function(){});
-		it("", function(){});
+			pSocket.send(JSON.stringify(init));
+		};
+		pSocket.close();
+		done();
 	});
-	// All combinations of init with or without some properties
-	// Test: Init for Users
-	describe("", function(){
-		it("", function(){});
-		it("", function(){});
-		it("", function(){});
-		it("", function(){});
-		it("", function(){});
+
+	it("With invalid characters in 'suggestedNick'", function(done){
+				var init = {
+				"id": uid(),
+				"suggestedNick":'!#$%9some_invalid_nick',
+				"type": "init",
+				"to": "me",
+				"resource": uid(),
+				"origin": {
+							domain: "scrollback.io", 
+							verified: true }
+				};
+				socket.onmessage = function(message){
+					message = JSON.parse(message.data);
+					assert(message.type=='error', "INIT with invalid suggestedNick was created!");
+					done();
+				};
+				socket.send(JSON.stringify(init));
 	});
+
+	// TODO: INIT with same session ID and existing suggestedNick
+	// TODO: INIT with valid auth
+	// TODO: INIT with invalid auth
 });
