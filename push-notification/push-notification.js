@@ -75,7 +75,8 @@ module.exports = function(core, conf) {
 	function onNewDisscussion(text) {
 		var from = text.from.replace(/^guest-/, "");
 		var payload = {
-			title: from + ": " + text.title,
+//			title: from + ": " + text.title,
+			title: from + ": " + text.text.substring(0,80),
 			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
 			path: text.to + (text.thread ? "/" + text.thread : "")
 		};
