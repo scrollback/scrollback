@@ -255,6 +255,14 @@ button {
         margin: 0 .5em;
     }
 
+    &-role {
+        opacity: .5;
+
+        &:before { content: "("; }
+
+        &:after { content: ")"; }
+    }
+
     &-offline { opacity: .7; }
 }
 

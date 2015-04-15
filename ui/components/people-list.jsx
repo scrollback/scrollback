@@ -16,12 +16,13 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var people = this.state.people,
+				room = store.get("nav", "room"),
 				headers = {
 					online: [],
 					offline: []
 				},
 				sections = [],
-				user, items, regex;
+				user, rel, role, items, regex;
 
 			try {
 				regex = new RegExp(stringUtils.escapeRegExp(this.state.query));
@@ -34,6 +35,13 @@ module.exports = function(core, config, store) {
 
 				if (headers[people[i].status]) {
 					user = store.get("entities", people[i].user);
+					rel = store.getRelation(room, user.id);
+
+					if (rel.role === "owner") {
+						role = "owner";
+					} else if (rel.role === "moderator") {
+						role = "mod";
+					}
 
 					if (regex.test(user.id)) {
 						headers[people[i].status].push({
@@ -42,6 +50,7 @@ module.exports = function(core, config, store) {
 								<div className="people-list-item">
 									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
 									<span className="people-list-item-nick">{appUtils.formatUserName(user.id)}</span>
+									{role ? <span className="people-list-item-role">{role}</span> : ""}
 								</div>
 							)
 						});
