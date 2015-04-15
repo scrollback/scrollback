@@ -41,6 +41,8 @@ module.exports = function(core, config, store) {
 						role = "owner";
 					} else if (rel.role === "moderator") {
 						role = "mod";
+					} else {
+						role = null;
 					}
 
 					if (regex.test(user.id)) {
