@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 				env = store.get("context", "env");
 
 				this.setState({
-					showLanding: !!(mode === "home" && user && env !== "android" && appUtils.isGuest(user))
+					showLanding: !!(mode === "home" && env !== "embed" && env !== "android" && user && appUtils.isGuest(user))
 				});
 			}
 
