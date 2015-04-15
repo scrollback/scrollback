@@ -103,7 +103,7 @@
         &-icon {
             $icon-width: $bar-height / 1.5;
 
-            @extend %appear;
+            @extend %appearin;
 
             float: left;
             font-size: 1.5em;
