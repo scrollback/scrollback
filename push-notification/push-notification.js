@@ -55,6 +55,7 @@ module.exports = function(core, conf) {
 		log.d("Got text:", text);
 //		if (text.mentions.length) onMentions(text);
 //		if (text.thread == text.id) onNewDisscussion(text);
+//		Temp thing: remove ASAP
 		onNewDisscussion(text);
 		next();
 	}, "gateway");
