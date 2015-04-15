@@ -61,47 +61,4 @@ module.exports = function(core, config, store) {
 			next();
 		});
 	}, 500);
-
-	core.on("room-menu", function(menu, next) {
-		var rel = store.getRelation(menu.room);
-
-		if (rel && /(owner|moderator)/.test(rel.role)) {
-			menu.items.configure = {
-				text: "Configure room",
-				prio: 300,
-				action: function() {
-					core.emit("setstate", {
-						nav: {
-							room: menu.room,
-							dialog: "conf"
-						}
-					});
-				}
-			};
-		} else if (rel && rel.role === "follower") {
-			menu.items.unfollow = {
-				text: "Unfollow room",
-				prio: 300,
-				action: function() {
-					core.emit("part-up", {
-						to: menu.room,
-						room: menu.room
-					});
-				}
-			};
-		} else {
-			menu.items.follow = {
-				text: "Follow room",
-				prio: 300,
-				action: function() {
-					core.emit("join-up", {
-						to: menu.room,
-						room: menu.room
-					});
-				}
-			};
-		}
-
-		next();
-	}, 500);
 };

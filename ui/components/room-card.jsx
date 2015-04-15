@@ -9,19 +9,34 @@ module.exports = function(core, config, store) {
 		RoomCard;
 
 	RoomCard = React.createClass({
-		showRoomMenu: function(e) {
-			core.emit("room-menu", {
-				origin: e.currentTarget,
-				buttons: {},
-				items: {},
-				room: this.props.roomId
-			}, function(err, menu) {
-				showMenu("room-menu", menu);
+		showRoomSettings: function() {
+			core.emit("setstate", {
+				nav: {
+					room: this.props.roomId,
+					dialog: "conf"
+				}
 			});
 		},
 
+		toggleFollowRoom: function() {
+			var room = this.props.roomId,
+				rel = store.getRelation(room);
+
+			if (rel && rel.role === "follower") {
+				core.emit("part-up",  {
+					to: room,
+					room: room
+				});
+			} else {
+				core.emit("join-up",  {
+					to: room,
+					room: room
+				});
+			}
+		},
+
 		goToRoom: function(e) {
-			if (/icon-more/.test(e.target.className)) {
+			if (/card-header-icon/.test(e.target.className)) {
 				return;
 			}
 
@@ -38,8 +53,10 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var room = this.props.roomId,
 				user = store.get("user"),
+				rel = store.getRelation(room, user),
 				pics = getRoomPics(room),
-				menu, threads;
+				icons = [],
+				threads;
 
 			threads = (store.getThreads(room, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
@@ -51,9 +68,14 @@ module.exports = function(core, config, store) {
 			});
 
 			if (user && !appUtils.isGuest(user)) {
-				menu = <a className="card-header-icon card-header-icon-more card-cover-icon" onClick={this.showRoomMenu}></a>;
-			} else {
-				menu = [];
+				if (rel && (/owner|moderator/).test(rel.role)) {
+					icons.push(<a className="card-header-icon card-header-icon-configure card-cover-icon"
+					           key={"card-configure" + room} onClick={this.showRoomSettings}></a>);
+				} else {
+					icons.push(<a className={"card-header-icon card-header-icon-follow card-cover-icon" +
+					           ((rel && rel.role === "follower") ? " following" : "")}
+					           key={"card-follow" + room} onClick={this.toggleFollowRoom}></a>);
+				}
 			}
 
 			return (
@@ -62,7 +84,7 @@ module.exports = function(core, config, store) {
 						<div className="card-cover-header card-header">
 							<span className="card-header-badge notification-badge notification-badge-mention"></span>
 							<span className="card-header-badge notification-badge notification-badge-messages"></span>
-							{menu}
+							{icons}
 						</div>
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.picture  + ")" }}></div>
 						<h3 className="card-cover-title">{room}</h3>

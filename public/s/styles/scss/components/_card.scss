@@ -67,6 +67,14 @@
                 }
 
                 &-more { @include icon(more); }
+
+                &-configure { @include icon(configure); }
+
+                &-follow {
+                    @include icon(star-empty);
+
+                    &.following { @include icon(star); }
+                }
             }
 
             &-badge {
