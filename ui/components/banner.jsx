@@ -91,14 +91,16 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes, next) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				mode, pics,
+				mode, env, pics,
 				rel, roomObj, userObj;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room)) || changes.user ||
-			    (changes.entities && (changes.entities[user] || changes.entities[room]))) {
+			    (changes.entities && (changes.entities[user] || changes.entities[room])) ||
+			    (changes.context && changes.context.env)) {
 				mode = store.get("nav", "mode");
+				env = store.get("context", "env");
 
-				if (mode === "room") {
+				if (mode === "room" && env !== "embed") {
 					rel = store.getRelation();
 					roomObj = store.getRoom() || {};
 					pics = getRoomPics(roomObj.id);
@@ -115,7 +117,7 @@ module.exports = function(core, config, store) {
 							action: this.showRoomSettings
 						} : null
 					});
-				} else if (mode === "home" && user && !appUtils.isGuest(user)) {
+				} else if (mode === "home" && env !== "embed" && user && !appUtils.isGuest(user)) {
 					userObj = store.getUser() || {};
 
 					this.setState({
