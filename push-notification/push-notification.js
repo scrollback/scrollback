@@ -8,7 +8,7 @@ var gcm_notify = require('./gcm-notify.js');
 module.exports = function(core, conf) {
 	config = conf;
 
-	function mapUsersToIds(idList, cb) {
+/*	function mapUsersToIds(idList, cb) {
 		core.emit("getUsers", {
 			session: "internal-push-notifications",
 			ref: idList
@@ -19,7 +19,7 @@ module.exports = function(core, conf) {
 			}
 			cb(query.results);
 		});
-	}
+	}*/
 
 	function notifyUsers(userList, payload) {
 		/*
@@ -53,12 +53,13 @@ module.exports = function(core, conf) {
 	
 	core.on('text', function(text, next) {
 		log.d("Got text:", text);
-		if (text.mentions.length) onMentions(text);
-		if (text.thread == text.id) onNewDisscussion(text);
+//		if (text.mentions.length) onMentions(text);
+//		if (text.thread == text.id) onNewDisscussion(text);
+		onNewDisscussion(text);
 		next();
 	}, "gateway");
 
-	function onMentions(text) {
+/*	function onMentions(text) {
 		var from = text.from.replace(/^guest-/, "");
 		var payload = {
 			title: from + " mentioned you in " + text.to,
@@ -68,7 +69,7 @@ module.exports = function(core, conf) {
 		mapUsersToIds(text.mentions, function(userList) {
 			notifyUsers(userList, payload);
 		});
-	}
+	}*/
 
 	function onNewDisscussion(text) {
 		var from = text.from.replace(/^guest-/, "");
@@ -86,11 +87,11 @@ module.exports = function(core, conf) {
 			if (!d || !d.results) return;
 			
 			usersList = d.results.filter(function(e) {
-				return (e.id !== text.from) && (text.mentions.indexOf(e.id) < 0);
+//				return (e.id !== text.from) && (text.mentions.indexOf(e.id) < 0);
+				return (e.id !== text.from);
 			});
 			log.d("Users: ", usersList);
 			notifyUsers(usersList, payload);
 		});
 	}
-
 };
