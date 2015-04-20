@@ -124,7 +124,7 @@ module.exports = function(core, config, store) {
 					break;
 				case "chat":
 					threadObj = store.get("indexes", "threadsById", nav.thread);
-					title = threadObj ? threadObj.title : nav.thread ? nav.thread : "All messages";
+					title = threadObj ? threadObj.title : nav.thread ? "" : "All messages";
 					break;
 				case "home":
 					title = "My feed";
