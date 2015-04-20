@@ -61,14 +61,31 @@
         &-cover {
             @extend %clearfix;
 
-            background-size: 100%;
-            background-size: cover;
-            background-position: center center;
+            position: relative;
             color: $light-color;
-            box-shadow: inset 12em 50em 0 rgba(85,85,85,.7);
             min-height: 12em;
-            padding: 1em;
-            text-align: center;
+            overflow: hidden;
+
+            &-image {
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                background-size: 100%;
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+                z-index: 0;
+            }
+
+            &-content {
+                position: relative;
+                height: 100%;
+                width: 100%;
+                padding: 1em;
+                text-align: center;
+                background-image: linear-gradient(to bottom, rgba(85,85,85,.7), rgba(85,85,85,.7));
+                z-index: 1;
+            }
 
             &-logo {
                 height: 8em;

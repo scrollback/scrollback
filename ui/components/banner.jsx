@@ -52,12 +52,15 @@ module.exports = function(core, config, store) {
 
 			if (this.state.banner) {
 				items.push(
-				        <div className="banner-cover" style={{ backgroundImage: "url(" + this.state.cover + ")" }} key="banner-cover">
-							<div className="banner-cover-logo" style={{ backgroundImage: "url(" + this.state.picture + ")" }}></div>
-								<h3 className="banner-cover-title">{this.state.title}</h3>
-								<div className="banner-cover-description" dangerouslySetInnerHTML={{__html: this.state.description}}></div>
-								{this.state.button ?
-									<button className="banner-cover-button" onClick={this.state.button.action}>{this.state.button.label}</button> : ""}
+				        <div className="banner-cover" key="banner-cover">
+				        	<div className="banner-cover-image" style={{ backgroundImage: "url(" + this.state.cover + ")" }}></div>
+				        	<div className="banner-cover-content">
+								<div className="banner-cover-logo" style={{ backgroundImage: "url(" + this.state.picture + ")" }}></div>
+									<h3 className="banner-cover-title">{this.state.title}</h3>
+									<div className="banner-cover-description" dangerouslySetInnerHTML={{__html: this.state.description}}></div>
+									{this.state.button ?
+										<button className="banner-cover-button" onClick={this.state.button.action}>{this.state.button.label}</button> : ""}
+							</div>
 				        </div>
 				          );
 			}
@@ -109,7 +112,7 @@ module.exports = function(core, config, store) {
 						title: roomObj.id,
 						description: format.mdToHtml(roomObj.description) || "This room has no description.",
 						picture: pics.picture,
-						cover: pics.cover,
+						cover: pics.banner,
 						banner: true,
 						form: false,
 						button: (rel && /(owner|moderator)/.test(rel.role)) ? {
