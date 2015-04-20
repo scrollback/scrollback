@@ -22,10 +22,15 @@
             min-height: 36em;
             height: 70%;
 
+            // Landscape orientation
             @media only screen and (orientation: landscape) {
+                @include banner-image(1);
+
                 @include retina(1.3) { @include banner-image(1.3); }
 
-                @include retina { @include banner-image(2); }
+                @include retina(2) { @include banner-image(2); }
+
+                @include retina(3) { @include banner-image(3); }
             }
 
             @media only screen and (min-device-width: 320px) and (orientation: landscape) {
@@ -33,7 +38,9 @@
 
                 @include retina(1.3) { @include banner-image(2); }
 
-                @include retina { @include banner-image(3); }
+                @include retina(2) { @include banner-image(3); }
+
+                @include retina(3) { @include banner-image(4); }
             }
 
             @media only screen and (min-device-width: 414px) and (orientation: landscape) {
@@ -41,7 +48,7 @@
 
                 @include retina(1.3) { @include banner-image(3); }
 
-                @include retina { @include banner-image(4); }
+                @include retina(2) { @include banner-image(4); }
             }
 
             @media only screen and (min-device-width: 640px) and (orientation: landscape) {
@@ -51,6 +58,24 @@
             }
 
             @media only screen and (min-device-width: 768px) and (orientation: landscape) { @include banner-image(4); }
+
+            // Potrait orientation
+            // FIXME: we should really have separate images
+            @media only screen and (orientation: potrait) {
+                @include banner-image(2);
+
+                @include retina(1.3) { @include banner-image(3); }
+
+                @include retina(2) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 320px) and (orientation: potrait) {
+                @include banner-image(3);
+
+                @include retina(1.3) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 414px) and (orientation: potrait) { @include banner-image(4); }
 
             &-content {
                 display: table-cell;
