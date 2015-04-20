@@ -122,7 +122,7 @@ module.exports = function(core, config, store) {
 							</div>
 				);
 			} else {
-				content = <div className="chat-area-empty">There are no messages yet :-(</div>;
+				content = <div className="chat-area-empty">Loading messages...</div>;
 			}
 
 			if (nav.textRange && nav.textRange.time) {
