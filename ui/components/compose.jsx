@@ -106,7 +106,7 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			return (
-				<div key="chat-area-input" className="chat-area-input">
+				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
 								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}
