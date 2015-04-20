@@ -5,13 +5,14 @@ module.exports = function(core, config, store) {
 
 	return function(roomId) {
 		var room = store.getRoom(roomId),
-			hash, cover, picture;
+			hash, picture, cover, banner;
 
 		if (room) {
 			picture = room.picture;
 
 			if (room.guides && room.guides.customization && room.guides.customization.cover) {
 				cover = room.guides.customization.cover;
+				banner = cover;
 			}
 		}
 
@@ -32,7 +33,7 @@ module.exports = function(core, config, store) {
 				picture = "0" + picture;
 			}
 
-			picture = "/s/pictures/" + picture + ".jpg";
+			picture = "/s/pictures/avatar/" + picture + ".jpg";
 		}
 
 		if (!cover) {
@@ -44,12 +45,14 @@ module.exports = function(core, config, store) {
 				cover = "0" + cover;
 			}
 
-			cover = "/s/pictures/" + cover + ".jpg";
+			banner = "/s/pictures/banner/" + cover + ".jpg";
+			cover = "/s/pictures/cover/" + cover + ".jpg";
 		}
 
 		roomPics[roomId] = {
+			picture: picture,
 			cover: cover,
-			picture: picture
+			banner: banner
 		};
 
 		return roomPics[roomId];

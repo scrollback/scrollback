@@ -1,19 +1,81 @@
+@mixin banner-image($size: 1) {
+    $base: "https://scrollback.github.io/static/assets/banner";
+
+    background-image: url(#{$base}/banner@#{$size}x.jpg)
+}
+
 @include exports("banner") {
     .banner {
         width: 100%;
 
         &-landing {
+            @include banner-image;
+
             display: table;
             table-layout: fixed;
             height: 100%;
             width: 100%;
-            background-image: url(https://scrollback.github.io/static/assets/banner/banner.png);
             background-size: cover;
             background-position: center;
             text-align: center;
             color: $light-color;
             min-height: 36em;
             height: 70%;
+
+            // Landscape orientation
+            @media only screen and (orientation: landscape) {
+                @include banner-image(1);
+
+                @include retina(1.3) { @include banner-image(1.3); }
+
+                @include retina(2) { @include banner-image(2); }
+
+                @include retina(3) { @include banner-image(3); }
+            }
+
+            @media only screen and (min-device-width: 320px) and (orientation: landscape) {
+                @include banner-image(1.3);
+
+                @include retina(1.3) { @include banner-image(2); }
+
+                @include retina(2) { @include banner-image(3); }
+
+                @include retina(3) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 414px) and (orientation: landscape) {
+                @include banner-image(2);
+
+                @include retina(1.3) { @include banner-image(3); }
+
+                @include retina(2) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 640px) and (orientation: landscape) {
+                @include banner-image(3);
+
+                @include retina(1.3) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 768px) and (orientation: landscape) { @include banner-image(4); }
+
+            // Potrait orientation
+            // FIXME: we should really have separate images
+            @media only screen and (orientation: potrait) {
+                @include banner-image(2);
+
+                @include retina(1.3) { @include banner-image(3); }
+
+                @include retina(2) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 320px) and (orientation: potrait) {
+                @include banner-image(3);
+
+                @include retina(1.3) { @include banner-image(4); }
+            }
+
+            @media only screen and (min-device-width: 414px) and (orientation: potrait) { @include banner-image(4); }
 
             &-content {
                 display: table-cell;
@@ -61,14 +123,31 @@
         &-cover {
             @extend %clearfix;
 
-            background-size: 100%;
-            background-size: cover;
-            background-position: center center;
+            position: relative;
             color: $light-color;
-            box-shadow: inset 12em 50em 0 rgba(85,85,85,.7);
             min-height: 12em;
-            padding: 1em;
-            text-align: center;
+            overflow: hidden;
+
+            &-image {
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                background-size: 100%;
+                background-size: cover;
+                background-position: center center;
+                background-repeat: no-repeat;
+                z-index: 0;
+            }
+
+            &-content {
+                position: relative;
+                height: 100%;
+                width: 100%;
+                padding: 1em;
+                text-align: center;
+                background-image: linear-gradient(to bottom, rgba(85,85,85,.7), rgba(85,85,85,.7));
+                z-index: 1;
+            }
 
             &-logo {
                 height: 8em;
