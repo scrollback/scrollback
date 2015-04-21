@@ -18,8 +18,11 @@
         width: $fab-size / 1.5;
         padding: .25em .75em;
         border-radius: 50%;
-        background-color: $color;
         color: rgba(0,0,0,0.5);
+
+        // FIXME: border-radius doesn't work when background is set in Android < 4.4
+        background: none;
+        box-shadow: inset 0 0 0 $fab-size $color;
 
         &:focus, &:hover {
             background-color: lighten($color, 5%);
