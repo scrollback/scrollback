@@ -1,11 +1,5 @@
-/*global describe*/
-/*global beforeEach*/
-/*global afterEach*/
-/*global it*/
-/*global scrollback*/
-/*global uid*/
-/*global SockJS*/
-/*global assert*/
+/* global SockJS, scrollback, uid, assert, FB */
+/* jshint mocha: true */
 
 describe("Action: INIT:", function(){
 	var socket;
@@ -118,7 +112,47 @@ describe("Action: INIT:", function(){
 				socket.send(JSON.stringify(init));
 	});
 
-	// TODO: INIT with same session ID and existing suggestedNick
-	// TODO: INIT with valid auth
-	// TODO: INIT with invalid auth
+	it("With existing 'session' and 'suggestedNick'", function(){});
+
+	it("Facebook login with valid auth token", function(done){
+		function statusChanged(response) {
+			if (response.status === 'connected') {
+					var sessionId = "web://"+uid();
+					var init = {
+					"auth": {
+						"facebook": response.authResponse.accessToken
+					},
+					"id": sessionId,
+					"type": "init",
+					"to": "me",
+					"suggestedNick": "gustavsDachshund",
+					"session": "web://"+uid(),
+					"resource": uid(),
+					"origin": {
+						domain: "scrollback.io", 
+						verified: true }
+					};
+					socket.onmessage = function(message){
+						message = JSON.parse(message.data);
+						assert(message.type!='error', "Facebook login failed!");
+						done();
+					};
+					socket.send(JSON.stringify(init));
+			}
+			else {
+				FB.login(statusChanged);
+			}
+		}
+		FB.init({
+			appId      : '834799843281318',
+			xfbml      : false,
+			version    : 'v2.3'
+		});
+		FB.getLoginStatus(statusChanged);
+	});
+
+	// it("Google+ login with valid auth token", function(){});
+	// it("Google+ login with invalid auth token", function(){});
+	// it("Persona login with valid auth token", function(){});
+	// it("Persona login with invalid auth token", function(){});
 });
