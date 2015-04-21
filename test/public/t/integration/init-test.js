@@ -151,6 +151,30 @@ describe("Action: INIT:", function(){
 		FB.getLoginStatus(statusChanged);
 	});
 
+	it("Facebook login with invalid auth token", function(done){
+		var sessionId = "web://"+uid();
+		var init = {
+		"auth": {
+			"facebook": "398dkfhskjdfhj74i3758748"
+		},
+		"id": sessionId,
+		"type": "init",
+		"to": "me",
+		"suggestedNick": "lena",
+		"session": "web://"+uid(),
+		"resource": uid(),
+		"origin": {
+			domain: "scrollback.io", 
+			verified: true }
+		};
+		socket.onmessage = function(message){
+			message = JSON.parse(message.data);
+			assert(message.type!='error', "Facebook login with invalid auth token passed!");
+			done();
+		};
+		socket.send(JSON.stringify(init));
+	});
+
 	// it("Google+ login with valid auth token", function(){});
 	// it("Google+ login with invalid auth token", function(){});
 	// it("Persona login with valid auth token", function(){});
