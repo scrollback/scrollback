@@ -36,6 +36,10 @@
 			(window,document,"script","{{errorception.id}}");
 		</script>
 	{{/if}}
+
+	{{#if weiner.enabled}}
+		<script src="{{weiner.protocol}}//{{weiner.host}}/target/target-script-min.js#{{weiner.appid}}"></script>
+	{{/if}}
 </head>
 
 <body class="{{#if cordova}} platform-cordova {{/if}}">
