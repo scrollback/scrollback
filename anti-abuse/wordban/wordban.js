@@ -34,6 +34,7 @@ module.exports = function(core, conf) {
 					if (phrase) { //phrase can not be empty string.
 						var r = search(textMessage, textArray, phrase);
 						if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
+							message.tags = Array.isArray(message.tags) ? message.tags : [];
 							log.d("Found phrase: ", phrase);
 							message.tags.push("abusive", "hidden");
 							return callback();
