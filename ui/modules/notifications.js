@@ -82,15 +82,21 @@ module.exports = function(core, config, store) {
 		}());
 
 	core.on("text-dn", function(text, next) {
-		var user = store.getUser(),
-			sound = (user && user.params && user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
+		var user, sound;
+
+		if (text.tags && text.tags.indexOf("hidden") > -1) {
+			return next();
+		}
+
+		user = store.getUser();
+		sound = (user && user.params && user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
 
 		if (user && text.mentions && text.mentions.indexOf(user.id) > -1) {
 			if (store.get("nav", "mode") === "chat" && store.get("nav", "room") === text.to) {
 				browserNotify(text.text, true, sound);
 			}
 
-			if (user.params.notifications.desktop) {
+			if (user.params && user.params.notifications && user.params.notifications.desktop) {
 				desktopnotify.show({
 					title: "New mention in " + text.to,
 					body: (text.from ? text.from.replace(/^guest-/, "") + ": " : "") + text.text,
