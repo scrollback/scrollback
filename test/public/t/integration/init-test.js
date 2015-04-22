@@ -1,4 +1,4 @@
-/* global SockJS, scrollback, uid, assert, FB, gapi, done, error */
+/* global SockJS, scrollback, uid, assert, FB, gapi, error, navigator */
 /* jshint mocha: true */
 /* jshint node: true */
 
@@ -113,7 +113,7 @@ describe("Action: INIT:", function(){
 				socket.send(JSON.stringify(init));
 	});
 
-	it("With existing 'session' and 'suggestedNick'", function(){});
+	// it("With existing 'session' and 'suggestedNick'", function(){});
 
 	it("Facebook login with valid auth token", function(done){
 		this.timeout(4000);
@@ -197,7 +197,7 @@ describe("Action: INIT:", function(){
 		gapi.auth.signIn(additionalParams);
 	});
 
-	it("Google+ login with invalid auth token", function(){
+	it("Google+ login with invalid auth token", function(done){
 		var sessionId = "web://"+uid();
 		var init = {
 		"auth": {
@@ -206,7 +206,7 @@ describe("Action: INIT:", function(){
 		"id": sessionId,
 		"type": "init",
 		"to": "me",
-		"suggestedNick": "lena",
+		"suggestedNick": "apple",
 		"session": "web://"+uid(),
 		"resource": uid(),
 		"origin": {
@@ -221,6 +221,58 @@ describe("Action: INIT:", function(){
 		socket.send(JSON.stringify(init));
 	});
 
-	// it("Persona login with valid auth token", function(){});
-	// it("Persona login with invalid auth token", function(){});
+	it("Persona login with valid auth token", function(done){
+		navigator.id.watch({
+			onlogin: function(assertion){
+			var sessionId = "web://"+uid();
+					var init = {
+					"auth": {
+						"browser-id": assertion
+					},
+					"id": sessionId,
+					"type": "init",
+					"to": "me",
+					"suggestedNick": "crusoe",
+					"session": "web://"+uid(),
+					"resource": uid(),
+					"origin": {
+						domain: "scrollback.io", 
+						verified: true }
+					};
+					socket.onmessage = function(message){
+						message = JSON.parse(message.data);
+						assert(message.type!='error', "Persona login failed!");
+						done();
+					};
+					socket.send(JSON.stringify(init));
+			}
+		});
+
+		navigator.id.request();
+		done();
+	});
+
+	it("Persona login with invalid auth token", function(done){
+		var sessionId = "web://"+uid();
+		var init = {
+		"auth": {
+			"browser-id": "eyJwdWJs"
+		},
+		"id": sessionId,
+		"type": "init",
+		"to": "me",
+		"suggestedNick": "oakley",
+		"session": "web://"+uid(),
+		"resource": uid(),
+		"origin": {
+			domain: "scrollback.io",
+			verified: true }
+		};
+		socket.onmessage = function(message){
+			message = JSON.parse(message.data);
+			assert(message.type!='error', "Persona login with invalid assertion passed!");
+			done();
+		};
+		socket.send(JSON.stringify(init));
+	});
 });
