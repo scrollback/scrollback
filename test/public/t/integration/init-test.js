@@ -1,5 +1,6 @@
-/* global SockJS, scrollback, uid, assert, FB */
+/* global SockJS, scrollback, uid, assert, FB, gapi, done, error */
 /* jshint mocha: true */
+/* jshint node: true */
 
 describe("Action: INIT:", function(){
 	var socket;
@@ -115,6 +116,9 @@ describe("Action: INIT:", function(){
 	it("With existing 'session' and 'suggestedNick'", function(){});
 
 	it("Facebook login with valid auth token", function(done){
+		this.timeout(4000);
+		setTimeout(done, 3700);
+		var manualLogin = false;
 		function statusChanged(response) {
 			if (response.status === 'connected') {
 					var sessionId = "web://"+uid();
@@ -139,8 +143,11 @@ describe("Action: INIT:", function(){
 					};
 					socket.send(JSON.stringify(init));
 			}
-			else {
+			else if (!manualLogin) {
+				manualLogin = true;
 				FB.login(statusChanged);
+			} else {
+				throw new error("FBLoginFailed");
 			}
 		}
 		FB.init({
@@ -175,8 +182,45 @@ describe("Action: INIT:", function(){
 		socket.send(JSON.stringify(init));
 	});
 
-	// it("Google+ login with valid auth token", function(){});
-	// it("Google+ login with invalid auth token", function(){});
+	it("Google+ login with valid auth token", function(done){
+		this.timeout(4000);
+		setTimeout(done, 3700);
+		var additionalParams = {
+			'clientid' : '780938265693-dqejsnmrevapt69q5mu32719fo3trupt.apps.googleusercontent.com',
+			'callback': statusChanged,
+			'cookiepolicy' : 'single_host_origin',
+   };
+		function statusChanged(authResult){
+			if(authResult.error) throw Error("Google+ Failed");
+			// console.log(authResult.access_token);
+		}
+		gapi.auth.signIn(additionalParams);
+	});
+
+	it("Google+ login with invalid auth token", function(){
+		var sessionId = "web://"+uid();
+		var init = {
+		"auth": {
+			"google": "398dkfhskjdfhj74i3758748"
+		},
+		"id": sessionId,
+		"type": "init",
+		"to": "me",
+		"suggestedNick": "lena",
+		"session": "web://"+uid(),
+		"resource": uid(),
+		"origin": {
+			domain: "scrollback.io",
+			verified: true }
+		};
+		socket.onmessage = function(message){
+			message = JSON.parse(message.data);
+			assert(message.type!='error', "Google+ login with invalid auth token passed!");
+			done();
+		};
+		socket.send(JSON.stringify(init));
+	});
+
 	// it("Persona login with valid auth token", function(){});
 	// it("Persona login with invalid auth token", function(){});
 });
