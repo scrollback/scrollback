@@ -15,7 +15,7 @@ html
 									td(style="width: 230px; padding: 10px 0px 10px 20px;")
 										a(href="https://scrollback.io/#{r.id}" style="color: #fff; font-weight: bold; text-decoration: none") #{r.id}
 									td(style="width: 30px; padding: 10px 20px 10px 0; vertical-align: top; text-align: right;") #{r.totalCount}
-								each l in r.labels
+								each l in r.tags
 									tr(style="background: #fff; color: #000;")
 										td(style="color: #fff; padding: 10px 0 5px 20px;")
 											a(href="https://scrollback.io/#{r.id}/#{l.label}/#{l.title}", style="color: #000; text-decoration: none") #{formatText(l.title)}

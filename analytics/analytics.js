@@ -1,5 +1,5 @@
 var config;
-var log  = require('../lib/logger.js');
+var log = require('../lib/logger.js');
 var pg = require('pg');
 var conString = "";
 var textActions = ['text', 'edit'];
@@ -11,10 +11,10 @@ var queriesAndActions = ['getTexts', 'getRooms', 'getThreads', 'getUsers', 'init
 module.exports = function(core, conf) {
 	config = conf;
 	conString = "pg://" + config.pg.username + ":" +
-	config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
-	
+		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
+
 	init(core);
-	
+
 	textActions.forEach(function(type) {
 		core.on(type, function(action, cb) {
 			cb();
@@ -36,18 +36,18 @@ module.exports = function(core, conf) {
 		cb();
 		saveSessionActions(init);
 	}, "watcher");
-	memberActions.forEach (function (ma) {
+	memberActions.forEach(function(ma) {
 		core.on(ma, function(action, cb) {
 			cb();
 			saveMembersAction(action);
 		}, "watcher");
 	});
-    occupantActions.forEach (function(a) {
-        core.on(a, function(action, cb) {
-            cb();
-            saveOccupantAction(action);
-        }, "watcher");
-    });
+	occupantActions.forEach(function(a) {
+		core.on(a, function(action, cb) {
+			cb();
+			saveOccupantAction(action);
+		}, "watcher");
+	});
 };
 
 function init(core) {
@@ -57,7 +57,7 @@ function init(core) {
 			callback();
 		}, "antiflood");
 		core.on(event, function(qa, callback) {
-			log.d("queries: ",event,  qa.id);
+			log.d("queries: ", event, qa.id);
 			log.d((new Date().getTime() - qa.eventStartTime));
 			var params = [];
 			var values = [];
@@ -93,7 +93,7 @@ function saveSessionActions(action) {
 	var pav = getParamsAndValues(action);
 	var params = pav.params;
 	var values = pav.values;
-	if(action.suggestedNick) {
+	if (action.suggestedNick) {
 		params.push("suggestednick");
 		values.push(action.suggestedNick);
 	}
@@ -156,33 +156,33 @@ function saveTextActions(action) {
 		params.push('mentions');
 		values.push(action.mentions);
 	}
-	if (action.threads) {
-		params.push('threads');
-		params.push('threadtitles');//threadTitles
+	if (action.thread) {
+		params.push('thread');
+		params.push('threadtitles'); //threadTitles
 		params.push('threadscores');
-		var threads = [];
+		var thread = [];
 		var threadTitles = [];
 		var threadScores = [];
-		action.threads.forEach(function(th) {
-			threads.push(th.id);
+		action.thread.forEach(function(th) {
+			thread.push(th.id);
 			threadTitles.push(th.title);
 			threadScores.push(th.score);
 		});
-		values.push(threads);
+		values.push(thread);
 		values.push(threadTitles);
 		values.push(threadScores);
 	}
-	if (action.labels) {
-		var labels = [];
+	if (action.tags) {
+		var tags = [];
 		var labelScores = [];
-		for(var l in action.labels) {
-			if (action.labels.hasOwnProperty(l)) {
-				labels.push(l);
-				labelScores.push(action.labels[l]);
+		for (var l in action.tags) {
+			if (action.tags.hasOwnProperty(l)) {
+				tags.push(l);
+				labelScores.push(action.tags[l]);
 			}
 		}
-		params.push("labels");
-		values.push(labels);
+		params.push("tags");
+		values.push("tags");
 		params.push("labelscores");
 		values.push(labelScores);
 	}
@@ -218,7 +218,7 @@ function saveRoomUserActions(action) {
 }
 
 function getParamsAndValues(action) {
-	var params = ['id', 'type', 'from', 'time', 'session', 'resource', 'success' ];
+	var params = ['id', 'type', 'from', 'time', 'session', 'resource', 'success'];
 	var values = [action.id, action.type, action.from, new Date(action.time).toISOString(), action.session, action.resource, true];
 	return {
 		params: params,
@@ -230,8 +230,8 @@ function getParamsAndValues(action) {
 function insert(tableName, params, values) {
 	var q = "INSERT INTO " + tableName + "(\"" + params.join("\",\"") + "\") values(";
 	var no = [];
-	for (var i = 1;i <= params.length;i++) {
-		no.push("$"+i);
+	for (var i = 1; i <= params.length; i++) {
+		no.push("$" + i);
 	}
 	q += no.join(",") + ")";
 	pg.connect(conString, function(err, client, done) {
@@ -245,7 +245,3 @@ function insert(tableName, params, values) {
 		});
 	});
 }
-
-
-
-
