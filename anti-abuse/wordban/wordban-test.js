@@ -1,6 +1,6 @@
 /* jshint mocha: true */
 var assert = require("assert");
-var core = new(require('ebus'))();
+var core = new (require('ebus'))();
 var wordban = require("./wordban.js");
 var gen = require("../../lib/generate.js");
 var config = require("./../../server-config-defaults.js");
