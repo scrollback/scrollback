@@ -185,15 +185,15 @@ describe("Action: INIT:", function(){
 	it("Google+ login with valid auth token", function(done){
 		this.timeout(4000);
 		setTimeout(done, 3700);
-		var additionalParams = {
-			'clientid' : '780938265693-dqejsnmrevapt69q5mu32719fo3trupt.apps.googleusercontent.com',
-			'callback': statusChanged,
-			'cookiepolicy' : 'single_host_origin',
-   };
 		function statusChanged(authResult){
 			if(authResult.error) throw Error("Google+ Failed");
 			// console.log(authResult.access_token);
 		}
+		var additionalParams = {
+			'clientid' : '780938265693-dqejsnmrevapt69q5mu32719fo3trupt.apps.googleusercontent.com',
+			'callback': statusChanged,
+			'cookiepolicy' : 'single_host_origin'
+		};
 		gapi.auth.signIn(additionalParams);
 	});
 
