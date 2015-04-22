@@ -2,7 +2,11 @@ var store, core, config;
 var entityOps = require("./entity-ops.js");
 //var relationsProps = require("./property-list.js").relations;
 var pendingActions = {};
+var user;
+
 module.exports = function(c, conf, s) {
+	user = require("../lib/user.js")(c, conf, s);
+
 	store = s;
 	core = c;
 	config = conf;
@@ -230,7 +234,7 @@ function onTextDn(text, next) {
 
 function onEdit (edit, next) {
 	var text, thread, changes = {},
-		pleb = ["moderator", "owner", "su"].indexOf(store.getRelation().role) < 0;
+		pleb = !user.isAdmin();
 
 	text = edit.old;
 
@@ -264,19 +268,19 @@ function onEdit (edit, next) {
 }
 
 function onJoinPart(join, next) {
-	var room = join.room;
-	var user = join.user;
+	var roomObj = join.room;
+	var userObj = join.user;
 	var relation = {},
 		entities = {};
 
-	relation.user = user.id;
-	relation.room = room.id;
+	relation.user = userObj.id;
+	relation.room = roomObj.id;
 	relation.role = join.role || (join.type === 'join'? 'follower': null);
 	if(relation.role === 'none') relation.role = null;
 
-	entities[room.id] = entityOps.relatedEntityToEntity(room);
-	entities[user.id] = entityOps.relatedEntityToEntity(user);
-	entities[room.id + "_" + user.id] = relation;
+	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
+	entities[userObj.id] = entityOps.relatedEntityToEntity(userObj);
+	entities[roomObj.id + "_" + userObj.id] = relation;
 
 	core.emit("setstate", {
 		entities: entities

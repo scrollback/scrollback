@@ -40,6 +40,7 @@ module.exports = function(core) {
 						if (typeof dialog.buttons[i].text === "string" && typeof dialog.buttons[i].action === "function") {
 							$("<button>").text(dialog.buttons[i].text)
 							.on("click", dialog.buttons[i].action)
+							.attr("type", "button")
 							.addClass(i)
 							.appendTo($buttons);
 						}
@@ -69,7 +70,9 @@ module.exports = function(core) {
 				$dialog.on("submit", function(e) {
 					e.preventDefault();
 
-					dialog.action.action.apply($action, [ e ]);
+					if (typeof dialog.action.action === "function") {
+						dialog.action.action.apply($action, [ e ]);
+					}
 				});
 
 				if (dialog.dismiss !== false) {
