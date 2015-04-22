@@ -13,19 +13,19 @@ var userExp = 10 * 60 * 1000;
 var initCount = 0;
 var ircUtils;
 
-module.exports = function (coreObj, conf) {
+module.exports = function(coreObj, conf) {
 	core = coreObj;
 	config = conf;
 	client = require('./client.js')(clientEmitter, config);
 	client.init(clientEmitter);
 	ircUtils = require('./ircUtils.js')(config, clientEmitter, client, callbacks);
 	init();
-	
+
 	require('./roomEvent.js')(core, config, client, ircUtils, firstMessage);
-	core.on("http/init", function (payload, callback) {
+	core.on("http/init", function(payload, callback) {
 		payload.push({
 			get: {
-				"/r/irc/*": function (req, res, next) {
+				"/r/irc/*": function(req, res, next) {
 					ircUtils.getRequest(req, res, next);
 				}
 			}
@@ -33,14 +33,14 @@ module.exports = function (coreObj, conf) {
 		callback(null, payload);
 	}, "setters");
 
-	core.on("init", function (init, callback) {
+	core.on("init", function(init, callback) {
 		var oldUser;
 		log("init irc:", init);
 		if ((/^irc/).test(init.session)) return callback();
-		if(init.old && init.old.id){
-			oldUser = init.old;	
+		if (init.old && init.old.id) {
+			oldUser = init.old;
 		}
-		
+
 		var newUser = init.user;
 		if (oldUser && newUser && oldUser.id !== newUser.id) {
 			var uid = guid();
@@ -49,7 +49,7 @@ module.exports = function (coreObj, conf) {
 				sbNick: oldUser.id,
 				uid: uid
 			});
-			callbacks[uid] = function (isConn) {
+			callbacks[uid] = function(isConn) {
 				if (isConn) {
 					clientEmitter.emit('write', {
 						type: "disconnectUser",
@@ -61,9 +61,9 @@ module.exports = function (coreObj, conf) {
 		callback();
 	}, "gateway");
 
-	core.on('text', function (text, callback) {
+	core.on('text', function(text, callback) {
 		log("On text:", client.connected(), text.id);
-		if(ircUtils.isActionReq(text)) {
+		if (ircUtils.isActionReq(text)) {
 			if (!(firstMessage[text.to] && firstMessage[text.to][text.from])) {
 				if (!firstMessage[text.to]) {
 					firstMessage[text.to] = {};
@@ -74,8 +74,8 @@ module.exports = function (coreObj, conf) {
 				} else ircUtils.connectUser(text.to, text.from, text.origin);
 			}
 			var t = text.text;
-			if (text.labels) {
-				if (text.labels.action) t =  "/me " + text.text;
+			if (text.tags) {
+				if (text.tags.indexOf("action") !== -1) t = "/me " + text.text;
 			}
 			t = ircUtils.ircfyText(text);
 			ircUtils.say(text.to, text.from, t);
@@ -83,7 +83,7 @@ module.exports = function (coreObj, conf) {
 		callback();
 	}, "gateway");
 
-	core.on('away', function (action, callback) {
+	core.on('away', function(action, callback) {
 		log("On away:", client.connected());
 		if (ircUtils.isActionReq(action)) {
 			if (firstMessage[action.to] && firstMessage[action.to][action.from]) {
@@ -97,10 +97,10 @@ module.exports = function (coreObj, conf) {
 
 function init() {
 	var notUsedRooms = {};
-	clientEmitter.on('init', function (st) {
+	clientEmitter.on('init', function(st) {
 		initCount = 0;
 		//delete all keys. don't change the ref.(roomEvent.js is also using same ref.)
-		Object.keys(firstMessage).forEach(function (k) {
+		Object.keys(firstMessage).forEach(function(k) {
 			delete firstMessage[k];
 		});
 		onlineUsers = {};
@@ -114,7 +114,7 @@ function init() {
 		core.emit("getRooms", {
 			identity: "irc",
 			session: "internal-irc"
-		}, function (err, data) {
+		}, function(err, data) {
 			var rooms = data.results;
 			log("returned state from IRC:", JSON.stringify(state));
 			log("results of getRooms: ", rooms);
@@ -122,7 +122,7 @@ function init() {
 				log("Get room query :", err);
 				return;
 			}
-			rooms.forEach(function (room) {
+			rooms.forEach(function(room) {
 				if (!room.params.irc.enabled) return;
 				if (state.rooms[room.id]) {
 					var r1 = room.params.irc;
@@ -130,7 +130,7 @@ function init() {
 					var r2 = state.rooms[room.id].params.irc;
 					if (!(r1.server === r2.server && r1.channel === r2.channel && r1.pending === r2.pending)) {
 						log("reconnecting bot with new values:", room.id);
-						ircUtils.disconnectBot(state.rooms[room.id].id, function () {
+						ircUtils.disconnectBot(state.rooms[room.id].id, function() {
 							ircUtils.addNewBot(room);
 						});
 					}
@@ -146,7 +146,7 @@ function init() {
 				if (servChanProp[room.params.irc.server] &&
 					servChanProp[room.params.irc.server][room.params.irc.channel]) {
 					var users = servChanProp[room.params.irc.server][room.params.irc.channel].users;
-					users.forEach(function (user) {
+					users.forEach(function(user) {
 						if (servNick[room.params.irc.server] && servNick[room.params.irc.server][user] &&
 							servNick[room.params.irc.server][user].dir === "in") {
 							sendInitAndBack(user, "irc://" + room.params.irc.server + ":" + user, room);
@@ -157,7 +157,7 @@ function init() {
 							log("room:", room.id, " nick", servNick[room.params.irc.server][user].nick);
 							if (!onlineUsers[room.id]) onlineUsers[room.id] = {};
 							onlineUsers[room.id][servNick[room.params.irc.server][user].nick] = user;
-							setTimeout(function () {
+							setTimeout(function() {
 								if (onlineUsers[room.id] && onlineUsers[room.id][servNick[room.params.irc.server][user].nick]) {
 									log("disconnecting user ", servNick[room.params.irc.server][user].nick, " from ", room.id);
 									ircUtils.disconnectUser(room.id, servNick[room.params.irc.server][user].nick);
@@ -179,7 +179,7 @@ function init() {
 		isInitDone();
 	});
 
-	clientEmitter.on('callback', function (data) {
+	clientEmitter.on('callback', function(data) {
 		console.log("callback =", data); //each callback have 1 parameter as input.
 		if (data.uid && callbacks[data.uid]) {
 			console.log("callbacks calling..");
@@ -187,12 +187,12 @@ function init() {
 		}
 	});
 
-	clientEmitter.on('room', function (room) {
+	clientEmitter.on('room', function(room) {
 		log("room event:", room);
 		core.emit("getRooms", {
 			ref: room.room.id,
 			session: "internal-irc"
-		}, function (err, reply) {
+		}, function(err, reply) {
 			log("results of getRooms", err, reply);
 			if (err || !reply.results) return;
 			var r = reply.results[0];
@@ -207,7 +207,7 @@ function init() {
 			rr.to = r.id;
 			rr.room.guides = {};
 			log("emitting room from irc", rr);
-			core.emit("room", rr, function (err, d) {
+			core.emit("room", rr, function(err, d) {
 				log("reply while saving room ", err, d);
 			});
 			//clear the first msg list
@@ -215,12 +215,12 @@ function init() {
 			delete firstMessage[rr.room.id];
 		});
 	});
-	clientEmitter.on("back", function (data) {
+	clientEmitter.on("back", function(data) {
 		console.log("back", data);
 		sendInitAndBack(data.from, data.session, data.room);
 	});
 
-	clientEmitter.on("away", function (data) {
+	clientEmitter.on("away", function(data) {
 		core.emit('away', {
 			id: guid(),
 			type: 'away',
@@ -230,12 +230,12 @@ function init() {
 		});
 	});
 
-	clientEmitter.on('message', function (data) {
+	clientEmitter.on('message', function(data) {
 		log("message from :", data);
-		var labels = {};
+		var tags = [];
 		if (data.text.indexOf('/me ') === 0) {
 			data.text = data.text.substring(4);
-			labels.action = 1;
+			tags.push("action");
 		}
 		if (data.text && data.text.trim()) {
 			core.emit('text', {
@@ -244,10 +244,10 @@ function init() {
 				to: data.to,
 				from: data.from,
 				text: data.text,
-				labels: labels,
+				tags: tags,
 				time: data.time ? data.time : new Date().getTime(),
 				session: data.session
-			}, function (err, message) {
+			}, function(err, message) {
 				log("message", err, message);
 			});
 		} else log("Empty text message from irc");
@@ -275,7 +275,7 @@ function sendInitAndBack(suggestedNick, session, room) {
 			gateway: "irc",
 			server: room.params.irc.server
 		}
-	}, function (err, init) {
+	}, function(err, init) {
 		log("init back", init);
 
 		if (init.user.id !== suggestedNick)
@@ -292,7 +292,7 @@ function sendInitAndBack(suggestedNick, session, room) {
 			to: room.id,
 			session: session,
 			from: init.user.id //nick returned from init.
-		}, function (err /*, back*/ ) {
+		}, function(err /*, back*/ ) {
 			if (err) log("Error:", err.message);
 		});
 		initCount--;

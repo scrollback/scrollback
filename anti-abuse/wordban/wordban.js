@@ -17,8 +17,9 @@ module.exports = function(core, conf) {
 		text = message.text;
 		if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
 			if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
+				message.tags = Array.isArray(message.tags) ? message.tags : [];
 				if (rejectable(text)) {
-					message.labels.abusive = 1;
+					message.tags.push("abusive", "hidden");
 					log(message);
 					return callback();
 				}
@@ -30,11 +31,11 @@ module.exports = function(core, conf) {
 				textArray = suffixArray(textMessage);
 				for (var i = 0; i < customPhrases.length; i++) {
 					var phrase = customPhrases[i];
-					if (phrase) {//phrase can not be empty string.
+					if (phrase) { //phrase can not be empty string.
 						var r = search(textMessage, textArray, phrase);
 						if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
 							log.d("Found phrase: ", phrase);
-							message.labels.abusive = 1;
+							message.tags.push("abusive", "hidden");
 							return callback();
 						}
 					}
@@ -68,7 +69,7 @@ module.exports = function(core, conf) {
 			var a = action.room.params.antiAbuse.customPhrases;
 			var l = 0;
 			if (a instanceof Array) {
-				for (var i = 0;i < a.length;i++) {
+				for (var i = 0; i < a.length; i++) {
 					var sentance = a[i];
 					if (!sentance) {
 						a.splice(i, 1);
