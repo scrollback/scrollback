@@ -6,10 +6,10 @@
 
         position: relative;
         z-index: 600;
+        width: 100%;
         min-height: $bar-height;
         max-height: $bar-height;
         height: $bar-height;
-        width: 100%;
         overflow: hidden;
 
         &-primary {

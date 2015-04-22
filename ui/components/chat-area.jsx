@@ -21,7 +21,7 @@ module.exports = function(core, config, store) {
 
 			// Enhance chat area layout in modern browsers
 			if (window.CSS.supports("display", "flex")) {
-				chatAreaClassNames += " chat-area-enhanced";
+				chatAreaClassNames += " flex-enhanced";
 			}
 
 			return (
