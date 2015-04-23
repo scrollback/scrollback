@@ -38,8 +38,8 @@ function Store(objs) {
 }
 
 Store.prototype.get = function() {
-	var value, arr,
-		args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments),
+		value, arr;
 
 	for (var i = this._objs.length, l = 0; i > l; i--) {
 		arr = args.slice(0);
@@ -49,7 +49,7 @@ Store.prototype.get = function() {
 		value = objUtils.get.apply(null, arr);
 
 		if (typeof value !== "undefined") {
-			return objUtils.clone(value);
+			return value;
 		}
 	}
 };
