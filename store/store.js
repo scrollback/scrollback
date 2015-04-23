@@ -39,7 +39,7 @@ function Store(objs) {
 
 Store.prototype.get = function() {
 	var value, arr,
-		args = [].slice.call(arguments);
+		args = Array.prototype.slice.call(arguments);
 
 	for (var i = this._objs.length, l = 0; i > l; i--) {
 		arr = args.slice(0);
