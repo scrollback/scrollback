@@ -403,3 +403,10 @@ button {
 
     &-logout { @include icon(off); }
 }
+
+.test-thread-color {
+    @for $i from 1 through length($palette) {
+        &-#{$i - 1} { background-color: nth($palette, $i); }
+        &-dark-#{$i - 1} { background-color: darken(nth($palette, $i), 16%); }
+    }
+}

@@ -18,4 +18,5 @@ module.exports = function(core, config, store) {
 	require("./rules/resetFocus.js")(core, config, store);
 	require("./rules/selectedTexts.js")(core, config, store);
 	require("./rules/removeRelations.js")(core, config, store);
+	require("./rules/statusbarColor.js")(core, config, store);
 };
