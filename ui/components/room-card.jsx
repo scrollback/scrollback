@@ -69,10 +69,10 @@ module.exports = function(core, config, store) {
 
 			if (user && !appUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
-					icons.push(<a className="card-header-icon card-header-icon-configure card-cover-icon"
+					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
 					           key={"card-configure" + room} onClick={this.showRoomSettings}></a>);
 				} else {
-					icons.push(<a className={"card-header-icon card-header-icon-follow card-cover-icon" +
+					icons.push(<a data-state="online" className={"card-header-icon card-header-icon-follow card-cover-icon" +
 					           ((rel && rel.role === "follower") ? " following" : "")}
 					           key={"card-follow" + room} onClick={this.toggleFollowRoom}></a>);
 				}

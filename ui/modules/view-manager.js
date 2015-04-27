@@ -4,7 +4,7 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var keys = [ "view", "mode" ],
-		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas", "input" ],
+		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas", "input", "state" ],
 		oldClassName;
 
 	// Listen to navigate and add class names
@@ -56,6 +56,8 @@ module.exports = function(core, config, store) {
 		if (store.get("app", "focusedInput")) {
 			newClassList.push("input-focused");
 		}
+
+		newClassList.push("state-" + store.get("app", "connectionStatus"));
 
 		// Sort and join class names for comparison
 		newClassName = newClassList.sort().join(" ");
