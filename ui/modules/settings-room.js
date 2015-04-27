@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+var objUtils = require("../../lib/obj-utils.js");
+
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
 
@@ -55,7 +57,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		core.emit("conf-show", { room: store.getRoom() }, function(err, items) {
+		core.emit("conf-show", { room: objUtils.clone(store.getRoom()) }, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();

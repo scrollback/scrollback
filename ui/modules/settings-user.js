@@ -1,7 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
-var appUtils = require("../../lib/app-utils.js");
+var objUtils = require("../../lib/obj-utils.js"),
+	appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
@@ -46,7 +47,7 @@ module.exports = function(core, config, store) {
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: user }, function(err, items) {
+		core.emit("pref-show", { user: objUtils.clone(user) }, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
@@ -55,7 +56,7 @@ module.exports = function(core, config, store) {
 
 	core.on("user-menu", function(menu, next) {
 		var user = store.getUser(),
-			notification = (user.params.notifications && typeof user.params.notifications.sound == "boolean") ? user.params.notifications.sound : true;
+			notification = (user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
 
 		if (user && !appUtils.isGuest(store.get("user"))) {
 			menu.items.userpref = {
