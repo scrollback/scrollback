@@ -251,10 +251,10 @@ function sortLabels(room, roomObj, mentions,callback) {
 		label.interesting = [];
 		mentions.forEach(function(m) {//TODO use new schema
 			m = JSON.parse(m);
-			var id = m.threads[0].id;
+			var id = m.thread;
 			if(id === label.label) {
 				label.interesting.push(m);
-				label.title = m.threads[0].title;
+				label.title = m.title || "";
 			}
 		});
 		ct++;
@@ -283,7 +283,7 @@ function sortLabels(room, roomObj, mentions,callback) {
 			r.labels.sort(function(l1,l2){
 				return l2.count - l1.count;
 			});
-			if (rm != -1) {
+			if (rm !== -1) {
 				r.labels.splice(rm,1);
 			}
 			done();
@@ -423,10 +423,10 @@ function getHeading(email) {
 			}
 			log("best label", bestLabel);
 			label.interesting.forEach(function(m) {
-				if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
+				if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) !== -1) {
 					bestMention = m;
 				}
-				else if(m.mentions && m.mentions.indexOf(email.username) != -1 && bestMention.text.length < m.text.length) {
+				else if(m.mentions && m.mentions.indexOf(email.username) !== -1 && bestMention.text.length < m.text.length) {
 					bestMention = m;
 				}
 			});
@@ -470,7 +470,7 @@ function sendPeriodicMails(){
 		start2 = 24*60 + start1;//(+12 +14 +13)
 		end2 = start2 + 59;//+13
 	}
-	if (x == 12) {
+	if (x === 12) {
 		start2 = -12*60;
 		end2 = start2 + 59;
 	}

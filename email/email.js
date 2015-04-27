@@ -25,9 +25,7 @@ module.exports = function(coreObject, conf) {
 	if (config.auth) {
 		core.on('text', function(message, callback) {
 			callback();
-			if(message.type === "text"){
-				addMessage(message);
-			}
+			addMessage(message);
 		}, "gateway");
 		if (config.debug) {
 			setInterval(sendPeriodicMails, timeout);
@@ -53,9 +51,9 @@ function getExpireTime() {
 function addMessage(message){
     var room = message.to;
     if(config.debug) log("email -"  , message);
-    if (message.threads && message.threads[0]) {
-        var label = message.threads[0].id;
-        var title = message.threads[0].title;
+    if (message.thread) {
+        var label = message.thread;
+        var title = message.title || "";
 		var multi = redis.multi();
 		multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
 		multi.incr("email:label:" + room + ":" + label + ":count");
