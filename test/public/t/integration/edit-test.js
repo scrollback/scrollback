@@ -1,7 +1,7 @@
 /*global describe*/
 /*global it*/
 /*global uid*/
-/*global assert*/
+
 /*global SockJS*/
 /*global scrollback*/
 /*global beforeEach*/
@@ -14,6 +14,9 @@ describe('Testing ACTION edit: ', function() {
 		socket = new SockJS(scrollback.host + "/socket");
 		var sessionId = "web://" + uid();
 		var init = {
+			"auth": {
+				testauth: "mailto:testinguser@mailinator.com"
+			},
 			"id": sessionId,
 			"type": "init",
 			"to": "me",
@@ -70,7 +73,6 @@ describe('Testing ACTION edit: ', function() {
 			}
 			
 			if(msg.type === 'text'){
-				
 				console.log(text.id);
 				socket.send(JSON.stringify(edit));
 				return;

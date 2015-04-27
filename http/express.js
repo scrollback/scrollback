@@ -55,7 +55,7 @@ function init() {
 		maxAge: 86400000
 	}));
 
-	if (process.env.NODE_ENV === "dev") {
+	if (process.env.NODE_ENV !== "production") {
 		app.use(express.static(__dirname + '/../test/public'));
 	}
 

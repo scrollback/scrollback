@@ -21,7 +21,7 @@ Boston, MA 02111-1307 USA.
 var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-				"push-notification", "google" ];
+				"push-notification", "google", "testauth" ];
 
 require("newrelic");
 
@@ -50,5 +50,10 @@ function start(name) {
 plugins.forEach(function(name) {
 	start(name);
 });
+
+if (process.env.NODE_ENV !== "production") {
+	start("testauth");
+}
+
 
 start("http"); // start http app at last
