@@ -15,12 +15,12 @@ describe('Testing ACTION edit: ', function() {
 		var sessionId = "web://" + uid();
 		var init = {
 			"auth": {
-				testauth: "mailto:testinguser@mailinator.com"
+				testauth: "dummyuser"
 			},
 			"id": sessionId,
 			"type": "init",
 			"to": "me",
-			"suggestedNick": "test",
+			"suggestedNick": "testinuser",
 			"session": "web://" + uid(),
 			"resource": uid(),
 			"origin": {
@@ -39,12 +39,13 @@ describe('Testing ACTION edit: ', function() {
 			msg = JSON.parse(msg.data);
 			console.log(msg);
 			var m = {
-				from: "test",
+				from: "testinguser",
 				type: 'back',
 				to: "scrollback"
 			};
 			
 			var text = {
+				from: "testinguser",
 				text: "i am the boss",
 				id: "z5jrpsi5gdtvvmjffhdia3wa4pjio4ak",
 				tags: ["hidden"],
