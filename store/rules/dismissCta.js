@@ -1,8 +1,9 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var dismissed, cta;
+		var dismissed = store.get("app", "dismissedCtas"),
+			cta;
 
-		dismissed = store.get("app", "dismissedCtas") || [];
+		dismissed = Array.isArray(dismissed) ? dismissed.slice(0) : [];
 
 		if (changes.app) {
 			if (changes.app.dismissedCtas) {
