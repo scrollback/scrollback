@@ -145,7 +145,7 @@ Store.prototype.getRelatedRooms = function(id, filter) {
 
 			roomObj = self.getRoom(roomRelation.room);
 
-			objUtils.extend(roomRelation, roomObj);
+			objUtils.merge(roomRelation, roomObj);
 
 			return true;
 		});
@@ -186,7 +186,7 @@ Store.prototype.getRelatedUsers = function(id, filter) {
 			}
 
 			userObj = self.getUser(relation.user);
-			objUtils.extend(relation, userObj);
+			objUtils.merge(relation, userObj);
 
 			return true;
 		});

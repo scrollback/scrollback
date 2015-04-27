@@ -16,7 +16,7 @@ module.exports = function(c, conf, s, st) {
 		applyChanges(changes, allChanges);
 		applyChanges(changes, state);
 		buildIndex(state, changes);
-		
+
 		if(timer) clearTimeout(timer);
 		timer = setTimeout(fireStateChange, 100);
 		next();
@@ -25,24 +25,28 @@ module.exports = function(c, conf, s, st) {
 
 function fireStateChange() {
 	buildIndex(allChanges);
-	
+
 	numChanges = 0;
 	core.emit("statechange", allChanges);
 	allChanges = {};
 }
 
 function applyChanges(changes, base) {
-	if (changes.nav)      base.nav      = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.nav)      || {}, changes.nav));
-	if (changes.context)  base.context  = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.context)  || {}, changes.context));
-	if (changes.app)      base.app      = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.app)      || {}, changes.app));
+	if (changes.nav)      base.nav      = objUtils.deepFreeze(objUtils.merge(objUtils.clone(base.nav)      || {}, changes.nav));
+	if (changes.context)  base.context  = objUtils.deepFreeze(objUtils.merge(objUtils.clone(base.context)  || {}, changes.context));
+	if (changes.app)      base.app      = objUtils.deepFreeze(objUtils.merge(objUtils.clone(base.app)      || {}, changes.app));
+
 	if (changes.entities) {
-		for (var e in changes.entities) objUtils.deepFreeze(changes.entities[e]);
-		base.entities = objUtils.extend(base.entities || {}, changes.entities);
+		for (var e in changes.entities) {
+			objUtils.deepFreeze(changes.entities[e]);
+		}
+
+		base.entities = objUtils.merge(base.entities || {}, changes.entities);
 	}
-	
+
 	if (changes.texts)    updateTexts    (base.texts    = base.texts    || {}, changes.texts);
 	if (changes.threads)  updateThreads  (base.threads  = base.threads  || {}, changes.threads);
-	
+
 	if (changes.session)  base.session = changes.session;
 	if (changes.user)     base.user    = changes.user;
 }
@@ -90,7 +94,7 @@ function updateTexts(baseTexts, texts) {
 
 function buildIndex(obj, changes) {
 	var relation;
-	
+
 	// Changes are passed so that we don’t waste time rebuilding indexes that are still valid.
 	if(!changes) changes = obj;
 
@@ -112,8 +116,8 @@ function buildIndex(obj, changes) {
 			}
 		}
 	}
-	
-	
+
+
 	/* jshint -W083 */
 	function buildRangeIndex(obj, prop) {
 		var index = obj.indexes[prop+'ById'] = {};
@@ -126,7 +130,7 @@ function buildIndex(obj, changes) {
 		}
 	}
 	/* jshint +W083 */
-	
+
 	if(obj.threads && changes.threads) buildRangeIndex(obj, 'threads');
 	if(obj.texts && changes.texts) buildRangeIndex(obj, 'texts');
 }
