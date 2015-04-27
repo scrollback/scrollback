@@ -35,7 +35,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			if (this.state.showLanding) {
 				return (
-						<div className="banner banner-landing">
+						<div data-state="online" className="banner banner-landing">
 							<div className="banner-landing-content">
 								<div className="banner-landing-content-inner">
 									<img src="http://scrollback.github.io/static/assets/banner/scrollback-large.png" />

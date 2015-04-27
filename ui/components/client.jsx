@@ -63,10 +63,10 @@ module.exports = function(core, config, store) {
 
 							<ChatArea />
 
-							<button className="fab" data-mode="home" onClick={this.createRoom}>
+							<button className="fab" data-state="online" data-mode="home" onClick={this.createRoom}>
 								<span className="fab-label">Create room</span>
 							</button>
-							<button className="fab" data-mode="room" onClick={this.createThread}>
+							<button className="fab" data-state="online" data-mode="room" onClick={this.createThread}>
 								<span className="fab-label">Create discussion</span>
 							</button>
 						</main>
