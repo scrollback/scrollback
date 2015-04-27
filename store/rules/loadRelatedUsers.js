@@ -35,12 +35,8 @@ function loadUsersList(roomId) {
 	var occupantList, memberList, done = false,
 		entities = {},
 		listeningRooms = store.get("app", "listeningRooms");
-	
-	if(Array.isArray(listeningRooms)) {
-		listeningRooms = Array.prototype.slice.call(listeningRooms);
-	} else {
-		listeningRooms = [];
-	}
+
+	listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
 
 	if (listeningRooms.indexOf(roomId) < 0) listeningRooms.push(roomId);
 
