@@ -32,10 +32,13 @@ function fireStateChange() {
 }
 
 function applyChanges(changes, base) {
-	if (changes.nav)      objUtils.extend(base.nav      = base.nav      || {}, changes.nav);
-	if (changes.context)  objUtils.extend(base.context  = base.context  || {}, changes.context);
-	if (changes.app)      objUtils.extend(base.app      = base.app      || {}, changes.app);
-	if (changes.entities) objUtils.extend(base.entities = base.entities || {}, changes.entities);
+	if (changes.nav)      base.nav      = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.nav)      || {}, changes.nav));
+	if (changes.context)  base.context  = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.context)  || {}, changes.context));
+	if (changes.app)      base.app      = objUtils.deepFreeze(objUtils.extend(objUtils.clone(base.app)      || {}, changes.app));
+	if (changes.entities) {
+		for (var e in changes.entities) objUtils.deepFreeze(changes.entities[e]);
+		base.entities = objUtils.extend(base.entities || {}, changes.entities);
+	}
 	
 	if (changes.texts)    updateTexts    (base.texts    = base.texts    || {}, changes.texts);
 	if (changes.threads)  updateThreads  (base.threads  = base.threads  || {}, changes.threads);
@@ -55,6 +58,7 @@ function updateThreads(baseThreads, threads) {
 
 		if(threads[roomId].length) {
 			threads[roomId].forEach(function(newRange) {
+				newRange.items.forEach(objUtils.deepFreeze);
 				baseThreads[roomId] = rangeOps.merge(ranges, newRange, "startTime");
 			});
 		} else {
@@ -75,6 +79,7 @@ function updateTexts(baseTexts, texts) {
 
 		if (texts[roomThread].length) {
 			texts[roomThread].forEach(function(newRange) {
+				newRange.items.forEach(objUtils.deepFreeze);
 				baseTexts[roomThread] = rangeOps.merge(ranges, newRange, "time");
 			});
 		} else {
