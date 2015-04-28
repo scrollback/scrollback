@@ -36,7 +36,6 @@
         &-icon {
             @extend %transition;
             @include icon(search);
-            @include transform(translate3d(0,0,0));
 
             position: absolute;
             top: 0;
@@ -48,8 +47,9 @@
             opacity: .5;
             line-height: 1;
             pointer-events: none;
+            transform: translate3d(0,0,0);
         }
 
-        &-input:valid + &-icon { @include transform(translate3d(100%,0,0)); }
+        &-input:valid + &-icon { transform: translate3d(100%,0,0); }
     }
 }

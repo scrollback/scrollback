@@ -92,7 +92,7 @@ module.exports = function(core, config, store) {
 					</div>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
+					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
 		},
@@ -124,7 +124,7 @@ module.exports = function(core, config, store) {
 					break;
 				case "chat":
 					threadObj = store.get("indexes", "threadsById", nav.thread);
-					title = threadObj ? threadObj.title : nav.thread ? nav.thread : "All messages";
+					title = threadObj ? threadObj.title : nav.thread ? "" : "All messages";
 					break;
 				case "home":
 					title = "My feed";

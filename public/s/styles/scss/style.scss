@@ -8,7 +8,6 @@
 
 // Import base styles from lace
 @import "../../../../bower_components/lace/src/scss/base";
-@import "../../../../bower_components/lace/src/scss/animations";
 @import "../../../../bower_components/lace/src/scss/alertbar";
 @import "../../../../bower_components/lace/src/scss/modal";
 @import "../../../../bower_components/lace/src/scss/popover";
@@ -24,6 +23,8 @@
 @import "../../../../bower_components/lace/src/scss/dropshadow";
 @import "../../../../bower_components/lace/src/scss/clearfix";
 @import "../../../../bower_components/lace/src/scss/icons";
+@import "../../../../bower_components/lace/src/scss/animations/transition";
+@import "../../../../bower_components/lace/src/scss/animations/appearin";
 
 
 // Import various components
@@ -33,7 +34,6 @@
 @import "components/fab";
 @import "components/appbar";
 @import "components/searchbar";
-@import "components/profile";
 @import "components/card";
 @import "components/badge";
 @import "components/sidebar";
@@ -44,6 +44,7 @@
 @import "components/banner";
 @import "components/userarea";
 @import "components/calltoactionbar";
+@import "components/connectionstatus";
 @import "components/tip";
 
 
@@ -64,6 +65,9 @@ body {
 }
 
 button {
+    // FIXME: prevent leaking of background color in Android < 4.4
+    background-clip: padding-box;
+
     &:focus { outline: 0; }
 }
 
@@ -138,15 +142,15 @@ button {
 
 %embed-active {
     .appbar-title-container {
-        margin-left: 1em;
-
         @include transition;
-        @include transform(translate3d(0, 0, 0));
+
+        margin-left: 1em;
+        transform: translate3d(0, 0, 0);
     }
 }
 
 %embed-inactive {
-    .appbar-title-container { @include transform(translate3d(0, -100%, 0)); }
+    .appbar-title-container { transform: translate3d(0, -100%, 0); }
 
     .appbar-primary { background-color: $dark-color; }
 
@@ -253,6 +257,14 @@ button {
     &-nick {
         line-height: $bar-height;
         margin: 0 .5em;
+    }
+
+    &-role {
+        opacity: .5;
+
+        &:before { content: "("; }
+
+        &:after { content: ")"; }
     }
 
     &-offline { opacity: .7; }
@@ -362,8 +374,13 @@ button {
 .backdrop { z-index: 700; }
 
 .menu {
-    border: 0;
     width: auto;
+
+    &-buttons {
+        padding: 1em;
+
+        button { width: 100%; }
+    }
 
     &-item {
         white-space: nowrap;

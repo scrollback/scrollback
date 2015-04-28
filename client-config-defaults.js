@@ -22,6 +22,12 @@ var defaults = {
 		cache: 300,
 		storage: 200,
 		watcher: 100
+	},
+	weiner: {
+		enabled: false,
+		appid: "scrollback",
+		protocol: "http:",
+		host: "192.168.0.1:8080"
 	}
 };
 

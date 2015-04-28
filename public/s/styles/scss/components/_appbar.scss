@@ -6,10 +6,10 @@
 
         position: relative;
         z-index: 600;
+        width: 100%;
         min-height: $bar-height;
         max-height: $bar-height;
         height: $bar-height;
-        width: 100%;
         overflow: hidden;
 
         &-primary {
@@ -64,7 +64,7 @@
         &-icon {
             $icon-width: $bar-height / 1.5;
 
-            @extend %appear;
+            @extend %appearin;
 
             float: right;
             font-size: 1.5em;
@@ -75,6 +75,7 @@
             min-width: $icon-width;
             max-width: $icon-width;
             line-height: 1;
+            border: 0;
 
             &-left { float: left; }
 

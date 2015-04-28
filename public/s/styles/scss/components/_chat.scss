@@ -8,9 +8,14 @@
         height: 100%;
         width: 100%;
         overflow: hidden;
+        margin-top: $bar-height * -1;
+        padding-top: $bar-height;
 
-        &-enhanced {
+        &.flex-enhanced {
             @include align-items(flex-end);
+
+            margin-top: 0;
+            padding-top: 0;
 
             &:before {
                 @include flex-grow(1);
@@ -26,7 +31,7 @@
             width: 100%;
             text-align: center;
             padding: 2em 1.4em;
-            font-size: 1.4em;
+            font-size: 1.2em;
             opacity: .5;
         }
 
@@ -39,7 +44,7 @@
 
             @media #{$screenxxxx} { padding: 1em 2em; }
 
-            .chat-area-enhanced & { @include flex-grow(0); }
+            .flex-enhanced & { @include flex-grow(0); }
         }
 
         &-actions {

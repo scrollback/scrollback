@@ -21,7 +21,7 @@ module.exports = function() {
 				textBox = React.findDOMNode(this.refs.textBox);
 
 			if (typeof value === "string") {
-				contentBox.innerText = contentBox.textContent = textBox.value = value;
+				contentBox.textContent = textBox.value = value;
 			} else {
 				return textBox.value;
 			}
@@ -30,7 +30,7 @@ module.exports = function() {
 		onInput: function(e) {
 			var contentBox = React.findDOMNode(this.refs.contentBox);
 
-			contentBox.innerText = contentBox.textContent = e.target.value;
+			contentBox.textContent = e.target.value;
 
 			if (typeof this.props.onInput === "function") {
 				this.props.onInput(e);

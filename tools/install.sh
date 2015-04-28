@@ -276,7 +276,7 @@ postgres_schemas() {
 }
 
 postgres_osx_create() {
-    printf("Creating DB user and Scrollback DBs...")
+    printf "Creating DB user and Scrollback DBs..."
     printf $(createuser -d scrollback)
     printf $(createdb -U scrollback -O scrollback scrollback)
     printf $(createdb -U scrollback -O scrollback logs)

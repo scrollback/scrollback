@@ -4,19 +4,24 @@ module.exports = function(core, config, store) {
 
 		dismissed = store.get("app", "dismissedCtas") || [];
 
-		if (changes.app) {
-			if (changes.app.dismissedCtas) {
-				dismissed = dismissed.concat(changes.app.dismissedCtas || []);
+		if (store.get("app", "connectionStatus") === "online") {
+			if (changes.app) {
+				if (changes.app.dismissedCtas) {
+					dismissed = dismissed.concat(changes.app.dismissedCtas || []);
+				}
+
+				cta = changes.app.cta;
+			} else {
+				changes.app = {};
 			}
 
-			cta = changes.app.cta;
+			cta = cta || store.get("app", "cta");
+
+			if (dismissed.indexOf(cta) > -1) {
+				changes.app.cta = null;
+			}
 		} else {
-			changes.app = {};
-		}
-
-		cta = cta || store.get("app", "cta");
-
-		if (dismissed.indexOf(cta) > -1) {
+			changes.app = changes.app || {};
 			changes.app.cta = null;
 		}
 

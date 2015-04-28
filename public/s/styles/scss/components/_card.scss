@@ -54,6 +54,7 @@
                 height: 100%;
                 width: $icon-width;
                 line-height: 1;
+                border: 0;
 
                 &:hover, &:focus {
                     background-color: rgba(0,0,0,0.05);
@@ -66,10 +67,18 @@
                 }
 
                 &-more { @include icon(more); }
+
+                &-configure { @include icon(configure); }
+
+                &-follow {
+                    @include icon(star-empty);
+
+                    &.following { @include icon(star); }
+                }
             }
 
             &-badge {
-                @extend %appear;
+                @extend %appearin;
                 @include flex-shrink(0);
 
                 margin: 0 (.5em / .8);

@@ -10,6 +10,10 @@ module.exports = function(core, config, store) {
 
 	ChatItem = React.createClass({
 		showChatMenu: function(e) {
+			if (/\bchat-item-nick\b/.test(e.target.className)) {
+				return;
+			}
+
 			core.emit("text-menu", {
 				origin: e.currentTarget,
 				buttons: {},

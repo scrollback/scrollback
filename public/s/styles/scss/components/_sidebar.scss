@@ -23,20 +23,18 @@
         }
 
         &-left {
-            @include transform(translate3d(-100%,0,0));
-
             left: 0;
             box-shadow: inset -1px 0 0 rgba(0,0,0,0.12), 1px 0 3px rgba(0,0,0,0.06);
+            transform: translate3d(-100%,0,0);
 
-            .view-sidebar-left & { @include transform(translate3d(0,0,0)); }
+            .view-sidebar-left & { transform: translate3d(0,0,0); }
 
             @media #{$screenxxx} {
-                @include transform(translate3d(0,0,0));
-
                 position: relative;
                 left: auto;
                 top: auto;
                 z-index: 100;
+                transform: translate3d(0,0,0);
             }
 
             &-footer {
@@ -47,26 +45,23 @@
         }
 
         &-right {
-            @include transform(translate3d(100%,0,0));
-
             right: 0;
             box-shadow: inset 1px 0 0 rgba(0,0,0,0.12), -1px 0 3px rgba(0,0,0,0.06);
+            transform: translate3d(100%,0,0);
 
-            .view-sidebar-right & { @include transform(translate3d(0,0,0)); }
+            .view-sidebar-right & { transform: translate3d(0,0,0); }
 
             @media #{$screenxxxx}  {
-                @include transform(translate3d(0,0,0));
-
                 position: relative;
                 left: auto;
                 top: auto;
                 z-index: 100;
+                transform: translate3d(0,0,0);
             }
         }
 
         &-overlay {
-            @include transition;
-            @include transform(translate3d(0,0,0));
+            @extend %transition;
 
             position: absolute;
             z-index: 600;
@@ -77,6 +72,7 @@
             background-color: rgba(0,0,0,0.7);
             opacity: 0;
             pointer-events: none;
+            transform: translate3d(0,0,0);
 
             .view-sidebar-left &, .view-sidebar-right & {
                 opacity: 1;
@@ -107,7 +103,7 @@
         &-icon {
             $icon-width: $bar-height / 1.5;
 
-            @extend %appear;
+            @extend %appearin;
 
             float: left;
             font-size: 1.5em;
@@ -118,6 +114,7 @@
             min-width: $icon-width;
             max-width: $icon-width;
             line-height: 1;
+            border: 0;
 
             &:hover, &:focus, &:active { color: inherit; }
 
