@@ -148,12 +148,13 @@ module.exports = function (core, conf) {
         edit: function (action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
             if (!action.text && !action.tags) return callback(new SbError("NO_OPTION_TO_EDIT"));
-            if (action.tags && typeof action.tags != "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
-            if (action.text && typeof action.text != "string") return callback(new SbError("INVALID_EDIT_OPTION_TEXT"));
+            if (action.tags && typeof action.tags !== "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
+            if (action.text && typeof action.text !== "string") return callback(new SbError("INVALID_EDIT_OPTION_TEXT"));
             callback();
         },
         user: function (action, callback) {
            if (!validate(action, userValidator, callback)) return;
+            action.user.type = "user";
             action.user.id = action.user.id.toLowerCase();
             if (action.role) delete action.role;
             action.user = cleanEntity(action);
@@ -161,6 +162,7 @@ module.exports = function (core, conf) {
         },
         room: function (action, callback) {
             if (!validate(action, roomValidator, callback)) return;
+            action.room.type = "room";
             action.room.id = action.room.id.toLowerCase();
 			if(action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
             if (!action.room.identities) action.room.identities = [];
