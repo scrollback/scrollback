@@ -1,0 +1,13 @@
+@mixin dropshadow($level: 1){
+    @if ($level == 1) {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    } @else if ($level == 2) {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    } @else if ($level == 3) {
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19);
+    } @else if ($level == 4) {
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25);
+    } @else if ($level == 5) {
+        box-shadow: 0 19px 38px rgba(0,0,0,0.30);
+    }
+}

@@ -1,0 +1,55 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "linked";
+
+@include exports("entry") {
+	.entry {
+		@extend %snappy;
+
+		border: 1px solid darken($light-color, 20%);
+		border-top-color: darken($light-color, 30%);
+		border-radius: $roundness;
+		background-image: none; /* fix background in firefox */
+		background-color: $light-color;
+		color: $dark-color;
+
+		&:hover, &:focus, &:active {
+			border-color: $accent-color;
+			border-top-color: darken($accent-color, 5%);
+			outline: none;
+		}
+
+		&.disabled {
+			&, &:hover, &:focus, &:active {
+				border-color: darken($light-color, 20%);
+				background-color: darken($light-color, 10%);
+				pointer-events: none;
+			}
+		}
+
+		&.linked { @extend .linked; }
+
+		$types: (
+			info: $info-color,
+			success: $success-color,
+			warning: $warning-color,
+			error: $error-color
+		);
+
+		@each $type, $color in $types {
+			&.#{$type} { border-color: $color; }
+		}
+	}
+
+	input, textarea {
+		@extend .entry;
+
+		margin: .5em 0;
+		padding: .5em;
+		font-size: 1em;
+		outline: none;
+
+		&:disabled { @extend .entry.disabled; }
+	}
+}

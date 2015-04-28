@@ -1,0 +1,85 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "dropshadow";
+@import "flexbox";
+@import "icons";
+
+@include exports("alert") {
+	.alert-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 600;
+	}
+
+	.alert-bar {
+		@include flexbox;
+		@include flex-direction(row);
+		@include justify-content(space-between);
+		@include align-items(stretch);
+		@include slidedown;
+		@include dropshadow(3);
+
+		margin: 1em;
+		padding: 0;
+		text-align: center;
+		border-radius: $roundness;
+
+		$types: (
+			info: $info-color,
+			success: $success-color,
+			warning: $warning-color,
+			error: $error-color
+		);
+
+		@each $type, $color in $types {
+			&.#{$type} {
+				background-color: $color;
+				color: $light-color;
+			}
+		}
+	}
+
+	.alert-content {
+		@include flex-grow(1);
+
+		padding: 1em;
+
+		a {
+			font-weight: 700;
+			border-bottom: 1px solid fade-out($light-color, .5);
+			color: $light-color;
+
+			&:focus, &:hover, &:active {
+				color: $light-color;
+				border-bottom-color: $light-color;
+			}
+		}
+	}
+
+	.alert-remove {
+		@include flexbox;
+		@include flex-direction(row);
+		@include flex-wrap(nowrap);
+		@include align-items(center);
+		@include align-content(center);
+		@include icon(close);
+		@extend %snappy;
+
+		padding: 1em 1.25em;
+		cursor: pointer;
+		background-color: rgba(0,0,0,.1);
+		border-radius: 0 $roundness $roundness 0;
+
+		&:focus, &:hover { background-color: rgba(0,0,0,.2); }
+
+		&:active { background-color: rgba(0,0,0,.3); }
+
+		&:before {
+			display: block;
+			font-weight: 700;
+		}
+	}
+}

@@ -1,0 +1,19 @@
+@import "functions";
+@import "global";
+@import "animations";
+
+@include exports("progressbar") {
+	.progressbar {
+		@extend %transition;
+
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 2px;
+		width: 80%;
+		z-index: 500;
+		background-color: $accent-color;
+
+		&.loading { @extend %progressbar; }
+	}
+}

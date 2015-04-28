@@ -1,0 +1,80 @@
+@include exports(footer) {
+    .footer {
+        padding: 1em;
+        background-color: #ebebeb;
+        width: 100%;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+        &:after {
+            content: "";
+            display: block;
+            height: $bar-height;
+        }
+    }
+
+    .row-footer {
+        @extend %clearfix;
+
+        padding-right: 1.5em;
+        padding-left: 1.5em;
+        margin-right: 100px ;
+        margin-left: 100px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .li-footer {
+        list-style-type: none;
+        margin-left: 0px;
+        line-height: 28px;
+    }
+    .ul-footer {
+        margin: 0px;
+    }
+
+    .a-footer {
+        @extend %snappy;
+
+        color: #707070;
+        text-decoration: none;
+        border-bottom: 1px solid #aaa;
+
+        &:hover, &:focus { color: darken($link-color, 15%); }
+
+        &:active { color: darken($link-color, 30%); }
+    }
+
+    .a-image {
+        @extend %snappy;
+
+
+        text-decoration: none;
+        border-bottom: 0px;
+        margin-right: 0.25em;
+        float: left;
+
+        &:hover, &:focus { color: darken($link-color, 15%); }
+
+        &:active { color: darken($link-color, 30%); }
+    }
+
+    .h4-footer {
+        font-size: 1em;
+        color: #707070;
+        list-style-type:none;
+     }
+
+     .p-footer {
+        color: #707070;
+     }
+
+     .google-link {
+        padding-top: 0.5em;
+     }
+
+
+
+
+
+
+}

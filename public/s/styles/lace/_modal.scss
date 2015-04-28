@@ -1,0 +1,51 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "dropshadow";
+
+@include exports("modal") {
+	.backdrop {
+		@extend %fadein;
+
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		z-index: 400;
+		background: rgba(0,0,0,.7);
+	}
+
+	.modal {
+		@include dropshadow(3);
+		@extend %appear;
+
+		display: block;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		min-width: 27em;
+		max-width: 100%;
+		z-index: 500;
+		overflow: auto;
+		background: $light-color;
+		border-radius: $roundness;
+		padding: 2em;
+
+		@media #{$mobile-break-point} {
+			@include slideup;
+
+			top: auto;
+			left: 0;
+			bottom: 0;
+			margin-top: 0!important;
+			margin-left: 0!important;
+			min-width: 100%;
+			max-height: 100%;
+			width: 100%;
+			padding: 1.5em;
+			border-radius: 0;
+		}
+	}
+}

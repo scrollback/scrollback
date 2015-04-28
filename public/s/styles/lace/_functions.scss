@@ -1,0 +1,87 @@
+$modules: () !default;
+
+@mixin exports($name) {
+    @if (not index($modules, $name)) {
+        $modules: append($modules, $name) !global;
+        @content;
+    }
+}
+
+@function strip-unit($value) {
+    @return $value / ($value * 0 + 1);
+}
+
+$rem-base: 10px;
+
+@function rem-calc($sizes, $base: $rem-base) {
+    $rem-vals: ();
+
+    @each $size in $sizes {
+        $value: strip-unit($size) / strip-unit($rem-base) * 1rem;
+        $rem-vals: append($rem-vals, $value);
+    }
+
+    @if length($rem-vals) == 1 {
+        @return nth($rem-vals, 1);
+    } @else {
+        @return $rem-vals;
+    }
+}
+
+@mixin rem($property, $values) {
+    $px : ();
+    $rem: ();
+
+    @each $value in $values {
+        @if $value == 0 or $value == auto {
+            $px : append($px, $value);
+            $rem: append($rem, $value);
+        } @else if type-of(strip-unit($value)) == number {
+            $px : append($px,  $value);
+            $rem: append($rem, rem-calc($value));
+        } @else {
+            $px : append($px,  $value);
+            $rem: append($rem, $value);
+        }
+    }
+
+    @if $px == $rem {
+        #{$property}: $px;
+    } @else {
+        #{$property}: $px;
+        #{$property}: $rem;
+    }
+}
+
+@mixin prefix($property, $value) {
+    @each $prefix in -webkit-, -moz-, -ms-, -o-, "" {
+        #{$prefix}#{$property}: $value;
+    }
+}
+
+@mixin declare-font-face($font-family, $font-filename, $font-filepath, $font-weight: normal, $font-style: normal, $font-stretch: normal) {
+    @font-face {
+        font-family: "#{$font-family}";
+        src: url("#{$font-filepath}/#{$font-filename}.eot");
+        src: url("#{$font-filepath}/#{$font-filename}.eot?#iefix") format("embedded-opentype"),
+             url("#{$font-filepath}/#{$font-filename}.woff") format("woff"),
+             url("#{$font-filepath}/#{$font-filename}.ttf") format("truetype"),
+             url("#{$font-filepath}/#{$font-filename}.svg##{$font-family}") format("svg");
+
+        font-weight: $font-weight;
+        font-style: $font-style;
+        font-stretch: $font-stretch;
+    }
+}
+
+@mixin font-smoothing($value) {
+    -webkit-font-smoothing: $value;
+
+    @if $value == antialiased {
+        -moz-osx-font-smoothing: grayscale;
+    } @else if $value == subpixel-antialiased or $value == auto {
+        -moz-osx-font-smoothing: auto;
+    } @else {
+        -moz-osx-font-smoothing: $value;
+    }
+}

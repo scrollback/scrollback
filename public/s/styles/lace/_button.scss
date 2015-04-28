@@ -1,0 +1,106 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "linked";
+@import "spinner";
+
+@mixin buttons($bg: $accent-color, $fg: $light-color) {
+    @extend %snappy;
+
+    display: inline-block;
+    margin: .5em 0;
+    padding: .5em 1em;
+    font-size: 1em;
+    border: 1px solid $bg;
+    border-bottom-color: darken($bg, 5%);
+    border-radius: $roundness;
+    background-image: none; /* fix background in firefox */
+    background-color: $bg;
+    color: $fg;
+    text-align: center;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+
+    &:hover, &:focus {
+        background-color: darken($bg, 5%);
+        border-color: darken($bg, 5%);
+        color: $fg;
+    }
+
+    &:active {
+        background-color: darken($bg, 10%);
+        border-color: darken($bg, 10%);
+        color: $fg;
+    }
+
+    &.working {
+        @include spinner;
+
+        padding-left: 0;
+
+        &, &:hover, &:focus, &:active {
+            background-color: darken($bg, 10%);
+            border-color: darken($bg, 10%);
+            color: mix($bg, $fg, 30%);
+            cursor: wait;
+            pointer-events: none;
+        }
+    }
+}
+
+@include exports("button") {
+    .button {
+        @include buttons;
+
+        &.secondary {
+            background-color: transparent;
+            border-color: rgba(0,0,0,0.15);
+            color: currentcolor;
+
+            &:hover, &:focus {
+                background-color: rgba(255,255,255,0.3);
+                border-color: rgba(0,0,0,0.3);
+                color: currentcolor;
+            }
+
+            &:active {
+                background-color: rgba(0,0,0,0.05);;
+                border-color: rgba(0,0,0,0.3);
+                color: currentcolor;
+            }
+        }
+
+        &.disabled {
+            &, &:hover, &:focus, &:active {
+                @include opacity(.5);
+
+                background-color: rgba(0,0,0,0.05);
+                border-color: rgba(0,0,0,0.3);
+                color: currentcolor;
+                cursor: default;
+                pointer-events: none;
+            }
+        }
+
+        &.linked { @extend .linked; }
+
+        &.google { @include buttons(#4285f4, #fff); }
+
+        &.googleplus { @include buttons(#d34836, #fff); }
+
+        &.twitter { @include buttons(#55acee, #fff); }
+
+        &.facebook { @include buttons(#3b5998, #fff); }
+
+        &.persona { @include buttons(#e66000, #fff); }
+
+        &.openid { @include buttons(#f78c40, #fff); }
+    }
+
+    button, input[type="submit"], input[type="button"] {
+        @extend .button;
+
+        &:disabled { @extend .button.disabled; }
+    }
+}

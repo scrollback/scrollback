@@ -8,6 +8,7 @@
 
 // Import base styles from lace
 @import "../../../../bower_components/lace/src/scss/base";
+@import "../../../../bower_components/lace/src/scss/grid";
 @import "../../../../bower_components/lace/src/scss/alertbar";
 @import "../../../../bower_components/lace/src/scss/modal";
 @import "../../../../bower_components/lace/src/scss/popover";
@@ -45,7 +46,9 @@
 @import "components/userarea";
 @import "components/calltoactionbar";
 @import "components/tip";
+@import "components/footer";
 
+@include grid;
 
 // Element styles
 html, body {
@@ -293,16 +296,11 @@ button {
         width: 100%;
         height: 100%;
         overflow: auto;
-
-        &:after {
-            content: "";
-            display: block;
-            height: $bar-height * 2.5;
-        }
     }
 
     &-inner {
         padding: .5em 0;
+        margin-bottom: $bar-height * 2.5;
 
         @media #{$screenxx} { padding: 2em; }
     }

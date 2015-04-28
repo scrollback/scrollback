@@ -1,0 +1,69 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "icons";
+
+@include exports("switch") {
+	$switch-font-size: 1.2em;
+	$switch-trough-size: ( 2em / $switch-font-size ) * 1em;
+	$switch-slider-size: ( 1.6em / $switch-font-size ) * 1em;
+	$line-height: 1.6 * $switch-font-size;
+
+	.switch-container {
+		position: relative;
+		margin: .25em 0;
+	}
+
+	.switch {
+		display: none;
+
+		& ~ label {
+			@include icon(close);
+
+			cursor: pointer;
+
+			&:before, &:after {
+				@extend %transition;
+
+				position: absolute;
+				display: block;
+				font-size: $switch-font-size;
+				line-height: $line-height;
+				color: $light-color;
+				border-radius: $roundness;
+			}
+
+			&:before {
+				top: -( $switch-font-size / 2 );
+				left: 0;
+				height: $switch-trough-size;
+				width: $switch-trough-size * 2;
+				padding: ( ( $switch-font-size + .2 ) / 4 ) ( ( $switch-font-size - .2 ) / 2 );
+				text-align: right;
+				box-shadow: inset 0 1px 0 rgba(0,0,0,.15);
+				background-color: $error-color;
+			}
+
+			&:after {
+				content: "";
+				top: -( $switch-font-size - ( $switch-trough-size - $switch-slider-size ) ) / 2;
+				left: ( $switch-trough-size - $switch-slider-size ) / 2;
+				height: $switch-slider-size;
+				width: $switch-slider-size;
+				background-color: $light-color;
+				box-shadow: 0 -1px 1px rgba(0,0,0,.15);
+			}
+		}
+
+		&:checked ~ label {
+			@include icon(done);
+
+			&:before {
+				text-align: left;
+				background-color: $success-color;
+			}
+
+			&:after { left: $switch-trough-size + ( ( $switch-trough-size - $switch-slider-size ) / 2 ); }
+		}
+	}
+}

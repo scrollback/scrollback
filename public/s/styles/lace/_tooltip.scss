@@ -1,0 +1,52 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "dropshadow";
+
+@include exports("tooltip") {
+	[data-tooltip] {
+		position: relative;
+
+		&:before {
+			content: "";
+			margin-top: -1em;
+			margin-left: -.5em;
+			border: .5em solid transparent;
+			border-bottom-color: $dark-color;
+			background: transparent;
+		}
+
+		&:after {
+			@include dropshadow(2);
+
+			content: attr(data-tooltip);
+			color: $light-color;
+			background: $dark-color;
+			padding: .5em 1em;
+			white-space: nowrap;
+			margin-left: -50%;
+			border-radius: $roundness;
+		}
+
+		&:before, &:after {
+			@include opacity(0);
+			@include transform(translate3d(0, -.5em, 0));
+			@extend %transition;
+
+			position: absolute;
+			z-index: 300;
+			top: 100%;
+			left: 50%;
+			pointer-events: none;
+			font-size: $font-size;
+			font-weight: 400;
+		}
+
+		&:hover, &:active {
+			&:before, &:after {
+				@include opacity(1);
+				@include transform(translate3d(0, 0, 0));
+			}
+		}
+	}
+}
