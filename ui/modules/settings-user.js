@@ -48,10 +48,10 @@ module.exports = function(core, config, store) {
 	}, 500);
 
 	core.on("user-menu", function(menu, next) {
-		var user = store.getUser(),
-			notification = (user.params.notifications && typeof user.params.notifications.sound === "boolean") ? user.params.notifications.sound : true;
+		var userObj = store.getUser(),
+			sound = (userObj.params.notifications && typeof userObj.params.notifications.sound === "boolean") ? userObj.params.notifications.sound : true;
 
-		if (user && !appUtils.isGuest(store.get("user"))) {
+		if (userObj && !appUtils.isGuest(userObj.id)) {
 			menu.items.userpref = {
 				text: "Account settings",
 				prio: 300,
@@ -63,23 +63,23 @@ module.exports = function(core, config, store) {
 			};
 		}
 
-		menu.items["sound-notification-" + (notification ? "disable" : "enable")] = {
-			text: (notification ? "Disable " : "Enable ") + "sound notifications",
+		menu.items["sound-notification-" + (sound ? "disable" : "enable")] = {
+			text: (sound ? "Disable " : "Enable ") + "sound notifications",
 			prio: 500,
 			action: function() {
-				user.params.notifications = user.params.notifications || {sound:true};
+				var newUserObj = objUtils.clone(userObj);
 
-				user.params.notifications.sound = !user.params.notifications.sound;
+				newUserObj.params.notifications = newUserObj.params.notifications || {};
+				newUserObj.params.notifications.sound = !sound;
 
 				core.emit("user-up", {
-					to: user.id,
-					from: user.id,
-					user: user
+					to: newUserObj.id,
+					user: newUserObj
 				});
 			}
 		};
 
-		if (user && appUtils.isGuest(store.get("user"))) {
+		if (userObj && appUtils.isGuest(userObj.id)) {
 			menu.title = "Sign in to Scrollback with";
 
 			core.emit("auth", menu, function() {
