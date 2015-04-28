@@ -69,7 +69,11 @@ Store.prototype.getEntity = function(id) {
 Store.prototype.getUser = function(id) {
 	var userObj = this.getEntity(id || this.get("user"));
 
-	if (userObj && userObj.type === "user") {
+	if (typeof userObj === "object") {
+		if (userObj.type === "user") {
+			return userObj;
+		}
+	} else {
 		return userObj;
 	}
 };
@@ -77,7 +81,11 @@ Store.prototype.getUser = function(id) {
 Store.prototype.getRoom = function(id) {
 	var roomObj = this.getEntity(id || this.get("nav", "room"));
 
-	if (roomObj && roomObj.type === "room") {
+	if (typeof roomObj === "object") {
+		if (roomObj.type === "room") {
+			return roomObj;
+		}
+	} else {
 		return roomObj;
 	}
 };
