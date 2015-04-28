@@ -68,6 +68,7 @@
             background-color: $info-color;
             color: $light-color;
             white-space: nowrap;
+            cursor: default;
 
             &:after {
                 content: "";
