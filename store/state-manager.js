@@ -96,7 +96,7 @@ function buildIndex(obj, changes) {
 	var relation;
 
 	// Changes are passed so that we don’t waste time rebuilding indexes that are still valid.
-	if(!changes) changes = obj;
+	if (!changes) changes = obj;
 
 	obj.indexes = obj.indexes || {
 		userRooms: {},
@@ -108,6 +108,7 @@ function buildIndex(obj, changes) {
 	if (obj.entities && changes.entities) {
 		obj.indexes.userRooms = {};
 		obj.indexes.roomUsers = {};
+
 		for (var name in obj.entities) {
 			relation = obj.entities[name];
 			if (relation && relation.room && relation.user) {
@@ -115,22 +116,27 @@ function buildIndex(obj, changes) {
 				(obj.indexes.roomUsers[relation.room] = obj.indexes.roomUsers[relation.room] || []).push(relation);
 			}
 		}
+
+		objUtils.deepFreeze(obj.indexes.userRooms);
+		objUtils.deepFreeze(obj.indexes.roomUsers);
 	}
 
-
-	/* jshint -W083 */
 	function buildRangeIndex(obj, prop) {
-		var index = obj.indexes[prop+'ById'] = {};
-		for(var room in obj[prop]) {
-			if(obj[prop][room].forEach) obj[prop][room].forEach(function (range) {
-				range.items.forEach(function (item) {
-					index[item.id] = item;
-				});
-			});
-		}
-	}
-	/* jshint +W083 */
+		var index = obj.indexes[prop + "ById"] = {};
 
-	if(obj.threads && changes.threads) buildRangeIndex(obj, 'threads');
-	if(obj.texts && changes.texts) buildRangeIndex(obj, 'texts');
+		for (var room in obj[prop]) {
+			if (obj[prop][room].forEach) {
+				obj[prop][room].forEach(function(range) {
+					range.items.forEach(function(item) {
+						index[item.id] = item;
+					});
+				});
+			}
+		}
+
+		objUtils.deepFreeze(obj.indexes[prop + "ById"]);
+	}
+
+	if (obj.threads && changes.threads) buildRangeIndex(obj, 'threads');
+	if (obj.texts && changes.texts) buildRangeIndex(obj, 'texts');
 }

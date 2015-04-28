@@ -40,8 +40,8 @@ module.exports = function(core, config, store) {
 				role = room.role || "visitor";
 
 				secs[role].items.push({
-					key: "home-room-card-" + role + "-" + room.room,
-					elem: <RoomCard roomId={room.room} threadCount="3" />
+					key: "home-room-card-" + role + "-" + room.id,
+					elem: <RoomCard roomId={room.id} threadCount="3" />
 				});
 			});
 
@@ -51,9 +51,9 @@ module.exports = function(core, config, store) {
 				}
 
 				secs.featured.items.push({
-					key: "home-room-card-featured-" + room.room,
+					key: "home-room-card-featured-" + room.id,
 					updateTime: room.updateTime,
-					elem: <RoomCard roomId={room.room} threadCount="3" />
+					elem: <RoomCard roomId={room.id} threadCount="3" />
 				});
 			});
 

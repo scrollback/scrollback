@@ -9,14 +9,7 @@ module.exports = function(core, config, store) {
 
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),
-			currentUser = store.getUser(),
-			userObj = {
-				id: currentUser.id,
-				description: "",
-				identities: currentUser.identities || [],
-				params: currentUser.params || {},
-				guides: currentUser.guides || {}
-			};
+			userObj = objUtils.clone(store.getUser());
 
 		self.addClass("working");
 

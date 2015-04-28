@@ -9,13 +9,7 @@ module.exports = function(core, config, store) {
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
 			roomName = store.get("nav", "room"),
-			roomObj = {
-				id: roomName,
-				description: "",
-				identities: [],
-				params: {},
-				guides: {}
-			};
+			roomObj = objUtils.clone(store.getRoom(roomName));
 
 		self.addClass("working");
 
