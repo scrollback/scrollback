@@ -31,14 +31,16 @@ module.exports = function(core, config, store) {
 
 	core.on("setstate", function(changes, next) {
 		var roomObj;
+
 		if (changes.nav && changes.nav.room) {
 			roomObj = (changes.entities && changes.entities[changes.nav.room]) || store.getRoom(changes.nav.room);
 
-			if (roomObj !== "unknown") return next();
+			if (typeof roomObj === "object") return next();
 
 			if (!changes.entities) changes.entities = {};
 
 			changes.entities[changes.nav.room] = "loading";
+
 			loadRoom(changes.nav.room);
 		}
 		next();
