@@ -31,14 +31,16 @@ module.exports = function(core, config, store) {
 			}
 
 			store.getRelatedRooms().forEach(function(room) {
+				var role;
+
 				if (typeof room !== "object") {
 					return;
 				}
 
-				room.role = room.role || "visitor";
+				role = room.role || "visitor";
 
-				secs[room.role].items.push({
-					key: "home--room-card-" + room.role + "-" + room.id,
+				secs[role].items.push({
+					key: "home-room-card-" + role + "-" + room.id,
 					elem: <RoomCard roomId={room.id} threadCount="3" />
 				});
 			});

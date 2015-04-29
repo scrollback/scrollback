@@ -36,7 +36,9 @@ module.exports = function(core, config, store) {
 			currentText = store.get("app", "currentText");
 
 			if (!/\bchat-item-nick\b/.test(e.target.className)) {
-				selectedTexts = store.get("app", "selectedTexts") || [];
+				selectedTexts = store.get("app", "selectedTexts");
+
+				selectedTexts = Array.isArray(selectedTexts) ? selectedTexts.slice(0) : [];
 
 				index = selectedTexts.indexOf(this.props.text.id);
 

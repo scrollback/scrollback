@@ -59,7 +59,7 @@ module.exports = function(core, config, store) {
 									<h3 className="banner-cover-title">{this.state.title}</h3>
 									<div className="banner-cover-description" dangerouslySetInnerHTML={{__html: this.state.description}}></div>
 									{this.state.button ?
-										<button className="banner-cover-button" onClick={this.state.button.action}>{this.state.button.label}</button> : ""}
+										<button className="banner-cover-button" data-state="online" onClick={this.state.button.action}>{this.state.button.label}</button> : ""}
 							</div>
 				        </div>
 				          );

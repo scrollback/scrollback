@@ -49,7 +49,7 @@ function getItems(ranges, req, propName) {
     if(!range) return ["missing"];
 
     index = findIndex(range.items, propName, req[propName]);
-	
+
 	if(range.items[index] && range.items[index][propName] === req[propName] && req.before && !req.after) index++;
 	/*
 		Consider the range [1, 2, 3, 4, 5].
@@ -57,7 +57,7 @@ function getItems(ranges, req, propName) {
 		(index: 3, after: 2) =>  2 items [3, 4]. However
 		(index: 3, before: 2, after: 2) => 4 items [1, 2, 3, 4].
 	*/
-	
+
     startIndex = index - (req.before || 0);
     endIndex = index + (req.after || 0);
 
@@ -71,7 +71,7 @@ function getItems(ranges, req, propName) {
         endIndex = range.items.length;
     }
 
-    return [].concat(
+    return Array.prototype.concat(
         (missingBefore? ['missing']: []),
         range.items.slice(startIndex, endIndex),
         (missingAfter? ['missing']: [])
@@ -137,7 +137,7 @@ function mergeRange(ranges, range, propName) {
 
 	mergedRange.items = mergedRange.items.concat(range.items);
 
-	if (bottomItemIndex != -1) {
+	if (bottomItemIndex !== -1) {
 		mergedRange.items = mergedRange.items.concat(ranges[bottomRangeIndex].items.slice(bottomItemIndex));
 		mergedRange.end = ranges[bottomRangeIndex].end;
 	}

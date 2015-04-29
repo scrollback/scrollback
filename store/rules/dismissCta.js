@@ -1,20 +1,25 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var dismissed, cta;
+		var dismissed = store.get("app", "dismissedCtas"),
+			changed, cta;
 
-		dismissed = store.get("app", "dismissedCtas") || [];
+		dismissed = Array.isArray(dismissed) ? dismissed.slice(0) : [];
 
 		if (changes.app) {
-			if (changes.app.dismissedCtas) {
-				dismissed = dismissed.concat(changes.app.dismissedCtas || []);
-			}
+			changed = changes.app.dismissedCtas;
 
-			cta = changes.app.cta;
+			if (changed) {
+				for (var i = 0, l = changed.length; i < l; i++) {
+					if (dismissed.indexOf(changed[i]) === -1) {
+						dismissed.push(changed[i]);
+					}
+				}
+			}
 		} else {
 			changes.app = {};
 		}
 
-		cta = cta || store.get("app", "cta");
+		cta = store.with(changes).get("app", "cta");
 
 		if (dismissed.indexOf(cta) > -1) {
 			changes.app.cta = null;

@@ -38,8 +38,8 @@ function Store(objs) {
 }
 
 Store.prototype.get = function() {
-	var value, arr,
-		args = [].slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments),
+		value, arr;
 
 	for (var i = this._objs.length, l = 0; i > l; i--) {
 		arr = args.slice(0);
@@ -49,7 +49,7 @@ Store.prototype.get = function() {
 		value = objUtils.get.apply(null, arr);
 
 		if (typeof value !== "undefined") {
-			return objUtils.clone(value);
+			return value;
 		}
 	}
 };
@@ -63,15 +63,31 @@ Store.prototype.with = function(obj) {
 };
 
 Store.prototype.getEntity = function(id) {
-	return this.get("entities", id) || "unknown";
+	return this.get("entities", id);
 };
 
 Store.prototype.getUser = function(id) {
-	return this.getEntity(id || this.get("user"));
+	var userObj = this.getEntity(id || this.get("user"));
+
+	if (typeof userObj === "object") {
+		if (userObj.type === "user") {
+			return userObj;
+		}
+	} else {
+		return userObj;
+	}
 };
 
 Store.prototype.getRoom = function(id) {
-	return this.getEntity(id || this.get("nav", "room"));
+	var roomObj = this.getEntity(id || this.get("nav", "room"));
+
+	if (typeof roomObj === "object") {
+		if (roomObj.type === "room") {
+			return roomObj;
+		}
+	} else {
+		return roomObj;
+	}
 };
 
 Store.prototype.getTexts = function(roomId, threadId, time, range) {
@@ -117,7 +133,9 @@ Store.prototype.getRelation = function(roomId, userId) {
 };
 
 Store.prototype.getRelatedRooms = function(id, filter) {
-	var user, rooms, self = this;
+	var user, relations,
+		rooms = [],
+		self = this;
 
 	if (typeof id === "string") {
 		user = id;
@@ -129,50 +147,50 @@ Store.prototype.getRelatedRooms = function(id, filter) {
 		}
 	}
 
-	rooms = this.get("indexes", "userRooms", user);
+	relations = this.get("indexes", "userRooms", user);
 
-	if (rooms) {
-		rooms = rooms.filter(function(roomRelation) {
+	if (Array.isArray(relations)) {
+		relations.forEach(function(roomRelation) {
 			var roomObj, filterKeys, i;
+
 			if (filter) {
 				filterKeys = Object.keys(filter);
 				for (i = 0; i < filterKeys.length; i++) {
 					if (filter[filterKeys] !== roomRelation[filterKeys]) {
-						return false;
+						return;
 					}
 				}
 			}
 
 			roomObj = self.getRoom(roomRelation.room);
 
-			objUtils.extend(roomRelation, roomObj);
-
-			return true;
+			rooms.push(objUtils.merge(objUtils.clone(roomRelation), roomObj));
 		});
 
 	}
-	if (rooms) {
-		return rooms;
-	} else {
-		return [];
-	}
+
+	return rooms;
 };
 
 Store.prototype.getRelatedUsers = function(id, filter) {
-	var roomId, users, self = this;
+	var roomId, relations,
+		users = [],
+		self = this;
 
 	if (typeof id === "string") {
 		roomId = id;
 	} else if (typeof id === "object") {
 		roomId = this.get("nav", "room");
+
 		filter = id;
 	} else {
 		roomId = this.get("nav", "room");
 	}
 
-	users = this.get("indexes", "roomUsers", roomId);
-	if (users) {
-		users = users.filter(function(relation) {
+	relations = this.get("indexes", "roomUsers", roomId);
+
+	if (Array.isArray(relations)) {
+		relations.forEach(function(relation) {
 			var userObj, filterKeys, i;
 
 			if (filter) {
@@ -180,23 +198,18 @@ Store.prototype.getRelatedUsers = function(id, filter) {
 
 				for (i = 0; i < filterKeys.length; i++) {
 					if (filter[filterKeys] !== relation[filterKeys]) {
-						return false;
+						return;
 					}
 				}
 			}
 
 			userObj = self.getUser(relation.user);
-			objUtils.extend(relation, userObj);
 
-			return true;
+			users.push(objUtils.merge(objUtils.clone(relation), userObj));
 		});
 	}
 
-	if (users) {
-		return users;
-	} else {
-		return [];
-	}
+	return users;
 };
 
 Store.prototype.getRecommendedRooms = function getRecommendedRooms() {

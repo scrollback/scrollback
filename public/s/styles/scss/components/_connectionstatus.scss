@@ -1,0 +1,13 @@
+@include exports("connectionstatus") {
+    .connection-status {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        padding: .5em;
+        background-color: rgba(0, 0, 0,.5);
+        color: rgba(255, 255, 255, .8);
+        text-align: center;
+        z-index: 100;
+        font-size: .9em;
+    }
+}
