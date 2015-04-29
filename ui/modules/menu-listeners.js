@@ -1,6 +1,7 @@
+/* jshint browser: true */
 /* global $ */
 
-module.exports = function(core, config, store) {
+module.exports = function(core) {
 	var menuShown = false;
 
 	$(document).on("popoverInited popoverDismissed", function(e, popover) {
@@ -10,10 +11,10 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("statechange", function(changes, next) {
-		if (menuShown && changes && "nav" in changes) {
+		if (menuShown && changes.nav && ("mode" in changes.nav || "view" in changes.nav)) {
 			$.popover("dismiss");
 		}
 
 		next();
-	}, 100)
-}
+	}, 100);
+};
