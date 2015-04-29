@@ -59,6 +59,7 @@
 	require("../http/logout-client.js")(core, config, store);
 
 	// Modules
+	require("./modules/menu-listeners.js")(core, config, store);
 	require("./modules/dialogs-listeners.js")(core, config, store);
 	require("./modules/thread-dialog.js")(core, config, store);
 	require("./modules/notifications.js")(core, config, store);
