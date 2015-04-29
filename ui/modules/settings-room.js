@@ -1,19 +1,15 @@
 /* jshint browser: true */
 /* global $ */
 
+var objUtils = require("../../lib/obj-utils.js");
+
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
 
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
 			roomName = store.get("nav", "room"),
-			roomObj = {
-				id: roomName,
-				description: "",
-				identities: [],
-				params: {},
-				guides: {}
-			};
+			roomObj = objUtils.clone(store.getRoom(roomName));
 
 		self.addClass("working");
 
@@ -55,7 +51,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		core.emit("conf-show", { room: store.getRoom() }, function(err, items) {
+		core.emit("conf-show", { room: objUtils.clone(store.getRoom()) }, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();

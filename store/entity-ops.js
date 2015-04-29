@@ -1,5 +1,6 @@
-var relationsProps = require("./property-list.js").relations;
-var objUtils = require("../lib/obj-utils.js");
+var relationsProps = require("./property-list.js").relations,
+	objUtils = require("../lib/obj-utils.js");
+
 module.exports = {
 	relatedEntityToEntity: function(relatedEntity) {
 		relatedEntity = objUtils.clone(relatedEntity);
@@ -9,7 +10,7 @@ module.exports = {
 		return relatedEntity;
 	},
 	entityTorelatedEntity: function(entity, relation) {
-		var x = objUtils.extend(objUtils.clone(entity), relation);
+		var x = objUtils.merge(objUtils.clone(entity), relation);
 		delete x.room;
 		delete x.user;
 	},
@@ -21,5 +22,5 @@ module.exports = {
 		relation[entity.type] = entity.id;
 		relation[ref.type] = ref.id;
 		return relation;
-	},
+	}
 };

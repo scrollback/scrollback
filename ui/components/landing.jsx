@@ -35,10 +35,10 @@ module.exports = function(core, config, store) {
 		render: function() {
 			if (this.state.showLanding) {
 				return (
-						<div className="banner banner-landing">
+						<div data-state="online" className="banner banner-landing">
 							<div className="banner-landing-content">
 								<div className="banner-landing-content-inner">
-									<img src="http://scrollback.github.io/static/assets/banner/scrollback-large.png" />
+									<img src="https://scrollback.github.io/static/assets/banner/scrollback-large.png" />
 									<p>Where communities hang out</p>
 									<form className="banner-landing-form" onSubmit={this.onSubmit}>
 										<input ref="roomNameEntry" type="text" className="linked go-to-room" placeholder="Type a room name" autofocus />
