@@ -1,12 +1,11 @@
 var log = require('../lib/logger.js'),
-	config;
-var gcm_notify = require('./gcm-notify.js');
+	gcm_notify = require('./gcm-notify.js');
 /*
 	devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
 */
 
-module.exports = function(core, conf) {
-	config = conf;
+module.exports = function(core, config) {
+	var user = require('../lib/user.js')(core, config);
 
 /*	function mapUsersToIds(idList, cb) {
 		core.emit("getUsers", {
@@ -50,7 +49,7 @@ module.exports = function(core, conf) {
 		log.d("Got regLists of the room:", regList);
 		gcm_notify(regList, payload, core, config);
 	}
-	
+
 	core.on('text', function(text, next) {
 		log.d("Got text:", text);
 //		if (text.mentions.length) onMentions(text);
@@ -73,25 +72,37 @@ module.exports = function(core, conf) {
 	}*/
 
 	function onNewDisscussion(text) {
-		var from = text.from.replace(/^guest-/, "");
-		var payload = {
-			title: from + ": " + text.title,
-			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
+		var payload, body;
+
+		body = text.title ? text.title + " - " + text.text : text.text;
+
+		if (typeof body !== "string" || !text) {
+			return;
+		}
+
+		payload = {
+			title: text.to + ": " + user.getNick(text.from) + " started a discussion",
+			text: body.length > 100 ? body.substring(0, 100) : body,
 			path: text.to + (text.thread ? "/" + text.thread : "")
 		};
+
 		core.emit("getUsers", {
 			memberOf: text.to,
 			session: "internal-push-notifications"
 		}, function(e, d) {
 			var usersList;
-			log.d("Got users of the room:", d);
-			if (!d || !d.results) return;
-			
+
+			if (!(d && d.results)) {
+				return;
+			}
+
 			usersList = d.results.filter(function(e) {
 //				return (e.id !== text.from) && (text.mentions.indexOf(e.id) < 0);
 				return (e.id !== text.from);
 			});
+
 			log.d("Users: ", usersList);
+
 			notifyUsers(usersList, payload);
 		});
 	}
