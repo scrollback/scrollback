@@ -94,15 +94,16 @@ module.exports = function(core, config, store) {
 			if (state.nav.room.indexOf(":") !== -1) {
 				return next(); // Not ready with the new room yet.
 			}
+
 			url = "/" + state.nav.room;
 			title = format.titleCase(state.nav.room) + " on Scrollback";
 		} else if (state.nav.mode === "chat") {
 			if (state.nav.room.indexOf(":") !== -1) {
 				return next(); // Not ready with the new room yet.
 			}
+
 			title = state.nav.thread ? (store.get("indexes", "threadsById", state.nav.thread) || { title: state.nav.room }).title : "All messages";
-			url = "/" + state.nav.room + "/" + (state.nav.thread ? state.nav.thread : "all") +
-				(title ? "/" + format.urlComponent(title) : "");
+			url = "/" + state.nav.room + "/" + (state.nav.thread ? state.nav.thread : "all") + (title ? "/" + format.urlComponent(title) : "");
 		}
 
 		document.title = title || "Scrollback";
@@ -122,7 +123,7 @@ module.exports = function(core, config, store) {
 		for (var section in propMap) {
 			for (var prop in propMap[section]) {
 				if (state[section][prop]) {
-					if (prop === "dialogState") {
+					if (typeof state[section][prop] === "object") {
 						params[propMap[section][prop]] = encodeURIComponent(JSON.stringify(state[section][prop]));
 					} else {
 						params[propMap[section][prop]] = state[section][prop];
