@@ -71,12 +71,10 @@ module.exports = function(core, config) {
 			onMentions(text);
 		}
 
-		// if (text.thread) {
-		// 	onReply(text);
-		// }
-
 		if (text.thread === text.id) {
 			onNewDisscussion(text);
+		} else {
+			onReply(text);
 		}
 
 		next();
@@ -96,13 +94,30 @@ module.exports = function(core, config) {
 		});
 	}
 
-	// function onReply(text) {
-	// 	var payload = {
-	// 			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
-	// 			text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
-	// 			path: text.to + (text.thread ? "/" + text.thread : "")
-	// 		};
-	// }
+	function onReply(text) {
+		var payload = {
+				title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
+				text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
+				path: text.to + (text.thread ? "/" + text.thread : "")
+			};
+
+		core.emit("getUsers", {
+			memberOf: text.to,
+			session: "internal-push-notifications"
+		}, function(e, d) {
+			var usersList;
+
+			if (!(d && d.results)) {
+				return;
+			}
+
+			usersList = d.results.filter(function(e) {
+				return (e.id !== text.from);
+			});
+
+			notifyUsers(usersList, payload);
+		});
+	}
 
 	function onNewDisscussion(text) {
 		var payload, body;
