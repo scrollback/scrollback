@@ -165,7 +165,7 @@ module.exports = function(conf, clientEmitter, client, callbacks) {
 		if (message.text.length <= l) {
 			return message.text;
 		} else {
-			var suffix = "... [full message at http://" + config.global.host + "/" + message.to + "?time=" + 
+			var suffix = "... [ full message at http://" + config.global.host + "/" + message.to + "?time=" + 
 				new Date(message.time).toISOString() + "&tab=people" + " ]";	
 			var r = message.text.substring(0, l - suffix.length) + suffix;
 			return r;
