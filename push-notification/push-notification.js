@@ -87,7 +87,7 @@ module.exports = function(core, config) {
 
 		payload = {
 			title: text.to + ": " + user.getNick(text.from) + " mentioned you",
-			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
+			text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
 			path: text.to + (text.thread ? "/" + text.thread : "")
 		};
 
@@ -99,7 +99,7 @@ module.exports = function(core, config) {
 	// function onReply(text) {
 	// 	var payload = {
 	// 			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
-	// 			text: text.text.length > 100 ? text.text.substring(0, 100) : text.text,
+	// 			text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
 	// 			path: text.to + (text.thread ? "/" + text.thread : "")
 	// 		};
 	// }
@@ -115,7 +115,7 @@ module.exports = function(core, config) {
 
 		payload = {
 			title: text.to + ": " + user.getNick(text.from) + " started a discussion",
-			text: body.length > 100 ? body.substring(0, 100) : body,
+			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
 			path: text.to + (text.thread ? "/" + text.thread : "")
 		};
 
