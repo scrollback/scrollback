@@ -19,7 +19,8 @@ function getParams(string) {
 var propMap = {
 	nav: {
 		dialog: "d",
-		dialogState: "ds"
+		dialogState: "ds",
+		view: "v"
 	}
 };
 
