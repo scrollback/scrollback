@@ -11,6 +11,7 @@ module.exports = function(core, config, store) {
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		RoomList = require("./room-list.jsx")(core, config, store),
 		ThreadList = require("./thread-list.jsx")(core, config, store),
+		Footer = require("./footer.jsx")(core, config, store),
 		Client;
 
 	Client = React.createClass({
@@ -58,6 +59,8 @@ module.exports = function(core, config, store) {
 
 										<ThreadList />
 									</div>
+
+									<Footer />
 								</div>
 							</div>
 
