@@ -4,6 +4,7 @@ module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var future = store.with(changes),
 			signingup = future.get("nav", "dialogState", "signingup"),
+			signedin = future.get("nav", "dialogState", "signedin"),
 			dialog = future.get("nav", "dialog"),
 			userId = future.get("user"),
 			currentDialog = store.get("nav", "dialog");
@@ -12,14 +13,16 @@ module.exports = function(core, config, store) {
 		changes.nav.dialogState = changes.nav.dialogState || {};
 
 		// Reset signing up in case dialog is being dismissed
-		if (currentDialog && !dialog) {
+		if (currentDialog && !dialog && signingup) {
 			changes.nav.dialogState.signingup = null;
 		}
 
 		if (userId) {
 			if (appUtils.isGuest(userId)) {
 				// User is not signed in
-				changes.nav.dialogState.signedin = null;
+				if (signedin) {
+					changes.nav.dialogState.signedin = null;
+				}
 
 				if (signingup) {
 					// Trying to sign up
@@ -34,7 +37,7 @@ module.exports = function(core, config, store) {
 				if (/(signup|signin)/.test(dialog)) {
 					changes.nav.dialog = null;
 					changes.nav.dialogState = null;
-				} else {
+				} else if (signingup) {
 					changes.nav.dialogState.signingup = null;
 				}
 			}
