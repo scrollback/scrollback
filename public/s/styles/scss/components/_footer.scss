@@ -1,80 +1,61 @@
 @include exports(footer) {
     .footer {
-        padding: 1em;
-        background-color: #ebebeb;
         width: 100%;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 1em;
+        background-color: darken($light-color, 7%);
+        border-top: 1px solid rgba(0, 0, 0, .05);
+        color: lighten($dark-color, 20%);
 
         &:after {
             content: "";
             display: block;
             height: $bar-height;
         }
+
+        &-inner {
+            @extend %clearfix;
+
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        &-playstore {
+            display: inline-block;
+            border: 0;
+            margin: 0.5em 0;
+        }
+
+        &-social {
+            a {
+                border: 0;
+                padding: .25em;
+
+                &:first-of-type { padding-left: 0; }
+
+                &:last-of-type { padding-right: 0; }
+            }
+        }
+
+        h5 {
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: .5em;
+        }
+
+        ul { margin: 0; }
+
+        li {
+            list-style: none;
+            line-height: 1.8;
+        }
+
+        a {
+            color: currentColor;
+            border-bottom-color: lighten($dark-color, 50%);
+
+            &:hover, &:focus { color: $link-color; }
+
+            &:active { color: darken($link-color, 15%); }
+        }
     }
-
-    .row-footer {
-        @extend %clearfix;
-
-        padding-right: 1.5em;
-        padding-left: 1.5em;
-        margin-right: 100px ;
-        margin-left: 100px;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
-    .li-footer {
-        list-style-type: none;
-        margin-left: 0px;
-        line-height: 28px;
-    }
-    .ul-footer {
-        margin: 0px;
-    }
-
-    .a-footer {
-        @extend %snappy;
-
-        color: #707070;
-        text-decoration: none;
-        border-bottom: 1px solid #aaa;
-
-        &:hover, &:focus { color: darken($link-color, 15%); }
-
-        &:active { color: darken($link-color, 30%); }
-    }
-
-    .a-image {
-        @extend %snappy;
-
-
-        text-decoration: none;
-        border-bottom: 0px;
-        margin-right: 0.25em;
-        float: left;
-
-        &:hover, &:focus { color: darken($link-color, 15%); }
-
-        &:active { color: darken($link-color, 30%); }
-    }
-
-    .h4-footer {
-        font-size: 1em;
-        color: #707070;
-        list-style-type:none;
-     }
-
-     .p-footer {
-        color: #707070;
-     }
-
-     .google-link {
-        padding-top: 0.5em;
-     }
-
-
-
-
-
-
 }
