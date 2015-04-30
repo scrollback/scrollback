@@ -19,7 +19,7 @@ module.exports = function(c, conf, s) {
 			(changes.nav && changes.nav.mode ||
 			current.nav && current.nav.mode) === "room" // don’t bother except in the room mode
 		) {
-			threadRanges = [].concat(
+			threadRanges = Array.prototype.concat(
 				changes.threads && changes.threads[room] || [],
 				current.threads && current.threads[room] || []
 			);

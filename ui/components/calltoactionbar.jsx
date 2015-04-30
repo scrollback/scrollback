@@ -8,13 +8,8 @@ module.exports = function(core, config, store) {
 
 	CallToActionBar = React.createClass({
 		hideSelf: function() {
-			var cta = store.get("app", "cta"),
-				dismissed = store.get("app", "dismissedCtas") || [];
-
-			dismissed.push(cta);
-
 			core.emit("setstate", {
-				app: { dismissedCtas: dismissed }
+				app: { dismissedCtas: [ store.get("app", "cta") ] }
 			});
 		},
 

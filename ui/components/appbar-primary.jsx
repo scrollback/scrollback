@@ -92,7 +92,7 @@ module.exports = function(core, config, store) {
 					</div>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="user follower" data-mode="room chat" className={classNames} onClick={this.toggleFollowRoom}></a>
+					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
 		},
@@ -109,7 +109,7 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes, next) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				threadObj, nav, relation, title;
+				userObj, threadObj, nav, relation, title;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
@@ -131,10 +131,12 @@ module.exports = function(core, config, store) {
 					break;
 				}
 
+				userObj = store.getUser();
+
 				this.setState({
 					title: title,
 					username: appUtils.formatUserName(user),
-					picture: getAvatar(store.getUser().picture, 48),
+					picture: userObj ? getAvatar(userObj.picture, 48) : "",
 					following: !!(relation && relation.role === "follower")
 				});
 			}

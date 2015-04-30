@@ -6,6 +6,7 @@ module.exports = function(core, config, store) {
 		Banner = require("./banner.jsx")(core, config, store),
 		AppbarPrimary = require("./appbar-primary.jsx")(core, config, store),
 		CallToActionBar = require("./calltoactionbar.jsx")(core, config, store),
+		ConnectionStatus = require("./connectionstatus.jsx")(core, config, store),
 		SidebarRight = require("./sidebar-right.jsx")(core, config, store),
 		ChatArea = require("./chat-area.jsx")(core, config, store),
 		RoomList = require("./room-list.jsx")(core, config, store),
@@ -43,6 +44,8 @@ module.exports = function(core, config, store) {
 
 							<CallToActionBar />
 
+							<ConnectionStatus />
+
 							<div className="main-content" data-mode="home search room">
 								<div className="main-content-inner-wrap">
 
@@ -60,10 +63,10 @@ module.exports = function(core, config, store) {
 
 							<ChatArea />
 
-							<button className="fab" data-mode="home" onClick={this.createRoom}>
+							<button className="fab" data-state="online" data-mode="home" onClick={this.createRoom}>
 								<span className="fab-label">Create room</span>
 							</button>
-							<button className="fab" data-mode="room" onClick={this.createThread}>
+							<button className="fab" data-state="online" data-mode="room" onClick={this.createThread}>
 								<span className="fab-label">Create discussion</span>
 							</button>
 						</main>

@@ -64,7 +64,7 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Unhide message",
 				action: function() {
-					var tags = (textObj.tags || []).slice(0);
+					var tags = Array.isArray(textObj.tags) ? textObj.tags.slice(0) : [];
 
 					core.emit("edit-up", {
 						to: room,
@@ -80,13 +80,14 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Hide message",
 				action: function() {
-					textObj.tags = (textObj.tags || []).slice(0);
-					textObj.tags.push("hidden");
+					var tags = Array.isArray(textObj.tags) ? textObj.tags.slice(0) : [];
+
+					tags.push("hidden");
 
 					core.emit("edit-up", {
 						to: room,
 						ref: textObj.id,
-						tags: textObj.tags
+						tags: tags
 					});
 				}
 			};
@@ -109,7 +110,7 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Unhide discussion",
 				action: function() {
-					var tags = (threadObj.tags || []).slice(0);
+					var tags = Array.isArray(threadObj.tags) ? threadObj.tags.slice(0) : [];
 
 					core.emit("edit-up", {
 						to: room,
@@ -126,13 +127,14 @@ module.exports = function(core, config, store) {
 				prio: 500,
 				text: "Hide discussion",
 				action: function() {
-					threadObj.tags = (threadObj.tags || []).slice(0);
-					threadObj.tags.push("thread-hidden");
+					var tags = Array.isArray(threadObj.tags) ? threadObj.tags.slice(0) : [];
+
+					tags.push("thread-hidden");
 
 					core.emit("edit-up", {
 						to: room,
 						ref: threadObj.id,
-						tags: threadObj.tags,
+						tags: tags,
 						color: threadObj.color
 					});
 				}

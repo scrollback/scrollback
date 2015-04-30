@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+var objUtils = require("../../lib/obj-utils.js");
+
 module.exports = function(core, config, store) {
 	function addErrors($dialog, room) {
 		var pluginErr;
@@ -128,7 +130,7 @@ module.exports = function(core, config, store) {
 		}
 		if (error) {
 			core.emit("conf-show", {
-				room: action.room
+				room: objUtils.clone(action.room)
 			}, function(err, items) {
 				delete items.room;
 
