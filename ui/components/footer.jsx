@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 			                        </li>
 			                        <li className="li-footer">
 			                            <a className="a-image" href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">
-			                                <img className="google-link" src="/s/pictures/footer/google.png" width="40%" />
+			                                <img className="google-link" src="/s/img/footer/google.png" />
 			                            </a>
 			                        </li>
 			                     </ul>
@@ -52,16 +52,16 @@ module.exports = function(core, config, store) {
 			                    <h4 className="h4-footer"> Connect with us on</h4>
 			                    <p>
 			                        <a className="a-image" href="https://www.facebook.com/scrollback" target="_blank" >
-			                            <img src="/s/pictures/footer/facebook.png" height="40px" width="40px" ></img>
+			                            <img src="/s/img/footer/facebook.png"  ></img>
 			                        </a>
 			                        <a className="a-image" href="https://twitter.com/Scrollbackio" target="_blank" >
-			                            <img src="/s/pictures/footer/twitter.png" height="40px" width="40px" ></img>
+			                            <img src="/s/img/footer/twitter.png"  ></img>
 			                        </a>
 			                        <a className="a-image" href="https://www.linkedin.com/company/scrollback" target="_blank" >
-			                            <img src="/s/pictures/footer/linkedin.png" height="40px" width="40px"></img>
+			                            <img src="/s/img/footer/linkedin.png" ></img>
 			                        </a>
 			                        <a className="a-image" href="https://github.com/scrollback/scrollback" target="_blank" s>
-			                            <img  src="/s/pictures/footer/github.png" height="40px" width="40px" ></img>
+			                            <img  src="/s/img/footer/github.png"  ></img>
 			                        </a>
 			                    </p>
 			                </div>
