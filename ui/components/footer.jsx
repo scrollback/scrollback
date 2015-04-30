@@ -21,7 +21,7 @@ module.exports = function(core, config, store) {
 			        			     <ul className="ul-footer">
 
 			        			     <li className="li-footer">Scrollback is a product of Askabt.</li>
-			        			     <li className="li-footer">s#05-16, 71 Ayer Rajah Crescent,</li>
+			        			     <li className="li-footer">#05-16, 71 Ayer Rajah Crescent,</li>
 			        			     <li className="li-footer">Tel - +91-98451 68036,</li>
 			        			     <li className="li-footer">Mail - evans@scrollback.io</li>
 			        			     </ul>
