@@ -73,6 +73,7 @@
 	require("./components/client.jsx")(core, config, store);
 
 	// Miscellaneous
+	require("./misc/fontloader.js")(core, config, store);
 	require("./misc/appcache.js")(core, config, store);
 	require("./misc/google-analytics.js")(core, config, store);
 	require("./misc/load-indicator.js")(core, config, store);
