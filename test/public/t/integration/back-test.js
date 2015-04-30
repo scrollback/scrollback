@@ -1,33 +1,18 @@
 /*global describe*/
 /*global it*/
-/*global uid*/
 /*global assert*/
 /*global SockJS*/
 /*global scrollback*/
 /*global beforeEach*/
 /*global afterEach*/
+/*global getConnection*/
 
 describe('Action: BACK ', function() {
 	var socket;
 	beforeEach(function(done) {
 		socket = new SockJS(scrollback.host + "/socket");
-		var sessionId = "web://" + uid();
-		var init = {
-			"id": sessionId,
-			"type": "init",
-			"to": "me",
-			"suggestedNick": "testinguser",
-			"session": "web://" + uid(),
-			"resource": uid(),
-			"origin": {
-				domain: "scrollback.io",
-				verified: true
-			}
-		};
-		socket.onopen = function() {
-			socket.send(JSON.stringify(init));
-			done();
-		};
+		getConnection(socket);
+		done();
 	});
 
 	it("back action with all property ", function(done) {

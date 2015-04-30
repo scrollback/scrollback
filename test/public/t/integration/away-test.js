@@ -1,6 +1,6 @@
 /*global describe*/
 /*global it*/
-/*global uid*/
+/*global getConnection*/
 /*global assert*/
 /*global SockJS*/
 /*global scrollback*/
@@ -16,23 +16,8 @@ describe('Action: AWAY ', function() {
 	};
 	beforeEach(function(done) {
 		socket = new SockJS(scrollback.host + "/socket");
-		var sessionId = "web://" + uid();
-		var init = {
-			"id": sessionId,
-			"type": "init",
-			"to": "me",
-			"suggestedNick": "sbtestinguser",
-			"session": "web://" + uid(),
-			"resource": uid(),
-			"origin": {
-				domain: "scrollback.io",
-				verified: true
-			}
-		};
-		socket.onopen = function() {
-			socket.send(JSON.stringify(init));
-			done();
-		};
+		getConnection(socket);
+		done();
 	});
 
 	it("away action with all property ", function(done) {
