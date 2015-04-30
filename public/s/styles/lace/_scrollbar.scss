@@ -1,0 +1,24 @@
+@import "global";
+
+@include exports("scrollbar") {
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-button { display: none; }
+
+    ::-webkit-scrollbar-track { background-color: transparent; }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: darken($light-color, 10%);
+
+        &:vertical { min-height: 100px; }
+
+        &:horizontal { min-width: 100px; }
+
+        &:hover, &:focus { background-color: $accent-color; }
+
+        &:active { background-color: darken($accent-color, 10%); }
+    }
+}

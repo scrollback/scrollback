@@ -1,0 +1,20 @@
+@import "functions";
+@import "global";
+@import "animations";
+
+@mixin spinner($size: 1em) {
+	&:before {
+		@extend %spin;
+
+		content: "";
+		display: inline-block;
+		width: $size;
+		height: $size;
+		margin: 0 1em;
+		border-top: 2px solid currentColor;
+		border-right: 2px solid transparent;
+		border-bottom: 2px solid currentColor;
+		border-left: 2px solid transparent;
+		border-radius: 50%;
+	}
+}

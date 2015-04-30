@@ -1,0 +1,88 @@
+@mixin opacity($opacity: .5) {
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(opacity=#{$opacity * 100});
+    -webkit-opacity: $opacity;
+    -moz-opacity: $opacity;
+    opacity: $opacity;
+}
+
+@mixin blur($radius: 5px) {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'blur\'><feGaussianBlur stdDeviation=\'#{$radius}\'/></filter></svg>#blur";
+
+    filter: url($svg);
+    -webkit-filter: blur($radius);
+    filter: blur($radius);
+}
+
+@mixin brightness($amount: 0.5) {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'brightness\'><feComponentTransfer><feFuncR type=\'linear\' slope=\'#{$amount}\'/><feFuncG type=\'linear\' slope=\'#{$amount}\'/>feFuncB type=\'linear\' slope=\'#{$amount}\'/></filter></svg>#brightness";
+
+    filter: url($svg);
+    -webkit-filter: brightness($amount);
+    filter: brightness($amount);
+}
+
+@mixin contrast($amount: 200%) {
+    $intercept: -(0.5 * $amount + 0.5);
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'contrast\'><feComponentTransfer><feFuncR type=\'linear\' slope=\'#{$amount}\' intercept=\'#{$intercept}\'/><feFuncG type=\'linear\' slope=\'#{$amount}\' intercept=\'#{$intercept}\'/>feFuncB type=\'linear\' slope=\'#{$amount}\' intercept=\'#{$intercept}\'/></filter></svg>#contrast";
+
+    filter: url($svg);
+    -webkit-filter: contrast($amount);
+    filter: contrast($amount);
+}
+
+%grayscale {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale";
+
+    filter: url($svg);
+    filter: gray;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+%sharpen {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'SharpenFilter\'><feConvolveMatrix order=\'3 3\' preserveAlpha=\'true\' kernelMatrix=\'0 -1 0 -1 5 -1 0 -1 0\'/></filter></svg>#SharpenFilter";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%posterize {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'PosterizeFilter\'><feComponentTransfer><feFuncR type=\'discrete\' tableValues=\'0 0.25 0.5 0.75 1\'/><feFuncG type=\'discrete\' tableValues=\'0 0.25 0.5 0.75 1\'/><feFuncB type=\'discrete\' tableValues=\'0 0.25 0.5 0.75 1\'/></feComponentTransfer></filter></svg>#PosterizeFilter";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%edgedetect {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'EdgeDetectFilter\'><feConvolveMatrix order=\'3 3\' preserveAlpha=\'true\' kernelMatrix=\'-5 0 0 0 0 0 0 0 5\'/></filter></svg>#EdgeDetectFilter";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%emboss {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'emboss\' ><feConvolveMatrix order=\'5 5\' preserveAlpha=\'true\' kernelMatrix=\'-1 0 0 0 0 0 -2 0 0 0 0 0 3 0 0 0 0 0 0 0 0 0 0 0 0\'/></filter></svg>#emboss";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%luminancemask {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'LuminanceMaskFilter\'><feColorMatrix type=\'luminanceToAlpha\'/></filter></svg>#LuminanceMaskFilter";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%xray {
+    $svg: "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'XRayFilter\'><feColorMatrix type=\'matrix\' values=\'0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0\' /><feComponentTransfer ><feFuncR type=\'table\' tableValues=\'1 0\'/><feFuncG type=\'table\' tableValues=\'1 0\'/><feFuncB type=\'table\' tableValues=\'1 0\'/></feComponentTransfer></filter></svg>#XRayFilter";
+
+    -webkit-filter: url($svg);
+    filter: url($svg);
+}
+
+%nofilter {
+    -webkit-filter: none;
+    -ms-filter: none;
+    filter: none;
+}

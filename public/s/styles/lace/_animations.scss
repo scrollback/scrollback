@@ -1,0 +1,159 @@
+@import "functions";
+@import "easings";
+@import "effects";
+
+@mixin transform($args) {
+    @include prefix(transform, $args);
+}
+
+@mixin keyframes($animation) {
+    @-webkit-keyframes #{$animation} { @content; }
+
+    @-moz-keyframes #{$animation} { @content; }
+
+    @-ms-keyframes #{$animation} { @content; }
+
+    @keyframes #{$animation} { @content; }
+}
+
+@mixin spin($args: 1s linear infinite) {
+    @include prefix(animation, spin $args);
+}
+
+@mixin slideup($args: .3s $easeOutSine) {
+    @include prefix(animation, slideup $args);
+}
+
+@mixin slideright($args: .3s $easeOutSine) {
+    @include prefix(animation, slideright $args);
+}
+
+@mixin slidedown($args: .3s $easeOutSine) {
+    @include prefix(animation, slidedown $args);
+}
+
+@mixin slideleft($args: .3s $easeOutSine) {
+    @include prefix(animation, slideleft $args);
+}
+
+@mixin appear($args: .5s $easeOutQuad) {
+    @include prefix(animation, appear $args);
+}
+
+@mixin fadein($args: .5s $easeOutQuad) {
+    @include prefix(animation, fadein $args);
+}
+
+@mixin progressbar($args: 3s ease) {
+    @include prefix(animation, progressbar $args);
+}
+
+@mixin transition($args: .3s ease) {
+    @include prefix(transition, $args);
+}
+
+@include exports("animations") {
+    @include keyframes(spin) {
+        to  { @include transform(rotate(360deg)); }
+    }
+
+    @include keyframes(slideup) {
+        0% {
+            @include opacity(0);
+            @include transform(translate3d(0, 10%, 0));
+        }
+
+        100% {
+            @include opacity(1);
+            @include transform(translate3d(0, 0, 0));
+        }
+    }
+
+    @include keyframes(slideright) {
+        0% {
+            @include opacity(0);
+            @include transform(translate3d(-10%, 0, 0));
+        }
+
+        100% {
+            @include opacity(1);
+            @include transform(translate3d(0, 0, 0));
+        }
+    }
+
+    @include keyframes(slidedown) {
+        0% {
+            @include opacity(0);
+            @include transform(translate3d(0, -10%, 0));
+        }
+
+        100% {
+            @include opacity(1);
+            @include transform(translate3d(0, 0, 0));
+        }
+    }
+
+    @include keyframes(slideleft) {
+        0% {
+            @include opacity(0);
+            @include transform(translate3d(10%, 0, 0));
+        }
+
+        100% {
+            @include opacity(1);
+            @include transform(translate3d(0, 0, 0));
+        }
+    }
+
+    @include keyframes(appear) {
+        0% {
+            @include opacity(0);
+            @include transform(scale(.5));
+        }
+
+        30%  { @include transform(scale(1)); }
+
+        100%  { @include opacity(1); }
+    }
+
+    @include keyframes(fadein) {
+        0%  { @include opacity(0); }
+        100%  { @include opacity(1); }
+    }
+
+    @include keyframes(progressbar) {
+        0% { width: 0; }
+
+        10% { width: 30%; }
+
+        30% { width: 50%; }
+
+        40% { width: 70%; }
+
+        100% { width: 80%; }
+    }
+
+    %spin { @include spin; }
+
+    %slideup { @include slideup; }
+
+    %slideright { @include slideright; }
+
+    %slidedown { @include slidedown; }
+
+    %slideleft { @include slideleft; }
+
+    %appear { @include appear; }
+
+    %fadein { @include fadein; }
+
+    %progressbar { @include progressbar; }
+
+    %transition { @include transition; }
+
+    %snappy {
+        @include transition(.3s $easeOutQuad);
+
+        &:focus, &:hover, &:active { @include transition(none); }
+    }
+}

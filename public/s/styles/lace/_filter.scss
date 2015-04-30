@@ -1,0 +1,27 @@
+@mixin filter($map, $multi) {
+    @each $filter, $states in $map {
+        @each $state in $states {
+            $selector: unquote(".#{$filter}-#{$state}");
+
+            @if (index($multi, $filter) != null) {
+                &:not(#{$selector}) {
+                    [data-#{$filter}=#{$state}] { display: none; }
+                }
+            } @else {
+                &#{$selector} {
+                    [data-#{$filter}]:not([data-#{$filter}~=#{$state}]) { display: none; }
+                }
+            }
+        }
+
+        $selector: unquote("[class*=#{$filter}-]");
+
+        &#{$selector} {
+            [data-#{$filter}=none] { display: none; }
+        }
+
+        &:not(#{$selector}) {
+            [data-#{$filter}]:not([data-#{$filter}=none]) { display: none; }
+        }
+    }
+}

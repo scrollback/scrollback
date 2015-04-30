@@ -1,0 +1,83 @@
+@import "global";
+@import "reset";
+@import "animations";
+@import "effects";
+@import "button";
+@import "entry";
+
+/* base styles */
+body {
+    background: $light-color;
+    color: $dark-color;
+    font: #{$font-size}/($font-line-height) $font-family-normal;
+
+    @media #{$mobile-break-point} { font-size: #{$font-size-mobile}; }
+}
+
+a {
+    @extend %snappy;
+
+    color: $link-color;
+    text-decoration: none;
+
+    &:hover, &:focus { color: darken($link-color, 15%); }
+
+    &:active { color: darken($link-color, 30%); }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2, h3, h4 {
+    font-family: $font-family-headings;
+    font-weight: 700;
+    margin-top: .25em;
+    margin-bottom: .5em;
+}
+
+h1 { font-size: 1.8em; }
+
+h2 { font-size: 1.5em; }
+
+h3 { font-size: 1.2em; }
+
+h4 { font-size: 1em; }
+
+p { margin: .5em 0; }
+
+input[type="checkbox"], input[type="radio"] {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 1em;
+    border-radius: $roundness;
+    background-color: darken($light-color, 5%);
+}
+
+code {
+    font-weight: 700;
+    font-family: $font-family-monospace;
+    line-height: 1.2em;
+}
+
+.fadeout {
+    @include opacity(0);
+    @extend %transition;
+}
+
+/* browser specific styles */
+::selection {
+    background-color: $accent-color;
+    color: $light-color;
+}
+
+::-moz-selection {
+    background-color: $accent-color;
+    color: $light-color;
+}

@@ -1,0 +1,186 @@
+@import "functions";
+@import "global";
+@import "animations";
+@import "dropshadow";
+
+@include exports("popover") {
+	%popover-arrow {
+		position: absolute;
+		display: block;
+		content: "";
+		height: 14px;
+		width: 14px;
+		background-color: transparent;
+		border-style: solid;
+		border-width: 1px 0 0 1px;
+		z-index: 800;
+	}
+
+	.popover-body {
+		@include dropshadow(4);
+
+		position: absolute;
+		display: block;
+		width: 15em;
+		margin: .5em;
+		border-radius: $roundness;
+		font-weight: normal;
+		border: 1px solid darken($light-color, 20%);
+		background-color: $light-color;
+		color: $dark-color;
+		text-transform: none;
+		z-index: 900;
+
+		&:before {
+			@extend %popover-arrow;
+
+			background-image: linear-gradient(135deg, $light-color 60%, $light-color 60%, transparent 60%);
+			border-color: darken($light-color, 30%);
+		}
+
+		$types: (
+			info: $info-color,
+			success: $success-color,
+			warning: $warning-color,
+			error: $error-color
+		);
+
+		@each $type, $color in $types {
+			&.#{$type} {
+				background-color: $color;
+				color: $light-color;
+				border-color: $color;
+
+				&:before {
+					background-image: linear-gradient(135deg, $color 60%, $info-color 60%, transparent 60%);
+					border-color: $color;
+				}
+			}
+		}
+
+		&.popover-top {
+			@extend %slideup;
+
+			&:before {
+				@include transform(rotate(225deg));
+
+				bottom: -8px;
+			}
+		}
+
+		&.popover-left {
+			@extend %slideleft;
+
+			&:before {
+				@include transform(rotate(135deg));
+
+				right: -8px;
+			}
+		}
+
+		&.popover-bottom {
+			@extend %slidedown;
+
+			&:before {
+				@include transform(rotate(45deg));
+
+				top: -8px;
+			}
+		}
+
+		&.popover-right {
+			@extend %slideright;
+
+			&:before {
+				@include transform(rotate(315deg));
+
+				left: -8px;
+			}
+		}
+
+		&.arrow-x {
+			&:before {
+				left: 50%;
+				margin-left: -8px;
+			}
+
+			&.arrow-left {
+				&:before {
+					left: 1em;
+					right: auto;
+				}
+			}
+
+			&.arrow-right {
+				&:before {
+					left: auto;
+					right: 1em;
+				}
+			}
+		}
+
+		&.arrow-y {
+			&:before {
+				top: 50%;
+				margin-top: -8px;
+			}
+
+			&.arrow-top {
+				&:before {
+					top: 1em;
+					bottom: auto;
+				}
+			}
+
+			&.arrow-bottom {
+				&:before {
+					top: auto;
+					bottom: 1em;
+				}
+			}
+		}
+
+		.popover-section {
+			border-bottom: 1px solid darken($light-color, 10%);
+
+			&:only-of-type, &:last-of-type { border-bottom: none; }
+		}
+
+		.popover-title {
+			padding: 1em;
+			font-weight: 700;
+		}
+
+		.popover-buttons {
+			padding: 1em;
+
+			.button { width: 100%; }
+		}
+
+		.popover-content { padding: 1em; }
+
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+
+			li {
+				border-bottom: 1px solid darken($light-color, 10%);
+
+				&:only-child, &:last-child { border-bottom: none; }
+
+				a {
+					display: block;
+					color: $dark-color;
+					padding: 1em;
+					font-weight: 700;
+
+					&:hover, &:focus {
+						background-color: darken($light-color, 2.5%);
+						color: darken($dark-color, 30%);
+					}
+				}
+			}
+		}
+	}
+}
