@@ -78,7 +78,7 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes, next) {
 			if (changes.nav && changes.nav.mode) {
-				this.setState({ show: (store.get("nav", "mode") === "home") });
+				this.setState({ show: (store.get("nav", "mode") === "home" && store.get("context", "env") !== "android") });
 			}
 
 			next();
