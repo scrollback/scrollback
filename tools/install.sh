@@ -283,7 +283,7 @@ postgres_osx_create() {
 }
 
 postgres_create_linux() {
-    printf("Creating DB user and Scrollback DBs...")
+    printf "Creating DB user and Scrollback DBs..."
     printf $(sudo -u postgres createuser -d scrollback)
     printf $(sudo -u postgres createdb -O scrollback scrollback)
     printf $(sudo -u postgres createdb -O scrollback logs)

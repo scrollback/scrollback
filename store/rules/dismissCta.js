@@ -1,27 +1,27 @@
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
-		var dismissed, cta;
+		var dismissed = store.get("app", "dismissedCtas"),
+			changed, cta;
 
-		dismissed = store.get("app", "dismissedCtas") || [];
+		dismissed = Array.isArray(dismissed) ? dismissed.slice(0) : [];
 
-		if (store.get("app", "connectionStatus") === "online") {
-			if (changes.app) {
-				if (changes.app.dismissedCtas) {
-					dismissed = dismissed.concat(changes.app.dismissedCtas || []);
+		if (changes.app) {
+			changed = changes.app.dismissedCtas;
+
+			if (changed) {
+				for (var i = 0, l = changed.length; i < l; i++) {
+					if (dismissed.indexOf(changed[i]) === -1) {
+						dismissed.push(changed[i]);
+					}
 				}
-
-				cta = changes.app.cta;
-			} else {
-				changes.app = {};
-			}
-
-			cta = cta || store.get("app", "cta");
-
-			if (dismissed.indexOf(cta) > -1) {
-				changes.app.cta = null;
 			}
 		} else {
-			changes.app = changes.app || {};
+			changes.app = {};
+		}
+
+		cta = store.with(changes).get("app", "cta");
+
+		if (dismissed.indexOf(cta) > -1) {
 			changes.app.cta = null;
 		}
 

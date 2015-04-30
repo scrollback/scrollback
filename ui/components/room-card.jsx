@@ -1,7 +1,6 @@
 /* jshint browser: true */
 
-var appUtils = require("../../lib/app-utils.js"),
-	showMenu = require("../utils/show-menu.js");
+var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -70,11 +69,11 @@ module.exports = function(core, config, store) {
 			if (user && !appUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
 					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
-					           key={"card-configure" + room} onClick={this.showRoomSettings}></a>);
+					           key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);
 				} else {
 					icons.push(<a data-state="online" className={"card-header-icon card-header-icon-follow card-cover-icon" +
 					           ((rel && rel.role === "follower") ? " following" : "")}
-					           key={"card-follow" + room} onClick={this.toggleFollowRoom}></a>);
+					           key={"card-follow-" + room} onClick={this.toggleFollowRoom}></a>);
 				}
 			}
 

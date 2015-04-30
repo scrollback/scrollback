@@ -36,6 +36,8 @@ function loadUsersList(roomId) {
 		entities = {},
 		listeningRooms = store.get("app", "listeningRooms");
 
+	listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
+
 	if (listeningRooms.indexOf(roomId) < 0) listeningRooms.push(roomId);
 
 	function emitSetState() {

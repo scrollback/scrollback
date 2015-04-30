@@ -109,7 +109,7 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes, next) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				threadObj, nav, relation, title;
+				userObj, threadObj, nav, relation, title;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
@@ -131,10 +131,12 @@ module.exports = function(core, config, store) {
 					break;
 				}
 
+				userObj = store.getUser();
+
 				this.setState({
 					title: title,
 					username: appUtils.formatUserName(user),
-					picture: getAvatar(store.getUser().picture, 48),
+					picture: userObj ? getAvatar(userObj.picture, 48) : "",
 					following: !!(relation && relation.role === "follower")
 				});
 			}
