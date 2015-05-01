@@ -1,6 +1,6 @@
 var store, core, config,
 	entityOps = require("./entity-ops.js"),
-	objUtils = require("./obj-utils.js"),
+	objUtils = require("../lib/obj-utils.js"),
 	pendingActions = {},
 	user;
 
