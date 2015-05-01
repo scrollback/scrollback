@@ -25,9 +25,7 @@ module.exports = function(coreObject, conf) {
 	if (config.auth) {
 		core.on('text', function(message, callback) {
 			callback();
-			if(message.type === "text"){
-				addMessage(message);
-			}
+			addMessage(message);
 		}, "gateway");
 		if (config.debug) {
 			setInterval(sendPeriodicMails, timeout);
@@ -52,21 +50,21 @@ function getExpireTime() {
  */
 function addMessage(message){
     var room = message.to;
-    if(config.debug) log("email -"  , message);
-    if (message.threads && message.threads[0]) {
-        var label = message.threads[0].id;
-        var title = message.threads[0].title;
+    log.d("email -"  , message);
+    if (message.thread) {
+        var thread = message.thread;
+        var title = message.title || "";
 		var multi = redis.multi();
-		multi.zadd("email:label:" + room + ":labels" ,message.time , label); // email: roomname : labels is a sorted set
-		multi.incr("email:label:" + room + ":" + label + ":count");
-		multi.expire("email:label:" + room + ":" + label + ":count" , getExpireTime());
-		if(title) multi.set("email:label:" + room + ":" + label + ":title", title);
-		multi.expire("email:label:" + room + ":" + label + ":title" , getExpireTime());
-		multi.lpush("email:label:" + room + ":" + label +":tail", JSON.stringify(message));//last message of label
-		multi.ltrim("email:label:" + room + ":" + label +":tail", 0, 2);
-		multi.expire("email:label:" + room + ":" + label + ":tail" , getExpireTime());
+		multi.zadd("email:thread:" + room + ":threads" ,message.time , thread); // email: roomname : threads is a sorted set
+		multi.incr("email:thread:" + room + ":" + thread + ":count");
+		multi.expire("email:thread:" + room + ":" + thread + ":count" , getExpireTime());
+		if(title) multi.set("email:thread:" + room + ":" + thread + ":title", title);
+		multi.expire("email:thread:" + room + ":" + thread + ":title" , getExpireTime());
+		multi.lpush("email:thread:" + room + ":" + thread +":tail", JSON.stringify(message));//last message of thread
+		multi.ltrim("email:thread:" + room + ":" + thread +":tail", 0, 2);
+		multi.expire("email:thread:" + room + ":" + thread + ":tail" , getExpireTime());
 		multi.exec(function(err,replies) {
-			log("added message in redis" , err, replies);
+			log.d("added message in redis" , err, replies);
 		});
         if (message.mentions) {
             message.mentions.forEach(function(username) {

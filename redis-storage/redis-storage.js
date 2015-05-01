@@ -73,7 +73,7 @@ function onRoom(action, callback) {
 
 function onGetRooms(query, callback) {
 	if (query.ref && !query.hasMember) {
-		if (typeof query.ref == "string") {
+		if (typeof query.ref === "string") {
 			return roomDB.get("room:{{" + query.ref + "}}", function(err, data) {
 				var res;
 				if (err || !data) return callback();
