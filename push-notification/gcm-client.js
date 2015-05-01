@@ -1,16 +1,13 @@
 /* jshint browser: true */
 
-var core, config, store, gcmTimeValidity = 7 * 24 * 60 * 60 * 1000,
+var gcmTimeValidity = 7 * 24 * 60 * 60 * 1000,
 	updateDevice = false,
-	objUtils = require("../lib/obj-utils.js"),
-	user = require("../lib/user.js");
+	objUtils = require("../lib/obj-utils.js");
 
-module.exports = function(c, conf, st) {
-	var LS = window.localStorage,
+module.exports = function(core, config, store) {
+	var user = require("../lib/user.js")(core, config, store),
+		LS = window.localStorage,
 		lastGCMTime, device;
-	core = c;
-	config = conf;
-	store = st;
 
 	lastGCMTime = LS.getItem("lastGCMTime");
 	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
