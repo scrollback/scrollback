@@ -113,7 +113,7 @@
 
         padding: .75em 1em;
 
-        @media #{$screenxx} {
+        @media #{$screenxxx} {
             padding-left: $spacing-left-normal;
             border-radius: $roundness;
         }
@@ -134,7 +134,7 @@
                 opacity: .5;
             }
 
-            @media #{$screenxx} {
+            @media #{$screenxxx} {
                 margin-left: 1em - $spacing-left-normal;
 
                 &:after { display: none; }
@@ -146,7 +146,7 @@
 		&-continuation { padding-top: .25em; }
 
         &-message {
-            @media #{$screenxx} { display: inline; }
+            @media #{$screenxxx} { display: inline; }
         }
 
         &-error {
@@ -189,7 +189,7 @@
 
                     &:after { content: ""; }
 
-                    @media #{$screenxx} { margin-left: 0; }
+                    @media #{$screenxxx} { margin-left: 0; }
                 }
             }
         }
