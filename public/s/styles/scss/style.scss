@@ -196,22 +196,32 @@ button {
     &-title-container {
         position: relative;
         height: 100%;
-        width: 8em;
+        width: 4em;
         width: calc(100% - 16em);
         float: left;
 
         @media #{$screenx} {
-            width: 11em;
+            width: 5em;
+            width: calc(100% - 16em);
+        }
+
+        @media #{$screenxx} {
+            width: 8em;
             width: calc(100% - 16em);
         }
 
         @media #{$screenxxx} {
-            width: 18em;
+            width: 5em;
             width: calc(100% - 26em);
         }
 
         @media #{$screenxxxx} {
-            width: 30em;
+            width: 14em;
+            width: calc(100% - 26em);
+        }
+
+        @media #{$screenxxxxx} {
+            width: 36em;
             width: calc(100% - 26em);
         }
 
@@ -229,12 +239,6 @@ button {
     }
 
     &-primary {
-        @media #{$screenxxx} {
-            .appbar-icon-menu, .appbar-avatar { display: none; }
-
-            .appbar-title-container { margin-left: 1em; }
-        }
-
         @media #{$screenxxxx} {
             .appbar-icon-people { display: none; }
         }
@@ -306,7 +310,7 @@ button {
         padding: .5em 0;
         margin-bottom: $bar-height * 2.5;
 
-        @media #{$screenxx} { padding: 2em; }
+        @media #{$screenxxx} { padding: 2em; }
     }
 
     &-chat {
