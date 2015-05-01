@@ -37,10 +37,12 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
+		user = objUtils.clone(user);
+
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: objUtils.clone(user) }, function(err, items) {
+		core.emit("pref-show", { user: user }, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
