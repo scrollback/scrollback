@@ -42,7 +42,7 @@
             overflow: auto;
             -webkit-overflow-scrolling: touch;
 
-            @media #{$screenxxxx} { padding: 1em 2em; }
+            @media #{$screenxxxx} { padding: 1em 3em; }
 
             .flex-enhanced & { @include flex-grow(0); }
         }
@@ -83,7 +83,7 @@
                     }
                 }
 
-                @media #{$screenxxxx} { padding: 1em 3em; }
+                @media #{$screenxxxx} { padding: 1em 4em; }
             }
 
             &-send {
