@@ -35,7 +35,7 @@ function init() {
 		if (x < 30) {
 			sub = 30;
 		}
-		log("Init email will send email after ", (sub - x)* 60000, " ms");
+		log.d("Init email will send email after ", (sub - x)* 60000, " ms");
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
@@ -54,7 +54,7 @@ function init() {
 function trySendingToUsers() {
 	redis.smembers("email:toSend", function(err,usernames) {
 		if(!err && usernames) {
-			if (config.debug) log("checking for mentions...", usernames);
+			if (config.debug) log.d("checking for mentions...", usernames);
 			usernames.forEach(function(username) {
 				initMailSending(username);
 			});
@@ -71,48 +71,53 @@ function trySendingToUsers() {
  *@param {string} username username
  */
  function initMailSending(username) {
-	log("init mail sending for user  " + username);
+	log.d("init mail sending for user  " + username);
 	redis.get("email:" + username + ":lastsent", function(err, lastSent) {
-		log("data returned form redis", lastSent + " , " , err);
+		log.d("data returned form redis for username "+ username + " " + lastSent  +" , " , err);
 		if (err) return;
 		redis.get("email:" + username + ":isMentioned", function(err, data) {
 			var ct = new Date().getTime();
 			var interval = waitingTime2 ;
 			if (data) interval = waitingTime1;
 			if (config.debug) {
-				log("username " + username + " is mentioned ", data);
+				log.d("username " + username + " is mentioned ", data);
 				interval = timeout/2;
 				if (data) interval = timeout/8;
-				log("interval " , interval);
+				log.d("interval " , interval);
 			}
 			if (!lastSent )	lastSent = ct - interval;
-			log("time left for user " , (parseInt(lastSent, 10) + interval - ct));
+			log.d("time left for user " , (parseInt(lastSent, 10) + interval - ct));
 			if (parseInt(lastSent, 10) + interval <= ct) {
 				//get rooms that user is following...
-				log("getting rooms that user is following....");
+				log.d("getting rooms that user is following....", username);
 				core.emit("getRooms", {hasMember: username, session: "internal-email"}, function(err, following) {
-					log("results:", following);
+					log.d("results:", following);
 					if(err || !following) {
-						log("error in getting members information" , err);
+						log.d("error in getting members information" , err);
 						return;
 					}
 					if(!following.results || !following.results.length) {
-						log("username ", username ," is not following any rooms ");
+						log.d("username ", username ," is not following any rooms ");
 						return;
 					}
+					
+					
+					
+					log.d("got the follower rooms preparing email.:", username, following.results);
 					var rooms = [];
 					following.results.forEach(function(r) {
 						rooms.push(r.id);
 					});
 					prepareEmailObject(username, rooms, lastSent, function(err, email) {
+						log.d(err, email);
 						if (!err) sendMail(email);
 					});
 				});
 				redis.srem("email:toSend", username);
 			}else {
-				log("can not send email to user ", username, " now");
+				log.d("can not send email to user ", username, " now");
 				redis.sadd("email:toSend", username, function(err, res) {
-					if (err) log.d(err, res);
+					if (err) log.d.d(err, res);
 				});
 			}
 		});
@@ -125,14 +130,14 @@ function trySendingToUsers() {
  *email: {
  *  username: {string}, //username
 	heading : {string},
-	count: {number} ,//total count of labels
+	count: {number} ,//total count of threads
 	emailId: {string},
 	rooms: [
 		id: {string}, //room name
-		totalCount: {number},//total count of labels
-		labels: [
+		totalCount: {number},//total count of threads
+		threads: [
 			{
-				label: {string},
+				thread: {string},
 				count: {number},
 				interesting: [
 					messages objects
@@ -148,7 +153,7 @@ function trySendingToUsers() {
  *@param {function} callback(err, emailObject).
  */
 function prepareEmailObject(username ,rooms, lastSent, callback) {
-	if (config.debug) log("send mail to user ", username , rooms);
+	if (config.debug) log.d("send mail to user ", username , rooms, lastSent);
 	var email = {};
 	email.username = username;
 	email.rooms = [];
@@ -166,35 +171,35 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 					b = JSON.parse(b);
 					return a.time - b.time;
 				});
-				log("mentions returned from redis ", room ,mentions, lastSent);
-				var l = "email:label:" + room + ":labels";
+				log.d("mentions returned from redis ", room ,mentions, lastSent);
+				var l = "email:thread:" + room + ":threads";
 
-				redis.zrangebyscore(l, lastSent, "+inf",  function(err,labels) {
-					if(config.debug) log("labels returned from redis" , labels);
-					roomsObj.labels = [];
-					roomsObj.totalCount = labels.length;
+				redis.zrangebyscore(l, lastSent, "+inf",  function(err, threads) {
+					log.d("threads returned from redis" , threads);
+					roomsObj.threads = [];
+					roomsObj.totalCount = threads.length;
 					if (!err) {
-						var isLabel = false;
-						labels.forEach(function(label) {
-							isLabel = true;
-							var lc = "email:label:" + room + ":" + label + ":count";
+						var isThread = false;
+						threads.forEach(function(thread) {
+							isThread = true;
+							var lc = "email:thread:" + room + ":" + thread + ":count";
 							qc++;
 							redis.get(lc, function(err,count) {
 								if (err) {
 									callback(err);
 								}else {
 									var ll = {
-										label: label ,
+										thread: thread ,
 										count : parseInt(count, 10)
 									};
-									roomsObj.labels.push(ll);
+									roomsObj.threads.push(ll);
 								}
 								done(roomsObj, mentions);
 							});
 						});
-						if (!isLabel) {
-							qc++;//if no label never call done() for this room;
-							isNoLabel();
+						if (!isThread) {
+							qc++;//if no thread never call done() for this room;
+							isNoThread();
 							ct++;
 						}
 					}
@@ -209,23 +214,23 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				callback(err);
 			}
 		});
-		function isNoLabel() {
+		function isNoThread() {
 			if (++vq >= rooms.length) {
 				callback(new Error("NO_DATA"));
 			}
 		}
 		function done( roomObj, mentions) {
-			log("room done......" , room , qc);
+			log.d("room done......" , room , qc);
 			if(--qc > 0 ) return;
 
-			sortLabels(room ,roomObj,mentions,function(err,rr) {
+			sortThreads(room ,roomObj,mentions,function(err,rr) {
 				if (err) callback(err);
 				else {
 					email.rooms.push(rr);
 					ct++;
 					if (ct >= rooms.length) {
 						deleteMentions(username, rooms);
-						log("email object creation complete" , JSON.stringify(email));
+						log.d("email object creation complete" , JSON.stringify(email));
 						callback(null, email);
 					}
 				}
@@ -236,55 +241,55 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 
 /**
  *create email.rooms element
- *filter out labels and generate labels array for current room
- *Add label.interesting messages.
+ *filter out threads and generate threads array for current room
+ *Add thread.interesting messages.
  */
-function sortLabels(room, roomObj, mentions,callback) {
-	var maxLabels = 5;
-	log("sort labels");
+function sortThreads(room, roomObj, mentions,callback) {
+	var maxThreads = 5;
+	log.d("sort threads");
 	var r = {};
 	var ct = 0;
 	r.id = room;
 	r.totalCount = roomObj.totalCount;
-	r.labels = [];
-	roomObj.labels.forEach(function(label) {
-		label.interesting = [];
+	r.threads = [];
+	roomObj.threads.forEach(function(thread) {
+		thread.interesting = [];
 		mentions.forEach(function(m) {//TODO use new schema
 			m = JSON.parse(m);
-			var id = m.threads[0].id;
-			if(id === label.label) {
-				label.interesting.push(m);
-				label.title = m.threads[0].title;
+			var id = m.thread;
+			if(id === thread.thread) {
+				thread.interesting.push(m);
+				thread.title = m.title || "";
 			}
 		});
 		ct++;
-		redis.get ("email:label:" + room + ":" + label.label + ":title", function(err, title) {
+		redis.get ("email:thread:" + room + ":" + thread.thread + ":title", function(err, title) {
 			if (!err && title) {
-				label.title = title;
-			} else label.title = "Title";
-			var pos = r.labels.length;
-			for (var i = 0;i < r.labels.length;i++ ) {
-				if (r.labels[i].interesting.length < label.interesting.length ) {
+				thread.title = title;
+			} else thread.title = "Title";
+			var pos = r.threads.length;
+			for (var i = 0;i < r.threads.length;i++ ) {
+				if (r.threads[i].interesting.length < thread.interesting.length ) {
 					pos = i;
 					break;
 				}
-				else if(r.labels[i].interesting.length === label.interesting.length) {
-					if (r.labels[i].count < label.count) {
+				else if(r.threads[i].interesting.length === thread.interesting.length) {
+					if (r.threads[i].count < thread.count) {
 						pos = i;
 						break;
 					}
 				}
 			}
 			var rm = -1;
-			if (r.labels.length >= maxLabels) {
-				rm = r.labels.length;
+			if (r.threads.length >= maxThreads) {
+				rm = r.threads.length;
 			}
-			r.labels.splice(pos,0,label);
-			r.labels.sort(function(l1,l2){
+			r.threads.splice(pos,0,thread);
+			r.threads.sort(function(l1,l2){
 				return l2.count - l1.count;
 			});
-			if (rm != -1) {
-				r.labels.splice(rm,1);
+			if (rm !== -1) {
+				r.threads.splice(rm,1);
 			}
 			done();
 		});
@@ -293,38 +298,38 @@ function sortLabels(room, roomObj, mentions,callback) {
 		if (--ct > 0) {
 			return;
 		}
-		r.labels.sort(function(l1, l2) {
+		r.threads.sort(function(l1, l2) {
 			return l2.count - l1.count;
 		});
 		var nn = 0;
-		r.labels.forEach(function(label) {
+		r.threads.forEach(function(thread) {
 			nn++;
-			redis.lrange("email:label:" + room + ":" + label.label + ":tail", 0, -1, function(err, lastMsgs) {
+			redis.lrange("email:thread:" + room + ":" + thread.thread + ":tail", 0, -1, function(err, lastMsgs) {
 				if (lastMsgs ) {
 					lastMsgs.reverse();
 					lastMsgs.forEach(function(lastMsg) {
 						var isP = true;
 						var msg = JSON.parse(lastMsg);
-						label.interesting.forEach(function(m) {
+						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
 								isP = false;
 							}
 						});
 						if (isP) {
-							label.interesting.push(msg);
+							thread.interesting.push(msg);
 						}
 					});
 				}
 				complete();
 			});
 		});
-		log("room Obj " , JSON.stringify(r));
+		log.d("room Obj " , JSON.stringify(r));
 		function complete() {
 			if (--nn > 0) {
 				return;
 			}
-			r.labels.forEach(function(label) {
-				label.interesting.sort(function(m1,m2){
+			r.threads.forEach(function(thread) {
+				thread.interesting.sort(function(m1,m2){
 					return m1.time - m2.time;
 				});
 			});
@@ -346,7 +351,7 @@ function deleteMentions(username , rooms) {
 		m = "email:" + username + ":isMentioned";
 		multi.del(m);
 		multi.exec(function(replies) {
-			log("mentions deleted" , replies);
+			log.d("mentions deleted" , replies);
 		});
 	});
 }
@@ -360,7 +365,7 @@ function sendMail(email) {
 	core.emit("getUsers", {ref: email.username, session: "internal-email"}, function(err, data) {
 		if (err || !data.results) return;
 		var user = data.results;
-		log("getting email id", data);
+		log.d("getting email id", data);
 		var mailAccount;
 		if (user && user[0] && user[0].identities) {
 			mailAccount = user[0].identities;
@@ -371,14 +376,13 @@ function sendMail(email) {
 					var html;
 					try {
 						email.heading = getHeading(email);
-						log("email object" + JSON.stringify(email));
+						log.d("email object" + JSON.stringify(email));
 						html = digestJade(email);
 					}catch(err) {
-						log("Error while rendering email: ", err);
-						//TODO send mail to developer..
+						log.e("Error while rendering email: ", err);
 						return;
 					}
-					log(email , "sending email to user " , html );
+					log.d(email , "sending email to user " , html );
 					send(config.from, email.emailId, email.heading, html);
 					redis.set("email:" + email.username + ":lastsent", new Date().getTime());
 					var interval = 2*24*60*60*1000;//TODO move this variable inside myConfig
@@ -386,10 +390,10 @@ function sendMail(email) {
 						interval = timeout*2;
 					}
 					email.rooms.forEach(function(room) {
-						redis.zremrangebyscore("email:label:" + room.id + ":labels", 0,
+						redis.zremrangebyscore("email:thread:" + room.id + ":threads", 0,
 							new Date().getTime() - interval , function(err, data) {
-								log("deleted old labels from that room " , err ,data);
-							});//ZREMRANGEBYSCORE email:scrollback:labels -1 1389265655284
+								log.d("deleted old threads from that room " , err ,data);
+							});//ZREMRANGEBYSCORE email:scrollback:threads -1 1389265655284
 					});
 				}
 			});
@@ -402,44 +406,44 @@ function sendMail(email) {
  */
 function getHeading(email) {
 	var heading = "";
-	var bestLabel ;
+	var bestThread ;
 	var bestMention = {};
-	var labelCount = 0;
+	var threadCount = 0;
 	var more = 0;
 	email.rooms.forEach(function(room) {
-		labelCount += room.totalCount;
-		more += room.labels.length;
-		room.labels.forEach(function(label) {
-			if (!bestLabel) {
-				bestLabel = {};
-				bestLabel.title = formatText(label.title);
-				bestLabel.room = room.id;
-				bestLabel.count = label.count;
+		threadCount += room.totalCount;
+		more += room.threads.length;
+		room.threads.forEach(function(thread) {
+			if (!bestThread) {
+				bestThread = {};
+				bestThread.title = formatText(thread.title);
+				bestThread.room = room.id;
+				bestThread.count = thread.count;
 			}
-			else if(bestLabel.count < label.count){
-				bestLabel.title = formatText(label.title);
-				bestLabel.room = room.id;
-				bestLabel.count = label.count;
+			else if(bestThread.count < thread.count){
+				bestThread.title = formatText(thread.title);
+				bestThread.room = room.id;
+				bestThread.count = thread.count;
 			}
-			log("best label", bestLabel);
-			label.interesting.forEach(function(m) {
-				if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) != -1) {
+			log.d("best thread", bestThread);
+			thread.interesting.forEach(function(m) {
+				if (!bestMention.mentions && m.mentions && m.mentions.indexOf(email.username) !== -1) {
 					bestMention = m;
 				}
-				else if(m.mentions && m.mentions.indexOf(email.username) != -1 && bestMention.text.length < m.text.length) {
+				else if(m.mentions && m.mentions.indexOf(email.username) !== -1 && bestMention.text.length < m.text.length) {
 					bestMention = m;
 				}
 			});
 		});
 	});
-	email.count = labelCount;
+	email.count = threadCount;
 	if (bestMention.mentions) {//if mentioned
 		heading += "[" + bestMention.from.replace(/guest-/g, "") +  "] " + bestMention.text + " - on " + bestMention.to;
 	}
 	else {
 		var tail = (more > 1 ? " +" + (more - 1) + " more": "");
-		heading += "[" + bestLabel.room.substring(0,1).toUpperCase() + bestLabel.room.substring(1) + "] " +
-			bestLabel.title + tail;
+		heading += "[" + bestThread.room.substring(0,1).toUpperCase() + bestThread.room.substring(1) + "] " +
+			bestThread.title + tail;
 	}
 	email.formatText = formatText;
 	return heading;
@@ -470,17 +474,17 @@ function sendPeriodicMails(){
 		start2 = 24*60 + start1;//(+12 +14 +13)
 		end2 = start2 + 59;//+13
 	}
-	if (x == 12) {
+	if (x === 12) {
 		start2 = -12*60;
 		end2 = start2 + 59;
 	}
-	log("current time hour:",x+","+start1+","+start2);
+	log.d("current time hour:",x+","+start1+","+start2);
 	function processResults(err, data) {
-		log("err", err, " data: ", data );
+		log.d("err", err, " data: ", data );
 		if (err || !data.results) return;
 		var users = data.results;
 		users.forEach(function(user) {
-			log("trying for user", user);
+			log.d("trying for user", user);
 			if (user.params && (!user.params.email || user.params.email.frequency !== "never")) {//TODO write a query based on freq
 				initMailSending(user.id);
 			}

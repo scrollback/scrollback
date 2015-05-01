@@ -14,10 +14,7 @@ function send(from,to,subject,html) {
         email.bcc = emailConfig.bcc;
     }
 
-    if (emailConfig.debug) {
-        log("sending email :", email);
-    }
-    transport.sendMail(email, function(error) {
+	transport.sendMail(email, function(error) {
         if(!error){
             log('Text message sent successfully!');
         }

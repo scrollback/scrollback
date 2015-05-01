@@ -59,7 +59,7 @@
     "markdown-it-emoji": "latest",
     "mysql": "latest",
     "newrelic": "latest",
-    "nodemailer": "latest",
+    "nodemailer": "v0.7.1",
     "oauth": "latest",
     "pg": "latest",
     "react": "latest",
