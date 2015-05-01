@@ -1,8 +1,8 @@
-var store, core, config;
-var entityOps = require("./entity-ops.js");
-//var relationsProps = require("./property-list.js").relations;
-var pendingActions = {};
-var user;
+var store, core, config,
+	entityOps = require("./entity-ops.js"),
+	objUtils = require("./obj-utils.js"),
+	pendingActions = {},
+	user;
 
 module.exports = function(c, conf, s) {
 	user = require("../lib/user.js")(c, conf, s);
@@ -106,7 +106,9 @@ function onInit(init, next) {
 }
 
 function onRoomUser(action, next) {
-	var changes = {},entities = {};
+	var changes = {},
+		entities = {};
+
 	entities[action.to] = action[action.type === "room" ? "room" : "user"];
 	changes.entities = entities;
 
@@ -142,6 +144,8 @@ function onTextUp(text, next) {
 	next(); // calling next here so that it gets an id.
 
 	pendingActions[text.id] = text;
+
+	text = objUtils.clone(text);
 
 	newState.texts[text.to] = [{ // put the text in all messages
 		start: text.time,
@@ -287,5 +291,4 @@ function onJoinPart(join, next) {
 	});
 	return next();
 }
-
 

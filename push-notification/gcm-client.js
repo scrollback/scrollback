@@ -2,7 +2,8 @@
 
 var core, config, store, gcmTimeValidity = 7 * 24 * 60 * 60 * 1000,
 	updateDevice = false,
-	appUtils = require("../lib/app-utils.js");
+	objUtils = require("../lib/obj-utils.js"),
+	user = require("../lib/user.js");
 
 module.exports = function(c, conf, st) {
 	var LS = window.localStorage,
@@ -36,7 +37,9 @@ module.exports = function(c, conf, st) {
 	function saveUser() {
 		var userObj = store.getUser(), uuid;
 
-		if (!userObj.id || appUtils.isGuest(userObj.id)) return;
+		if (!userObj.id || user.isGuest(userObj.id)) return;
+
+		userObj = objUtils.clone(userObj);
 
 		if (!userObj.params) userObj.params = {};
 		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
