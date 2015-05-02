@@ -40,12 +40,12 @@ module.exports = function(coreObj, conf) {
 				var threadId = message.thread,
 					msg = JSON.stringify({
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
-					text: message.text,
+					text: message.text.replace(/\s+/g, ' '),
 					room: message.to,
 					threadId: threadId
 				});
 				
-				log.d("Sending msg to scrollback.jar: " + msg);
+				log.i("Sending msg to scrollback.jar: " + msg);
 				try {
 					client.write(msg + ",");
 				} catch(err) {
