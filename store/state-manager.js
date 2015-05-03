@@ -20,7 +20,7 @@ module.exports = function(c, conf, s, st) {
 		buildIndex(state, changes);
 
 		if(gapTimer) clearTimeout(gapTimer);
-		gapTimer = setTimeout(fireStateChange, 100); // If nothing else happens within 100ms, fire.
+		gapTimer = setTimeout(fireStateChange, 50); // If nothing else happens within 100ms, fire.
 		
 		if(!lagTimer) lagTimer = setTimeout(fireStateChange, 100); // Don't delay any statechange more than 100ms
 		
