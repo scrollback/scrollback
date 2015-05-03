@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 			var chatitems = [], atTop = false, atBottom = true,
 				nav = store.get("nav"),
 				chatAreaClassNames = "main-content-chat chat-area",
-				before, after, beforeItems, afterItems, positionKey;
+				before, after, beforeItems, afterItems, positionKey, loading = false;
 
 			// Don't show
 			if (!this.state.show) {
@@ -58,10 +58,12 @@ module.exports = function(core, config, store) {
 			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
 
 			if (beforeItems[0] === "missing") {
+				loading = true;
 				beforeItems.shift();
 			}
 
 			if (afterItems[afterItems.length - 1] === "missing") {
+				loading = true;
 				afterItems.pop();
 			}
 
@@ -112,7 +114,7 @@ module.exports = function(core, config, store) {
 							</div>
 				);
 			} else {
-				return <div className="chat-area-empty">There are no messages yet :-(</div>;
+			return <div className="chat-area-empty">{loading ? "Loading messages..." : "There are no messages yet :-("}</div>;
 			}
 		},
 
