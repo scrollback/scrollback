@@ -1,12 +1,10 @@
 /* jshint browser: true */
 
-var core, config, store, initSent;
-module.exports = function(c, conf, s) {
+"use strict";
 
-	core = c;
-	config = conf;
-	store = s;
+var initSent;
 
+module.exports = function(core) {
 	window.addEventListener("message", function(event) {
 		var data = event.data,
 			action;
@@ -26,7 +24,7 @@ module.exports = function(c, conf, s) {
 			action = data;
 		}
 
-		if (!data.command || data.command != "signin") {
+		if (!data.command || data.command !== "signin") {
 			return;
 		}
 

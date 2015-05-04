@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var showMenu = require("../utils/show-menu.js");
 
 module.exports = function(core, config, store) {

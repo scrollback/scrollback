@@ -4,6 +4,8 @@
 	Provides: threads (async)
 */
 
+"use strict";
+
 module.exports = function (core, config, store) {
 	core.on('setstate', function (changes, next) {
 		if(changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) {
@@ -61,7 +63,7 @@ module.exports = function (core, config, store) {
 
 		if (textRange.before) {
 			r = store.getTexts(roomId, thread, time, -textRange.before);
-			if (r[0] == "missing") {
+			if (r[0] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,

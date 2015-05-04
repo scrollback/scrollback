@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 require("../../lib/swipe-events.js");
 
 module.exports = function(core, config, store) {

@@ -1,3 +1,5 @@
+"use strict";
+
 var core, config, store;
 var queueBack = [];
 //var entityOps = require("./../entity-ops.js");

@@ -4,6 +4,8 @@
 	Provides: threads (async)
 */
 
+"use strict";
+
 module.exports = function (core, config, store) {
 	core.on('setstate', function (changes, next) {
 		if(changes.nav && (changes.nav.room || changes.nav.threadRange)) {
@@ -45,7 +47,7 @@ module.exports = function (core, config, store) {
 			r;
 
 		r = store.getThreads(roomId, time, (threadRange.after || 0) + 5);
-		if (r[r.length - 1] == "missing") {
+		if (r[r.length - 1] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[r.length - 2].startTime : time),
@@ -54,7 +56,7 @@ module.exports = function (core, config, store) {
 		}
 
 		r = store.getThreads(roomId, time, -(threadRange.before || 0) - 5);
-		if (r[0] == "missing") {
+		if (r[0] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[1].startTime : time),

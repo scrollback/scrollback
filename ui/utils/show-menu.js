@@ -24,6 +24,8 @@
  * });
  */
 
+ "use strict";
+
 module.exports = function(type, menu) {
 	var $popover = $("<div>"),
 		$list, item,

@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global _gaq */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var props;
 

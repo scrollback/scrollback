@@ -1,6 +1,7 @@
-"use strict";
 /* jshint browser:true */
 /* global SockJS*/
+
+"use strict";
 
 var generate = require("../lib/generate.js"),
 	appUtils = require("../lib/app-utils.js"),

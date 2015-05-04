@@ -1,3 +1,5 @@
+"use strict";
+
 var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {

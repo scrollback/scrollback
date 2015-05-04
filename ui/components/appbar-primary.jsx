@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var showMenu = require("../utils/show-menu.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),

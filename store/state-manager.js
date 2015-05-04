@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var core, config, store;
 var objUtils = require("./../lib/obj-utils.js");
 var rangeOps = require("./range-ops.js");

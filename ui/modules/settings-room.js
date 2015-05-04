@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 var objUtils = require("../../lib/obj-utils.js");
 
 module.exports = function(core, config, store) {

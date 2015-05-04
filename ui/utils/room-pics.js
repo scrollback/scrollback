@@ -1,3 +1,5 @@
+"use strict";
+
 var stringUtils = require("../../lib/string-utils.js");
 
 module.exports = function(core, config, store) {

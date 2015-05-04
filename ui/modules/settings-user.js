@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 var objUtils = require("../../lib/obj-utils.js"),
 	appUtils = require("../../lib/app-utils.js");
 

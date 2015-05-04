@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var generate = require("../../lib/generate.js"),
 		threadError = "We could not create the thread. Please refresh the page and try again.";

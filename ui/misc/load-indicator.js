@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 module.exports = function(core) {
 	function dismissLoading(changes, next) {
 		if (changes.nav && changes.nav.mode) {
