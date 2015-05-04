@@ -163,7 +163,7 @@ module.exports = function(core, config, store) {
 			} else {
 				empty = (
 					<div className="thread-feed-empty">
-						{loading ? "Loading discussions..." : "There are no discussions yet :-("}
+						{loading ? "Loading discussions..." : <img src="/s/img/no-messages.png" />}
 					</div>
 				);
 			}
