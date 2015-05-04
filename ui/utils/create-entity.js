@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var listenersAdded;
 
 module.exports = function(core, config, store) {

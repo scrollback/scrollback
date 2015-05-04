@@ -2,6 +2,7 @@
 /* global jQuery */
 
 (function($) {
+	"use strict";
 
 	$.fn.validInput = function(validator) {
 		var $this = $(this),

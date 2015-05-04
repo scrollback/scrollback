@@ -1,3 +1,5 @@
+"use strict";
+
 var objUtils = require("./../lib/obj-utils.js");
 
 module.exports = function createBulkQuery(core, store, type) {

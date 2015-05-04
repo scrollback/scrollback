@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var desktopnotify = require("../../lib/desktopnotify.js"),
 		browserNotify = (function() {

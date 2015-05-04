@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var getAvatar = require("../../lib/get-avatar.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js");

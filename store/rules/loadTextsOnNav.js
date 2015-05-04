@@ -4,6 +4,8 @@
 	Provides: threads (async)
 */
 
+"use strict";
+
 module.exports = function (core, config, store) {
 	core.on('setstate', function (changes, next) {
 		if(changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) {

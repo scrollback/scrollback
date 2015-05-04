@@ -1,3 +1,5 @@
+"use strict";
+
 var store, core, config,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),

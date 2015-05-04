@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(core, config, store) {
 	// Reset dialogState when dialog is reset
 	core.on("setstate", function(changes, next) {

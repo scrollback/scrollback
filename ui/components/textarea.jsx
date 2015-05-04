@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 module.exports = function() {
 	var React = require("react"),
 		TextArea;

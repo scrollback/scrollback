@@ -1,3 +1,5 @@
+"use strict";
+
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	del = require("del"),

@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ChatItem = require("./chat-item.jsx")(core, config, store),

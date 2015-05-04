@@ -1,3 +1,5 @@
+"use strict";
+
 var relationsProps = require("./../property-list.js").relations;
 var core, config, store;
 module.exports = function(c, conf, s) {

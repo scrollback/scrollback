@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var appUtils = require("../../lib/app-utils.js"),
 		validateEntity = require("../utils/validate-entity.js")(core, config, store),

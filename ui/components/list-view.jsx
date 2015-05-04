@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function() {
 	var React = require("react"),
 		Endless = require("../../bower_components/endless/endless.js"),

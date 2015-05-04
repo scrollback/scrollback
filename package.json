@@ -105,8 +105,8 @@
     "lazypipe": "latest",
     "mocha": "latest",
     "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git",
-    "selenium-webdriver": "latest",
     "reactify": "latest",
+    "selenium-webdriver": "latest",
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest"
   }

@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var format = require("../../lib/format.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
