@@ -3,6 +3,7 @@
 var store, core, config,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
+	generate = require("../lib/generate.js"),
 	pendingActions = {},
 	user;
 
@@ -17,12 +18,27 @@ module.exports = function(c, conf, s) {
 	core.on("join-dn", onJoinPart, 1000);
 	core.on("part-dn", onJoinPart, 1000);
 	core.on("edit-dn", onEdit, 1000);
-	core.on("text-up", onTextUp, 1000);
+	core.on("text-up", onTextUp, 900);
 	core.on("text-dn", onTextDn, 1000);
 	core.on("away-dn", onAwayBack, 1000);
 	core.on("back-dn", onAwayBack, 1000);
 	core.on("room-dn", onRoomUser, 1000);
 	core.on("user-dn", onRoomUser, 999);
+
+	[
+		"text-up", "edit-up", "back-up", "away-up",
+		"join-up", "part-up", "admit-up", "expel-up", "room-up"
+	].forEach(function(event) {
+		core.on(event, function(action) {
+			if (!action.id) { action.id = generate.uid(); }
+		}, 1000);
+	});
+
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(event) {
+		core.on(event, function(query) {
+			if (!query.id) { query.id = generate.uid(); }
+		}, 1000);
+	});
 };
 
 function entitiesFromRooms(list, entities, userId) {
@@ -31,7 +47,7 @@ function entitiesFromRooms(list, entities, userId) {
 			relation = entities[rkey] || {},
 			entity = entities[e.id] || {};
 
-		relation = entityOps.relatedEntityToRelation(e, {id:userId,type:"user"});
+		relation = entityOps.relatedEntityToRelation(e, {id:userId, type:"user"});
 		entity = entityOps.relatedEntityToEntity(e);
 		entities[e.id] = entity;
 		entities[rkey] = relation;
@@ -139,11 +155,9 @@ function onAwayBack(action, next) {
 	next();
 }
 
-function onTextUp(text, next) {
+function onTextUp(text) {
 	var newState = { texts: {} },
 		currentTexts = store.get("texts", text.to);
-
-	next(); // calling next here so that it gets an id.
 
 	pendingActions[text.id] = text;
 
