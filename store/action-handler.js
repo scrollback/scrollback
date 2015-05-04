@@ -67,7 +67,6 @@ function onInit(init, next) {
 				newstate.nav = newstate.nav || {};
 				newstate.nav.dialogState = newstate.nav.dialogState || {};
 				newstate.nav.dialogState.signingup = true;
-
 				break;
 		}
 		entities[store.get("user")] = init.user;

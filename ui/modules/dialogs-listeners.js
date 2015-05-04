@@ -81,21 +81,26 @@ module.exports = function(core, config, store) {
 	}, 1);
 
 	core.on("createroom-dialog", function(dialog, next) {
-		var nav = store.get("nav"),
-			user = store.get("user"),
+		var user = store.get("user"),
+			context = store.get("context"),
 			signingup = store.get("nav", "dialogState", "signingup"),
 			nonexistent = store.get("nav", "dialogState", "nonexistent"),
-			roomName = store.get("nav", "dialogState", "prefill") || "";
+			roomName = store.get("nav", "dialogState", "prefill") || "",
+			nick;
 
 		if (!user) {
 			return;
 		}
-
+		if(context.env === "embed") {
+			dialog.dismiss = false;
+			nick = (context.embed && context.embed.nick)? context.embed.nick : "";
+		}
+		
 		if (appUtils.isGuest(user)) {
 			if (signingup) {
 				dialog.title = "Create a new room";
 				dialog.content = [
-					"<p><b>Step 1:</b> Choose a username<input type='text' id='createroom-dialog-user' autofocus></p>",
+					"<p><b>Step 1:</b> Choose a username<input type='text' id='createroom-dialog-user' value='" + nick + "'autofocus></p>",
 					"<p><b>Step 2:</b> Choose a room name<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus></p>"
 				];
 				dialog.action = {
@@ -151,7 +156,7 @@ module.exports = function(core, config, store) {
 			}
 		} else {
 			if (nonexistent) {
-				dialog.title = "There is no room called '" + nav.room + "' :-(";
+				dialog.title = "There is no room called '" + roomName + "' :-(";
 				dialog.description = "Would you like to create the room?";
 			} else {
 				dialog.title = "Create a new room";
@@ -171,13 +176,18 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	core.on("signup-dialog", function(dialog, next) {
-		var signingup = store.get("nav", "dialogState", "signingup");
-
+		var signingup = store.get("nav", "dialogState", "signingup"),
+			context = store.get("context"), nick;
 		if (signingup) {
+			if(context.env === "embed") {
+				dialog.dismiss = false;
+				nick = (context.embed && context.embed.nick)? context.embed.nick : "";
+				
+			}
 			dialog.title = "Finish sign up";
 			dialog.description = "Choose a username";
 			dialog.content = [
-				"<input type='text' id='signup-dialog-user' autofocus>",
+				"<input type='text' id='signup-dialog-user' value='" + nick + "'autofocus>",
 				"<p>Be creative. People in Scrollback will know you by this name.</p>"
 			];
 			dialog.action = {

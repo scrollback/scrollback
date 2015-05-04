@@ -40,8 +40,8 @@ function jwsHandler(action, callback) {
 	if (!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
 		if (!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
-		if (payload.iss !== action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
-
+		if (payload.iss !== action.origin.domain) return callback(new Error("AUTH_FAIL:INVALID_ISS"));
+		if(payload.aud !== config.global.host) return callback(new Error("AUTH_FAIL:INVALID_AUDIENCE"));
 		core.emit("getUsers", {
 			identity: "mailto:" + payload.sub,
 			session: "internal-jws"
