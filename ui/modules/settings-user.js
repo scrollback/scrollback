@@ -89,6 +89,8 @@ module.exports = function(core, config, store) {
 			core.emit("auth", menu, function() {
 				next();
 			});
+
+			return;
 		}
 
 		next();
