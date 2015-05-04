@@ -21,7 +21,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-    ["getTexts", "getUsers", "getRooms", "getThreads", "getEntities"].forEach(function(e) {
+    [ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -33,8 +33,11 @@ module.exports = function(c, conf, s) {
 			}
 		}, 10);
 	});
-	["text-up", "edit-up", "back-up", "away-up",
-	 "join-up", "part-up", "admit-up", "expel-up","room-up"].forEach(function(event) {
+
+	[
+		"text-up", "edit-up", "back-up", "away-up",
+		"join-up", "part-up", "admit-up", "expel-up", "room-up"
+	].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
 			if (initDone) {
@@ -99,14 +102,12 @@ module.exports = function(c, conf, s) {
 };
 
 function sendAction(action) {
-	if (!action.id) action.id = generate.uid();
 	action.session = session;
 	action.from = store.get("user");
 	client.send(JSON.stringify(action));
 }
 
 function sendQuery(query, next) {
-	if (!query.id) query.id = generate.uid();
 	query.session = session;
 	client.send(JSON.stringify(query));
 	pendingQueries[query.id] = next;
