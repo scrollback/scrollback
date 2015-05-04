@@ -4,23 +4,23 @@ var host = config.http.host;
 var Email = require('../lib/email.js');
 var emailObj = new Email(config.email.auth);
 var r1 = JSON.parse(fs.readFileSync('./mocha-output-unit.json', 'utf8'));
-var r2 = JSON.parse(fs.readFileSync('./mocha-output-selenium.json', 'utf8'));
+//var r2 = JSON.parse(fs.readFileSync('./mocha-output-selenium.json', 'utf8'));
 var testResults = {
-	unit: r1,
-	selenium: r2
+	unit: r1
+	//selenium: r2
 };
 processTestResults(testResults);
 
 function processTestResults(testResults) {
 	var r = {};
-	r.totol = testResults.unit.passed + testResults.selenium.passed + testResults.selenium.failed + testResults.unit.failed;
-	r.passed = testResults.unit.passed + testResults.selenium.passed;
-	r.failed = testResults.selenium.failed + testResults.unit.failed;
+	r.totol = testResults.unit.passed /*+ testResults.selenium.passed + testResults.selenium.failed */+ testResults.unit.failed;
+	r.passed = testResults.unit.passed /*+ testResults.selenium.passed*/;
+	r.failed = /*testResults.selenium.failed + */testResults.unit.failed;
 	r.unit = r1;
-	r.selenium = r2;
+	//r.selenium = r2;
 	var cp = 0,
 		cf = 0;
-    ['unit', 'selenium'].forEach(function(v) {
+    ['unit'/*, 'selenium'*/].forEach(function(v) {
 		for (var test in r[v]) {
 			if (r[v].hasOwnProperty(test) && typeof r[v][test] == 'object') {
 				cp = 0;
@@ -71,7 +71,7 @@ function sendEmail() {
 	var colorFailed = "#d9534f";
 	var colorPassed = "#5cb85c";
 	var spanStyle = "style=\" color:%s;\" ";
-	['unit', 'selenium'].forEach(function(v) {
+	['unit'/*, 'selenium'*/].forEach(function(v) {
 		out.push("<a  style=\"display: block;color: black;font-size: 20px;text-decoration: blink;margin-top: 5px;\" href='" +
 			parse(tempUrl, v + "-test-results", today) + "'>" + v + " Tests</a>");
 		for (var test in r[v]) {
@@ -100,7 +100,7 @@ function sendEmail() {
 	});
 	out.push("<a href='" + parse(tempUrl, "email", yesterday) + "'>Previous day test results</a>");
 	out.push("<a href='" + parse(tempUrl, "email", today) + "'>See this email on browser</a>");
-	out.push("<a href='https://www.browserstack.com/automate'>See selenium test logs on browserstack</a>");
+	//out.push("<a href='https://www.browserstack.com/automate'>See selenium test logs on browserstack</a>");
 	out.push("</body></html>");
 	var m = out.join("\n");
 	fs.writeFileSync("public/s/tmp/email-" + today + ".html", m);
