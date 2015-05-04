@@ -94,7 +94,6 @@
     "gulp-minify-css": "latest",
     "gulp-notify": "latest",
     "gulp-plumber": "latest",
-    "gulp-remove-use-strict": "latest",
     "gulp-rename": "latest",
     "gulp-sass": "latest",
     "gulp-sourcemaps": "latest",
