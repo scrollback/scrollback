@@ -4,7 +4,9 @@ var core, config, store;
 var objUtils = require("./../lib/obj-utils.js");
 var rangeOps = require("./range-ops.js");
 var state;
-var allChanges = {}, timer = null, numChanges=0;
+var allChanges = {},
+	gapTimer = null,
+	lagTimer = null;
 
 module.exports = function(c, conf, s, st) {
 	config = conf;
@@ -17,16 +19,22 @@ module.exports = function(c, conf, s, st) {
 		applyChanges(changes, state);
 		buildIndex(state, changes);
 
-		if(timer) clearTimeout(timer);
-		timer = setTimeout(fireStateChange, 100);
+		if(gapTimer) clearTimeout(gapTimer);
+		gapTimer = setTimeout(fireStateChange, 50); // If nothing else happens within 100ms, fire.
+		
+		if(!lagTimer) lagTimer = setTimeout(fireStateChange, 100); // Don't delay any statechange more than 100ms
+		
 		next();
 	}, 1);
 };
 
 function fireStateChange() {
-	buildIndex(allChanges);
+	clearTimeout(gapTimer);
+	clearTimeout(lagTimer);
+	gapTimer = lagTimer = null;
 
-	numChanges = 0;
+	buildIndex(allChanges);
+	
 	core.emit("statechange", allChanges);
 	allChanges = {};
 }
