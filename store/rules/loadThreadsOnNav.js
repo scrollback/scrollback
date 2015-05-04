@@ -21,17 +21,15 @@ module.exports = function (core, config, store) {
 			},
 			range = {};
 
-		if (!err && threads.results && threads.results.length) {
+		if (!err && threads.results) {
 			updatingState.threads[threads.to] = [];
 
 			if (threads.before) {
 				range.end = threads.time;
-				range.start = threads.results[0].startTime;
-				if(threads.results.length < threads.before) range.start = null;
+				range.start = threads.results.length < threads.before? null: threads.results[0].startTime;
 			} else if(threads.after) {
 				range.start = threads.time;
-				range.end = threads.results[threads.results.length - 1].startTime;
-				if(threads.results.length < threads.after) range.end = null;
+				range.end = threads.results.length < threads.after? null: threads.results[threads.results.length - 1].startTime;
 			}
 			range.items = threads.results;
 			updatingState.threads[threads.to].push(range);
