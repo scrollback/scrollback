@@ -21,7 +21,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-    [ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(e) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -36,7 +36,8 @@ module.exports = function(c, conf, s) {
 
 	[
 		"text-up", "edit-up", "back-up", "away-up",
-		"join-up", "part-up", "admit-up", "expel-up", "room-up"
+		"join-up", "part-up", "admit-up", "expel-up",
+		"room-up"
 	].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
@@ -51,22 +52,23 @@ module.exports = function(c, conf, s) {
 		}, 1);
 	});
 
-	 core.on("user-up", function(userUp, next) {
-		 if (appUtils.isGuest(userUp.user.id)) {
-			 next();
-			 core.emit("user-dn", userUp);
-		 } else {
-			 userUp.type = "user";
-			 if (initDone) {
+	core.on("user-up", function(userUp, next) {
+		if (appUtils.isGuest(userUp.user.id)) {
+			next();
+			core.emit("user-dn", userUp);
+		} else {
+			userUp.type = "user";
+			if (initDone) {
 				sendAction(userUp);
 			} else {
 				actionQueue.push(function() {
 					sendAction(userUp);
 				});
 			}
-			 next();
-		 }
-	 }, 1);
+			next();
+		}
+	}, 1);
+
 	core.on("init-up", function(init, next) {
 		if (!init.session) session = init.session = "web://" + generate.uid();
 		init.type = "init";

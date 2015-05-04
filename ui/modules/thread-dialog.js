@@ -20,8 +20,7 @@ module.exports = function(core, config, store) {
 			from: store.get("user"),
 			text: text,
 			thread: id, // this is how you create a new thread.
-			title: title,
-			time: new Date().getTime()
+			title: title
 		}, function(err) {
 			if (err) {
 				return callback("error", threadError);

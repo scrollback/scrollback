@@ -5,7 +5,7 @@ var store, core, config,
 	objUtils = require("../lib/obj-utils.js"),
 	generate = require("../lib/generate.js"),
 	pendingActions = {},
-	user;
+	user, timeAdjustment = 0;
 
 module.exports = function(c, conf, s) {
 	user = require("../lib/user.js")(c, conf, s);
@@ -14,29 +14,39 @@ module.exports = function(c, conf, s) {
 	core = c;
 	config = conf;
 
-	core.on("init-dn", onInit, 1000);
-	core.on("join-dn", onJoinPart, 1000);
-	core.on("part-dn", onJoinPart, 1000);
-	core.on("edit-dn", onEdit, 1000);
-	core.on("text-up", onTextUp, 900);
-	core.on("text-dn", onTextDn, 1000);
-	core.on("away-dn", onAwayBack, 1000);
-	core.on("back-dn", onAwayBack, 1000);
-	core.on("room-dn", onRoomUser, 1000);
-	core.on("user-dn", onRoomUser, 999);
+	core.on("init-dn", onInit, 950);
+	core.on("join-dn", onJoinPart, 950);
+	core.on("part-dn", onJoinPart, 950);
+	core.on("edit-dn", onEdit, 950);
+	core.on("text-up", onTextUp, 950);
+	core.on("text-dn", onTextDn, 950);
+	core.on("away-dn", onAwayBack, 950);
+	core.on("back-dn", onAwayBack, 950);
+	core.on("room-dn", onRoomUser, 950);
+	core.on("user-dn", onRoomUser, 950);
 
 	[
-		"text-up", "edit-up", "back-up", "away-up",
+		"text-up", "edit-up", "back-up", "away-up", "init-up",
 		"join-up", "part-up", "admit-up", "expel-up", "room-up"
 	].forEach(function(event) {
 		core.on(event, function(action) {
 			if (!action.id) { action.id = generate.uid(); }
+			if (!action.time) { action.time = Date.now() + timeAdjustment; }
 		}, 1000);
 	});
 
 	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(event) {
 		core.on(event, function(query) {
 			if (!query.id) { query.id = generate.uid(); }
+		}, 1000);
+	});
+
+	[
+		"text-dn", "edit-dn", "back-dn", "away-dn", "init-dn",
+		"join-dn", "part-dn", "admit-dn", "expel-dn", "room-dn"
+	].forEach(function(event) {
+		core.on(event, function(action) {
+			timeAdjustment = action.time - Date.now();
 		}, 1000);
 	});
 };
