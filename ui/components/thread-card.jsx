@@ -62,7 +62,6 @@ module.exports = function(core, config, store) {
 				to: store.get("nav", "room"),
 				from: store.get("user"),
 				text: text,
-				time: new Date().getTime(),
 				thread: this.props.thread.id
 			});
 
