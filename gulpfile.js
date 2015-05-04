@@ -1,4 +1,7 @@
 // Load plugins and declare variables
+
+"use strict";
+
 var gulp = require("gulp"),
 	del = require("del"),
 	bower = require("bower"),
@@ -18,6 +21,7 @@ var gulp = require("gulp"),
 	symlink = require("gulp-sym"),
 	concat = require("gulp-concat"),
 	striplogs = require("gulp-strip-debug"),
+	removestrict = require("gulp-remove-use-strict"),
 	uglify = require("gulp-uglify"),
 	rename = require("gulp-rename"),
 	sass = require("gulp-sass"),
@@ -103,6 +107,7 @@ function prefix(str, arr, extra) {
 var buildscripts = lazypipe()
 	.pipe(plumber, { errorHandler: onerror })
 	.pipe(!debug ? uglify : gutil.noop)
+	.pipe(!debug ? removestrict : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
 
 // Install the GIT hooks
