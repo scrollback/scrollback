@@ -9,7 +9,7 @@ module.exports = function(core, config, store) {
 			room = future.get("nav", "room"),
 			mode = future.get("nav", "mode"),
 			cta = future.get("app", "cta"),
-			rel = store.getRelation(room, user) || {};
+			rel = future.getRelation(room, user) || {};
 
 		changes.app = changes.app || {};
 
