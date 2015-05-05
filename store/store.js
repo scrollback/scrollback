@@ -171,7 +171,9 @@ Store.prototype.getRelatedRooms = function(id, filter) {
 
 	}
 
-	return rooms;
+	return rooms.filter(function(room) {
+		return (typeof room === "object");
+	});
 };
 
 Store.prototype.getRelatedUsers = function(id, filter) {
@@ -211,7 +213,9 @@ Store.prototype.getRelatedUsers = function(id, filter) {
 		});
 	}
 
-	return users;
+	return users.filter(function(user) {
+		return (typeof user === "object");
+	});
 };
 
 Store.prototype.getRecommendedRooms = function getRecommendedRooms() {
