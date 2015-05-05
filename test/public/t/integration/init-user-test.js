@@ -1,4 +1,4 @@
-/* global assert, createConnection */
+/* global assert, createConnection, error, socket, SockJS, scrollback, uid, FB, gapi, navigator */
 /* jshint mocha: true */
 /* jshint node: true */
 
@@ -32,13 +32,92 @@ describe("Action: INIT (testing existing USER accounts)", function(){
 });
 
 describe("Action: INIT", function(){
-	it("Apple connects to Scrollback (through Facebook)", function(){
-		// TODO: Assert: Apple's USER object is created, gets a new session (validate her Facebook login)`
+	it("Facebook login with valid auth token", function(done){
+	var socket = new SockJS(scrollback.host+"/socket");
+	socket.onopen=function(){done();};
+	this.timeout(4000);
+	setTimeout(done, 3700);
+	var manualLogin = false;
+	function statusChanged(response) {
+		if (response.status === 'connected') {
+			var init = {
+			"auth": {
+				"facebook": response.authResponse.accessToken
+			},
+			"id": uid(),
+			"type": "init",
+			"to": "me",
+			"suggestedNick": "appledachshund",
+			"session": "web://"+uid(),
+			"resource": uid(),
+			"origin": {
+				domain: "scrollback.io", 
+				verified: true }
+			};
+			socket.onmessage = function(message){
+				message = JSON.parse(message.data);
+				assert(message.type!='error', "Facebook login failed!");
+				done();
+			};
+			socket.send(JSON.stringify(init));
+		}
+		else if (!manualLogin) {
+			manualLogin = true;
+			FB.login(statusChanged);
+		} else {
+			throw new error("FBLoginFailed");
+		}
+	}
+		FB.init({
+		appId      : '834799843281318',
+		xfbml      : false,
+		version    : 'v2.3'
+		});
+		FB.getLoginStatus(statusChanged);
 	});
-	it("Gabdu connects to Scrollback (through Google+)", function(){
-		// TODO: Assert: Gabdu's USER object is created, gets a new session (validate his Google+ login)`
+
+	it("Google+ login with valid auth token", function(done){
+		this.timeout(4000);
+		setTimeout(done, 3700);
+		function statusChanged(authResult){
+			if(authResult.error) throw Error("Google+ Failed");
+			// console.log(authResult.access_token);
+		}
+		var additionalParams = {
+			'clientid' : '780938265693-dqejsnmrevapt69q5mu32719fo3trupt.apps.googleusercontent.com',
+			'callback': statusChanged,
+			'cookiepolicy' : 'single_host_origin'
+		};
+		gapi.auth.signIn(additionalParams);
 	});
-	it("Kariya connects to Scrollback (through Persona)", function(){
-		// TODO: Assert: Kariya's USER object is created, gets a new session (validate his e-mail login)`
+
+	it("Persona login with valid auth token", function(done){
+		navigator.id.watch({
+			onlogin: function(assertion){
+					var init = {
+					"auth": {
+						"browser-id": assertion
+					},
+					"id": uid(),
+					"type": "init",
+					"to": "me",
+					"suggestedNick": "crusoe",
+					"session": "web://"+uid(),
+					"resource": uid(),
+					"origin": {
+						domain: "scrollback.io", 
+						verified: true }
+					};
+					socket.onmessage = function(message){
+						message = JSON.parse(message.data);
+						assert(message.type!='error', "Persona login failed!");
+						done();
+					};
+					socket.send(JSON.stringify(init));
+			}
+		});
+
+		navigator.id.request();
+		done();
 	});
 });
