@@ -48,11 +48,11 @@ describe("Action: TEXT", function(){
 						"Oops! Looks like Anklebiter didn't enter the room: dachshundworld");
 						SocketGustav.on(specialId, function(results){
 								console.log("gustav heard:", results);
-								console.log(thingsFinished++);
+								thingsFinished++;
 						});
 						SocketCrusoe.on(specialId, function(results){
 							console.log("crusoe heard:", results);
-							console.log(thingsFinished++);
+							thingsFinished++;
 						});
 						
 						SocketOakley.on(specialId, function(results){
@@ -70,7 +70,7 @@ describe("Action: TEXT", function(){
 						}, function(results) {
 							assert(results.text===textMsg, 
 							"Oops! looks like anklebiter didn't hear back what he said");
-							console.log(thingsFinished++);
+							thingsFinished++;
 						});
 						oakleyTimeout = setTimeout(function() {
 							thingsFinished++;
@@ -126,14 +126,16 @@ describe("Action: EDIT", function(){
 						text: word(5),
 						to: "dachshundworld"
 					}, function(results){
-						socketAnklebiter.emit({
+						SocketGustav.emit({
 							id: uid(),
 							ref: msgId,
 							type: "edit",
 							text: "corrected",
 							to: "dachshundworld"
 						}, function(results){
-							console.log(results);
+							assert(results.from==="gustav" && results.text==="corrected" && results.type==="edit", 
+							"Gustav (owner) couldn't edit!");
+							done();
 						});
 					});
 				});
