@@ -35,7 +35,7 @@ module.exports = function(core, config, store) {
 				picture = "0" + picture;
 			}
 
-			picture = "/s/pictures/avatar/" + picture + ".jpg";
+			picture = "/s/assets/pictures/avatar/" + picture + ".jpg";
 		}
 
 		if (!cover) {
@@ -47,8 +47,8 @@ module.exports = function(core, config, store) {
 				cover = "0" + cover;
 			}
 
-			banner = "/s/pictures/banner/" + cover + ".jpg";
-			cover = "/s/pictures/cover/" + cover + ".jpg";
+			banner = "/s/assets/pictures/banner/" + cover + ".jpg";
+			cover = "/s/assets/pictures/cover/" + cover + ".jpg";
 		}
 
 		roomPics[roomId] = {

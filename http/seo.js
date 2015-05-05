@@ -1,3 +1,5 @@
+"use strict";
+
 var log = require('../lib/logger.js');
 var config;
 var noOfThreads = 50;
@@ -38,7 +40,7 @@ module.exports = function(core, conf) {
 		var room;
 
 		function done() {
-			if (++ct == 2) {
+			if (++ct === 2) {
 				if (room) callback(genHeadHtml(room, thread));
 				else callback("");
 			}
@@ -171,7 +173,7 @@ function htmlEscape(str) {
 
 function genHeadHtml(room, thread) {
 	var r = [];
-	var roomIcon = "https://" + config.host + "/s/img/scrollback-preview.png";
+	var roomIcon = "https://" + config.host + "/s/assets/preview.png";
 	r.push("<meta name=\"description\" content=\"" + htmlEscape(room.description) + "\">");
 	r.push("<meta name=\"twitter:card\" content=\"summary\" />");
 	r.push("<meta name=\"twitter:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");

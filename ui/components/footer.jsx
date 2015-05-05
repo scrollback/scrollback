@@ -43,7 +43,7 @@ module.exports = function(core, config, store) {
 										</li>
 										<li>
 											<a className="footer-playstore" href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">
-												<img src="/s/img/footer/google.png" />
+												<img src="/s/assets/footer/google.png" />
 											</a>
 										</li>
 									 </ul>
@@ -53,16 +53,16 @@ module.exports = function(core, config, store) {
 									<h5>Connect with us on</h5>
 									<p className="footer-social">
 										<a href="https://www.facebook.com/scrollback" target="_blank" >
-											<img src="/s/img/footer/facebook.png"  ></img>
+											<img src="/s/assets/footer/facebook.png"  ></img>
 										</a>
 										<a href="https://twitter.com/Scrollbackio" target="_blank" >
-											<img src="/s/img/footer/twitter.png"  ></img>
+											<img src="/s/assets/footer/twitter.png"  ></img>
 										</a>
 										<a href="https://www.linkedin.com/company/scrollback" target="_blank" >
-											<img src="/s/img/footer/linkedin.png" ></img>
+											<img src="/s/assets/footer/linkedin.png" ></img>
 										</a>
 										<a href="https://github.com/scrollback/scrollback" target="_blank" s>
-											<img  src="/s/img/footer/github.png"  ></img>
+											<img  src="/s/assets/footer/github.png"  ></img>
 										</a>
 									</p>
 								</div>

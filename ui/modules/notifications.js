@@ -102,7 +102,7 @@ module.exports = function(core, config, store) {
 				desktopnotify.show({
 					title: "New mention in " + text.to,
 					body: (text.from ? text.from.replace(/^guest-/, "") + ": " : "") + text.text,
-					icon: "/s/img/scrollback-dark.png",
+					icon: "/s/assets/logo/scrollback-dark.png",
 					tag: text.id,
 					action: function() {
 						core.emit("setstate", {

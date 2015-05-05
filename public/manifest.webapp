@@ -4,9 +4,9 @@
     "description": "Scrollback - Where communities hang out",
     "launch_path": "/me",
     "icons": {
-        "30": "/s/img/fxos/fxos-30.png",
-        "60": "/s/img/fxos/fxos-60.png",
-        "128": "/s/img/fxos/fxos-128.png"
+        "30": "/s/assets/fxos/fxos-30.png",
+        "60": "/s/assets/fxos/fxos-60.png",
+        "128": "/s/assets/fxos/fxos-128.png"
     },
     "developer": {
         "name": "Scrollback",
