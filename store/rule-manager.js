@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(core, config, store) {
 	require("./rules/loadRooms.js")(core, config, store);
 	require("./rules/loadRelatedUsers.js")(core, config, store);
@@ -18,4 +20,5 @@ module.exports = function(core, config, store) {
 	require("./rules/resetFocus.js")(core, config, store);
 	require("./rules/selectedTexts.js")(core, config, store);
 	require("./rules/removeRelations.js")(core, config, store);
+	require("./rules/lastVisitedAt.js")(core, config, store);
 };
