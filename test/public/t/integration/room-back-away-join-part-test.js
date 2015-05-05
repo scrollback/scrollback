@@ -98,7 +98,6 @@ describe("Action: ROOM", function(){
 						socketGustav.on(id, function(action){
 							assert(action.from==="anklebiter" && action.role==="follower", 
 								"Looks like Gustav didn't hear Anklebiter follow his room!");
-							console.log("gustav heard join");
 							thingsFinished++;
 							if(thingsFinished === 2) done();
 						});
@@ -111,8 +110,7 @@ describe("Action: ROOM", function(){
 							from: "anklebiter"
 						}, function(action){
 							assert(action.from==="anklebiter" && action.to===roomId, 
-								"Looks like Anklebiter's Follow action failed!");
-							console.log("join came back");
+								"Looks like Anklebiter's follow failed!");
 							socketGustav.emit({
 								id: uid(),
 								type: "getUsers",
@@ -120,7 +118,6 @@ describe("Action: ROOM", function(){
 							}, function(action){
 								assert(action.results[0].id==="anklebiter", 
 									"Looks like Anklebiter isn't in Gustav's room!");
-								console.log("query finished");
 								thingsFinished++;
 								if(thingsFinished === 2) done();
 							});
@@ -132,52 +129,69 @@ describe("Action: ROOM", function(){
 	});
 
 	it("Anklebiter unfollows (parts) a room", function(done){
-		this.timeout(10000);
 		var specialId = uid();
 		var thingsFinished=0;
 		// make Oakley login to Scrollback
 		socketOakley = createConnection("oakley", function(socketOakley){
 			assert(socketOakley.user.id==="oakley", "Oops, looks like Oakley didn't login to Scrollback!");
 			// make Gustav login to scrollback and enter some room
-			socketGustav = createConnection("gustav", function(socketGustav){
+			console.log("About to create connection for Gustav");
+				socketGustav = createConnection("gustav", function(socketGustav){
 				socketGustav.emit({
 					id: uid(),
 					from: "gustav",
 					type: "back",
 					to: roomId
 				}, function(results){
-					assert(results.from==="gustav" && results.to===roomId, "Oops! Looks like wasn''t able to enter a room he created");
-					socketAnklebiter = createConnection("anklebiter", function(socketAnklebiter){
+					console.log("About to create connection for Anklebiter");
+					assert(results.from==="gustav" && results.to===roomId,
+					"Oops! Looks like gustav wasn''t able to enter a room he created");
+					createConnection("anklebiter", function(socketAnklebiter){
+						console.log("about to enter", roomId);
 						socketAnklebiter.emit({
-									id: uid(),
-									role: "follower",
-									type: "back",
-									to: roomId,
-									from: "anklebiter"
+							id: uid(),
+							type: "back",
+							to: roomId,
+							from: "anklebiter"
 						}, function(results){
-							assert(results.from==="anklebiter" && results.to===roomId && results.role==="follower",
-							"Oops! looks like Anklebiter wasn't able to follow a room");
+							console.log(results);
+							assert(results.from==="anklebiter" && results.to===roomId, 
+							"Oops! looks like Anklebiter wasn't able to enter a room");
 
-							socketGustav.on(specialId, function(results){ 
-								// TODO: Did gustav hear it ?
-								console.log(results);
-								thingsFinished++;
-								if (thingsFinished === 1) done();
-							});
-							
-							//TODO: Oakley should not hear anything
+							console.log("About to do a join");
 
 							socketAnklebiter.emit({
-								id: specialId,
-								role: "none",
-								type: "back",
+								id: uid(),
+								type: "join",
 								to: roomId,
 								from: "anklebiter"
 							}, function(results){
-								assert(results.role==="none" && results.from==="anklebiter" && results.to===roomId, 
-								"Oops! Looks like Anklebiter couldn't unfollow a room");
-								thingsFinished++;
-								if (thingsFinished === 1) done();
+								assert(results.from==="anklebiter" && results.to===roomId && results.role==="follower",
+								"Oops! looks like Anklebiter wasn't able to follow a room");
+
+								console.log("About to test unfollow");
+
+								// Gustav must hear unfollow 
+								socketGustav.on(specialId, function(results){
+									console.log("Gustav heard:", results);
+									thingsFinished++;
+									if (thingsFinished === 2) done();
+								});
+
+								// Anklebiter does a unfollow
+								socketAnklebiter.emit({
+									id: specialId,
+									role: "none",
+									type: "part",
+									to: roomId,
+									from: "anklebiter"
+								}, function(results){
+									console.log("Anklebiter heard", results);
+									assert(results.from==="anklebiter" && results.to===roomId,
+									"Oops! Looks like Anklebiter couldn't unfollow a room");
+									thingsFinished++;
+									if (thingsFinished === 2) done();	
+								});
 							});
 						});
 					});
