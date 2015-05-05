@@ -119,7 +119,7 @@ module.exports = function(core, config, store) {
 			} else {
 				return (
 					<div className="chat-area-empty">
-						{loading ? "Loading messages..." : <img src="/s/img/no-discussions.png" />}
+						{loading ? "Loading messages..." : <img src="/s/img/blankslate/no-discussions.png" />}
 					</div>
 				);
 			}
