@@ -31,6 +31,10 @@ module.exports = function(core, config, store) {
 			}
 
 			for (var i = 0, l = people.length; i < l; i++) {
+				if (!people[i]) {
+					continue;
+				}
+
 				people[i].status = people[i].status || "offline";
 
 				if (headers[people[i].status]) {
