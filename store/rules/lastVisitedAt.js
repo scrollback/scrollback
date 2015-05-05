@@ -1,6 +1,15 @@
 "use strict";
 
 module.exports = function(core, config, store) {
+	function addFirstVisitedAt(changes) {
+		changes.app = changes.app || {};
+		changes.app.firstVisitedAt = Date.now();
+
+		core.off("setstate", addFirstVisitedAt);
+	}
+
+	core.on("setstate", addFirstVisitedAt, 100);
+
 	core.on("setstate", function(changes, next) {
 		var oldroom, newroom, oldmode, newmode,
 			oldrel, newrel, future;
