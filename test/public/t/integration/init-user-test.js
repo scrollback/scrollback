@@ -31,18 +31,6 @@ describe("Action: INIT (testing existing USER accounts)", function(){
 	});
 });
 
-// describe("Action: INIT (testing for INVALID_INIT_PARAMS)", function(){
-// 	it("GangstahHamstah tries to connect Scrollback (without a valid session)", function(){
-// 		// `Assert: GangstahHamstah gets INVALID_INIT_PARAMS`
-// 	});
-// 	it("LonelyLab tries to connect to Scrollback (with Oakley's session)", function(){
-// 		// `Assert: LonelyLab gets Oakley's USER object back`
-// 	});
-// 	it("BondaTheSpy tries to connect to Scrollback (with name as BondaThe$py)", function(){
-// 		// `Assert: BondaTheSpy gets INVALID_INIT_PARAMS`
-// 	});
-// });
-
 // describe("Action: INIT", function(){
 // 	it("Apple connects to Scrollback (through Facebook)", function(){
 // 		// `Assert: Apple's USER object is created, gets a new session (validate her Facebook login)`

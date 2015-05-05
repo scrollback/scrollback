@@ -1,12 +1,13 @@
-/* global createConnection, uid, assert */
+/* global createConnection, word, uid, assert */
 /* jshint mocha: true */
 /* jshint node: true */
 
 describe("Action: ROOM", function(){
 	this.timeout(20000);
-	var roomId=uid();
+	var roomId=word(7);
+	var socketGustav, socketAnklebiter, socketOakley;
 	it("Gustav creates a room", function(done) {
-		createConnection("gustav", function(socketGustav) {
+		socketGustav = createConnection("gustav", function(socketGustav) {
 			var room = {
 				id: roomId,
 				params: {},
@@ -21,26 +22,27 @@ describe("Action: ROOM", function(){
 			roomEvent.id = uid();
 			socketGustav.emit(roomEvent, function(res) {
 				assert(res.type==="room" && res.session===socketGustav.session, 
-					"Room creation looks invalid!");
+				"Room creation looks invalid!");
 				done();
+				socketGustav.close();
 			});
 		});
 	});
 
 	it("Anklebiter enters a room whose owner is Gustav", function(done) {
-		createConnection("gustav", function(socketGustav) {
+		socketGustav = createConnection("gustav", function(socketGustav) {
 			socketGustav.emit({
 				id: uid(),
 				"from": "gustav",
 				"type": "back",
 				"to": roomId
 			}, function(){
-				createConnection("anklebiter", function(socketAnklebiter) {
+				socketAnklebiter = createConnection("anklebiter", function(socketAnklebiter) {
 					var id = uid();
 					var thingsFinished = 0;
 					socketGustav.on(id, function(action){
 						assert(action.type==="back" && action.from==="anklebiter", 
-							"Gustav didn't hear that Anklebiter enter room!");
+							"Gustav didn't hear that Anklebiter entered some room!");
 						thingsFinished++;
 						if(thingsFinished === 2) done();
 					});
@@ -51,17 +53,17 @@ describe("Action: ROOM", function(){
 						from:"anklebiter"
 					}, function(action) {
 						assert(action.type==="back" && action.from==="anklebiter", 
-							"Anklebiter didn't hear that Anklebiter enter room!");
+							"Anklebiter didn't hear that Anklebiter entered some room!");
 						thingsFinished++;
 						if(thingsFinished === 2) done();
 					});
 				});
 			});
 		});
-	}); 
+	});
 
 	it("Gustav does getUsers role=owner", function(done){
-		createConnection("gustav", function(socket_gustav){
+		socketGustav = createConnection("gustav", function(socket_gustav){
 			socket_gustav.emit({
 				type: "getUsers",
 				role: "owner",
@@ -69,7 +71,7 @@ describe("Action: ROOM", function(){
 				memberOf: roomId
 			}, function(action){
 				assert(action.results[0].id==="gustav", 
-					"Looks like Gustav is not the owner of the room GustavsDachshundWorld!");
+					"Looks like Gustav is not the owner of room in question!");
 				done();
 			});
 		});
@@ -77,14 +79,14 @@ describe("Action: ROOM", function(){
 
 	it("Anklebiter follows (joins) a room whose owner is Gustav", function(done){
 		this.timeout(10000);
-		createConnection("gustav", function(socketGustav){
+		socketGustav = createConnection("gustav", function(socketGustav){
 			socketGustav.emit({
 				id: uid(),
 				"from": "gustav",
 				"type": "back",
 				"to": roomId
 			}, function(){
-				createConnection("anklebiter", function(socketAnklebiter){
+				socketAnklebiter = createConnection("anklebiter", function(socketAnklebiter){
 					socketAnklebiter.emit({ 
 						id: uid(),
 						to: roomId, 
@@ -130,24 +132,57 @@ describe("Action: ROOM", function(){
 	});
 
 	it("Anklebiter unfollows (parts) a room", function(done){
-		createConnection("anklebiter", function(socketAnklebiter){
-			socketAnklebiter.emit({
-						id: uid(),
-						role: "none",
-						type: "back",
-						to: roomId,
-						from: "anklebiter"
-			}, function(action){
-				console.log(action);
-				done();
+		this.timeout(10000);
+		var specialId = uid();
+		var thingsFinished=0;
+		// make Oakley login to Scrollback
+		socketOakley = createConnection("oakley", function(socketOakley){
+			assert(socketOakley.user.id==="oakley", "Oops, looks like Oakley didn't login to Scrollback!");
+			// make Gustav login to scrollback and enter some room
+			socketGustav = createConnection("gustav", function(socketGustav){
+				socketGustav.emit({
+					id: uid(),
+					from: "gustav",
+					type: "back",
+					to: roomId
+				}, function(results){
+					assert(results.from==="gustav" && results.to===roomId, "Oops! Looks like wasn''t able to enter a room he created");
+					socketAnklebiter = createConnection("anklebiter", function(socketAnklebiter){
+						socketAnklebiter.emit({
+									id: uid(),
+									role: "follower",
+									type: "back",
+									to: roomId,
+									from: "anklebiter"
+						}, function(results){
+							assert(results.from==="anklebiter" && results.to===roomId && results.role==="follower",
+							"Oops! looks like Anklebiter wasn't able to follow a room");
+
+							socketGustav.on(specialId, function(results){ 
+								// TODO: Did gustav hear it ?
+								console.log(results);
+								thingsFinished++;
+								if (thingsFinished === 1) done();
+							});
+							
+							//TODO: Oakley should not hear anything
+
+							socketAnklebiter.emit({
+								id: specialId,
+								role: "none",
+								type: "back",
+								to: roomId,
+								from: "anklebiter"
+							}, function(results){
+								assert(results.role==="none" && results.from==="anklebiter" && results.to===roomId, 
+								"Oops! Looks like Anklebiter couldn't unfollow a room");
+								thingsFinished++;
+								if (thingsFinished === 1) done();
+							});
+						});
+					});
+				});
 			});
 		});
-		// Gustav hears Anklebiter unfollowed a room
-		// Oakley joins Scrollback
-		// Assert: Oakley gets a new USER object, new session
-		// Assert: Oakley doesn’t hear Anklebiter unfollowing a room
 	});
-
-// the end
 });
-
