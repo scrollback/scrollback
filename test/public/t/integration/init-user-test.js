@@ -31,14 +31,14 @@ describe("Action: INIT (testing existing USER accounts)", function(){
 	});
 });
 
-// describe("Action: INIT", function(){
-// 	it("Apple connects to Scrollback (through Facebook)", function(){
-// 		// `Assert: Apple's USER object is created, gets a new session (validate her Facebook login)`
-// 	});
-// 	it("Gabdu connects to Scrollback (through Google+)", function(){
-// 		// `Assert: Gabdu's USER object is created, gets a new session (validate his Google+ login)`
-// 	});
-// 	it("Kariya connects to Scrollback (through Persona)", function(){
-// 		// `Assert: Kariya's USER object is created, gets a new session (validate his e-mail login)`
-// 	});
-// });
+describe("Action: INIT", function(){
+	it("Apple connects to Scrollback (through Facebook)", function(){
+		// TODO: Assert: Apple's USER object is created, gets a new session (validate her Facebook login)`
+	});
+	it("Gabdu connects to Scrollback (through Google+)", function(){
+		// TODO: Assert: Gabdu's USER object is created, gets a new session (validate his Google+ login)`
+	});
+	it("Kariya connects to Scrollback (through Persona)", function(){
+		// TODO: Assert: Kariya's USER object is created, gets a new session (validate his e-mail login)`
+	});
+});
