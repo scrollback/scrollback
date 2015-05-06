@@ -8,9 +8,8 @@
 
 	{{{seo.head}}}
 
-	<link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon">
+	<link rel="shortcut icon" href="/s/assets/favicon.png" type="image/x-icon">
 
-    <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:400,700">
     <link rel="stylesheet" type="text/css" media="screen" href="/s/dist/styles/style.min.css">
 
     {{#if analytics.id}}
@@ -42,7 +41,7 @@
 	{{/if}}
 </head>
 
-<body class="{{#if cordova}} platform-cordova {{/if}}">
+<body>
 	<!-- [if lt IE 9]>
 		<div class="ie-warning">
 			<div class="ie-warning-content">
@@ -58,11 +57,6 @@
 	</main>
 
 	<div id="app-client"></div>
-
-	{{#if cordova}}
-		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova.js"></script>
-		<script src="/s/phonegap/cordova-plugins/{{appVersion}}/cordova_plugins.js"></script>
-	{{/if}}
 
     <script src="/s/dist/scripts/app.bundle.min.js"></script>
 

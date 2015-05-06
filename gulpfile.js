@@ -1,3 +1,5 @@
+"use strict";
+
 // Load plugins and declare variables
 var gulp = require("gulp"),
 	del = require("del"),
@@ -221,11 +223,6 @@ gulp.task("manifest", function() {
 	.pipe(plumber())
 	.pipe(manifest({
 		basePath: "public",
-		cache: [
-			"//fonts.googleapis.com/css?family=Open+Sans:400,700",
-			"//fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff",
-			"//fonts.gstatic.com/s/opensans/v10/MTP_ySUJH_bn48VBG8sNSnhCUOGz7vYGh680lGh-uXM.woff"
-		],
 		network: [ "*" ],
 		fallback: [
 			"/socket /s/socket-fallback",

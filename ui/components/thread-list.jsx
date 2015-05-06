@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
@@ -58,7 +60,7 @@ module.exports = function(core, config, store) {
 				items = [], atTop = false, atBottom = true,
 				before, after, beforeCount, afterCount,
 				allItems, beforeItems, afterItems, positionKey,
-				scrollToClassNames, cols, sections, empty, loading;
+				scrollToClassNames, cols, sections, empty, loading = false;
 
 			// Don't show
 			if (!this.state.show) {
@@ -88,7 +90,7 @@ module.exports = function(core, config, store) {
 
 			// if the last beforeItem and the first afterItem are the same, then pop.
 			if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
-			   beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
+				beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
 				beforeItems.pop();
 			}
 
@@ -160,14 +162,12 @@ module.exports = function(core, config, store) {
 					atBottom: atBottom,
 					position: positionKey
 				});
-			}
-
-			if (!items.length) {
+			} else {
 				empty = (
-				        <div className="thread-feed-empty">
-							{loading ? "Loading discussions..." : "There are no discussions yet :-("}
-						</div>
-						);
+					<div className="thread-feed-empty">
+						{loading ? "Loading discussions..." : <img src="/s/assets/blankslate/no-messages.png" />}
+					</div>
+				);
 			}
 
 			scrollToClassNames = "scroll-to scroll-to-top";

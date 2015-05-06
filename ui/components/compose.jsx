@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
@@ -54,7 +56,6 @@ module.exports = function(core, config, store) {
 				to: nav.room,
 				from: store.get("user"),
 				text: text,
-				time: Date.now(),
 				thread: nav.thread
 			});
 

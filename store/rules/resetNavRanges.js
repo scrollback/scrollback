@@ -1,3 +1,5 @@
+"use strict";
+
 /*
 	Rule: ResetNavRanges
 	Reads: room, thread

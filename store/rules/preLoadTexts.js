@@ -1,3 +1,5 @@
+"use strict";
+
 var core, config, store;
 //var entityOps = require("./../entity-ops.js");
 

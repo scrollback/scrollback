@@ -18,6 +18,8 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
+"use strict";
+
 var express = require("express"),
 	http = require("http"),
 	https = require("https"),
@@ -26,22 +28,26 @@ var express = require("express"),
 
 function init() {
 	var app = express(),
-		srv, srvs;
+		srv, srvs, appcached;
+
+	appcached = fs.readFileSync(__dirname + "/../public/manifest.appcache").toString().split(/\n/).filter(function(u) {
+		// Ignore empty lines, comments and headers
+        return u.length && !/(^#|^[A-Z]+:$)/.test(u);
+    });
 
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
-	app.set('view options', {
-		debug: true
-	});
+	app.set('view options', { debug: true });
+
 	app.use(function(req, res, next) {
-		if ((req.url).match(/.*\.appcache$/)) {
+		if (req.url.match(/.*\.appcache$/)) {
 			// We need to serve the correct mimetype for the manifest.appcache file.
 			// Even though latest browsers don't require this, older versions of browsers do.
 			// Firefox doesn't use appcache if we add Cache-Control: no-cache.
 			res.header('Content-Type', 'text/cache-manifest');
 			res.header('Expires', new Date(Date.now() + 86400000).toUTCString());
 			res.header('Pragma', 'no-cache');
-		} else {
+		} else if (appcached.indexOf(req.url) > -1) {
 			// Firefox doesn't load latest resources if we don't do this.
 			res.header('Cache-Control', 'no-cache');
 		}

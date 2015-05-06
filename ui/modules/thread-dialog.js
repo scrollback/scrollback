@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	var generate = require("../../lib/generate.js"),
 		threadError = "We could not create the thread. Please refresh the page and try again.";
@@ -18,8 +20,7 @@ module.exports = function(core, config, store) {
 			from: store.get("user"),
 			text: text,
 			thread: id, // this is how you create a new thread.
-			title: title,
-			time: new Date().getTime()
+			title: title
 		}, function(err) {
 			if (err) {
 				return callback("error", threadError);

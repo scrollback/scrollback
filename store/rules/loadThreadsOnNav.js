@@ -4,6 +4,8 @@
 	Provides: threads (async)
 */
 
+"use strict";
+
 module.exports = function (core, config, store) {
 	core.on('setstate', function (changes, next) {
 		if(changes.nav && (changes.nav.room || changes.nav.threadRange)) {
@@ -19,17 +21,15 @@ module.exports = function (core, config, store) {
 			},
 			range = {};
 
-		if (!err && threads.results && threads.results.length) {
+		if (!err && threads.results) {
 			updatingState.threads[threads.to] = [];
 
 			if (threads.before) {
 				range.end = threads.time;
-				range.start = threads.results[0].startTime;
-				if(threads.results.length < threads.before) range.start = null;
+				range.start = threads.results.length < threads.before? null: threads.results[0].startTime;
 			} else if(threads.after) {
 				range.start = threads.time;
-				range.end = threads.results[threads.results.length - 1].startTime;
-				if(threads.results.length < threads.after) range.end = null;
+				range.end = threads.results.length < threads.after? null: threads.results[threads.results.length - 1].startTime;
 			}
 			range.items = threads.results;
 			updatingState.threads[threads.to].push(range);
@@ -45,7 +45,7 @@ module.exports = function (core, config, store) {
 			r;
 
 		r = store.getThreads(roomId, time, (threadRange.after || 0) + 5);
-		if (r[r.length - 1] == "missing") {
+		if (r[r.length - 1] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[r.length - 2].startTime : time),
@@ -54,7 +54,7 @@ module.exports = function (core, config, store) {
 		}
 
 		r = store.getThreads(roomId, time, -(threadRange.before || 0) - 5);
-		if (r[0] == "missing") {
+		if (r[0] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[1].startTime : time),

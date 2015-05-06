@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
 		var ua = navigator.userAgent.toLowerCase(),

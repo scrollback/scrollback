@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var validate = require("../../lib/validate.js");
 
 module.exports = function(core) {

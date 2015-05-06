@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 var formField = function(label, type, id, value) {
 	var $input, i;
 

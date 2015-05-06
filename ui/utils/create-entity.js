@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var listenersAdded;
 
 module.exports = function(core, config, store) {
@@ -50,7 +52,7 @@ module.exports = function(core, config, store) {
 					if (identities) {
 						context = store.get("context");
 
-						if (context.embed){
+						if (context.embed) {
 							newRoom.guides.allowedDomains = [context.embed.origin.host];
 						}
 					}

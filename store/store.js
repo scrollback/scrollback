@@ -1,3 +1,5 @@
+"use strict";
+
 var objUtils = require("../lib/obj-utils.js"),
 	rangeOps = require("./range-ops.js"),
 	state = {

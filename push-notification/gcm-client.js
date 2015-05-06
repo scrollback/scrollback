@@ -1,15 +1,13 @@
 /* jshint browser: true */
 
-var core, config, store, gcmTimeValidity = 7 * 24 * 60 * 60 * 1000,
+var gcmTimeValidity = 12 * 60 * 60 * 1000,
 	updateDevice = false,
-	appUtils = require("../lib/app-utils.js");
+	objUtils = require("../lib/obj-utils.js");
 
-module.exports = function(c, conf, st) {
-	var LS = window.localStorage,
+module.exports = function(core, config, store) {
+	var user = require("../lib/user.js")(core, config, store),
+		LS = window.localStorage,
 		lastGCMTime, device;
-	core = c;
-	config = conf;
-	store = st;
 
 	lastGCMTime = LS.getItem("lastGCMTime");
 	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
@@ -36,10 +34,12 @@ module.exports = function(c, conf, st) {
 	function saveUser() {
 		var userObj = store.getUser(), uuid;
 
-		if (!userObj.id || appUtils.isGuest(userObj.id)) return;
+		if (!userObj.id || user.isGuest(userObj.id)) return;
+
+		userObj = objUtils.clone(userObj);
 
 		if (!userObj.params) userObj.params = {};
-		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
+		if (!userObj.params.pushNotifications || userObj.params.pushNotifications instanceof Array) userObj.params.pushNotifications = {};
 		if (!userObj.params.pushNotifications.devices || typeof userObj.params.pushNotifications.devices.length === "number") {
 			userObj.params.pushNotifications.devices = {};
 		}

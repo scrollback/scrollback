@@ -1,3 +1,5 @@
+"use strict";
+
 var relationsProps = require("./property-list.js").relations,
 	objUtils = require("../lib/obj-utils.js");
 

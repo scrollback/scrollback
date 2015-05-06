@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+"use strict";
+
 var objUtils = require("../../lib/obj-utils.js"),
 	appUtils = require("../../lib/app-utils.js");
 
@@ -37,10 +39,12 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
+		user = objUtils.clone(user);
+
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: objUtils.clone(user) }, function(err, items) {
+		core.emit("pref-show", { user: user }, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
@@ -85,6 +89,8 @@ module.exports = function(core, config, store) {
 			core.emit("auth", menu, function() {
 				next();
 			});
+
+			return;
 		}
 
 		next();

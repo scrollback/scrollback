@@ -18,7 +18,7 @@
     "sockjs": "~0.3.4",
     "svg4everybody": "*",
     "transformie": "*",
-    "endless": "~0.9.10",
+    "endless": "*",
     "jquery": "~2.1.3"
   }
 }
