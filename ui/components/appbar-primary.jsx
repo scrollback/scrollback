@@ -9,7 +9,9 @@ var showMenu = require("../utils/show-menu.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		AppbarPrimary;
+		AppbarPrimary, Color;
+
+	window.Color = Color = require("pigment/basic");
 
 	AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
@@ -81,7 +83,7 @@ module.exports = function(core, config, store) {
 			classNames += this.state.following ? " following" : "";
 
 			return (
-				<div key="appbar-primary" className="appbar appbar-primary" onClick={this.toggleMinimize}>
+				<div ref="appbar" key="appbar-primary" className="appbar appbar-primary" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
 					<img data-mode="home" className="appbar-title-logotype" src="/s/assets/logo/scrollback-logo-white.png" />
 					<div data-mode="room chat" className="appbar-title-container">
@@ -97,6 +99,28 @@ module.exports = function(core, config, store) {
 					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
+		},
+
+		componentDidUpdate: function() {
+			var appbar, color, darkcolor;
+
+			if (window.Android && typeof window.Android.setStatusBarColor === "function") {
+				appbar = React.findDOMNode(this.refs.appbar);
+
+				if (appbar) {
+					color = window.getComputedStyle(appbar)["background-color"];
+
+					try {
+						darkcolor = (new Color(color)).darken(0.16).tohex();
+
+						if (darkcolor) {
+							window.Android.setStatusBarColor(darkcolor);
+						}
+					} catch(e) {
+						console.log("Error parsing color: ", color, e);
+					}
+				}
+			}
 		},
 
 		getInitialState: function() {
