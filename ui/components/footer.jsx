@@ -15,59 +15,38 @@ module.exports = function(core, config, store) {
 
 			return (
 					<footer className="footer">
-						<div className="footer-inner">
-							<div className="row">
-								<div className="col large-4 medium-4 small-12">
-									<h5>Contact us</h5>
-									 <ul>
-										 <li>Scrollback is a product of Askabt.</li>
-										 <li>#05-16, 71 Ayer Rajah Crescent,</li>
-										 <li>Tel - +91-98451 68036,</li>
-										 <li>Mail - evans@scrollback.io</li>
-									 </ul>
-								</div>
-
-								<div className="col large-4 medium-4 small-12">
-									<ul>
-										<li>
-											<a href="http://web.scrollback.io/about/" target="_blank">About Us</a>
-										</li>
-										<li>
-											<a href="http://web.scrollback.io/careers/" target="_blank">We are Hiring</a>
-										</li>
-										<li>
-											<a href="http://web.scrollback.io/privacy-policy/" target="_blank">Privacy Policy</a>
-										</li>
-										<li>
-											<a href="http://blog.scrollback.io/" target="_blank">Blog</a>
-										</li>
-										<li>
-											<a className="footer-playstore" href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">
-												<img src="/s/assets/footer/google.png" />
-											</a>
-										</li>
-									 </ul>
-								</div>
-
-								<div className="col large-4 medium-4 small-12">
-									<h5>Connect with us on</h5>
-									<p className="footer-social">
-										<a href="https://www.facebook.com/scrollback" target="_blank" >
-											<img src="/s/assets/footer/facebook.png"  ></img>
-										</a>
-										<a href="https://twitter.com/Scrollbackio" target="_blank" >
-											<img src="/s/assets/footer/twitter.png"  ></img>
-										</a>
-										<a href="https://www.linkedin.com/company/scrollback" target="_blank" >
-											<img src="/s/assets/footer/linkedin.png" ></img>
-										</a>
-										<a href="https://github.com/scrollback/scrollback" target="_blank" s>
-											<img  src="/s/assets/footer/github.png"  ></img>
-										</a>
-									</p>
-								</div>
-							</div>
-						</div>
+						<ul className="footer-section footer-nav">
+							<li><a href="">About us</a></li>
+							<li><a href="">Privacy</a></li>
+							<li><a href="">Careers</a></li>
+							<li><a href="">Blog</a></li>
+						</ul>
+						<ul className="footer-section footer-social">
+							<li>
+								<a href="" className="footer-social-icon">
+									<img src="/s/assets/footer/facebook.png" />
+								</a>
+							</li>
+							<li>
+								<a href="" className="footer-social-icon">
+									<img src="/s/assets/footer/twitter.png" />
+								</a>
+							</li>
+							<li>
+								<a href="" className="footer-social-icon">
+									<img src="/s/assets/footer/linkedin.png" />
+								</a>
+							</li>
+							<li>
+								<a href="" className="footer-social-icon">
+									<img src="/s/assets/footer/github.png" />
+								</a>
+							</li>
+						</ul>
+						<a href="" className="footer-section footer-playstore">
+							<img src="/s/assets/footer/playstore.png" />
+							<span>Get the app</span>
+						</a>
 					</footer>
 
 					);

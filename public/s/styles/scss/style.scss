@@ -8,7 +8,6 @@
 
 // Import base styles from lace
 @import "../../../../bower_components/lace/src/scss/base";
-@import "../../../../bower_components/lace/src/scss/grid";
 @import "../../../../bower_components/lace/src/scss/alertbar";
 @import "../../../../bower_components/lace/src/scss/modal";
 @import "../../../../bower_components/lace/src/scss/popover";
@@ -48,10 +47,6 @@
 @import "components/connectionstatus";
 @import "components/tip";
 @import "components/footer";
-
-
-// Initialize grid
-@include grid();
 
 
 // Element styles

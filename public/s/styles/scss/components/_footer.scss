@@ -1,7 +1,8 @@
 @include exports(footer) {
     .footer {
+        @extend %clearfix;
+
         width: 100%;
-        padding: 1em;
         background-color: darken($light-color, 7%);
         border-top: 1px solid rgba(0, 0, 0, .05);
         color: lighten($dark-color, 20%);
@@ -12,50 +13,56 @@
             height: $bar-height;
         }
 
-        &-inner {
+        > ul {
             @extend %clearfix;
 
-            max-width: 1000px;
-            margin: auto;
+            list-style: none;
+            margin: 0;
+
+            > li { float: left; }
         }
 
-        &-playstore {
-            display: inline-block;
-            border: 0;
-            margin: 0.5em 0;
-        }
+        &-section { float: left; }
 
-        &-social {
+        &-nav {
             a {
+                display: inline-block;
+                padding: 1em;
                 border: 0;
-                padding: .25em;
+                text-transform: uppercase;
+                font-weight: 700;
+                color: currentColor;
 
-                &:first-of-type { padding-left: 0; }
+                &:focus, &:hover { background-color: rgba(0, 0, 0, .05); }
 
-                &:last-of-type { padding-right: 0; }
+                &:active { background-color: rgba(0, 0, 0, .075); }
             }
         }
 
-        h5 {
-            font-weight: 700;
+        &-social {
+            img { display: block; }
+
+            a {
+                display: block;
+                padding: .75em;
+                border: 0;
+            }
+        }
+
+        &-playstore {
+            @extend %clearfix;
+
+            border: 0;
             text-transform: uppercase;
-            margin-bottom: .5em;
-        }
-
-        ul { margin: 0; }
-
-        li {
-            list-style: none;
-            line-height: 1.8;
-        }
-
-        a {
+            font-weight: 700;
             color: currentColor;
-            border-bottom-color: lighten($dark-color, 50%);
 
-            &:hover, &:focus { color: $link-color; }
+            > img { padding: .75em; }
 
-            &:active { color: darken($link-color, 15%); }
+            > span {
+                padding: 1em;
+                float: right;
+            }
         }
     }
 }
