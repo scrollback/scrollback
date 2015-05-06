@@ -5,7 +5,7 @@ var request = require('request');
 /*
 	payload : 
 	{
-		title : "Push Notification Title,
+		title : "Push Notification Title",
 		message: "Message of Notification",
 		"foo": "baz"
 	}
@@ -20,35 +20,31 @@ module.exports = function(userRegMapping, payload, core, config) {
 	};
 
 	function removeDevice(userRegMap) {
-		var uuidToRemove, uuids;
-		/*
-			Removes a device from the list of the user's devices.
-		*/
-		if (!userRegMap.hasOwnProperty('registrationId') || !userRegMap.hasOwnProperty('user')) return;
+		var uuidToRemove, devices, uuid;
 		log.i("REMOVE device called with", userRegMap);
-		var regId = userRegMap.registrationId;
-		var userObj = userRegMap.user;
-		if (userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
-			var devices = userObj.params.pushNotifications.devices;
-			
-			uuids = Object.keys(devices);
-			
-			uuids.forEach(function(uuid) {
-				if(devices[uuid].registrationId !== regId) return;
+		if (!(
+			'registrationId ' in userRegMap &&
+			'user' in userRegMap &&
+			'params' in userRegMap.user &&
+			'pushNotifications' in userRegMap.user.params &&
+			'devices' in userRegMap.user.params.pushNotifications
+		)) return;
+		
+		for(uuid in devices) {
+			if(devices[uuid].redId === userRegMap.registrationId) {
 				uuidToRemove = uuid;
-			});
+				break;
+			}
 		}
 		
-		
 		if (uuidToRemove) {
-			delete userObj.params.pushNotifications.devices[uuidToRemove];
-			// emit user-up for userObj
-			log.i("EMITTING user", JSON.stringify(userObj));
+			delete userRegMap.user.params.pushNotifications.devices[uuidToRemove];
+			log.i("EMITTING user", JSON.stringify(userRegMap.user));
 
 			core.emit('user', {
 				type: "user",
-				to: userObj.id,
-				user: userObj,
+				to: userRegMap.user.id,
+				user: userRegMap.user,
 				session: "internal-push-notification"
 			}, function(err, data) {
 				log.i("Emitter user-up ", err, JSON.stringify(data));
