@@ -61,6 +61,25 @@
             }
         }
 
+        &-bell {
+            position: relative;
+
+            &-badge {
+                @extend %transition;
+                @include dropshadow(2);
+
+                position: absolute;
+                top: .75em;
+                right: .25em;
+                background-color: $error-color;
+                border-radius: 50%;
+                padding: .5em;
+                font-size: .5em;
+
+                .mode-chat & { background-color: rgba(0, 0, 0, 0.75); }
+            }
+        }
+
         &-icon {
             $icon-width: $bar-height / 1.5;
 
@@ -102,6 +121,8 @@
             &-search { @include icon(search); }
 
             &-people { @include icon(people); }
+
+            &-alert { @include icon(alert); }
 
             &-maximize { @include icon(maximize); }
 

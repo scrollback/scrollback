@@ -1,4 +1,5 @@
 /* jshint browser: true */
+/* global $ */
 
 "use strict";
 
@@ -34,7 +35,7 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleMinimize: function(e) {
-			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf("user-area") > -1)) {
+			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
 				return;
 			}
 
@@ -49,6 +50,19 @@ module.exports = function(core, config, store) {
 
 		fullScreen: function() {
 			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+		},
+
+		showNotifications: function(e) {
+			var $div = $("<div class='notification-area'>");
+
+			$div.append($("<div class='notification-area-message'>").text("22 new messages in scrollback"));
+			$div.append($("<div class='notification-area-message'>").text("4 new discussions in scrollback"));
+			$div.append($("<div class='notification-area-message'>").text("6 people mentioned you in scrollback"));
+
+			$div.popover({
+				arrow: false,
+				origin: e.currentTarget
+			});
 		},
 
 		showUserMenu: function(e) {
@@ -92,6 +106,9 @@ module.exports = function(core, config, store) {
 						<img className="user-area-avatar" alt={this.state.username} src={this.state.picture} />
 						<div className="user-area-nick">{this.state.username}</div>
 					</div>
+					<a className="appbar-bell appbar-icon appbar-icon-alert" onClick={this.showNotifications}>
+						<span className="appbar-bell-badge">32</span>
+					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
