@@ -1,0 +1,54 @@
+@include exports("notifications") {
+    .notification-center {
+        background-color: darken($light-color, 3%);
+        width: 18em;
+        min-height: 5.57em;
+
+        &:empty:after {
+            @extend %fadein;
+
+            content: "No notifications!";
+            display: block;
+            text-align: center;
+            padding: 2em 1em;
+            color: fade-out($dark-color, .5);
+        }
+
+        &-item {
+            @extend %clearfix;
+            @include dropshadow(1);
+
+            background-color: $light-color;
+            margin: .5em;
+            border-radius: $roundness;
+            max-height: 18em;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            cursor: pointer;
+
+            &.out { animation: remove .3s ease-out; }
+
+            .number { font-weight: 700; }
+
+            .content {
+                float: left;
+                padding: .5em .75em;
+                width: 85%;
+                width: calc(100% - 3em);
+                color: fade-out($dark-color, .2);
+            }
+
+            .close {
+                @include icon(close);
+
+                float: right;
+                padding: .5em .75em;
+                color: fade-out($dark-color, .5);
+
+                &:focus, &:hover { color: $error-color; }
+
+                &:active { color: darken($error-color, 20%); }
+            }
+        }
+    }
+}

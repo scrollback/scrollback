@@ -66,6 +66,7 @@
 
             &-badge {
                 @extend %transition;
+                @extend %appearin;
                 @include dropshadow(2);
 
                 position: absolute;
@@ -75,8 +76,9 @@
                 border-radius: 50%;
                 padding: .5em;
                 font-size: .5em;
+                font-weight: 700;
 
-                .mode-chat & { background-color: rgba(0, 0, 0, 0.75); }
+                .mode-chat & { background-color: rgba(0, 0, 0, 0.6); }
             }
         }
 

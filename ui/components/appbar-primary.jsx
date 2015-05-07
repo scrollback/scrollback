@@ -3,7 +3,8 @@
 
 "use strict";
 
-var showMenu = require("../utils/show-menu.js"),
+var NotificationCenter = require("../utils/notification-center.js"),
+	showMenu = require("../utils/show-menu.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
@@ -53,13 +54,64 @@ module.exports = function(core, config, store) {
 		},
 
 		showNotifications: function(e) {
-			var $div = $("<div class='notification-area'>");
+			var notifications = new NotificationCenter(),
+				$overview;
 
-			$div.append($("<div class='notification-area-message'>").text("22 new messages in scrollback"));
-			$div.append($("<div class='notification-area-message'>").text("4 new discussions in scrollback"));
-			$div.append($("<div class='notification-area-message'>").text("6 people mentioned you in scrollback"));
+			notifications.add("scrollback", {
+				texts: 5,
+				mentions: 2
+			});
 
-			$div.popover({
+			notifications.add("scrollback", { threads: 4 });
+
+			notifications.add("numix", {
+				threads: 3,
+				mentions: 5
+			});
+
+			notifications.add("gallifrey", {
+				texts: 3,
+				mentions: 5
+			});
+
+			notifications.add("noroom", { mentions: 5 });
+
+			$overview = $(notifications.overview);
+
+			$overview.on("click", "[data-room]", function(e) {
+				var $this = $(this),
+					room = $this.attr("data-room");
+
+				if (/close/.test(e.target.className)) {
+					$this.addClass("out");
+
+					setTimeout(function() {
+						var rel;
+
+						$this.remove().removeClass("out");
+
+						rel = {};
+
+						rel[room + "_" + store.get("user")] = {
+							lastVisitedAt: Date.now()
+						};
+
+						core.emit("setstate", { entities: rel });
+					}, 300);
+				} else {
+					$overview.popover("dismiss");
+
+					core.emit("setstate", {
+						nav: {
+							room: room,
+							mode: "room",
+							time: null
+						}
+					});
+				}
+			});
+
+			$overview.popover({
 				arrow: false,
 				origin: e.currentTarget
 			});
