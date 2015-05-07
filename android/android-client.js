@@ -1,7 +1,11 @@
 /* jshint browser: true */
 
+"use strict";
+
 module.exports = function(core) {
-	core.on("boot", function(state, next) {
+	var colordiv;
+
+	core.on("boot", function(state) {
 		if (window.Android) {
 			state.context.env = "android";
 
@@ -9,7 +13,25 @@ module.exports = function(core) {
 				window.Android.onFinishedLoading();
 			}
 		}
-
-		next();
 	}, 200);
+
+	if (window.Android && typeof window.Android.setStatusBarColor === "function") {
+		colordiv = document.createElement("div");
+
+		colordiv.className = "thread-color-dark";
+
+		document.body.appendChild(colordiv);
+
+		core.on("statechange", function(changes) {
+			var color;
+
+			if (changes.nav && (changes.nav.mode || changes.nav.thread || changes.nav.room)) {
+				color = window.getComputedStyle(colordiv)["background-color"];
+
+				if (color) {
+					window.Android.setStatusBarColor(color);
+				}
+			}
+		}, 1);
+	}
 };

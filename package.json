@@ -62,7 +62,6 @@
     "nodemailer": "v0.7.1",
     "oauth": "latest",
     "pg": "latest",
-    "pigment": "0.0.4",
     "react": "latest",
     "redis": "latest",
     "request": "latest",

@@ -101,28 +101,6 @@ module.exports = function(core, config, store) {
 			);
 		},
 
-		componentDidUpdate: function() {
-			var appbar, color, darkcolor;
-
-			if (window.Android && typeof window.Android.setStatusBarColor === "function") {
-				appbar = React.findDOMNode(this.refs.appbar);
-
-				if (appbar) {
-					color = window.getComputedStyle(appbar)["background-color"];
-
-					try {
-						darkcolor = (new Color(color)).darken(0.16).tohex();
-
-						if (darkcolor) {
-							window.Android.setStatusBarColor(darkcolor);
-						}
-					} catch(e) {
-						console.log("Error parsing color: ", color, e);
-					}
-				}
-			}
-		},
-
 		getInitialState: function() {
 			return {
 				title: "",

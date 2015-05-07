@@ -409,3 +409,19 @@ button {
 
     &-logout { @include icon(off); }
 }
+
+.thread-color {
+    background-color: $accent-color;
+
+    @for $i from 1 through length($palette) {
+        .color-#{$i - 1} & { background-color: nth($palette, $i); }
+    }
+
+    &-dark {
+        background-color: darken($accent-color, .16);
+
+        @for $i from 1 through length($palette) {
+            .color-#{$i - 1} & { background-color: darken(nth($palette, $i), .16); }
+        }
+    }
+}
