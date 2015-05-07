@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* jshint esnext: true, browser: true */
 
 "use strict";
 

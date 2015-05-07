@@ -1,5 +1,4 @@
-/* jshint browser: true */
-/* global _gaq */
+/* jshint esnext: true, browser: true */
 
 "use strict";
 
@@ -18,7 +17,7 @@ module.exports = (core, config, store) => {
 
 		props.forEach(prop => {
 			if (prop in changes.nav) {
-				_gaq.push(["_trackEvent", prop, store.get("nav")[prop]]);
+				window._gaq.push(["_trackEvent", prop, store.get("nav")[prop]]);
 			}
 		});
 	}, 500);

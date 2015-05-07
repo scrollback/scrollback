@@ -2,7 +2,6 @@
 	"boss": true,
 	"curly": false,
 	"eqeqeq": true,
-	"esnext": true,
 	"noarg": true,
 	"node": true,
 	"strict": true,
