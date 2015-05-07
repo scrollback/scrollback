@@ -1,10 +1,12 @@
 /* jshint mocha: true */
+/*jshint strict: true*/
 var	crypto = require('crypto'),
 	generate = require("../../lib/generate.js"),
 	r = {},
 	mathUtils = require('../../lib/math-utils.js');
 
 r.getNewTextAction = function() {
+	"use strict";
 	var id = generate.uid();
 	return {
 		id: (id),
@@ -12,13 +14,14 @@ r.getNewTextAction = function() {
 		from: generate.names(6),
 		to: generate.names(10),
 		text: generate.sentence(10),
-		labels: {},
-		threads: [{id: id + (mathUtils.random(0, 9)), title: generate.sentence(15)}],
+		tags: [],
+		thread: "asdfasdf",
 		time: new Date().getTime()
 	};
 };
 
 r.getNewUserAction = function() {
+	"use strict";
 	var email = generate.names(15) + "@" + generate.names(6) +"." + generate.names(2);
 	return {
 		id: generate.uid(),
@@ -40,7 +43,7 @@ r.getNewUserAction = function() {
 };
 
 r.getNewRoomAction = function(){
-
+"use strict";
 	return {
 		id: generate.uid(),
 		type:"room",
@@ -60,15 +63,18 @@ r.getNewRoomAction = function(){
 
 
 function generatePick(id) {
+	"use strict";
 	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=identicon&s=48';
 }
 
 
 r.copy = function (action) {
+	"use strict";
 	return JSON.parse(JSON.stringify(action));
 };
 
 r.getNewRelationAction = function(type, userRole) {
+	"use strict";
 	var user = r.getNewUserAction().user;
 	var room = r.getNewRoomAction().room;
 	var victim;
@@ -93,12 +99,13 @@ r.getNewRelationAction = function(type, userRole) {
 };
 
 r.emitActions = function(core, actions, callback) {
+	"use strict";
 	var ct = 0;
 	var error;
 	var results = [];
 	for (var j = 0; j < actions.length; j++) results.push(null);
 	function done() {
-		if (++ct == actions.length) callback(error, results);
+		if (++ct === actions.length) callback(error, results);
 	}
 
 	function run(i) {
@@ -119,6 +126,7 @@ r.emitActions = function(core, actions, callback) {
 };
 
 r.clearTables = function(client, tables, callback) {
+	"use strict";
 	var ct = 0;
 	function done() {
 		if (++ct >= tables.length) callback();
