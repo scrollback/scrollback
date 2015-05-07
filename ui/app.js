@@ -36,7 +36,6 @@
 	require("../history/history-client.js")(core, config, store);
 
 	// Apps
-	require("../android/android-client.js")(core, config, store);
 	require("../anti-abuse/anti-abuse-client.js")(core, config, store);
 	require("../authorizer/authorizer-client.js")(core, config, store);
 	require("../email/email-client.js")(core, config, store);
