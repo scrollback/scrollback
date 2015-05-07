@@ -78,11 +78,11 @@
 	require("./components/client.jsx")(...args);
 
 	// Miscellaneous
-	require("./misc/fontloader.js")(...args);
-	require("./misc/appcache.js")(...args);
-	require("./misc/google-analytics.js")(...args);
-	require("./misc/load-indicator.js")(...args);
-	require("./misc/workarounds.js")(...args);
+	require("./misc/fontloader.es6")(...args);
+	require("./misc/appcache.es6")(...args);
+	require("./misc/google-analytics.es6")(...args);
+	require("./misc/load-indicator.es6")(...args);
+	require("./misc/workarounds.es6")(...args);
 
 	// Initialize
 	require("../init/init.js")(...args);

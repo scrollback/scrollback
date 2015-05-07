@@ -1,4 +1,5 @@
 {
+    "esnext": true,
     "esprima": "esprima-fb",
     "fileExtensions": [ ".js", ".jsx" ],
 

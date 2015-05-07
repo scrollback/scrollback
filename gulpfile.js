@@ -40,7 +40,7 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"**/*.js", "!**/*.min.js",
+			"**/*.js", "**/*.es6", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
