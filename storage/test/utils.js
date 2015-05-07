@@ -15,7 +15,7 @@ r.getNewTextAction = function() {
 		to: generate.names(10),
 		text: generate.sentence(10),
 		tags: [],
-		thread: "asdfasdf",
+		thread: generate.sentence(8),
 		time: new Date().getTime()
 	};
 };

@@ -2,6 +2,7 @@
 /*jshint strict: true*/
 var assert = require('assert'),
 	core =new (require('ebus'))(),
+	generate = require("../../lib/generate.js"),
 	postgres = require('./../postgres.js'),
 	log = require("../../lib/logger.js"),
 	storage = require('../storage.js'),
@@ -57,11 +58,10 @@ describe("Storage Test(actions).", function() {
 		});
 	});
 
-	/*it("Insert new text message. (Labels and tags)", function(done) {
+	it("Insert new text message. (Labels and tags)", function(done) {
 		var msg = utils.getNewTextAction();
-		msg.labels.abusive = 1;
-		msg.labels.hidden = 1;
-		msg.tags = ['abc'];
+		msg.tags.push("abusive");
+		msg.tags.push("hidden");
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
@@ -84,8 +84,7 @@ describe("Storage Test(actions).", function() {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var m2 = utils.getNewTextAction();
-			m2.threads = m1.threads;
-			delete m2.threads[0].title; // don't update title.
+			m2.thread = m1.thread;
 			core.emit("text", m2, function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
@@ -128,7 +127,7 @@ describe("Storage Test(actions).", function() {
 			});
 		});
 	});
-
+//
 	it("Edit (Edit title)-2", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
@@ -157,8 +156,8 @@ describe("Storage Test(actions).", function() {
 
 	it("Edit (labels update)", function(done) {
 		var m1 = utils.getNewTextAction();
-		m1.labels.abusive = 1;
-		m1.labels.hidden = 1;
+		m1.tags.push("abusive");
+		m1.tags.push("hidden");
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
@@ -174,7 +173,7 @@ describe("Storage Test(actions).", function() {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							result.rows[0].tags.sort();
-							assert.deepEqual(result.rows[0].tags, ['abusive', 'color3', "hidden"], "Updating text failed");
+							assert.deepEqual(result.rows[0].tags, ['abusive', "hidden"], "Updating text failed");
 						});
 						cb();
 						done();
@@ -186,13 +185,13 @@ describe("Storage Test(actions).", function() {
 
 	it("Edit (labels remove/update test.)", function(done) {
 		var m1 = utils.getNewTextAction();
-		m1.labels.abusive = 1;
-		m1.labels.hidden = 1;
-		m1.labels.color3 = 1;
+		m1.tags.push("abusive");
+		m1.tags.push("hidden");
+		//m1.labels.color3 = 1;
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
-				labels: {hidden: 0, abc: 1}, // remove hidden, add abc
+				tags: ["abc", "abusive"], // remove hidden, add abc
 				time: new Date().getTime(),
 				old: m1
 			};
@@ -205,7 +204,7 @@ describe("Storage Test(actions).", function() {
 
 						results.forEach(function(result) {
 							result.rows[0].tags.sort();
-							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive', 'color3'], "Updating text failed");
+							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive'], "Updating text failed");
 						});
 						cb();
 						done();
@@ -406,8 +405,7 @@ describe("Storage Test(actions).", function() {
 				});
 			});
 		});
-	});*/
-
+	});
 
 });
 
