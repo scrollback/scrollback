@@ -1,14 +1,4 @@
 @include exports("notifications") {
-    @include keyframes(remove) {
-        50% { opacity: 0; }
-
-        100% {
-            opacity: 0;
-            margin: 0;
-            max-height: 0;
-        }
-    }
-
     .notification-center {
         background-color: darken($light-color, 3%);
         width: 18em;
@@ -36,7 +26,7 @@
             overflow: hidden;
             cursor: pointer;
 
-            &.out { animation: remove .3s ease-out; }
+            &.out { @extend %resizeout; }
 
             .number { font-weight: 700; }
 
