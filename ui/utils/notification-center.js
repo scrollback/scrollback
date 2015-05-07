@@ -15,15 +15,15 @@ function NotificationCenter() {
 				opts = this._items[room];
 
 				if (typeof opts.texts === "number") {
-					items.push("<span class='number texts'>" + opts.texts + "</span> new messages");
+					items.push((opts.texts < 0 ? "" : "<span class='number texts'>" + opts.texts + "</span> ") + "new messages");
 				}
 
 				if (typeof opts.threads === "number") {
-					items.push("<span class='number threads'>" + opts.threads + "</span> new discussions");
+					items.push((opts.threads < 0 ? "" : "<span class='number threads'>" + opts.threads + "</span> ") + "new discussions");
 				}
 
 				if (typeof opts.mentions === "number") {
-					items.push("<span class='number mentions'>" + opts.mentions + "</span> mentions");
+					items.push((opts.mentions < 0 ? "" : "<span class='number mentions'>" + opts.mentions + "</span> ") + "new mentions");
 				}
 
 				text = "";
@@ -42,7 +42,7 @@ function NotificationCenter() {
 
 				text += " in <span class='room'>" + room + "</span>";
 
-				content.push("<div class='notification-center-item' data-room='" + room + "''><span class='content'>" + text + "</span><span class='close'></span></div>");
+				content.push("<div class='notification-center-item' data-room='" + room + "''><span class='content'>" + text.charAt(0).toUpperCase() + text.slice(1) + "</span><span class='close'></span></div>");
 			}
 
 			return ("<div class='notification-center'>" + content.join("") + "</div>");

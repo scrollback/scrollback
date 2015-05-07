@@ -59,13 +59,13 @@ module.exports = function(core, config, store) {
 
 			notifications.add("scrollback", {
 				texts: 5,
-				mentions: 2
+				mentions: -1
 			});
 
 			notifications.add("scrollback", { threads: 4 });
 
 			notifications.add("numix", {
-				threads: 3,
+				threads: -1,
 				mentions: 5
 			});
 
