@@ -52,6 +52,8 @@ module.exports = function(core, config, store) {
 
 				if (color) {
 					window.Android.setStatusBarColor(color);
+				} else {
+					window.Android.setStatusBarColor("#000000");
 				}
 			}
 		}, 1);
