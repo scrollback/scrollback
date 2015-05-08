@@ -16,9 +16,17 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes) {
 			if (changes.notifications) {
-				let count = store.get("notifications").length;
+				let all = store.get("notifications");
 
-				this.setState({ count });
+				if (this.props.type) {
+					all = all.filter(n => n.subtype === this.props.type);
+				}
+
+				if (typeof this.props.filter === "function") {
+					all = all.filter(this.props.filter);
+				}
+
+				this.setState({ count: all.length });
 			}
 		},
 

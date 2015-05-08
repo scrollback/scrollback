@@ -135,34 +135,6 @@ Store.prototype.getRelation = function(roomId, userId) {
 	return this.get("entities", roomId + "_" + userId);
 };
 
-Store.prototype.getUnreadTexts = function(roomId, threadId) {
-	var rel = this.getRelation(roomId),
-		lastVisitedAt = rel && rel.lastVisitedAt ? rel.lastVisitedAt : this.get("app", "firstVisitedAt"),
-		texts = this.getTexts(roomId, threadId, lastVisitedAt, 100) || [];
-
-	return texts.filter(function(text) {
-		return (typeof text === "object");
-	});
-};
-
-Store.prototype.getUnreadThreads = function(roomId) {
-	var rel = this.getRelation(roomId),
-		lastVisitedAt = rel && rel.lastVisitedAt ? rel.lastVisitedAt : this.get("app", "firstVisitedAt"),
-		threads = this.getThreads(roomId, lastVisitedAt, 100) || [];
-
-	return threads.filter(function(thread) {
-		return (typeof thread === "object");
-	});
-};
-
-Store.prototype.getUnreadMentions = function(roomId, threadId) {
-	var user = this.get("user");
-
-	return this.getUnreadTexts(roomId, threadId).filter(function(text) {
-		return (Array.isArray(text.mentions) && text.mentions.indexOf(user) > -1);
-	});
-};
-
 Store.prototype.getRelatedRooms = function(id, filter) {
 	var user, relations,
 		rooms = [],
