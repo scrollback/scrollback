@@ -12,11 +12,9 @@ module.exports = function(core) {
 		}
 	});
 
-	core.on("statechange", function(changes, next) {
+	core.on("statechange", function(changes) {
 		if (menuShown && changes.nav && ("mode" in changes.nav || "view" in changes.nav)) {
 			$.popover("dismiss");
 		}
-
-		next();
 	}, 100);
 };

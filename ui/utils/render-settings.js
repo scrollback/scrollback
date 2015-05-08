@@ -107,21 +107,19 @@ module.exports = function(core, config, store) {
 		return $page;
 	}
 
-	core.on("statechange", function(changes, next) {
+	core.on("statechange", function(changes) {
 		if (changes.nav && changes.nav.settingsItem && /^(conf|pref)$/.test(store.get("nav", "dialog"))) {
 			setPage(store.get("nav", "settingsItem"));
 		}
-
-		next();
 	}, 500);
 
-	core.on("room-dn", function(action, next) {
+	core.on("room-dn", function(action) {
 		var room = action.room,
 			error = false,
 			errorItem;
 
 		if (!room.params) {
-			return next();
+			return;
 		}
 
 		for (var i in room.params) {
@@ -147,7 +145,6 @@ module.exports = function(core, config, store) {
 				});
 			});
 		}
-		next();
 	}, 500);
 
 	return renderSettings;

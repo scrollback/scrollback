@@ -32,7 +32,7 @@ module.exports = function(core, config, store) {
 		});
 	}
 
-	core.on("createthread-dialog", function(dialog, next) {
+	core.on("createthread-dialog", function(dialog) {
 		dialog.title = "Start a new discussion";
 		dialog.content = [
 			"<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>",
@@ -67,7 +67,5 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
-
-		next();
 	}, 100);
 };

@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 		});
 	}
 
-	core.on("statechange", function(changes, next) {
+	core.on("statechange", function(changes) {
 		var nav = store.get("nav"),
 			dialogStateChanged = false;
 
@@ -78,8 +78,6 @@ module.exports = function(core, config, store) {
 				userChangeCallback();
 				userChangeCallback = null;
 		}
-
-		next();
 	}, 1);
 
 	core.on("createroom-dialog", function(dialog, next) {
@@ -225,11 +223,9 @@ module.exports = function(core, config, store) {
 		}
 	}, 100);
 
-	core.on("disallowed-dialog", function(dialog, next) {
+	core.on("disallowed-dialog", function(dialog) {
 		dialog.title = "Domain mismatch";
 		dialog.dismiss = false;
-
-		next();
 	}, 1000);
 
 	// Keep track of if modal is shown

@@ -121,7 +121,7 @@ module.exports = function(core, config, store) {
 	}
 
 	if (!listenersAdded) {
-		core.on("user-dn", function(action, next) {
+		core.on("user-dn", function(action) {
 			if (userCallback) {
 				for (var id in userCallback) {
 					if (userCallback[id] && userCallback[id].user === action.user.id) {
@@ -131,11 +131,9 @@ module.exports = function(core, config, store) {
 			}
 
 			userCallback = null;
-
-			next();
 		}, 100);
 
-		core.on("room-dn", function(action, next) {
+		core.on("room-dn", function(action) {
 			if (roomCallback) {
 				for (var id in roomCallback) {
 					if (roomCallback[id] && roomCallback[id].room === action.room.id) {
@@ -145,11 +143,9 @@ module.exports = function(core, config, store) {
 			}
 
 			roomCallback = null;
-
-			next();
 		}, 100);
 
-		core.on("error-dn", function(err, next) {
+		core.on("error-dn", function(err) {
 			if (userCallback && err.id in userCallback) {
 				userCallback[err.id].callback("error", userError);
 
@@ -161,8 +157,6 @@ module.exports = function(core, config, store) {
 
 				roomCallback = null;
 			}
-
-			next();
 		}, 100);
 
 		listenersAdded = true;
