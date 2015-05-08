@@ -16,7 +16,7 @@ var message = {
 	type: 'text',
 	time: new Date().getTime(),
 	tags: [],
-	thread: "asdfasdf",
+	thread: "",
 	room: {
 		id: "scrollback",
 		params: {
@@ -29,7 +29,7 @@ var message = {
 function copyMsg() { "use strict"; return JSON.parse(JSON.stringify(message)); }
 function isEmpty(str) {
 	"use strict";
-    return (!str || 0 === str.length);
+    return (!str);
 }
 describe('threader', function() {
 	"use strict";
@@ -43,12 +43,12 @@ describe('threader', function() {
 	it('should have a thread of type "string"', function(done) {
 		var msg = copyMsg();
 		core.emit("text", msg, function(/*err, msg*/) {
-			console.log("message= ", msg);
-			var m = (msg.thread  && typeof msg.thread === 'string')? true : false;
+			console.log("message text= ", msg);
+			var m = (msg.thread  && typeof msg.thread === 'string' && msg.thread.length > 1)? true : false;
+			console.log(m);
 			assert.equal(m, true, "Unable to get a thread for message OR typeof thread is not a string.");
 			done();
 		});
-		//done();
 	});
 
 	/*it('should get a thread with lables', function(done) {
@@ -87,6 +87,7 @@ describe('threader', function() {
 		msg.room.params.threader.enabled = false;
 		core.emit("text", msg, function(/*err, data*/) {
 			console.log("msg=", msg);
+			console.log(isEmpty(msg.thread));
 			assert.equal(isEmpty(msg.thread), true, "Got a thread on disable");
 			done();
 		});
