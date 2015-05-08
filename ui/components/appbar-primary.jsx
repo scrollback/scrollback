@@ -1,4 +1,4 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env es6, browser */
 /* global $ */
 
 "use strict";
@@ -65,10 +65,10 @@ module.exports = function(core, config, store) {
 
 			$overview = $(center.html);
 
-			$overview.on("click", ".notification-center-item", function(e) {
+			$overview.on("click", ".notification-center-item", function(event) {
 				let $this = $(this);
 
-				if (/close/.test(e.target.className)) {
+				if (/close/.test(event.target.className)) {
 					$this.addClass("out");
 
 					e.preventDefault();

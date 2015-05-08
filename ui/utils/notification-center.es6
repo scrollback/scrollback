@@ -1,4 +1,4 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env es6, browser */
 
 "use strict";
 
@@ -24,7 +24,7 @@ class NotificationCenter {
 			break;
 		default:
 			text = `New notification in <strong>${action.to}</strong>`;
-		};
+		}
 
 		switch (type) {
 		case "mention":
