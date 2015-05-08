@@ -9,9 +9,7 @@ var showMenu = require("../utils/show-menu.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		AppbarPrimary, Color;
-
-	window.Color = Color = require("pigment/basic");
+		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
