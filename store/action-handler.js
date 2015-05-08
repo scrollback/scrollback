@@ -24,7 +24,33 @@ module.exports = function(c, conf, s) {
 	core.on("back-dn", onAwayBack, 950);
 	core.on("room-dn", onRoomUser, 950);
 	core.on("user-dn", onRoomUser, 950);
+	core.on("error-dn", function(error, next) {
+		var newState = {texts:{}};
+		var text = store.get("indexes", "textsById", error.id);
+		if(text) {
+			text = objUtils.clone(text);
+			(text.tags = text.tags?text.tags:[]).push("failed");
+			
+			newState.texts[text.to] = [{ // put the text in all messages
+				start: text.time,
+				end: text.time,
+				items: [text]
+			}];
 
+			if (text.thread) {
+				newState.texts[keyFromText(text)] = [{ // put the text in the appropriate thread
+					start: text.time,
+					end: (text.thread === text.id) ? null : text.time,
+					items: [text]
+				}];
+			}
+			
+			
+			core.emit("setstate", newState);
+		}
+		
+		next();
+	}, 1000);
 	[
 		"text-up", "edit-up", "back-up", "away-up", "init-up",
 		"join-up", "part-up", "admit-up", "expel-up", "room-up"
