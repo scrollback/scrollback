@@ -17,7 +17,7 @@ module.exports = function(core, config, store) {
 		}
 	}, 200);
 
-	core.on("setstate", function(changes, next) {
+	core.on("setstate", function(changes) {
 		var future = store.with(changes),
 			user = future.get("user"),
 			dialog = future.get("nav", "dialog"),
@@ -35,8 +35,6 @@ module.exports = function(core, config, store) {
 				changes.nav.dialogState = null;
 			}
 		}
-
-		next();
 	}, 900);
 
 	if (window.Android && typeof window.Android.setStatusBarColor === "function") {
