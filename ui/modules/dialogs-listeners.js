@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
 
 "use strict";
@@ -23,8 +23,8 @@ module.exports = function(core, config, store) {
 			}
 
 			if (res === "error") {
-				$entry.validInput(function(value, callback) {
-					callback(message);
+				$entry.validInput(function(value, cb) {
+					cb(message);
 				});
 			}
 
@@ -118,14 +118,14 @@ module.exports = function(core, config, store) {
 							} else if (username === roomname) {
 								callback("User and room names cannot be the same");
 							} else {
-								$roomEntry.validInput(function(roomname, callback) {
-									validateEntity("Room", roomname, function(res, message) {
+								$roomEntry.validInput(function(name, cb) {
+									validateEntity("Room", name, function(res, message) {
 										if (res === "error") {
-											callback(message);
+											cb(message);
 										}
 
 										if (res === "ok") {
-											callback();
+											cb();
 
 											createAndValidate("user", $userEntry, self, function() {
 												createAndValidate("room", $roomEntry, self);
@@ -209,9 +209,9 @@ module.exports = function(core, config, store) {
 		dialog.dismiss = false;
 
 		userChangeCallback = function() {
-			var user = store.get("user");
+			var userObj = store.getUser();
 
-			if (store.get("nav", "dialog") === "signin" && user && !user.isRestricted) {
+			if (store.get("nav", "dialog") === "signin" && userObj && !userObj.isRestricted) {
 				core.emit("setstate", {
 					nav: { dialog: null }
 				});

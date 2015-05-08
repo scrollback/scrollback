@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env es6, browser */
 
 "use strict";
 
@@ -59,12 +59,16 @@ module.exports = function(core, config, store) {
 				});
 			});
 
-			for (var role in secs) {
-				if (secs[role].items.length) {
+			function sortByTime(a, b) {
+				return (a.createTime || 0) - (b.createTime || 0);
+			}
+
+			for (var r in secs) {
+				if (secs[r].items.length) {
 					sections.push({
-						key: "home-" + secs[role].key,
-						header: secs[role].header,
-						items: secs[role].items.sort(function(a, b) { return (a.createTime || 0) - (b.createTime || 0); })
+						key: "home-" + secs[r].key,
+						header: secs[r].header,
+						items: secs[r].items.sort(sortByTime)
 					});
 				}
 			}

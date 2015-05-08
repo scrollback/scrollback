@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -16,7 +16,7 @@ module.exports = function(core, config, store) {
 		}
 
 		if (type === "room") {
-			validateEntity("Room", name, function(res, name) {
+			validateEntity("Room", name, function(res) {
 				var room, roomObj, newRoom, identities, context,
 					nav = store.get("nav");
 
@@ -74,7 +74,7 @@ module.exports = function(core, config, store) {
 				}
 			});
 		} else if (type === "user") {
-			validateEntity("User", name, function(res, name) {
+			validateEntity("User", name, function(res) {
 				var userObj;
 
 				if (res === "wait") {

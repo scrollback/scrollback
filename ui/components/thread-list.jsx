@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env es6, browser */
 
 "use strict";
 
@@ -117,15 +117,15 @@ module.exports = function(core, config, store) {
 			allItems = beforeItems.concat(afterItems);
 
 			allItems.reverse().forEach(function(thread) {
-				var key = "thread-" + thread.startTime;
+				var threadKey = "thread-" + thread.startTime;
 
 				if (typeof thread === "object") {
 					if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
-						positionKey = key;
+						positionKey = threadKey;
 					}
 
 					items.push({
-						key: key,
+						key: threadKey,
 						elem: <ThreadCard roomId={nav.room} thread={thread} />
 					});
 				}
