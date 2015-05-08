@@ -18,24 +18,27 @@
             @extend %clearfix;
             @include dropshadow(1);
 
+            display: block;
             background-color: $light-color;
+            color: $dark-color;
             margin: .5em;
             border-radius: $roundness;
             max-height: 18em;
             text-overflow: ellipsis;
             overflow: hidden;
             cursor: pointer;
+            border: 0;
+
+            &:focus, &:hover, &:active { color: currentColor; }
 
             &.out { @extend %resizeout; }
-
-            .number { font-weight: 700; }
 
             .content {
                 float: left;
                 padding: .5em .75em;
                 width: 85%;
                 width: calc(100% - 3em);
-                color: fade-out($dark-color, .2);
+                opacity: .8;
             }
 
             .close {

@@ -1,9 +1,9 @@
-/* jshint browser: true */
+/* jshint esnext: true, browser: true */
 /* global $ */
 
 "use strict";
 
-var NotificationCenter = require("../utils/notification-center.js"),
+var NotificationCenter = require("../utils/notification-center.es6"),
 	showMenu = require("../utils/show-menu.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),
@@ -55,60 +55,29 @@ module.exports = function(core, config, store) {
 		},
 
 		showNotifications: function(e) {
-			var notifications = new NotificationCenter(),
+			var center = new NotificationCenter(),
+				notifications = store.get("notifications"),
 				$overview;
 
-			notifications.add("scrollback", {
-				texts: 5,
-				mentions: -1
-			});
+			for (let notif of notifications) {
+				center.add(notif);
+			}
 
-			notifications.add("scrollback", { threads: 4 });
+			$overview = $(center.html);
 
-			notifications.add("numix", {
-				threads: -1,
-				mentions: 5
-			});
-
-			notifications.add("gallifrey", {
-				texts: 3,
-				mentions: 5
-			});
-
-			notifications.add("noroom", { mentions: 5 });
-
-			$overview = $(notifications.overview);
-
-			$overview.on("click", "[data-room]", function(e) {
-				var $this = $(this),
-					room = $this.attr("data-room");
+			$overview.on("click", ".notification-center-item", function(e) {
+				let $this = $(this);
 
 				if (/close/.test(e.target.className)) {
 					$this.addClass("out");
 
+					e.preventDefault();
+
 					setTimeout(function() {
-						var rel;
-
 						$this.remove().removeClass("out");
-
-						rel = {};
-
-						rel[room + "_" + store.get("user")] = {
-							lastVisitedAt: Date.now()
-						};
-
-						core.emit("setstate", { entities: rel });
 					}, 300);
 				} else {
 					$overview.popover("dismiss");
-
-					core.emit("setstate", {
-						nav: {
-							room: room,
-							mode: "room",
-							time: null
-						}
-					});
 				}
 			});
 
