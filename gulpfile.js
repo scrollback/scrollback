@@ -6,6 +6,7 @@ var gulp = require("gulp"),
 	bower = require("bower"),
 	browserify = require("browserify"),
 	reactify = require("reactify"),
+	babelify = require("babelify").configure({ extensions: [ ".es6", ".jsx" ] }),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
 	es = require("event-stream"),
@@ -39,7 +40,7 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"**/*.js", "!**/*.min.js",
+			"**/*.js", "**/*.es6", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
@@ -159,20 +160,26 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", function() {
-	return bundle([ "ui/app.js" ], {
+	return bundle([ "ui/app.es6" ], {
 		debug: true,
-		transform: [ reactify ]
+		transform: [ babelify, reactify ]
 	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
-	.pipe(rename({ suffix: ".bundle.min" }))
+	.pipe(rename({
+		suffix: ".bundle.min",
+		extname: ".js"
+    }))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.scripts));
 });
 
 // Generate embed widget script
 gulp.task("embed-legacy", function() {
-	return bundle("embed/embed-parent.js", { debug: true })
+	return bundle("embed/embed-parent.js", {
+		debug: true,
+		transform: [ babelify ]
+	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("client.min.js"))
@@ -181,7 +188,10 @@ gulp.task("embed-legacy", function() {
 });
 
 gulp.task("embed-apis", function() {
-	return bundle("widget/index.js", { debug: debug })
+	return bundle("widget/index.js", {
+		debug: true,
+		transform: [ babelify ]
+	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
 	.pipe(rename("sb.js"))

@@ -1,5 +1,6 @@
 /* jshint node: true */
 /* global it, before, describe */
+/*jshint strict: true*/
 var assert = require("assert");
 var core = new (require("ebus"))();
 var threader = require("./threader.js");
@@ -14,8 +15,8 @@ var message = {
 	to: "scrollback",
 	type: 'text',
 	time: new Date().getTime(),
-	labels: {},
-	threads: [],
+	tags: [],
+	thread: "asdfasdf",
 	room: {
 		id: "scrollback",
 		params: {
@@ -25,8 +26,13 @@ var message = {
 		}
 	}
 };
-function copyMsg() { return JSON.parse(JSON.stringify(message)); }
+function copyMsg() { "use strict"; return JSON.parse(JSON.stringify(message)); }
+function isEmpty(str) {
+	"use strict";
+    return (!str || 0 === str.length);
+}
 describe('threader', function() {
+	"use strict";
 	before( function(done) {
 		this.timeout(10000);
 		threader(core, config.threader);
@@ -34,15 +40,15 @@ describe('threader', function() {
 			done();	
 		}, 9000);
 	});
-	it('should get a thread with title', function(done) {
+	it('should have a thread of type "string"', function(done) {
 		var msg = copyMsg();
 		core.emit("text", msg, function(/*err, msg*/) {
 			console.log("message= ", msg);
-			var m = (msg.threads  && msg.threads instanceof Array && msg.threads.length) > 0 ? true : false;
-            m = m && (msg.threads[0].id && msg.threads[0].score ? true : false);
-			assert.equal(m, true, "Unable to get a thread for message OR typeof thread is not an array.");
+			var m = (msg.thread  && typeof msg.thread === 'string')? true : false;
+			assert.equal(m, true, "Unable to get a thread for message OR typeof thread is not a string.");
 			done();
 		});
+		//done();
 	});
 
 	/*it('should get a thread with lables', function(done) {
@@ -55,51 +61,6 @@ describe('threader', function() {
 		});
 	});*/
 
-    it('should Update thread ID (threader enabled)', function (done) {
-		var msg = copyMsg();
-		msg.threads = [{
-			id: "new",
-			score: 1
-		}];
-		core.emit("text", msg, function (/*err, msg*/) {
-			console.log("message= ", msg);
-			var m = (msg.threads && msg.threads instanceof Array && msg.threads.length) > 0 ? true : false;
-			m = m && (msg.threads[0].id && msg.threads[0].id !== 'new' && msg.threads[0].score ? true : false);
-			assert.equal(m, true, "Not updating thread ID OR typeof thread is not an array.");
-			done();
-		});
-	});
-	
-	it('should Update thread ID (threader disbled)', function (done) {
-		var msg = copyMsg();
-		msg.room.params.threader.enabled = false;
-		msg.threads = [{
-			id: "new",
-			score: 1
-		}];
-		core.emit("text", msg, function (/*err, msg*/) {
-			console.log("message= ", msg);
-			var m = (msg.threads && msg.threads instanceof Array && msg.threads.length) > 0 ? true : false;
-			m = m && (msg.threads[0].id && msg.threads[0].id !== 'new' && msg.threads[0].score ? true : false);
-			assert.equal(m, true, "Not updating thread ID OR typeof thread is not an array.");
-			done();
-		});
-	});
-	
-	it('should add startOfThread label', function (done) {
-		var msg = copyMsg();
-		msg.room.params.threader.enabled = false;
-		msg.threads = [{
-			id: "new",
-			score: 1
-		}];
-		core.emit("text", msg, function (/*err, msg*/) {
-			console.log("message= ", msg);
-			assert.equal(msg.labels.startOfThread, 1, "labels startOfThread is not added");
-			done();
-		});
-	});
-	
 	it('should not take more then 1 sec', function(done) {
 		this.timeout(1100);
 		var msg = copyMsg();
@@ -115,7 +76,8 @@ describe('threader', function() {
 		delete msg.room.params.threader;
 		core.emit("text", msg, function(/*err, data*/) {
 			console.log("msg=", msg);
-			assert.equal(msg.threads.length > 0, true, "No thread added to array");
+			var m = (msg.thread)? true : false;
+			assert.equal(m, true, "No thread added to array");
 			done();
 		});
 	});
@@ -125,7 +87,7 @@ describe('threader', function() {
 		msg.room.params.threader.enabled = false;
 		core.emit("text", msg, function(/*err, data*/) {
 			console.log("msg=", msg);
-			assert.equal(msg.threads.length, 0, "Length of threads array is more then 0");
+			assert.equal(isEmpty(msg.thread), true, "Got a thread on disable");
 			done();
 		});
 	});
@@ -150,6 +112,5 @@ describe('threader', function() {
 			done();
 		});
 	});
-
 
 });
