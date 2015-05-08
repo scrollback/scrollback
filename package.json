@@ -75,6 +75,7 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
+    "babelify": "latest",
     "blanket": "latest",
     "bower": "latest",
     "browserify": "latest",

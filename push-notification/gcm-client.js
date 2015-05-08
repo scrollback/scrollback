@@ -1,6 +1,6 @@
 /* jshint browser: true */
 
-var gcmTimeValidity = 7 * 24 * 60 * 60 * 1000,
+var gcmTimeValidity = 12 * 60 * 60 * 1000,
 	updateDevice = false,
 	objUtils = require("../lib/obj-utils.js");
 
@@ -39,7 +39,7 @@ module.exports = function(core, config, store) {
 		userObj = objUtils.clone(userObj);
 
 		if (!userObj.params) userObj.params = {};
-		if (!userObj.params.pushNotifications) userObj.params.pushNotifications = {};
+		if (!userObj.params.pushNotifications || userObj.params.pushNotifications instanceof Array) userObj.params.pushNotifications = {};
 		if (!userObj.params.pushNotifications.devices || typeof userObj.params.pushNotifications.devices.length === "number") {
 			userObj.params.pushNotifications.devices = {};
 		}
