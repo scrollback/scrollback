@@ -62,7 +62,7 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var data;
 
 			if (changes.app && "cta" in changes.app) {
@@ -88,8 +88,6 @@ module.exports = function(core, config, store) {
 
 				this.setState(data[store.get("app", "cta")] || this.getInitialState());
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

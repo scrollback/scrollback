@@ -189,7 +189,7 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var room = store.get("nav", "room");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
@@ -197,8 +197,6 @@ module.exports = function(core, config, store) {
 			    Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
 				this.setState({ show: (store.get("nav", "mode") === "room") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

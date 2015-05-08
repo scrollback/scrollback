@@ -1,5 +1,3 @@
-/* eslint-env es6, browser */
-
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -95,13 +93,11 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			if ((changes.nav && changes.nav.mode) ||
 			    (changes.indexes && changes.indexes.userRooms)) {
 				this.setState({ show: (store.get("nav", "mode") === "home") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

@@ -129,7 +129,7 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var thread = store.get("nav", "thread"),
 				room = store.get("nav", "room"),
 				key = thread ? room + "_" + thread : room;
@@ -139,8 +139,6 @@ module.exports = function(core, config, store) {
 
 				this.setState({ show: (store.get("nav", "mode") === "chat") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

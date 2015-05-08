@@ -126,11 +126,11 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var connection, placeholder, disabled;
 
 			if (!this.isMounted()) {
-				return next();
+				return;
 			}
 
 			if ((changes.nav && changes.nav.mode) ||
@@ -153,8 +153,6 @@ module.exports = function(core, config, store) {
 					disabled: disabled
 				});
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

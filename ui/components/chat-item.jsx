@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var format = require("../../lib/format.js"),

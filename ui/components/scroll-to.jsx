@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -17,11 +15,11 @@ module.exports = function(core, config, store) {
 			return <div {...this.props} className={className}>{"Scroll to" + this.props.type}</div>;
 		},
 
-		getInitialState: function () {
+		getInitialState: function() {
 		    return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			if (changes.nav) {
 				if (this.props.type === "top" && "threadRange" in changes.nav)  {
 					this.setState({ show: store.get("nav", "threadRange", "time") });
@@ -31,8 +29,6 @@ module.exports = function(core, config, store) {
 					this.setState(this.getInitialState());
 				}
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {
