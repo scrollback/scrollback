@@ -3,7 +3,8 @@
 module.exports = {
 	findIndex: findIndex,
 	merge: mergeRange,
-	getItems: getItems
+	getItems: getItems,
+	getAllItems: getAllItems
 };
 
 
@@ -34,8 +35,6 @@ function findIndex(items, propName, value, start, end) {
 		return pos;
 	}
 }
-
-
 
 
 function getItems(ranges, req, propName) {
@@ -84,49 +83,71 @@ function isInRange(range, value) {
 	return (range.start === null || range.start <= value) && (range.end === null || range.end >= value);
 }
 
-function mergeRange(ranges, range, propName) {
-	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, mergedRange = {};
 
-	if (range.start === null) topRangeIndex = -1;
+function findTopBound(ranges, propName, value) {
+	var topRangeIndex, topItemIndex;
+	
+	if (value === null) topRangeIndex = -1;
 	else {
 		for (
 			topRangeIndex = 0;
 			topRangeIndex < ranges.length && (
 				ranges[topRangeIndex].end !== null &&
-				ranges[topRangeIndex].end < range.start);
+				ranges[topRangeIndex].end < value);
 			topRangeIndex++
 		);
 	}
-	if (range.end === null) bottomRangeIndex = ranges.length;
+	
+	if (ranges[topRangeIndex] && isInRange(ranges[topRangeIndex], value)) {
+		topItemIndex = findIndex(ranges[topRangeIndex].items, propName, value);
+		while(
+			ranges[topRangeIndex].items[topItemIndex-1] &&
+			ranges[topRangeIndex].items[topItemIndex-1][propName] === value
+		) topItemIndex--;
+	} else {
+		topItemIndex = -1;
+	}
+	
+	return [topRangeIndex, topItemIndex];
+}
+
+function findBottomBound(ranges, propName, value) {
+	var bottomRangeIndex, bottomItemIndex;
+	
+	if (value === null) bottomRangeIndex = ranges.length;
 	else {
 		for (
 			bottomRangeIndex = ranges.length-1;
 			bottomRangeIndex >= 0 && (
 				ranges[bottomRangeIndex].start !== null &&
-				ranges[bottomRangeIndex].start > range.end);
+				ranges[bottomRangeIndex].start > value);
 			bottomRangeIndex--
 		);
 	}
-
-	if (ranges[topRangeIndex] && isInRange(ranges[topRangeIndex], range.start)) {
-		topItemIndex = findIndex(ranges[topRangeIndex].items, propName, range.start);
-		while(
-			ranges[topRangeIndex].items[topItemIndex-1] &&
-			ranges[topRangeIndex].items[topItemIndex-1][propName] === range.start
-		) topItemIndex--;
-	} else {
-		topItemIndex = -1;
-	}
-
-	if(ranges[bottomRangeIndex] && isInRange(ranges[bottomRangeIndex], range.end)){
-		bottomItemIndex = findIndex(ranges[bottomRangeIndex].items, propName, range.end);
+	
+	if(ranges[bottomRangeIndex] && isInRange(ranges[bottomRangeIndex], value)){
+		bottomItemIndex = findIndex(ranges[bottomRangeIndex].items, propName, value);
 		while(
 			ranges[bottomRangeIndex].items[bottomItemIndex] &&
-			ranges[bottomRangeIndex].items[bottomItemIndex][propName] === range.end
+			ranges[bottomRangeIndex].items[bottomItemIndex][propName] === value
 		) bottomItemIndex++;
 	} else {
 		bottomItemIndex = -1;
 	}
+	
+	return [bottomRangeIndex, bottomItemIndex];
+}
+
+function mergeRange(ranges, range, propName) {
+	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, mergedRange = {}, a;
+
+	a = findTopBound(ranges, propName, range.start);
+	topRangeIndex = a[0];
+	topItemIndex = a[1];
+	
+	a = findBottomBound(ranges, propName, range.end);
+	bottomRangeIndex = a[0];
+	bottomItemIndex = a[1];
 
 /*	console.log(JSON.stringify(ranges),'\n', JSON.stringify(range),'\n', topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex);*/
 
@@ -144,9 +165,90 @@ function mergeRange(ranges, range, propName) {
 		mergedRange.end = ranges[bottomRangeIndex].end;
 	}
 
-//	if(topItemIndex === -1) topRangeIndex++;
-//	if(bottomItemIndex === -1) bottomRangeIndex--;
-
 	ranges.splice(topRangeIndex, bottomRangeIndex - topRangeIndex + 1, mergedRange);
 	return ranges;
+}
+
+
+function getAllItems(ranges, req, propName) {
+    var range, leftBefore = req.before, leftAfter = req.after;
+	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, results = [], a, i;
+
+	a = findTopBound(ranges, propName, range.start);
+	topRangeIndex = a[0];
+	topItemIndex = a[1];
+	
+	a = findBottomBound(ranges, propName, range.end);
+	bottomRangeIndex = a[0];
+	bottomItemIndex = a[1];
+
+	// TODO: walk
+	
+	while(leftBefore > 0) {
+		if(topItemIndex > 0)
+	}
+	
+	if(topRangeIndex === bottomRangeIndex) {
+		if(topItemIndex === -1) {
+			results.push("missing");
+		}
+		results = results.concat(
+			ranges[topRangeIndex].items.slice(
+				Math.max(0, topItemIndex),
+				Math.max(0, bottomItemIndex)
+			)
+		);
+		if(bottomItemIndex === -1) {
+			results.push("missing");
+		}
+		return results;
+	}
+	
+	if(topItemIndex !== -1) {
+		results = results.concat(ranges[topRangeIndex].items.slice(topItemIndex));
+	} else {
+		results = results.concat(["missing"], ranges[topRangeIndex].items);
+	}
+
+	for(i = topRangeIndex + 1; i < bottomRangeIndex; i++) {
+		results = results.concat(ranges[i].items, ["missing"]);
+	}
+
+	if(bottomItemIndex !== -1) {
+		results = results.concat(ranges[bottomRangeIndex].items.slice(0, bottomItemIndex));
+	} else {
+		results = results.concat(ranges[bottomRangeIndex].items, ["missing"]);
+	}
+	
+	return results;
+	
+//	
+//    index = findIndex(range.items, propName, req[propName]);
+//
+//	if(range.items[index] && range.items[index][propName] === req[propName] && req.before && !req.after) index++;
+//	/*
+//		Consider the range [1, 2, 3, 4, 5].
+//		(index: 3, before: 2) => 2 items [2, 3] so that it is consistent with
+//		(index: 3, after: 2) =>  2 items [3, 4]. However
+//		(index: 3, before: 2, after: 2) => 4 items [1, 2, 3, 4].
+//	*/
+//
+//    startIndex = index - (req.before || 0);
+//    endIndex = index + (req.after || 0);
+//
+//    if(startIndex < 0) {
+//        if(range.start !== null) missingBefore = true;
+//        startIndex = 0;
+//    }
+//
+//    if(endIndex > range.items.length) {
+//        if(range.end !== null) missingAfter = true;
+//        endIndex = range.items.length;
+//    }
+//
+//    return Array.prototype.concat(
+//        (missingBefore? ['missing']: []),
+//        range.items.slice(startIndex, endIndex),
+//        (missingAfter? ['missing']: [])
+//    );
 }
