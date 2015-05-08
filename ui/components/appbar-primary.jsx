@@ -11,6 +11,7 @@ var NotificationCenter = require("../utils/notification-center.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Badge = require("./badge.jsx")(core, config, store),
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
@@ -159,7 +160,7 @@ module.exports = function(core, config, store) {
 						<div className="user-area-nick">{this.state.username}</div>
 					</div>
 					<a className="appbar-bell appbar-icon appbar-icon-alert" onClick={this.showNotifications}>
-						<span className="appbar-bell-badge">32</span>
+						<Badge className="appbar-bell-badge" />
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
