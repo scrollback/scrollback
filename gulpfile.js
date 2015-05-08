@@ -203,7 +203,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
+gulp.task("scripts", [ "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -260,7 +260,7 @@ gulp.task("watch", function() {
 });
 
 // Build all files
-gulp.task("build", [ "scripts", "styles" ], function() {
+gulp.task("build", [ "polyfills", "scripts", "styles" ], function() {
 	gulp.start("manifest");
 });
 
