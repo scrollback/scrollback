@@ -2,9 +2,7 @@
 
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
-
-module.exports = function(core, config, store) {
+module.exports = function(core) {
 	var colordiv;
 
 	core.on("boot", function(state) {
@@ -16,26 +14,6 @@ module.exports = function(core, config, store) {
 			}
 		}
 	}, 200);
-
-	core.on("setstate", function(changes) {
-		var future = store.with(changes),
-			user = future.get("user"),
-			dialog = future.get("nav", "dialog"),
-			env = future.get("context", "env");
-
-		if (env === "android") {
-			changes.nav = changes.nav || {};
-
-			if (user && appUtils.isGuest(user)) {
-				changes.nav.dialog = "signin";
-				changes.nav.dialogState = changes.nav.dialogState || {};
-				changes.nav.dialogState.mobileApp = true;
-			} else if (dialog === "signin") {
-				changes.nav.dialog = null;
-				changes.nav.dialogState = null;
-			}
-		}
-	}, 900);
 
 	if (window.Android && typeof window.Android.setStatusBarColor === "function") {
 		colordiv = document.createElement("div");
