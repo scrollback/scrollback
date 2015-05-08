@@ -1,9 +1,9 @@
-/* jshint browser: true */
+/* jshint esnext: true, browser: true */
 /* global $ */
 
 "use strict";
 
-module.exports = function() {
+module.exports = () => {
 	// Hack to get event bubbling work properly in iOS safari
 	if (navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
 		navigator.userAgent.match(/AppleWebKit/) &&
