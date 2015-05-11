@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -77,12 +75,10 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			if (changes.nav && changes.nav.mode) {
 				this.setState({ show: (store.get("nav", "mode") === "home" && store.get("context", "env") !== "android") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

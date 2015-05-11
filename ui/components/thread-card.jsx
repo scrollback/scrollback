@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js"),

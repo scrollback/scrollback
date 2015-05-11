@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 module.exports = function(core, config, store) {

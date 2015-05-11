@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -15,24 +13,22 @@ module.exports = function(core, config, store) {
 			return { text: "" };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var connection, text;
 
 			if (changes.app && "connectionStatus" in changes.app) {
-			    connection = store.get("app", "connectionStatus");
+				connection = store.get("app", "connectionStatus");
 
-			    if (connection === "offline") {
-			    	text = "You're offline!";
-			    } else if (connection === "connecting") {
-			    	text = "Connecting...";
-			    } else {
-			    	text = "";
-			    }
+				if (connection === "offline") {
+					text = "You're offline!";
+				} else if (connection === "connecting") {
+					text = "Connecting...";
+				} else {
+					text = "";
+				}
 
 				this.setState({ text: text });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

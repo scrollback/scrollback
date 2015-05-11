@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -25,6 +25,10 @@ module.exports = function(core) {
 		core.emit("getEntities", {
 			ref: name
 		}, function(err, res) {
+			if (err) {
+				return callback("error", "An error occured");
+			}
+
 			if (res && res.results && res.results.length) {
 				return callback("error", name + " is not available. May be try another?");
 			} else {

@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
 
 /**
@@ -44,9 +44,9 @@ module.exports = function(type, menu) {
 	if (typeof menu.buttons === "object" && !$.isEmptyObject(menu.buttons)) {
 		$buttons = $("<div>").addClass("popover-section menu-buttons");
 
-		for (var b in menu.buttons) {
-			button = menu.buttons[b];
-			sortable.push([button.prio, button, b]);
+		for (var btn in menu.buttons) {
+			button = menu.buttons[btn];
+			sortable.push([button.prio, button, btn]);
 		}
 
 		sortable.sort(function(a, b) {
@@ -54,14 +54,14 @@ module.exports = function(type, menu) {
 		});
 
 		// append buttons in sorted order
-		sortable.forEach(function(button) {
-			if (typeof button[1].text === "string" && typeof button[1].action === "function") {
-				$("<button>").addClass(button[2].toLowerCase().replace(' ', '-'))
-					.text(button[1].text)
+		sortable.forEach(function(b) {
+			if (typeof b[1].text === "string" && typeof b[1].action === "function") {
+				$("<button>").addClass(b[2].toLowerCase().replace(' ', '-'))
+					.text(b[1].text)
 					.on("click", function() {
 						$popover.popover("dismiss");
 
-						button[1].action();
+						b[1].action();
 					})
 					.appendTo($buttons);
 			}
@@ -84,14 +84,14 @@ module.exports = function(type, menu) {
 		});
 
 		// append items in sorted order
-		sortable.forEach(function(item) {
-			if (typeof item[1].text === "string" && typeof item[1].action === "function") {
-				$("<li>").append($("<a>").addClass("menu-item menu-" + item[2].toLowerCase().replace(' ', '-'))
-						.text(item[1].text))
+		sortable.forEach(function(it) {
+			if (typeof it[1].text === "string" && typeof it[1].action === "function") {
+				$("<li>").append($("<a>").addClass("menu-item menu-" + it[2].toLowerCase().replace(' ', '-'))
+						.text(it[1].text))
 					.on("click", function() {
 						$popover.popover("dismiss");
 
-						item[1].action();
+						it[1].action();
 					})
 					.appendTo($list.find("ul"));
 
