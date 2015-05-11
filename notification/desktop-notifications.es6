@@ -15,7 +15,7 @@ module.exports = (core, config, store) => {
 			desktopnotify.show({
 				title: item.title,
 				body: item.summary,
-				icon: "/s/assets/logo/scrollback-dark.png",
+				icon: "/s/assets/preview@2x.png",
 				tag: notification.id,
 				action: () => {
 					item.handlers[0]();
@@ -24,4 +24,4 @@ module.exports = (core, config, store) => {
 			});
 		}
 	}, 1);
-}
+};
