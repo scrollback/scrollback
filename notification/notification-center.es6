@@ -16,7 +16,7 @@ module.exports = (core, ...args) => {
 
 			not.status = "dismissed";
 
-			core.emit("notification-up", { notification: not });
+			core.emit("notification-up", not);
 		}
 
 		_render(notification) {

@@ -28,13 +28,13 @@ module.exports = (core, ...args) => {
 				title = `New mention in ${action.to}`;
 				break;
 			case "text":
-				title = `New ${action.title ? "reply" : "message"} in ${this._format(action.title || action.to)}`;
+				title = `New ${action.thread ? "reply" : "message"} in ${action.to}`;
 				break;
 			case "thread":
-				title = `New discussion in <strong>${action.to}</strong>`;
+				title = `New discussion in ${action.to}`;
 				break;
 			default:
-				title = `New notification in <strong>${action.to}</strong>`;
+				title = `New notification in ${action.to}`;
 			}
 
 			return title;
@@ -102,7 +102,7 @@ module.exports = (core, ...args) => {
 							room: action.to,
 							thread: action.id,
 							mode: "chat",
-							threadRange: { time: action.updateTime }
+							threadRange: { time: action.time }
 						}
 					});
 				});

@@ -75,7 +75,7 @@ function updateNotifications(baseNotifications, notifications) {
 		}
 	}
 
-	baseNotifications.sort((a, b) => a.time - b.time);
+	baseNotifications.sort((a, b) => b.time - a.time);
 }
 
 function updateThreads(baseThreads, threads) {

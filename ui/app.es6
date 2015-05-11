@@ -68,7 +68,6 @@
 	require("./modules/menu-listeners.es6")(...args);
 	require("./modules/dialogs-listeners.js")(...args);
 	require("./modules/thread-dialog.js")(...args);
-	require("./modules/notifications.js")(...args);
 	require("./modules/settings-room.js")(...args);
 	require("./modules/settings-user.js")(...args);
 	require("./modules/signin-handler.js")(...args);

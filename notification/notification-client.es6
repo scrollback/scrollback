@@ -4,4 +4,6 @@
 
 module.exports = (...args) => {
 	require("./notification-handler.es6")(...args);
+	require("./desktop-notifications.es6")(...args);
+	require("./titlebar-ticker.es6")(...args);
 }
