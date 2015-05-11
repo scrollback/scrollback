@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js");
@@ -63,7 +61,7 @@ module.exports = function(core, config, store) {
 			return { showLanding: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var mode, user, env;
 
 			if ((changes.nav && changes.nav.mode) ||
@@ -76,8 +74,6 @@ module.exports = function(core, config, store) {
 					showLanding: !!(mode === "home" && env !== "embed" && env !== "android" && user && appUtils.isGuest(user))
 				});
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

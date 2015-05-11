@@ -1,9 +1,9 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env es6, browser */
 
 (function() {
 	"use strict";
 
-	let config  = require(".././client-config-defaults.js"),
+	let config = require(".././client-config-defaults.js"),
 		core, store;
 
 	// ES6 polyfills
@@ -53,7 +53,7 @@
 	require("../irc/irc-client.js")(...args);
 	require("../threader/threader-client.js")(...args);
 	require("../twitter/twitter-client.js")(...args);
-	require('../customization/customization-client.js')(...args);
+	require("../customization/customization-client.js")(...args);
 
 	// User menu providers
 	require("../browserid-auth/browserid-auth-client.js")(...args);

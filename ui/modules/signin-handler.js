@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -17,7 +17,6 @@ module.exports = function(core) {
 			try {
 				action = JSON.parse(data);
 			} catch (e) {
-				console.log("Error parsing incoming action: ", data, e);
 				return;
 			}
 		} else {

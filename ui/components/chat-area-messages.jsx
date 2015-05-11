@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 			}
 
 			if (beforeItems[beforeItems.length - 1] && afterItems[0] &&
-			    beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
+				beforeItems[beforeItems.length - 1].id === afterItems[0].id) {
 				beforeItems.pop();
 			} else if (beforeItems.length > before) {
 				beforeItems.shift();
@@ -129,18 +129,16 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var thread = store.get("nav", "thread"),
 				room = store.get("nav", "room"),
 				key = thread ? room + "_" + thread : room;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
-			    (changes.texts && changes.texts[key] && changes.texts[key].length)) {
+				(changes.texts && changes.texts[key] && changes.texts[key].length)) {
 
 				this.setState({ show: (store.get("nav", "mode") === "chat") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {
