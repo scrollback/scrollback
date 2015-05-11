@@ -88,7 +88,7 @@ module.exports = (core, ...args) => {
 						nav: {
 							room: action.to,
 							thread: action.thread,
-							mode: action.thread ? "chat" : "room",
+							mode: "chat",
 							textRange: { time: action.time }
 						}
 					});
