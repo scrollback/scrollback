@@ -1,5 +1,7 @@
 /* global window, document, history, location */
 
+"use strict";
+
 var objUtils = require("../lib/obj-utils.js"),
 	format = require("../lib/format.js");
 
@@ -26,8 +28,8 @@ var propMap = {
 
 module.exports = function(core, config, store) {
 	core.on("boot", function(state, next) {
-		var params = getParams(location.search.substr(1)),
-			path = location.pathname.substr(1).split("/");
+		var params = getParams(location.search.substr(1).toLowerCase()),
+			path = location.pathname.substr(1).toLowerCase().split("/");
 
 		state.nav = state.nav || {};
 		state.context = state.context || {};
