@@ -51,6 +51,11 @@ module.exports = function(core, config, store) {
 						to: roomId,
 						thread: threadId
 					});
+
+					clearNotifications(changes, "thread", {
+						to: roomId,
+						thread: threadId
+					});
 				} else {
 					clearNotifications(changes, "text", { to: roomId });
 				}
