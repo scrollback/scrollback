@@ -42,7 +42,7 @@ module.exports = (core, config, store) => {
 				let roomId = store.get("nav", "room"),
 					mode = store.get("nav", "mode");
 
-				if (roomId === text.to && mode === "room" && !user.isAdmin(userId, roomId) && document.hasFocus()) {
+				if (roomId === text.to && mode === "room" && !user.isAdmin(userId, roomId)) {
 					return;
 				}
 
@@ -50,7 +50,7 @@ module.exports = (core, config, store) => {
 			} else {
 				let threadId = store.get("nav", "thread");
 
-				if (roomId === text.to && mode === "chat" && ((threadId && threadId === text.thread) || (!threadId && !text.thread)) && document.hasFocus()) {
+				if (roomId === text.to && mode === "chat" && ((threadId && threadId === text.thread) || (!threadId && !text.thread))) {
 					return;
 				}
 
