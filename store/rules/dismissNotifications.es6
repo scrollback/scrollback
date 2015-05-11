@@ -1,13 +1,24 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	function clearNotifications(changes, subtype) {
-		let roomId = store.get("nav", "room"),
-			all = store.get("notifications"),
+	function clearNotifications(changes, subtype, filters) {
+		let all = store.get("notifications"),
 			nots;
 
 		nots = all.filter(notification => {
-			return (notification.action.to === roomId && notification.subtype === subtype);
+			let filter = (notification.subtype === subtype);
+
+			if (filter) {
+				for (let f in filters) {
+					filter = (filter && notification.action[f] === filters[f]);
+
+					if (!filter) {
+						break;
+					}
+				}
+			}
+
+			return filter;
 		});
 
 		let dismissed = nots.map(notification => {
@@ -28,12 +39,23 @@ module.exports = function(core, config, store) {
 
 	core.on("setstate", function(changes) {
 		if (changes.nav.mode || changes.nav.room || "thread" in changes.nav) {
-			let mode = store.with(changes).get("nav", "mode");
+			let future = store.with(changes),
+				roomId = future.get("nav", "room"),
+				mode = future.get("nav", "mode");
 
 			if (mode === "chat") {
-				clearNotifications(changes, "text");
+				let threadId = future.get("nav", "thread");
+
+				if (threadId) {
+					clearNotifications(changes, "text", {
+						to: roomId,
+						thread: threadId
+					});
+				} else {
+					clearNotifications(changes, "text", { to: roomId });
+				}
 			} else if (mode === "room") {
-				clearNotifications(changes, "thread");
+				clearNotifications(changes, "thread", { to: roomId });
 			}
 		}
 	}, 100);
