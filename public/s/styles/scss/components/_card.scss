@@ -78,10 +78,20 @@
             }
 
             &-badge {
+                @extend %transition;
                 @extend %appearin;
                 @include flex-shrink(0);
 
-                margin: 0 (.5em / .8);
+                min-height: 2em;
+                min-width: 2em;
+                background-color: $error-color;
+                color: $light-color;
+                border-radius: 50%;
+                padding: .2em .25em .3em;
+                font-size: .8em;
+                font-weight: 700;
+                text-align: center;
+                margin: 0 1em;
 
                 &:empty { display: none; };
             }
