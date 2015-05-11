@@ -66,9 +66,9 @@ module.exports = (core, ...args) => {
 					core.emit("setstate", {
 						nav: {
 							room: action.to,
-							thread: action.thread,
-							mode: action.thread ? "chat" : "room",
-							threadRange: { time: action.time }
+							thread: action.id,
+							mode: "chat",
+							threadRange: { time: action.updateTime }
 						}
 					});
 				}

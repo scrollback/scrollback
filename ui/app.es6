@@ -1,4 +1,4 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env es6, browser */
 
 (function() {
 	"use strict";
@@ -64,7 +64,7 @@
 	require("../http/logout-client.js")(...args);
 
 	// Modules
-	require("./modules/menu-listeners.js")(...args);
+	require("./modules/menu-listeners.es6")(...args);
 	require("./modules/dialogs-listeners.js")(...args);
 	require("./modules/thread-dialog.js")(...args);
 	require("./modules/notifications.js")(...args);
