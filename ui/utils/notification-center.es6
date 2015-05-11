@@ -20,6 +20,14 @@ module.exports = (core, ...args) => {
 			return format.textToHtml(text);
 		}
 
+		_dismiss(notification) {
+			let not = objUtils.clone(notification);
+
+			not.status = "dismissed";
+
+			core.emit("notification-up", { notification: not });
+		}
+
 		_render(notification) {
 			let action = notification.action,
 				type = notification.subtype,
@@ -47,50 +55,63 @@ module.exports = (core, ...args) => {
 						nav: {
 							room: action.to,
 							thread: action.thread,
-							mode: action.thread ? "chat" : "room"
+							mode: action.thread ? "chat" : "room",
+							textRange: { time: action.time }
+						}
+					});
+				}
+				break;
+			case "thread":
+				listener = () => {
+					core.emit("setstate", {
+						nav: {
+							room: action.to,
+							thread: action.thread,
+							mode: action.thread ? "chat" : "room",
+							threadRange: { time: action.time }
 						}
 					});
 				}
 				break;
 			default:
-				listener = () => core.emit("setstate", { nav: { room: action.to }});
+				listener = () => {
+					core.emit("setstate", {
+						nav: {
+							room: action.to,
+							mode: "room"
+						}
+					});
+				};
 			}
 
 			let content = document.createElement("span");
 
 			content.innerHTML = html;
 			content.className = "notification-center-item-content content";
+			content.addEventListener("click", () => {
+				listener();
+
+				this._dismiss(notification);
+			}, false);
 
 			let close = document.createElement("span");
 
 			close.className = "notification-center-item-close close";
+			close.addEventListener("click", e => {
+				let parent = e.target.parentNode;
+
+				parent.className += " out";
+
+				setTimeout(() => parent.parentNode.removeChild(parent), 300);
+
+				this._dismiss(notification);
+			}, false);
 
 			let item = document.createElement("a");
 
 			item.className = "notification-center-item item";
 			item.appendChild(content);
 			item.appendChild(close);
-			item.addEventListener("click", e => {
-				let className = e.target.className;
-
-				if (/content/.test(className)) {
-					listener();
-				}
-
-				if (/close/.test(className)) {
-					let parent = e.target.parentNode;
-
-					parent.className += " out";
-
-					setTimeout(() => parent.parentNode.removeChild(parent), 300);
-
-					let not = objUtils.clone(notification);
-
-					not.status = "dismissed";
-
-					core.emit("notification-up", { notification: not });
-				}
-			}, false);
 
 			return item;
 		}
@@ -106,7 +127,7 @@ module.exports = (core, ...args) => {
 				div.appendChild(this._render(item));
 			}
 
-			div.className = "notification-center";
+			div.className = "notification-center menu-notifications";
 
 			return div;
 		}

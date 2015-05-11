@@ -62,11 +62,7 @@ module.exports = function(core, config, store) {
 				center.add(notif);
 			}
 
-			let $popover = $(center.dom);
-
-			$popover.on("click", ".content", () => $popover.popover("dismiss"));
-
-			$popover.popover({
+			$(center.dom).popover({
 				arrow: false,
 				origin: event.currentTarget
 			});
