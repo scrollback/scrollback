@@ -9,6 +9,10 @@ module.exports = function(core, config, store) {
 		getCount: function() {
 			let all = store.get("notifications");
 
+			if (all.length === 0) {
+				return all.length;
+			}
+
 			if (this.props.type) {
 				all = all.filter(n => n.subtype === this.props.type);
 			}

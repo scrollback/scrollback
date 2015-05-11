@@ -9,13 +9,13 @@ module.exports = (core, config, store) => {
 	core.on("notification-dn", notification => {
 		core.emit("setstate", {
 			notifications: [ notification ]
-		})
+		});
 	}, 100);
 
 	core.on("notification-up", notification => {
 		core.emit("setstate", {
 			notifications: [ notification ]
-		})
+		});
 	}, 100);
 
 	// Create notification events
@@ -33,7 +33,7 @@ module.exports = (core, config, store) => {
 		let subtype;
 
 		if (text.mentions && text.mentions.indexOf(userId) > -1) {
-			subtype = "mention"
+			subtype = "mention";
 		} else {
 			let roomId = store.get("nav", "room"),
 				mode = store.get("nav", "mode");
@@ -67,4 +67,4 @@ module.exports = (core, config, store) => {
 			status: "unread"
 		});
 	}, 100);
-}
+};

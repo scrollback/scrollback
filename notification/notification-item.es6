@@ -4,8 +4,7 @@
 
 module.exports = (core, ...args) => {
 	const user = require("../lib/user.js")(core, ...args),
-		  format = require("../lib/format.js"),
-		  objUtils = require("../lib/obj-utils.js");
+		  format = require("../lib/format.js");
 
 	class NotificationItem {
 		constructor(notification) {
@@ -21,11 +20,10 @@ module.exports = (core, ...args) => {
 		}
 
 		dismiss() {
-			let not = objUtils.clone(this.notification);
-
-			not.status = "dismissed";
-
-			core.emit("notification-up", not);
+			core.emit("notification-up", {
+				id: this.notification.id,
+				status: "dismissed"
+			});
 		}
 
 		get title() {
@@ -133,4 +131,4 @@ module.exports = (core, ...args) => {
 	}
 
 	return NotificationItem;
-}
+};
