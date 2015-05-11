@@ -17,11 +17,11 @@ along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
 or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
-
+"use strict";
 var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-				"push-notification", "google", "testauth" ];
+				"push-notification", "google"];
 
 require("newrelic");
 

@@ -1,3 +1,4 @@
+"use strict";
 var SbError = require('../../lib/SbError.js');
 var utils = require('../../lib/app-utils.js');
 var domainCheck;
