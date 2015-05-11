@@ -128,7 +128,7 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
 				userObj, threadObj, nav, relation, title;
@@ -162,8 +162,6 @@ module.exports = function(core, config, store) {
 					following: !!(relation && relation.role === "follower")
 				});
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

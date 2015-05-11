@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var format = require("../../lib/format.js"),
@@ -54,17 +52,17 @@ module.exports = function(core, config, store) {
 
 			if (this.state.banner) {
 				items.push(
-				        <div className="banner-cover" key="banner-cover">
-				        	<div className="banner-cover-image" style={{ backgroundImage: "url(" + this.state.cover + ")" }}></div>
-				        	<div className="banner-cover-content">
+						<div className="banner-cover" key="banner-cover">
+							<div className="banner-cover-image" style={{ backgroundImage: "url(" + this.state.cover + ")" }}></div>
+							<div className="banner-cover-content">
 								<div className="banner-cover-logo" style={{ backgroundImage: "url(" + this.state.picture + ")" }}></div>
 									<h3 className="banner-cover-title">{this.state.title}</h3>
 									<div className="banner-cover-description" dangerouslySetInnerHTML={{__html: this.state.description}}></div>
 									{this.state.button ?
 										<button className="banner-cover-button" data-state="online" onClick={this.state.button.action}>{this.state.button.label}</button> : ""}
 							</div>
-				        </div>
-				          );
+						</div>
+						  );
 			}
 
 			if (this.state.form) {
@@ -75,7 +73,7 @@ module.exports = function(core, config, store) {
 								<input className="banner-form-submit linked" type="submit" value="Go" />
 							</form>
 						</div>
-				        );
+						);
 			}
 
 			return <div className="banner">{items}</div>;
@@ -93,15 +91,15 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
 				mode, env, pics,
 				rel, roomObj, userObj;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room)) || changes.user ||
-			    (changes.entities && (changes.entities[user] || changes.entities[room])) ||
-			    (changes.context && changes.context.env)) {
+				(changes.entities && (changes.entities[user] || changes.entities[room])) ||
+				(changes.context && changes.context.env)) {
 				mode = store.get("nav", "mode");
 				env = store.get("context", "env");
 
@@ -141,8 +139,6 @@ module.exports = function(core, config, store) {
 					this.setState(this.getInitialState());
 				}
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
 
 "use strict";
@@ -32,7 +32,7 @@ module.exports = function(core, config, store) {
 		});
 	}
 
-	core.on("createthread-dialog", function(dialog, next) {
+	core.on("createthread-dialog", function(dialog) {
 		dialog.title = "Start a new discussion";
 		dialog.content = [
 			"<input type='text' id='createthread-dialog-thread' placeholder='Enter discussion title' autofocus>",
@@ -50,15 +50,15 @@ module.exports = function(core, config, store) {
 					if (!threadTitle) {
 						callback("Thread title cannot be empty");
 					} else {
-						$textEntry.validInput(function(text, callback) {
+						$textEntry.validInput(function(text, cb) {
 							text = (text || "").trim();
 
 							if (!text) {
-								callback("Message cannot be empty");
+								cb("Message cannot be empty");
 							} else {
 								createThread(threadTitle, text, function(res, message) {
 									if (res === "error") {
-										callback(message);
+										cb(message);
 									}
 								});
 							}
@@ -67,7 +67,5 @@ module.exports = function(core, config, store) {
 				});
 			}
 		};
-
-		next();
 	}, 100);
 };

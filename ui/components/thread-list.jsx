@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env es6, browser */
 
 "use strict";
 
@@ -117,15 +117,15 @@ module.exports = function(core, config, store) {
 			allItems = beforeItems.concat(afterItems);
 
 			allItems.reverse().forEach(function(thread) {
-				var key = "thread-" + thread.startTime;
+				var threadKey = "thread-" + thread.startTime;
 
 				if (typeof thread === "object") {
 					if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
-						positionKey = key;
+						positionKey = threadKey;
 					}
 
 					items.push({
-						key: key,
+						key: threadKey,
 						elem: <ThreadCard roomId={nav.room} thread={thread} />
 					});
 				}
@@ -189,7 +189,7 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var room = store.get("nav", "room");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
@@ -197,8 +197,6 @@ module.exports = function(core, config, store) {
 			    Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
 				this.setState({ show: (store.get("nav", "mode") === "room") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

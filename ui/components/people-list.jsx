@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var getAvatar = require("../../lib/get-avatar.js"),
@@ -95,7 +93,7 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			if ((changes.nav && (changes.nav.mode || changes.nav.room)) ||
 			    (changes.indexes && changes.indexes.roomUsers)) {
 
@@ -105,8 +103,6 @@ module.exports = function(core, config, store) {
 					});
 				}
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {
