@@ -17,7 +17,10 @@ module.exports = (core, config, store) => {
 				body: item.summary,
 				icon: "/s/assets/logo/scrollback-dark.png",
 				tag: notification.id,
-				action: item.handlers[0]
+				action: () => {
+					item.handlers[0]();
+					item.dismiss();
+				}
 			});
 		}
 	}, 1);

@@ -3,20 +3,11 @@
 "use strict";
 
 module.exports = (core, ...args) => {
-	const NotificationItem = require("./notification-item.es6")(core, ...args),
-		  objUtils = require("../lib/obj-utils.js");
+	const NotificationItem = require("./notification-item.es6")(core, ...args);
 
 	class NotificationCenter {
 		constructor() {
 			this._items = [];
-		}
-
-		_dismiss(notification) {
-			let not = objUtils.clone(notification);
-
-			not.status = "dismissed";
-
-			core.emit("notification-up", not);
 		}
 
 		_render(notification) {
@@ -29,8 +20,7 @@ module.exports = (core, ...args) => {
 			content.className = "notification-center-item-content content";
 			content.addEventListener("click", () => {
 				not.handlers[0]();
-
-				this._dismiss(notification);
+				not.dismiss();
 			}, false);
 
 			close = document.createElement("span");
@@ -43,7 +33,7 @@ module.exports = (core, ...args) => {
 
 				setTimeout(() => parent.parentNode.removeChild(parent), 300);
 
-				this._dismiss(notification);
+				not.dismiss();
 			}, false);
 
 			item = document.createElement("a");

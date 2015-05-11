@@ -4,7 +4,8 @@
 
 module.exports = (core, ...args) => {
 	const user = require("../lib/user.js")(core, ...args),
-		  format = require("../lib/format.js");
+		  format = require("../lib/format.js"),
+		  objUtils = require("../lib/obj-utils.js");
 
 	class NotificationItem {
 		constructor(notification) {
@@ -17,6 +18,14 @@ module.exports = (core, ...args) => {
 			text = text.length > 42 ? (text.slice(0, 42) + "…") : text;
 
 			return format.textToHtml(text);
+		}
+
+		dismiss() {
+			let not = objUtils.clone(this.notification);
+
+			not.status = "dismissed";
+
+			core.emit("notification-up", not);
 		}
 
 		get title() {
