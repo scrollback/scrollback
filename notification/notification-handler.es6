@@ -3,7 +3,8 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const generate = require("../lib/generate.js");
+	const user = require("../lib/user.js")(core, config, store),
+		  generate = require("../lib/generate.js");
 
 	core.on("notification-dn", notification => {
 		core.emit("setstate", {
@@ -33,10 +34,28 @@ module.exports = (core, config, store) => {
 
 		if (text.mentions && text.mentions.indexOf(userId) > -1) {
 			subtype = "mention"
-		} else if (text.id === text.thread) {
-			subtype = "thread";
 		} else {
-			subtype = "text";
+			let roomId = store.get("nav", "room"),
+				mode = store.get("nav", "mode");
+
+			if (text.id === text.thread) {
+				let roomId = store.get("nav", "room"),
+					mode = store.get("nav", "mode");
+
+				if (roomId === text.to && mode === "room" && !user.isAdmin(userId, roomId)) {
+					return;
+				}
+
+				subtype = "thread";
+			} else {
+				let threadId = store.get("nav", "thread");
+
+				if (roomId === text.to && mode === "chat" && ((threadId && threadId === text.thread) || (!threadId && !text.thread))) {
+					return;
+				}
+
+				subtype = "text";
+			}
 		}
 
 		core.emit("notification-dn", {
