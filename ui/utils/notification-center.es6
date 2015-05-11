@@ -2,29 +2,40 @@
 
 "use strict";
 
-module.exports = core => {
+module.exports = (core, ...args) => {
+	const user = require("../../lib/user.js")(core, ...args),
+		  format = require("../../lib/format.js");
+
 	class NotificationCenter {
 		constructor() {
 			this._items = [];
 		}
 
+		_format(text) {
+			text = typeof text === "string" ? text : "";
+
+			text = text.length > 42 ? (text.slice(0, 42) + "…") : text;
+
+			return format.textToHtml(text);
+		}
+
 		_render(notification) {
 			let action = notification.action,
 				type = notification.subtype,
-				text, listener;
+				html, listener;
 
 			switch (type) {
 			case "mention":
-				text = `${action.from} mentioned you in ${action.to}`;
+				html = `<strong>${user.getNick(action.from)}</strong> mentioned you in <strong>${action.to}</strong>: <strong>${this._format(action.text)}</strong>`;
 				break;
 			case "text":
-				text = `${action.from} said '${action.text}' in ${action.title || action.to}`;
+				html = `<strong>${user.getNick(action.from)}</strong> ${action.title ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(action.title || action.to)}</strong>`;
 				break;
 			case "thread":
-				text = `${action.from} started discussion '${action.title}' in ${action.to}`;
+				html = `<strong>${user.getNick(action.from)}</strong> started a discussion on <strong>${this._format(action.title)}</strong> in <strong>${action.to}</strong>`;
 				break;
 			default:
-				text = `New notification in ${action.to}`;
+				html = `New notification in <strong>${action.to}</strong>`;
 			}
 
 			switch (type) {
@@ -46,7 +57,7 @@ module.exports = core => {
 
 			let content = document.createElement("span");
 
-			content.textContent = text;
+			content.innerHTML = html;
 			content.className = "notification-center-item-content content";
 
 			let close = document.createElement("span");

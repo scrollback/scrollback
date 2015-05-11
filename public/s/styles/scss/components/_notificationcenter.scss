@@ -1,7 +1,7 @@
 @include exports("notifications") {
     .notification-center {
         background-color: darken($light-color, 3%);
-        width: 18em;
+        width: 20em;
         min-height: 5.57em;
         max-height: 80%;
         max-height: calc(100% - #{$bar-height * 1.5});
@@ -41,6 +41,13 @@
                 padding: .5em .75em;
                 width: 85%;
                 width: calc(100% - 3em);
+                font-size: .9em;
+                color: fade-out($dark-color, .5);
+
+                strong {
+                    font-weight: 400;
+                    color: $dark-color;
+                }
             }
 
             &-close {
