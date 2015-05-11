@@ -11,7 +11,7 @@ var showMenu = require("../utils/show-menu.js"),
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		Badge = require("./badge.jsx")(core, config, store),
-		NotificationCenter = require("../utils/notification-center.es6")(core, config, store),
+		NotificationCenter = require("../../notification/notification-center.es6")(core, config, store),
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({

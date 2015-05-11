@@ -1,0 +1,127 @@
+/* eslint-env es6, browser */
+
+"use strict";
+
+module.exports = (core, ...args) => {
+	const user = require("../lib/user.js")(core, ...args),
+		  format = require("../lib/format.js");
+
+	class NotificationItem {
+		constructor(notification) {
+			this.notification = notification;
+		}
+
+		_format(text) {
+			text = typeof text === "string" ? text : "";
+
+			text = text.length > 42 ? (text.slice(0, 42) + "…") : text;
+
+			return format.textToHtml(text);
+		}
+
+		get title() {
+			let action = this.notification.action,
+				title;
+
+			switch (this.notification.subtype) {
+			case "mention":
+				title = `New mention in ${action.to}`;
+				break;
+			case "text":
+				title = `New ${action.title ? "reply" : "message"} in ${this._format(action.title || action.to)}`;
+				break;
+			case "thread":
+				title = `New discussion in <strong>${action.to}</strong>`;
+				break;
+			default:
+				title = `New notification in <strong>${action.to}</strong>`;
+			}
+
+			return title;
+		}
+
+		get summary() {
+			let action = this.notification.action,
+				summary;
+
+			switch (this.notification.subtype) {
+			case "thread":
+				summary = `${user.getNick(action.from)} : ${this._format(action.title)}`;
+				break;
+			default:
+				summary = `${user.getNick(action.from)} : ${this._format(action.text)}`;
+			}
+
+			return summary;
+		}
+
+		get html() {
+			let action = this.notification.action,
+				html;
+
+			switch (this.notification.subtype) {
+			case "mention":
+				html = `<strong>${user.getNick(action.from)}</strong> mentioned you in <strong>${action.to}</strong>: <strong>${this._format(action.text)}</strong>`;
+				break;
+			case "text":
+				html = `<strong>${user.getNick(action.from)}</strong> ${action.title ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(action.title || action.to)}</strong>`;
+				break;
+			case "thread":
+				html = `<strong>${user.getNick(action.from)}</strong> started a discussion on <strong>${this._format(action.title)}</strong> in <strong>${action.to}</strong>`;
+				break;
+			default:
+				html = `New notification in <strong>${action.to}</strong>`;
+			}
+
+			return html;
+		}
+
+		get handlers() {
+			let action = this.notification.action,
+				handlers = [];
+
+			switch (this.notification.subtype) {
+			case "mention":
+			case "text":
+				handlers.push(() => {
+					core.emit("setstate", {
+						nav: {
+							room: action.to,
+							thread: action.thread,
+							mode: action.thread ? "chat" : "room",
+							textRange: { time: action.time }
+						}
+					});
+				});
+
+				break;
+			case "thread":
+				handlers.push(() => {
+					core.emit("setstate", {
+						nav: {
+							room: action.to,
+							thread: action.id,
+							mode: "chat",
+							threadRange: { time: action.updateTime }
+						}
+					});
+				});
+
+				break;
+			default:
+				handlers.push(() => {
+					core.emit("setstate", {
+						nav: {
+							room: action.to,
+							mode: "room"
+						}
+					});
+				});
+			}
+
+			return handlers;
+		}
+	}
+
+	return NotificationItem;
+}
