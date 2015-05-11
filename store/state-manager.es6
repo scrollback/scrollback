@@ -8,10 +8,9 @@ const objUtils = require("./../lib/obj-utils.js"),
 let allChanges = {},
 	gapTimer = null,
 	lagTimer = null,
-	core, config, store, state;
+	core, store, state;
 
 module.exports = function(c, conf, s, st) {
-	config = conf;
 	core = c;
 	store = s;
 	state = st;
@@ -71,7 +70,9 @@ function updateNotifications(baseNotifications, notifications) {
 			}
 		}
 
-		baseNotifications.push(objUtils.deepFreeze(notif));
+		if (notif.status !== "dismissed") {
+			baseNotifications.push(objUtils.deepFreeze(notif));
+		}
 	}
 
 	baseNotifications.sort((a, b) => a.time - b.time);

@@ -4,7 +4,8 @@
 
 module.exports = (core, ...args) => {
 	const user = require("../../lib/user.js")(core, ...args),
-		  format = require("../../lib/format.js");
+		  format = require("../../lib/format.js"),
+		  objUtils = require("../../lib/obj-utils.js");
 
 	class NotificationCenter {
 		constructor() {
@@ -82,6 +83,12 @@ module.exports = (core, ...args) => {
 					parent.className += " out";
 
 					setTimeout(() => parent.parentNode.removeChild(parent), 300);
+
+					let not = objUtils.clone(notification);
+
+					not.status = "dismissed";
+
+					core.emit("notification-up", { notification: not });
 				}
 			}, false);
 
