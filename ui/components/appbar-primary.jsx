@@ -3,8 +3,7 @@
 
 "use strict";
 
-var NotificationCenter = require("../utils/notification-center.es6"),
-	showMenu = require("../utils/show-menu.js"),
+var showMenu = require("../utils/show-menu.js"),
 	appUtils = require("../../lib/app-utils.js"),
 	stringUtils = require("../../lib/string-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js");
@@ -12,6 +11,7 @@ var NotificationCenter = require("../utils/notification-center.es6"),
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		Badge = require("./badge.jsx")(core, config, store),
+		NotificationCenter = require("../utils/notification-center.es6")(core, config, store),
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
@@ -54,36 +54,21 @@ module.exports = function(core, config, store) {
 			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
 		},
 
-		showNotifications: function(e) {
-			var center = new NotificationCenter(),
-				notifications = store.get("notifications"),
-				$overview;
+		showNotifications: function(event) {
+			let center = new NotificationCenter(),
+				notifications = store.get("notifications");
 
 			for (let notif of notifications) {
 				center.add(notif);
 			}
 
-			$overview = $(center.html);
+			let $popover = $(center.dom);
 
-			$overview.on("click", ".notification-center-item", function(event) {
-				let $this = $(this);
+			$popover.on("click", ".content", () => $popover.popover("dismiss"));
 
-				if (/close/.test(event.target.className)) {
-					$this.addClass("out");
-
-					e.preventDefault();
-
-					setTimeout(function() {
-						$this.remove().removeClass("out");
-					}, 300);
-				} else {
-					$overview.popover("dismiss");
-				}
-			});
-
-			$overview.popover({
+			$popover.popover({
 				arrow: false,
-				origin: e.currentTarget
+				origin: event.currentTarget
 			});
 		},
 

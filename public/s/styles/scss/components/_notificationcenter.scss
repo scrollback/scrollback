@@ -3,6 +3,9 @@
         background-color: darken($light-color, 3%);
         width: 18em;
         min-height: 5.57em;
+        max-height: 80%;
+        max-height: calc(100% - #{$bar-height * 1.5});
+        overflow: auto;
 
         &:empty:after {
             @extend %fadein;
@@ -33,15 +36,14 @@
 
             &.out { @extend %resizeout; }
 
-            .content {
+            &-content {
                 float: left;
                 padding: .5em .75em;
                 width: 85%;
                 width: calc(100% - 3em);
-                opacity: .8;
             }
 
-            .close {
+            &-close {
                 @include icon(close);
 
                 float: right;
