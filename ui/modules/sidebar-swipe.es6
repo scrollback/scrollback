@@ -10,8 +10,6 @@ module.exports = (core, config, store) => {
 		diff;
 
 	function translate(elem, amount) {
-		console.log(amount);
-
 		if (elem && elem.nodeType) {
 			window.requestAnimationFrame(() => {
 				let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
@@ -84,6 +82,7 @@ module.exports = (core, config, store) => {
 	document.addEventListener("touchstart", onstart, false);
 	document.addEventListener("touchend", onend, false);
 	document.addEventListener("touchcancel", onend, false);
+	document.addEventListener("touchleave", onend, false);
 	document.addEventListener("touchmove", onmove, false);
 
 	core.on("statechange", changes => {

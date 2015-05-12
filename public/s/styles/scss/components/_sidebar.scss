@@ -16,6 +16,7 @@
         box-shadow: 0 0 0 transparent;
 
         // fix flickers
+        -webkit-perspective: 1000;
         -webkit-backface-visibility: hidden;
 
         &-content {
@@ -64,6 +65,7 @@
             transform: translate3d(0, 0, 0);
 
             // fix flickers
+            -webkit-perspective: 1000;
             -webkit-backface-visibility: hidden;
 
             .view-sidebar-right & {
