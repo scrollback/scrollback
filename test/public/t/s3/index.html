@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload to S3 with Facebook login</title>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.12.min.js"></script>
+</head>
+<body>
+    <input type="file" id="file-chooser" />
+    <button id="upload-button" style="display:none">Upload to S3</button>
+    <div id="results"></div>
+    <p>https://s3-ap-northeast-1.amazonaws.com/scrollback1/</p>
+    <div id="fb-root"></div>
+    <script type="text/javascript">
+        var appId = '834799843281318';
+        var roleArn = 'arn:aws:iam::535382009135:role/myRole';
+        var bucketName = 'scrollback1';
+        AWS.config.region = 'us-east-1';
+        var fbUserId;
+        var bucket = new AWS.S3({
+            params: {
+                Bucket: bucketName
+            }
+        });
+        var fileChooser = document.getElementById('file-chooser');
+        var button = document.getElementById('upload-button');
+        var results = document.getElementById('results');
+        button.addEventListener('click', function () {
+            var file = fileChooser.files[0];
+            if (file) {
+                results.innerHTML = '';
+                //Object key will be facebook-USERID#/FILE_NAME
+                var objKey = 'facebook-' + fbUserId + '/' + file.name;
+                var params = {
+                    Key: objKey,
+                    ContentType: file.type,
+                    Body: file,
+                    ACL: 'public-read'
+                };
+                bucket.putObject(params, function (err, data) {
+                    if (err) {
+                        results.innerHTML = 'ERROR: ' + err;
+                    } else {
+                        listObjs();
+                    }
+                });
+            } else {
+                results.innerHTML = 'Nothing to upload.';
+            }
+        }, false);
+        function listObjs() {
+            var prefix = 'facebook-' + fbUserId;
+            bucket.listObjects({
+                Prefix: prefix
+            }, function (err, data) {
+                if (err) {
+                    results.innerHTML = 'ERROR: ' + err;
+                } else {
+                    var objKeys = "";
+                    data.Contents.forEach(function (obj) {
+                        objKeys += obj.Key + "<br>";
+                    });
+                    results.innerHTML = objKeys;
+                }
+            });
+        }
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: appId
+            });
+            FB.login(function (response) {
+                bucket.config.credentials = new AWS.WebIdentityCredentials({
+                    ProviderId: 'graph.facebook.com',
+                    RoleArn: roleArn,
+                    WebIdentityToken: response.authResponse.accessToken
+                });
+
+                fbUserId = response.authResponse.userID;
+                button.style.display = 'block';
+            });
+        };
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "all.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+</body>
+</html>

@@ -1,15 +1,15 @@
 <html>
 	<head>
-		<title>Scrollback: beautiful micro-forums for open communities.</title>
-		 <link rel="stylesheet" href="/t/mocha.css" />
+		<title>Scrollback - beautiful micro-forums for open communities.</title>
+		<link rel="stylesheet" href="/t/mocha.css" />
 	</head>
 	<body>
 		<div id="mocha"></div>
 		<script src="/t/mocha.js"></script>
 		<script src="/t/chai.js"></script>
 		<script src="//cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"></script>
-		<script src="/t/integration/getConnection.js"></script>
-		<script src="/t/integration/generate.js"></script>
+		<script src="/t/getConnection.js"></script>
+		<script src="/t/integration/tools.js"></script>
 		<script>window.fbAsyncInit = function() {};</script>
 		<script src="//connect.facebook.net/en_US/sdk.js"></script>
 		<script src="https://apis.google.com/js/client:platform.js" async defer></script>
@@ -21,15 +21,19 @@
 			};
 			mocha.setup('bdd');
 		</script>
-
-		<script src="init-test.js"></script>
+		
+		<!-- START Chandrakant's tests -->
 		<script src="back-test.js"></script>
 		<script src="away-test.js"></script>
-		<script src="user-test.js"></script>
-		<script src="room-test.js"></script>
-		<script src="text-test.js"></script>
 		<script src="joinpart-test.js"></script>
-		<script src="edit-test.js"></script>
+		<script src="edit-test.js"></script> 
+		<!-- END Chandrakant's tests -->
+		
+		<!-- START Sindhu's tests -->
+		<script src="init-user-test.js"></script>
+		<script src="text-edit-test.js"></script>
+		<script src="room-back-away-join-part-test.js"></script>
+		<!-- END Sindhu's tests -->
 		<script>mocha.run();</script>
 	</body>
 </html>
