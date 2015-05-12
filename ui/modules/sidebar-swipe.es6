@@ -3,7 +3,7 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const prefixes = [ "Moz", "ms", "O" ];
+	const prefixes = [ "webkit", "Moz", "ms", "O" ];
 
 	let posX, elemWidth, bodyWidth,
 		sidebar, overlay;
