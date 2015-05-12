@@ -418,10 +418,10 @@ button {
     }
 
     &-dark {
-        background-color: darken($accent-color, .16);
+        background-color: darken($accent-color, 16%);
 
         @for $i from 1 through length($palette) {
-            .color-#{$i - 1} & { background-color: darken(nth($palette, $i), .16); }
+            .color-#{$i - 1} & { background-color: darken(nth($palette, $i), 16%); }
         }
     }
 }

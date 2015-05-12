@@ -43,7 +43,7 @@ module.exports = function(core) {
 		core.on("statechange", function(changes) {
 			var color;
 
-			if (changes.nav && (changes.nav.mode || changes.nav.thread || changes.nav.room)) {
+			if (changes.nav && ("mode" in changes.nav || "thread" in changes.nav || "room" in changes.nav)) {
 				color = window.getComputedStyle(colordiv)["background-color"];
 
 				if (color) {
