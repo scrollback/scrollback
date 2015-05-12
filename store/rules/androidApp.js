@@ -6,15 +6,9 @@ module.exports = function(core) {
 	var colordiv;
 
 	function rgb2hex(color) {
-		var arr, rgb, r, g, b;
+		var rgb, r, g, b;
 
-		arr = color.replace(/[rgba()]/g, "").split(",");
-
-		rgb = [
-			parseInt(arr[0], 10),
-			parseInt(arr[1], 10),
-			parseInt(arr[2], 10)
-		];
+		rgb = color.replace(/^rgba?\(|\)$]/g, "").split(",");
 
 		r = ("0" + parseInt(rgb[0], 10).toString(16)).slice(-2);
 		g = ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2);
