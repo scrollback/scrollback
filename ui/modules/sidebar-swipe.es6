@@ -10,28 +10,26 @@ module.exports = (core, config, store) => {
 
 	function translate(elem, amount) {
 		if (elem && elem.nodeType) {
-			window.requestAnimationFrame(() => {
-				let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
+			let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
 
-				for (let p of prefixes) {
-					elem.style[p + "Transform"] = value;
-				}
+			for (let p of prefixes) {
+				elem.style[p + "Transform"] = value;
+			}
 
-				elem.style.transform = value;
-			});
+			elem.style.transform = value;
 		}
 	}
 
 	function opacity(elem, amount) {
 		if (elem && elem.nodeType) {
-			window.requestAnimationFrame(() => elem.style.opacity = amount);
+			elem.style.opacity = amount;
 		}
 	}
 
 	function onstart(e) {
 		sidebar = sidebar || document.querySelector(".sidebar-right");
 
-		if (sidebar.contains(e.target)) {
+		if (sidebar && sidebar.contains(e.target)) {
 			document.body.classList.add("swipe-start");
 
 			sidebar = document.querySelector(".sidebar-right");
@@ -43,7 +41,7 @@ module.exports = (core, config, store) => {
 	}
 
 	function onend(e) {
-		if (sidebar.contains(e.target) || overlay.contains(e.target)) {
+		if (sidebar && sidebar.contains(e.target)) {
 			document.body.classList.remove("swipe-start");
 
 			if (posX > elemWidth / 2) {
@@ -61,9 +59,7 @@ module.exports = (core, config, store) => {
 	}
 
 	function onmove(e) {
-		if (sidebar.contains(e.target)) {
-			e.preventDefault();
-
+		if (sidebar && sidebar.contains(e.target)) {
 			let currPosX = bodyWidth - e.touches[0].pageX;
 
 			if (currPosX !== posX && currPosX < elemWidth) {
@@ -72,6 +68,8 @@ module.exports = (core, config, store) => {
 			}
 
 			posX = currPosX;
+
+			e.preventDefault();
 		}
 	}
 
