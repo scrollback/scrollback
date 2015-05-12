@@ -40,7 +40,11 @@ module.exports = function(core, config, store) {
 				nav: {
 					thread: this.props.thread.id,
 					mode: "chat",
-					view: null
+					view: null,
+					textRange:{
+						time: null,
+						before: 25
+					}
 				}
 			});
 		},

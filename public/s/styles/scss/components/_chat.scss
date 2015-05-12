@@ -162,6 +162,11 @@
         }
 
         &-tag {
+            &-failed {
+                color: $error-color;
+                font-style: italic;
+            }
+            
             &-hidden {
                 font-style: italic;
                 opacity: .5;
