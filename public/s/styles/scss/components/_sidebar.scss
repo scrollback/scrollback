@@ -16,40 +16,18 @@
         box-shadow: 0 0 0 transparent;
         will-change: transform;
 
+        .swipe-start & { @include transition(.15s); }
+
         &-content {
             max-height: 100%;
             overflow: auto;
             -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
         }
 
-        &-left {
-            left: 0;
-            box-shadow: inset -1px 0 0 rgba(0,0,0,0.12), 1px 0 3px rgba(0,0,0,0.06);
-            transform: translate3d(-100%,0,0);
-
-            .view-sidebar-left & { transform: translate3d(0,0,0); }
-
-            @media #{$screenxxx} {
-                position: relative;
-                left: auto;
-                top: auto;
-                z-index: 100;
-                transform: translate3d(0,0,0);
-            }
-
-            &-footer {
-                &:focus, &:hover { background-color: darken($dark-color, 5%); }
-
-                &:active { background-color: darken($dark-color, 10%); }
-            }
-        }
-
         &-right {
-            right: 0;
+            left: 100%;
             box-shadow: inset 1px 0 0 rgba(0,0,0,0.12), -1px 0 3px rgba(0,0,0,0.06);
-            transform: translate3d(100%,0,0);
-
-            .view-sidebar-right & { transform: translate3d(0,0,0); }
+            transform: translate3d(0, 0, 0);
 
             @media #{$screenxxxx}  {
                 position: relative;
@@ -58,6 +36,17 @@
                 z-index: 100;
                 transform: translate3d(0,0,0);
             }
+        }
+
+        &-touch-target {
+            position: absolute;
+            top: 25%;
+            width: 2em;
+            height: 50%;
+            background-color: transparent;
+            overflow: hidden;
+
+            &-right { left: -2em; }
         }
 
         &-overlay {
@@ -69,19 +58,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0, 0, 0, 0.7);
             opacity: 0;
-            pointer-events: none;
-            transform: translate3d(0,0,0);
+            transform: translate3d(0, 0, 0);
 
-            .view-sidebar-left &, .view-sidebar-right & {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            @media #{$screenxxx} {
-                .view-sidebar-left & { display: none; }
-            }
+            .swipe-start & { @include transition(.15s); }
         }
 
         &-block {
