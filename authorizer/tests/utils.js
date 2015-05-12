@@ -18,7 +18,8 @@ utils.prototype.makeAction = function (action, role, userRole, victimRole) {
 				}
 			}
 		},
-		role: role
+		role: role,
+		origin: {}
 	};
 };
 

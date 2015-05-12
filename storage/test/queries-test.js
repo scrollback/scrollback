@@ -703,7 +703,7 @@ describe("Storage Test(Queries)", function() {
 						//log.d("Results:", results.results[i].id, texts[index].id, index);
 						assert.equal(results.results[i].id, texts[index--].id, "Incorrect results");
 					}
-					if (results.results.length != num) {
+					if (results.results.length !== num) {
 						done();
 					} else getTexts(results.results[0].time, index + 1);
 				});
@@ -813,7 +813,7 @@ describe("Storage Test(Queries)", function() {
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
 				core.emit("getRooms", {type: "getRooms", createTime: time - 1, after: num}, function(err, results) {
-					log.d("rooms:", results);
+					log.d("rooms:", results.results.length);
 
 					assert.equal(results.results.length, num, "not n messages");
 					for (var i = 0; i < results.results.length; i++) {
@@ -841,12 +841,12 @@ describe("Storage Test(Queries)", function() {
 			rooms.push(room);
 		}
 		var num = 256;
-		rooms.sort(function(r1, r2) {
+		/*rooms.sort(function(r1, r2) {
 			return r1.room.id > r2.room.id ? 1 : (r1.room.id === r2.room.id ? 0 : -1);
-		});
+		});*/
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {identity: "twitter"}, function(err, results) {
+				core.emit("getRooms", {type: "getRooms", identity: "twitter", createTime: time - 1, after: num}, function(err, results) {
 					log.d("rooms:", results.results.length);
 
 					assert.equal(results.results.length, num, "not n messages");
@@ -874,11 +874,11 @@ describe("Storage Test(Queries)", function() {
 			text.to = to;
 			text.time = time + i; // increasing time.
 			texts.push(text);
-			if (i < numThreads) {
-				threadIds.push(text.threads[0].id);
-			} else {
-				text.threads = [{id: threadIds[i % numThreads]}];
-			}
+//			if (i < numThreads) {
+//				threadIds.push(text.threads[0].id);
+//			} else {
+//				text.threads = [{id: threadIds[i % numThreads]}];
+//			}
 		}
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function(err) {

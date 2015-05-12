@@ -1,4 +1,5 @@
 /* global it */
+"use strict";
 var assert = require('assert');
 
 var Utils = new(require('./utils.js'))();
@@ -23,7 +24,8 @@ module.exports = function (core) {
 		// followers should be allowed to invite other users
 		admit = makeAction('admit', 'follower', 'follower', 'registered');
 		core.emit('admit', admit, function (err, data) {
-			assert.equal(data.transitionRole, 'follower', "Follower was not allowed to invite other followers in openFollow");
+			assert.equal(data.transitionRole, 'follower',
+						 "Follower was not allowed to invite other followers in openFollow as transition role is "+ data.transitionRole);
 			assert.equal(data.transitionType, 'invite', "Follower was not allowed to invite other followers (Transition type is not request)");
 		});
 
