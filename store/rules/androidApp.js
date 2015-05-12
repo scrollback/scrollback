@@ -23,6 +23,16 @@ module.exports = function(core) {
 		return "#" + r + g + b;
 	}
 
+	function setStatusBarColor() {
+		var color = window.getComputedStyle(colordiv)["background-color"];
+
+		if (color) {
+			window.Android.setStatusBarColor(rgb2hex(color));
+		} else {
+			window.Android.setStatusBarColor("#000000");
+		}
+	}
+
 	core.on("boot", function(state) {
 		if (window.Android) {
 			state.context.env = "android";
@@ -30,6 +40,8 @@ module.exports = function(core) {
 			if (typeof window.Android.onFinishedLoading === "function") {
 				window.Android.onFinishedLoading();
 			}
+
+			setStatusBarColor();
 		}
 	}, 200);
 
@@ -41,16 +53,8 @@ module.exports = function(core) {
 		document.body.appendChild(colordiv);
 
 		core.on("statechange", function(changes) {
-			var color;
-
 			if (changes.nav && ("mode" in changes.nav || "thread" in changes.nav || "room" in changes.nav)) {
-				color = window.getComputedStyle(colordiv)["background-color"];
-
-				if (color) {
-					window.Android.setStatusBarColor(rgb2hex(color));
-				} else {
-					window.Android.setStatusBarColor("#000000");
-				}
+				setStatusBarColor();
 			}
 		}, 1);
 	}

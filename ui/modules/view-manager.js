@@ -77,5 +77,5 @@ module.exports = function(core, config, store) {
 			// Store the old class name
 			oldClassName = newClassName;
 		}
-	}, 1);
+	}, 10);
 };
