@@ -1,3 +1,5 @@
+/* eslint-env es6, browser */
+
 "use strict";
 
 var format = require("../../lib/format.js"),
@@ -27,9 +29,10 @@ module.exports = function(core, config, store) {
 
 		selectMessage: function(e) {
 			var appChanges = {},
-				index, currentText, selectedTexts;
+				index, currentText, selectedTexts,
+				selection = window.getSelection();
 
-			if (e.target.tagName === "A") {
+			if (e.target.tagName === "A" || (selection && selection.type === "Range")) {
 				return;
 			}
 
