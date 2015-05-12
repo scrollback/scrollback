@@ -10,6 +10,7 @@ var objUtils = require("../lib/obj-utils.js"),
 		},
 		session: "",
 		user: "",
+		notifications: [],
 		texts: {},
 		threads: {},
 		entities: {},
@@ -235,7 +236,7 @@ Store.prototype.getFeaturedRooms = function() {
 module.exports = function(core, config) {
 	var store = new Store([ state ]);
 
-	require("./state-manager.js")(core, config, store, state);
+	require("./state-manager.es6")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);
 	require("./rule-manager.js")(core, config, store, state);
 	require("./socket.js")(core, config, store, state);

@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js"),
@@ -7,6 +5,7 @@ var appUtils = require("../../lib/app-utils.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Badge = require("./badge.jsx")(core, config, store),
 		ThreadCard;
 
 	ThreadCard = React.createClass({
@@ -117,6 +116,10 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		badgeFilter: function(notification) {
+			return notification.action.thread === this.props.thread.id;
+		},
+
 		render: function() {
 			var thread = this.props.thread,
 				classNames = "card thread-card",
@@ -154,8 +157,7 @@ module.exports = function(core, config, store) {
 				<div key={"thread-card-" + thread.id} className={classNames} data-color={thread.color} onClick={this.goToThread}>
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
-						<span className="card-header-badge notification-badge notification-badge-mention">{thread.mentions}</span>
-						<span className="card-header-badge notification-badge notification-badge-messages">{thread.messages}</span>
+						<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
 						{menu}
 					</div>
 					<div className="card-content">{chats}</div>

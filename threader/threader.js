@@ -1,10 +1,11 @@
 /* jshint mocha: true */
+/*jshint: true*/
 var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,
 	validator = new (require('valid'))(),
 	appUtils = require("../lib/app-utils.js"),
-	colors, redis;
+	redis;
 
 var threaderValidator = {
 	params: [{
@@ -17,11 +18,11 @@ var threaderValidator = {
 Communicate with scrollback java Process through TCP and set message.threads.
 */
 module.exports = function(coreObj, conf) {
+	"use strict";
 	core = coreObj;
 	config = conf;
 	redis = require('redis').createClient();
 	redis.select(config.redisDB);
-	colors = require('./colors.js')(redis, config);
 	if (config) {
 		init();
 		core.on("room", function(action, callback) {
@@ -32,8 +33,7 @@ module.exports = function(coreObj, conf) {
 			} else callback();
 		}, "appLevelValidation");
 
-		core.on('text', function(message, cb) {
-			var callback = colors(message, cb);
+		core.on('text', function(message, callback) {
 			var room = message.room;
 			if (client.writable && (!room.params || !room.params.threader || room.params.threader.enabled)) {//if client connected
 				
@@ -83,6 +83,7 @@ module.exports = function(coreObj, conf) {
 * }, ... ]
 */
 function processReply(data){
+	"use strict";
 	try {
 		log("JSB Response" + data);
 		data = JSON.parse(data);
@@ -121,6 +122,7 @@ function processReply(data){
 
 
 function init(){
+	"use strict";
 	client = net.connect({port: config.port, host: config.host}, function() {
 		log.i('Threader connected.');
 		client.write("[");//sending array of JSON objects

@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
 
 "use strict";
@@ -19,18 +19,18 @@ module.exports = function(core, config, store) {
 			core.emit("room-up", {
 				to: roomName,
 				room: room
-			 }, function(err, room) {
+			 }, function(e, r) {
 				self.removeClass("working");
 
-				if (err) {
+				if (e) {
 					// handle the error
 				} else {
-					for (var i in room.room.params) {
-						if (!room.room.params.hasOwnProperty(i)) {
+					for (var i in r.room.params) {
+						if (!r.room.params.hasOwnProperty(i)) {
 							continue;
 						}
 
-						if (room.room.params[i].error) {
+						if (r.room.params[i].error) {
 							return;
 						}
 					}

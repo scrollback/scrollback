@@ -1,11 +1,10 @@
-/* jshint browser: true */
-
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Badge = require("./badge.jsx")(core, config, store),
 		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		RoomCard;
 
@@ -51,6 +50,10 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		badgeFilter: function(notification) {
+			return notification.action.to === this.props.roomId;
+		},
+
 		render: function() {
 			var room = this.props.roomId,
 				user = store.get("user"),
@@ -83,8 +86,7 @@ module.exports = function(core, config, store) {
 				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
 						<div className="card-cover-header card-header">
-							<span className="card-header-badge notification-badge notification-badge-mention"></span>
-							<span className="card-header-badge notification-badge notification-badge-messages"></span>
+							<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
 							{icons}
 						</div>
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.picture  + ")" }}></div>

@@ -1,6 +1,9 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
+
+"use strict";
+
 var assert = require('assert'),
-	core =new (require('ebus'))(),
+	core = new (require('ebus'))(),
 	generate = require("../../lib/generate.js"),
 	postgres = require('./../postgres.js'),
 	log = require("../../lib/logger.js"),
@@ -44,7 +47,7 @@ describe("Storage Test(actions).", function() {
 				postgres.runQueries(client,
 										 [{query: "SELECT * from texts where id=$1", values: [msg.id]},
 										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}],
-										 function(err, results) {
+										 function(e, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
 						assert.equal(result.rowCount, 1, "Database doesn't have message Object");
@@ -58,15 +61,14 @@ describe("Storage Test(actions).", function() {
 
 	it("Insert new text message. (Labels and tags)", function(done) {
 		var msg = utils.getNewTextAction();
-		msg.labels.abusive = 1;
-		msg.labels.hidden = 1;
-		msg.tags = ['abc'];
+		msg.tags.push("abusive");
+		msg.tags.push("hidden");
 		core.emit("text", msg, function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
 				postgres.runQueries(client,
 										[{query: "SELECT * from texts where id=$1", values: [msg.id]}],
-										function(err, results) {
+										function(e, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
 						result.rows[0].tags.sort();
@@ -83,13 +85,12 @@ describe("Storage Test(actions).", function() {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var m2 = utils.getNewTextAction();
-			m2.threads = m1.threads;
-			delete m2.threads[0].title; // don't update title.
+			m2.thread = m1.thread;
 			core.emit("text", m2, function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							assert.equal(result.rows[0].length, 2, "Database doesn't have message Object");
@@ -115,7 +116,7 @@ describe("Storage Test(actions).", function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 											[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							assert.equal(result.rows[0].text, text, "Updating text failed");
@@ -127,7 +128,7 @@ describe("Storage Test(actions).", function() {
 			});
 		});
 	});
-
+//
 	it("Edit (Edit title)-2", function(done) {
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
@@ -141,7 +142,7 @@ describe("Storage Test(actions).", function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 											[{query: "SELECT * from threads where id=$1", values: [m1.thread]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							assert.equal(result.rows[0].title, text, "Updating title failed");
@@ -156,8 +157,8 @@ describe("Storage Test(actions).", function() {
 
 	it("Edit (labels update)", function(done) {
 		var m1 = utils.getNewTextAction();
-		m1.labels.abusive = 1;
-		m1.labels.hidden = 1;
+		m1.tags.push("abusive");
+		m1.tags.push("hidden");
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
@@ -169,11 +170,11 @@ describe("Storage Test(actions).", function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 											[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							result.rows[0].tags.sort();
-							assert.deepEqual(result.rows[0].tags, ['abusive', 'color3', "hidden"], "Updating text failed");
+							assert.deepEqual(result.rows[0].tags, ['abusive', "hidden"], "Updating text failed");
 						});
 						cb();
 						done();
@@ -185,13 +186,13 @@ describe("Storage Test(actions).", function() {
 
 	it("Edit (labels remove/update test.)", function(done) {
 		var m1 = utils.getNewTextAction();
-		m1.labels.abusive = 1;
-		m1.labels.hidden = 1;
-		m1.labels.color3 = 1;
+		m1.tags.push("abusive");
+		m1.tags.push("hidden");
+		//m1.labels.color3 = 1;
 		core.emit("text", m1, function() {
 			var edit = {
 				ref: m1.id,
-				labels: {hidden: 0, abc: 1}, // remove hidden, add abc
+				tags: ["abc", "abusive"], // remove hidden, add abc
 				time: new Date().getTime(),
 				old: m1
 			};
@@ -199,12 +200,12 @@ describe("Storage Test(actions).", function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 										[{query: "SELECT * from texts where id=$1", values: [m1.id]}],
-										function(err, results) {
+										function(e, results) {
 						log.d("Arguments:", arguments);
 
 						results.forEach(function(result) {
 							result.rows[0].tags.sort();
-							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive', 'color3'], "Updating text failed");
+							assert.deepEqual(result.rows[0].tags, ['abc', 'abusive'], "Updating text failed");
 						});
 						cb();
 						done();
@@ -220,7 +221,7 @@ describe("Storage Test(actions).", function() {
 			pg.connect(connString, function(err, client, cb) {
 				postgres.runQueries(client,
 										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
-										function(err, results) {
+										function(e, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
 						assert.deepEqual(result.rows[0].id, user.user.id, "Adding new user failed");
@@ -238,7 +239,7 @@ describe("Storage Test(actions).", function() {
 			pg.connect(connString, function(err, client, cb) {
 				postgres.runQueries(client,
 										[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
-										function(err, results) {
+										function(e, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {
 						assert.deepEqual(result.rows[0].timezone, user.user.timezone, "Adding new user failed");
@@ -261,7 +262,7 @@ describe("Storage Test(actions).", function() {
 				pg.connect(connString, function(err, client, cb) {
 					postgres.runQueries(client,
 											[{query: "SELECT * from entities where id=$1", values: [user.user.id]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						results.forEach(function(result) {
 							log("User: ", user.user.description, result.rows[0].description);
@@ -286,7 +287,7 @@ describe("Storage Test(actions).", function() {
 					postgres.runQueries(client,
 											[{query: "SELECT * from entities where id=$1", values: [room.room.id]},
 											 {query: "SELECT * from relations where \"room\"=$1 AND \"user\"=$2", values: [room.room.id, room.user.id]}],
-											function(err, results) {
+											function(e, results) {
 						log.d("Arguments:", arguments);
 						//results.forEach(function(result) {
 						assert.deepEqual(results[0].rows[0].id, room.room.id, "Adding new room failed");
@@ -316,7 +317,7 @@ describe("Storage Test(actions).", function() {
 					pg.connect(connString, function(err, client, cb) {
 						postgres.runQueries(client,
 												[{query: "SELECT * from entities where id=$1", values: [room.room.id]}],
-												function(err, results) {
+												function(e, results) {
 							log.d("Arguments:", arguments);
 							results.forEach(function(result) {
 								room.room.identities.sort();
@@ -355,7 +356,7 @@ describe("Storage Test(actions).", function() {
 						postgres.runQueries(client,
 												[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2",
 												  values: [room.room.id, user.user.id]}],
-												function(err, results) {
+												function(e, results) {
 							log.d("Arguments:", arguments);
 							results.forEach(function(result) {
 								log("Result:", result);
@@ -390,7 +391,7 @@ describe("Storage Test(actions).", function() {
 							postgres.runQueries(client,
 													[{query: "SELECT * from relations where \"room\"=$1 and \"user\"=$2",
 													  values: [room.room.id, user.user.id]}],
-													function(err, results) {
+													function(e, results) {
 								log.d("Arguments:", arguments);
 								results.forEach(function(result) {
 									log("Result:", result);
@@ -406,7 +407,6 @@ describe("Storage Test(actions).", function() {
 			});
 		});
 	});
-
 
 });
 

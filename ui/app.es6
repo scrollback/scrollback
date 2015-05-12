@@ -1,9 +1,9 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env es6, browser */
 
 (function() {
 	"use strict";
 
-	let config  = require(".././client-config-defaults.js"),
+	let config = require(".././client-config-defaults.js"),
 		core, store;
 
 	// ES6 polyfills
@@ -15,6 +15,7 @@
 	// Polyfills
 	require("../lib/css-supports.polyfill.js");
 	require("../lib/custom-events.polyfill.js");
+	require("../lib/notification.polyfill.js");
 	require("../lib/request-animation-frame.polyfill.js");
 
 	// Third party libraries
@@ -41,6 +42,7 @@
 	require("../history/history-client.js")(...args);
 
 	// Apps
+	require("../notification/notification-client.es6")(...args);
 	require("../anti-abuse/anti-abuse-client.js")(...args);
 	require("../authorizer/authorizer-client.js")(...args);
 	require("../email/email-client.js")(...args);
@@ -52,7 +54,7 @@
 	require("../irc/irc-client.js")(...args);
 	require("../threader/threader-client.js")(...args);
 	require("../twitter/twitter-client.js")(...args);
-	require('../customization/customization-client.js')(...args);
+	require("../customization/customization-client.js")(...args);
 
 	// User menu providers
 	require("../browserid-auth/browserid-auth-client.js")(...args);
@@ -63,10 +65,9 @@
 	require("../http/logout-client.js")(...args);
 
 	// Modules
-	require("./modules/menu-listeners.js")(...args);
+	require("./modules/menu-listeners.es6")(...args);
 	require("./modules/dialogs-listeners.js")(...args);
 	require("./modules/thread-dialog.js")(...args);
-	require("./modules/notifications.js")(...args);
 	require("./modules/settings-room.js")(...args);
 	require("./modules/settings-user.js")(...args);
 	require("./modules/signin-handler.js")(...args);

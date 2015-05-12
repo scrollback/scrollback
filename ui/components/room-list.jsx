@@ -1,5 +1,3 @@
-/* jshint browser: true */
-
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -15,9 +13,10 @@ module.exports = function(core, config, store) {
 					owner: "My rooms",
 					moderator: "Moderated rooms",
 					follower: "Following",
-					featured: "Featured rooms"
+					featured: "Recommened by Scrollback"
 				},
-				secs = {}, sections = [];
+				secs = {}, sections = [],
+				relatedRooms;
 
 			// Don't show
 			if (!this.state.show) {
@@ -32,7 +31,9 @@ module.exports = function(core, config, store) {
 				};
 			}
 
-			store.getRelatedRooms().forEach(function(room) {
+			relatedRooms = store.getRelatedRooms();
+
+			relatedRooms.forEach(function(room) {
 				var role;
 
 				if (typeof room !== "object") {
@@ -47,11 +48,19 @@ module.exports = function(core, config, store) {
 				});
 			});
 
-			store.getFeaturedRooms().forEach(function(room) {
+			store.getFeaturedRooms().filter(function(room) {
 				if (typeof room !== "object") {
-					return;
+					return false;
 				}
 
+				for (var i = 0, l = relatedRooms.length; i < l; i++) {
+					if (room.id === relatedRooms[i].id) {
+						return false;
+					}
+				}
+
+				return true;
+			}).forEach(function(room) {
 				secs.featured.items.push({
 					key: "home-room-card-featured-" + room.id,
 					updateTime: room.updateTime,
@@ -59,12 +68,16 @@ module.exports = function(core, config, store) {
 				});
 			});
 
-			for (var role in secs) {
-				if (secs[role].items.length) {
+			function sortByTime(a, b) {
+				return (a.createTime || 0) - (b.createTime || 0);
+			}
+
+			for (var r in secs) {
+				if (secs[r].items.length) {
 					sections.push({
-						key: "home-" + secs[role].key,
-						header: secs[role].header,
-						items: secs[role].items.sort(function(a, b) { return (a.createTime || 0) - (b.createTime || 0); })
+						key: "home-" + secs[r].key,
+						header: secs[r].header,
+						items: secs[r].items.sort(sortByTime)
 					});
 				}
 			}
@@ -80,13 +93,11 @@ module.exports = function(core, config, store) {
 			return { show: false };
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			if ((changes.nav && changes.nav.mode) ||
 			    (changes.indexes && changes.indexes.userRooms)) {
 				this.setState({ show: (store.get("nav", "mode") === "home") });
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {

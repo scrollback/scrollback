@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		oldClassName;
 
 	// Listen to navigate and add class names
-	core.on("statechange", function(changes, next) {
+	core.on("statechange", function() {
 		var newClassList = [],
 			currentClassName, newClassName,
 			relation, value, nav, thread, form, minimize;
@@ -77,7 +77,5 @@ module.exports = function(core, config, store) {
 			// Store the old class name
 			oldClassName = newClassName;
 		}
-
-		next();
 	}, 1);
 };

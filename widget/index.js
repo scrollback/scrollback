@@ -1,6 +1,6 @@
-/* jslint browser: true, indent: 4, regexp: true*/
-/* global require*/
+/* eslint-env browser */
 
+"use strict";
 var config = require("../client-config.js");
 var host = config.server.protocol + "//" + config.server.host;
 var iframeCount = 0,
@@ -49,10 +49,10 @@ function onMessage(e) {
 			break;
 		}
 	}
-	if (i == l) return;
+	if (i === l) return;
 	try {
 		data = JSON.parse(e.data);
-	} catch (e) {
+	} catch (err) {
 		return;
 	}
 
@@ -82,8 +82,8 @@ function constructEmbed(options) {
 	if (options.nick) embed.nick = options.nick;
 	embed.minimize = (typeof options.minimize === "boolean") ? options.minimize : false;
 	if(options.jws) embed.jws = options.jws;
-	if(typeof options.createRoom == "boolean")embed.createRoom = options.createRoom;
-	if(typeof options.createUser == "boolean")embed.createUser = options.createUser;
+	if(typeof options.createRoom === "boolean")embed.createRoom = options.createRoom;
+	if(typeof options.createUser === "boolean")embed.createUser = options.createUser;
 	embed.origin = {
 		protocol: location.protocol,
 		host: location.host,
@@ -95,16 +95,16 @@ function constructEmbed(options) {
 function addWidget(self) {
 	var iframe, options = self.options,
 		embed = self.embed, params = [];
-	
+
 	params.push("embed=" + encodeURIComponent(JSON.stringify(embed)));
 
 	iframe = document.createElement("iframe");
 	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
-	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
+	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form === "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
 
 	widgets[iframe.dataset.id] = self;
-	
+
 	domReady(function() {
 		var container = document.getElementById(self.options.container);
 		if (!container) {
@@ -145,7 +145,7 @@ function scrollback(opts, callback) {
 	/*widget.setState = require("./set-state.js")(self);
 	widget.options = require("./options.js")(self);
 	widget.signin = require("./signin.js")(self);*/
-	
+
 	widget.following = require("./following.js")(self);
 	self.widget = widget;
 

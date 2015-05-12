@@ -15,8 +15,8 @@ var gulp = require("gulp"),
 	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
-	jshint = require("gulp-jshint"),
 	jscs = require("gulp-jscs"),
+	eslint = require("gulp-eslint"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
 	concat = require("gulp-concat"),
@@ -40,16 +40,15 @@ var gulp = require("gulp"),
 	},
 	files = {
 		js: [
-			"**/*.js", "**/*.es6", "!**/*.min.js",
+			"**/*.js", "**/*.es6", "**/*.jsx", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
-		jsx: [ "**/*.jsx" ],
 		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
 
 // Make browserify bundle
-function bundle(files, opts) {
+function bundle(scripts, opts) {
 	var streams = [],
 		bundler = function(file) {
 			opts.entries = "./" + file;
@@ -66,14 +65,14 @@ function bundle(files, opts) {
 
 	opts = opts || {};
 
-	if (files && files instanceof Array) {
-		for (var i = 0, l = files.length; i < l; i++) {
-			if (typeof files[i] === "string") {
-				streams.push(bundler(files[i]));
+	if (scripts && scripts instanceof Array) {
+		for (var i = 0, l = scripts.length; i < l; i++) {
+			if (typeof scripts[i] === "string") {
+				streams.push(bundler(scripts[i]));
 			}
 		}
-	} else if (typeof files === "string") {
-		streams.push(bundler(files));
+	} else if (typeof scripts === "string") {
+		streams.push(bundler(scripts));
 	}
 
 	return es.merge.apply(null, streams).pipe(buffer());
@@ -123,13 +122,13 @@ gulp.task("hooks", function() {
 gulp.task("postinstall", [ "hooks" ]);
 
 // Lint JavaScript files
-gulp.task("jshint", function() {
+gulp.task("eslint", function() {
 	return gulp.src(files.js)
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
-	.pipe(jshint())
-	.pipe(jshint.reporter("jshint-stylish"))
-	.pipe(jshint.reporter("fail"));
+	.pipe(eslint())
+	.pipe(eslint.format())
+	.pipe(eslint.failOnError());
 });
 
 gulp.task("jscs", function() {
@@ -139,7 +138,7 @@ gulp.task("jscs", function() {
 	.pipe(jscs());
 });
 
-gulp.task("lint", [ "jshint" ]);
+gulp.task("lint", [ "eslint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", function() {
@@ -169,7 +168,7 @@ gulp.task("bundle", function() {
 	.pipe(rename({
 		suffix: ".bundle.min",
 		extname: ".js"
-    }))
+	}))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.scripts));
 });
@@ -203,7 +202,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
+gulp.task("scripts", [ "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -255,12 +254,12 @@ gulp.task("clean", function() {
 
 // Watch for changes
 gulp.task("watch", function() {
-	gulp.watch(files.js.concat(files.jsx), [ "scripts", "manifest" ]);
+	gulp.watch(files.js, [ "scripts", "manifest" ]);
 	gulp.watch(files.scss, [ "styles", "manifest" ]);
 });
 
 // Build all files
-gulp.task("build", [ "scripts", "styles" ], function() {
+gulp.task("build", [ "polyfills", "scripts", "styles" ], function() {
 	gulp.start("manifest");
 });
 

@@ -1,4 +1,5 @@
-/* jshint browser: true */
+/* eslint-env es6, browser */
+/* global $ */
 
 "use strict";
 
@@ -9,6 +10,8 @@ var showMenu = require("../utils/show-menu.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		Badge = require("./badge.jsx")(core, config, store),
+		NotificationCenter = require("../../notification/notification-center.es6")(core, config, store),
 		AppbarPrimary;
 
 	AppbarPrimary = React.createClass({
@@ -34,7 +37,7 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleMinimize: function(e) {
-			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf("user-area") > -1)) {
+			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
 				return;
 			}
 
@@ -49,6 +52,20 @@ module.exports = function(core, config, store) {
 
 		fullScreen: function() {
 			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+		},
+
+		showNotifications: function(event) {
+			let center = new NotificationCenter(),
+				notifications = store.get("notifications");
+
+			for (let notif of notifications) {
+				center.add(notif);
+			}
+
+			$(center.dom).popover({
+				arrow: false,
+				origin: event.currentTarget
+			});
 		},
 
 		showUserMenu: function(e) {
@@ -92,6 +109,9 @@ module.exports = function(core, config, store) {
 						<img className="user-area-avatar" alt={this.state.username} src={this.state.picture} />
 						<div className="user-area-nick">{this.state.username}</div>
 					</div>
+					<a className="appbar-bell appbar-icon appbar-icon-alert" onClick={this.showNotifications}>
+						<Badge className="appbar-bell-badge" />
+					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
@@ -108,7 +128,7 @@ module.exports = function(core, config, store) {
 			};
 		},
 
-		onStateChange: function(changes, next) {
+		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
 				userObj, threadObj, nav, relation, title;
@@ -142,8 +162,6 @@ module.exports = function(core, config, store) {
 					following: !!(relation && relation.role === "follower")
 				});
 			}
-
-			next();
 		},
 
 		componentDidMount: function() {
