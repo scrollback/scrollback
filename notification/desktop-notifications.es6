@@ -3,8 +3,7 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const NotificationItem = require("./notification-item.es6")(core, config, store),
-		  desktopnotify = require("../lib/desktopnotify.js");
+	const NotificationItem = require("./notification-item.es6")(core, config, store);
 
 	core.on("notification-dn", notification => {
 		let item = new NotificationItem(notification),
@@ -12,16 +11,18 @@ module.exports = (core, config, store) => {
 			show = (user.params && user.params.notifications && user.params.notifications.desktop === false) ? false : true;
 
 		if (show) {
-			desktopnotify.show({
-				title: item.title,
+			let not = new Notification(item.title, {
 				body: item.summary,
 				icon: "/s/assets/preview@2x.png",
-				tag: notification.id,
-				action: () => {
-					item.handlers[0]();
-					item.dismiss();
-				}
+				tag: notification.id
 			});
+
+			not.onclick = () => {
+				window.focus();
+
+				item.handlers[0]();
+				item.dismiss();
+			};
 		}
 	}, 1);
 };
