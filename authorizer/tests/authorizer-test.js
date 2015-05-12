@@ -1,9 +1,10 @@
+/* eslint-env mocha */
+
 /*
- This unit test tests the authorizer app. Invalid actions/queries will get a ERR_NOT_ALLOWED error and valid queries will get error as null. 
- These values are asserted for. 
+ This unit test tests the authorizer app. Invalid actions/queries will get a ERR_NOT_ALLOWED error and valid queries will get error as null.
+ These values are asserted for.
 */
-/*jshint strict: true */
-/* jshint mocha: true */
+
 var core = new (require('ebus'))();
 var config = require("./../../server-config-defaults.js");
 var auth = require('../authorizer.js');

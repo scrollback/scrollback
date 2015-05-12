@@ -43,7 +43,6 @@
 
 	// Apps
 	require("../notification/notification-client.es6")(...args);
-	require("../android/android-client.js")(...args);
 	require("../anti-abuse/anti-abuse-client.js")(...args);
 	require("../authorizer/authorizer-client.js")(...args);
 	require("../email/email-client.js")(...args);

@@ -1,5 +1,7 @@
 /* jshint browser: true */
 
+"use strict";
+
 var gcmTimeValidity = 12 * 60 * 60 * 1000,
 	updateDevice = false,
 	objUtils = require("../lib/obj-utils.js");

@@ -1,9 +1,11 @@
+"use strict";
+
 var log = require('../lib/logger.js');
 var _ = require('underscore');
 var request = require('request');
 
 /*
-	payload : 
+	payload :
 	{
 		title : "Push Notification Title",
 		message: "Message of Notification",
@@ -29,14 +31,14 @@ module.exports = function(userRegMapping, payload, core, config) {
 			'pushNotifications' in userRegMap.user.params &&
 			'devices' in userRegMap.user.params.pushNotifications
 		)) return;
-		
+
 		for(uuid in devices) {
 			if(devices[uuid].redId === userRegMap.registrationId) {
 				uuidToRemove = uuid;
 				break;
 			}
 		}
-		
+
 		if (uuidToRemove) {
 			delete userRegMap.user.params.pushNotifications.devices[uuidToRemove];
 			log.i("EMITTING user", JSON.stringify(userRegMap.user));
@@ -72,7 +74,7 @@ module.exports = function(userRegMapping, payload, core, config) {
 					for (index = 0; index < body.results.length; index++) {
 						result = body.results[index];
 						if (result.hasOwnProperty('error') &&
-							(result.error === "InvalidRegistration" || 
+							(result.error === "InvalidRegistration" ||
 							 result.error === "NotRegistered") || result.error === "MismatchSenderId") {
 							removeDevice(userRegMapping[index]);
 						}
