@@ -18,8 +18,6 @@
         // fix flickers
         -webkit-backface-visibility: hidden;
 
-        .swipe-start & { @include transition(.15s); }
-
         &-content {
             max-height: 100%;
             overflow: auto;
@@ -68,9 +66,10 @@
             // fix flickers
             -webkit-backface-visibility: hidden;
 
-            .view-sidebar-right & { pointer-events: auto; }
-
-            .swipe-start & { @include transition(.15s); }
+            .view-sidebar-right & {
+                pointer-events: auto;
+                opacity: 1;
+            }
         }
 
         &-block {

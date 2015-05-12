@@ -6,9 +6,12 @@ module.exports = (core, config, store) => {
 	const prefixes = [ "webkit", "Moz", "ms", "O" ];
 
 	let posX, elemWidth, bodyWidth,
-		sidebar, overlay;
+		sidebar, overlay,
+		diff;
 
 	function translate(elem, amount) {
+		console.log(amount);
+
 		if (elem && elem.nodeType) {
 			window.requestAnimationFrame(() => {
 				let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
@@ -32,39 +35,42 @@ module.exports = (core, config, store) => {
 		sidebar = sidebar || document.querySelector(".sidebar-right");
 
 		if (sidebar && sidebar.contains(e.target)) {
-			document.body.classList.add("swipe-start");
-
 			sidebar = document.querySelector(".sidebar-right");
 			overlay = document.querySelector(".sidebar-overlay");
 
 			elemWidth = sidebar.clientWidth;
 			bodyWidth = document.body.clientWidth;
+
+			if (e.target.className.indexOf("touch-target") && posX < 20) {
+				translate(sidebar, -20);
+				opacity(overlay, 20 / elemWidth);
+			}
 		}
 	}
 
 	function onend(e) {
 		if (sidebar && sidebar.contains(e.target)) {
-			document.body.classList.remove("swipe-start");
-
-			if (posX > elemWidth / 2) {
+			if (posX > elemWidth / 2 && diff > 0) {
 				core.emit("setstate", {
 					nav: { view: "sidebar-right" }
 				});
-			} else {
+			} else if (diff < 0) {
 				core.emit("setstate", {
 					nav: { view: null }
 				});
 			}
 		}
 
-		posX = 0;
+		posX = sidebar.clientWidth;
 	}
 
 	function onmove(e) {
 		if (sidebar && sidebar.contains(e.target)) {
 			let currPosX = bodyWidth - e.touches[0].pageX;
 
-			if (currPosX !== posX && currPosX < elemWidth) {
+			diff = currPosX - posX;
+
+			if (Math.abs(diff) > 2 && currPosX < elemWidth) {
 				translate(sidebar, (currPosX * -1));
 				opacity(overlay, currPosX / elemWidth);
 			}
@@ -85,9 +91,13 @@ module.exports = (core, config, store) => {
 			let view = store.get("nav", "view");
 
 			if (view === "sidebar-right") {
-				translate(sidebar, (sidebar.clientWidth * -1));
+				posX = sidebar.clientWidth;
+
+				translate(sidebar, (posX * -1));
 				opacity(overlay, 1);
 			} else {
+				posX = 0;
+
 				translate(sidebar, null);
 				opacity(overlay, null);
 			}
