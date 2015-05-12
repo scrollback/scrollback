@@ -20,9 +20,6 @@ module.exports = function (core, config) {
 			currentRole: action.user.role
 		}));
 		if (action.user.role === "moderator" || action.user.role === "owner" || action.user.role === "su") return callback();
-		else if (action.user.role === "follower" || action.user.role === "registered") {
-			// if (action.from === action.old.from && action.from === action.old.editInverse[action.old.editInverse.length - 1].from) return callback();
-		}
 		return callback(new SbError('ERR_NOT_ALLOWED', {
 			source: 'authorizer',
 			action: 'edit',
