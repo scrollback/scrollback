@@ -10,19 +10,21 @@ module.exports = (core, config, store) => {
 
 	function translate(elem, amount) {
 		if (elem && elem.nodeType) {
-			let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
+			window.requestAnimationFrame(() => {
+				let value = amount ? "translate3d(" + amount + "px, 0, 0)" : "";
 
-			for (let p of prefixes) {
-				elem.style[p + "Transform"] = value;
-			}
+				for (let p of prefixes) {
+					elem.style[p + "Transform"] = value;
+				}
 
-			elem.style.transform = value;
+				elem.style.transform = value;
+			});
 		}
 	}
 
 	function opacity(elem, amount) {
 		if (elem && elem.nodeType) {
-			elem.style.opacity = amount;
+			window.requestAnimationFrame(() => elem.style.opacity = amount);
 		}
 	}
 

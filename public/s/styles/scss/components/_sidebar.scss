@@ -14,7 +14,9 @@
         background-color: $light-color;
         color: $dark-color;
         box-shadow: 0 0 0 transparent;
-        will-change: transform;
+
+        // fix flickers
+        -webkit-backface-visibility: hidden;
 
         .swipe-start & { @include transition(.15s); }
 
@@ -62,6 +64,9 @@
             opacity: 0;
             pointer-events: none;
             transform: translate3d(0, 0, 0);
+
+            // fix flickers
+            -webkit-backface-visibility: hidden;
 
             .view-sidebar-right & { pointer-events: auto; }
 
