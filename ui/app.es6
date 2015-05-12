@@ -15,6 +15,7 @@
 	// Polyfills
 	require("../lib/css-supports.polyfill.js");
 	require("../lib/custom-events.polyfill.js");
+	require("../lib/notification.polyfill.js");
 	require("../lib/request-animation-frame.polyfill.js");
 
 	// Third party libraries
@@ -41,6 +42,7 @@
 	require("../history/history-client.js")(...args);
 
 	// Apps
+	require("../notification/notification-client.es6")(...args);
 	require("../android/android-client.js")(...args);
 	require("../anti-abuse/anti-abuse-client.js")(...args);
 	require("../authorizer/authorizer-client.js")(...args);
@@ -64,10 +66,9 @@
 	require("../http/logout-client.js")(...args);
 
 	// Modules
-	require("./modules/menu-listeners.js")(...args);
+	require("./modules/menu-listeners.es6")(...args);
 	require("./modules/dialogs-listeners.js")(...args);
 	require("./modules/thread-dialog.js")(...args);
-	require("./modules/notifications.js")(...args);
 	require("./modules/settings-room.js")(...args);
 	require("./modules/settings-user.js")(...args);
 	require("./modules/signin-handler.js")(...args);

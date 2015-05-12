@@ -61,6 +61,33 @@
             }
         }
 
+        &-bell {
+            position: relative;
+
+            &-badge {
+                @extend %transition;
+                @extend %appearin;
+                @include dropshadow(2);
+
+                position: absolute;
+                top: .75em;
+                right: .25em;
+                min-height: 2em;
+                min-width: 2em;
+                background-color: $error-color;
+                color: $light-color;
+                border-radius: 50%;
+                padding: .5em;
+                font-size: .5em;
+                font-weight: 700;
+                text-align: center;
+
+                &:empty { display: none; }
+
+                .mode-chat & { background-color: rgba(0, 0, 0, 0.6); }
+            }
+        }
+
         &-icon {
             $icon-width: $bar-height / 1.5;
 
@@ -102,6 +129,8 @@
             &-search { @include icon(search); }
 
             &-people { @include icon(people); }
+
+            &-alert { @include icon(alert); }
 
             &-maximize { @include icon(maximize); }
 

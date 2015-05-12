@@ -9,11 +9,11 @@ module.exports = function(core, config, store) {
 			room = future.get("nav", "room"),
 			mode = future.get("nav", "mode"),
 			cta = future.get("app", "cta"),
-			rel = future.getRelation(room, user) || {};
+			role = future.get("entities", room + "_" + user, "role");
 
 		changes.app = changes.app || {};
 
-		if (user && !appUtils.isGuest(user) && ((/(visitor|none)/).test(rel.role) || !rel.role) && (/(chat|room)/).test(mode)) {
+		if (user && !appUtils.isGuest(user) && ((/(visitor|none)/).test(role) || !role) && (/(chat|room)/).test(mode)) {
 			changes.app.cta = "follow";
 		} else if (cta === "follow") {
 			changes.app.cta = null;

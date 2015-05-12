@@ -36,7 +36,6 @@
 @import "components/appbar";
 @import "components/searchbar";
 @import "components/card";
-@import "components/badge";
 @import "components/sidebar";
 @import "components/chat";
 @import "components/markdown";
@@ -48,6 +47,7 @@
 @import "components/connectionstatus";
 @import "components/tip";
 @import "components/footer";
+@import "components/notificationcenter";
 
 
 // Initialize grid
@@ -196,33 +196,33 @@ button {
     &-title-container {
         position: relative;
         height: 100%;
-        width: 4em;
-        width: calc(100% - 16em);
+        width: 1em;
+        width: calc(100% - 19em);
         float: left;
 
         @media #{$screenx} {
-            width: 5em;
-            width: calc(100% - 16em);
+            width: 2em;
+            width: calc(100% - 19em);
         }
 
         @media #{$screenxx} {
-            width: 8em;
-            width: calc(100% - 16em);
+            width: 5em;
+            width: calc(100% - 19em);
         }
 
         @media #{$screenxxx} {
             width: 5em;
-            width: calc(100% - 26em);
+            width: calc(100% - 29em);
         }
 
         @media #{$screenxxxx} {
-            width: 14em;
-            width: calc(100% - 26em);
+            width: 11em;
+            width: calc(100% - 29em);
         }
 
         @media #{$screenxxxxx} {
-            width: 36em;
-            width: calc(100% - 26em);
+            width: 32em;
+            width: calc(100% - 29em);
         }
 
         .appbar-title {

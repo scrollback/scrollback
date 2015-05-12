@@ -1,11 +1,12 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
 
-var desktopnotify = require("../lib/desktopnotify.js"),
-	formField = require("../ui/utils/form-field.js");
+"use strict";
+
+var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core) {
-	core.on("pref-show", function(tabs, next) {
+	core.on("pref-show", function(tabs) {
 		var user = tabs.user,
 			$div = $("<div>"),
 			notifications = user.params.notifications;
@@ -22,8 +23,8 @@ module.exports = function(core) {
 
 		$div.append($soundtoggle);
 
-		if (desktopnotify.supported()) {
-			if (typeof notifications.desktop !== "boolean" || desktopnotify.supported().permission !== "granted") {
+		if (window.Notification.supported !== false) {
+			if (typeof notifications.desktop !== "boolean" || window.Notification.permission !== "granted") {
 				notifications.desktop = false;
 			}
 
@@ -33,10 +34,10 @@ module.exports = function(core) {
 
 			$desktoptoggle.find("#desktop-notification").on("change", function() {
 				if ($(this).is(":checked")) {
-					desktopnotify.request();
+					window.Notification.requestPermission();
 				}
 
-				if (desktopnotify.supported().permission === "denied") {
+				if (window.Notification.permission === "denied") {
 					$(this).attr("checked", false);
 
 					$("<div>").text("Permission for desktop notifications denied!").alertbar({
@@ -51,16 +52,12 @@ module.exports = function(core) {
 			text: "Notifications",
 			html: $div
 		};
-
-		next();
 	}, 500);
 
-	core.on("pref-save", function(user, next) {
+	core.on("pref-save", function(user) {
 		user.params.notifications = {
 			sound: $("#sound-notification").is(":checked"),
 			desktop: $("#desktop-notification").is(":checked")
 		};
-
-		next();
 	}, 500);
 };

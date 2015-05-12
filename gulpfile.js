@@ -127,8 +127,8 @@ gulp.task("eslint", function() {
 	.pipe(plumber({ errorHandler: onerror }))
 	.pipe(gitmodified("modified"))
 	.pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failOnError());
+	.pipe(eslint.format())
+	.pipe(eslint.failOnError());
 });
 
 gulp.task("jscs", function() {
@@ -168,7 +168,7 @@ gulp.task("bundle", function() {
 	.pipe(rename({
 		suffix: ".bundle.min",
 		extname: ".js"
-    }))
+	}))
 	.pipe(sourcemaps.write("."))
 	.pipe(gulp.dest(dirs.scripts));
 });
@@ -202,7 +202,7 @@ gulp.task("embed-apis", function() {
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
-gulp.task("scripts", [ "polyfills", "bundle", "embed" ]);
+gulp.task("scripts", [ "bundle", "embed" ]);
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -259,7 +259,7 @@ gulp.task("watch", function() {
 });
 
 // Build all files
-gulp.task("build", [ "scripts", "styles" ], function() {
+gulp.task("build", [ "polyfills", "scripts", "styles" ], function() {
 	gulp.start("manifest");
 });
 
