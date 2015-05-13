@@ -2,8 +2,8 @@
 
 "use strict";
 
-module.exports = (core, ...args) => {
-	const user = require("../lib/user.js")(core, ...args),
+module.exports = (core, config, store) => {
+	const user = require("../lib/user.js")(core, config, store),
 		  format = require("../lib/format.js");
 
 	class NotificationItem {
@@ -35,7 +35,13 @@ module.exports = (core, ...args) => {
 				title = `New mention in ${action.to}`;
 				break;
 			case "text":
-				title = `New ${action.thread ? "reply" : "message"} in ${action.to}`;
+				let thread;
+
+				if (action.thread) {
+					thread = store.get("indexes", "threadsById", action.thread);
+				}
+
+				title = `New ${thread ? "reply" : "message"} in ${thread && thread.title ? thread.title : action.to}`;
 				break;
 			case "thread":
 				title = `New discussion in ${action.to}`;
@@ -71,7 +77,13 @@ module.exports = (core, ...args) => {
 				html = `<strong>${user.getNick(action.from)}</strong> mentioned you in <strong>${action.to}</strong>: <strong>${this._format(action.text)}</strong>`;
 				break;
 			case "text":
-				html = `<strong>${user.getNick(action.from)}</strong> ${action.title ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(action.title || action.to)}</strong>`;
+				let thread;
+
+				if (action.thread) {
+					thread = store.get("indexes", "threadsById", action.thread);
+				}
+
+				html = `<strong>${user.getNick(action.from)}</strong> ${thread ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(thread && thread.title ? thread.title : action.to)}</strong>`;
 				break;
 			case "thread":
 				html = `<strong>${user.getNick(action.from)}</strong> started a discussion on <strong>${this._format(action.title)}</strong> in <strong>${action.to}</strong>`;
