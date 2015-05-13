@@ -77,6 +77,12 @@ button {
     &:focus { outline: 0; }
 }
 
+.app-client {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
 .app-container {
     @include flexbox;
     @include flex-direction(row);
@@ -88,7 +94,7 @@ button {
 
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
     overflow: hidden; /* fix overflow in firefox */
-    position: fixed; /* make sure that it works on ios when position: absolute */
+    position: absolute;
 }
 
 .sidebar {
