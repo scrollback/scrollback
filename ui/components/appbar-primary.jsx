@@ -100,9 +100,9 @@ module.exports = function(core, config, store) {
 			return (
 				<div ref="appbar" key="appbar-primary" className="appbar appbar-primary" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
-					<img data-mode="home" className="appbar-title-logotype" src="/s/assets/logo/scrollback-logo-white.png" />
+					<img data-mode="home" className="appbar-title-logotype" src="/s/assets/logo/scrollback-logo-white@2x.png" />
 					<div data-mode="room chat" className="appbar-title-container">
-						<img className="appbar-logotype appbar-logotype-primary" src="/s/assets/logo/scrollback-logo.png" />
+						<img className="appbar-logotype appbar-logotype-primary" src="/s/assets/logo/scrollback-logo@2x.png" />
 						<h1 className="appbar-title appbar-title-primary">{this.state.title}</h1>
 					</div>
 					<div className="user-area" onClick={this.showUserMenu}>

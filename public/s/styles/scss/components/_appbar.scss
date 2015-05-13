@@ -30,6 +30,8 @@
         &-logotype {
             float: left;
             padding: .75em 0;
+            max-height: 100%;
+            width: auto;
         }
 
         &-title {
@@ -44,6 +46,8 @@
             &-logotype {
                 float: left;
                 padding: .75em;
+                max-height: 100%;
+                width: auto;
             }
 
             &-primary {
