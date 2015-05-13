@@ -4,11 +4,14 @@
 /*global SockJS*/
 /*global scrollback*/
 /*global getConnection*/
+"use strict";
+var timeOut = 2500;
 
 describe('Testing join/part action of a user: ', function() {
 
 	var socket;
 		it("join action", function(done) {
+			this.timeout(timeOut);
 			socket = new SockJS(scrollback.host + "/socket");
 			getConnection(socket, "testinguser");
 			socket.onmessage = function(msg) {
@@ -41,6 +44,7 @@ describe('Testing join/part action of a user: ', function() {
 		});
 
 	it("join action from a guest", function(done) {
+		this.timeout(timeOut);
 			socket = new SockJS(scrollback.host + "/socket");
 			getConnection(socket, "guest");
 			socket.onmessage = function(msg) {
@@ -74,6 +78,7 @@ describe('Testing join/part action of a user: ', function() {
 		});
 
 	it("part action", function(done) {
+		this.timeout(timeOut);
 			socket = new SockJS(scrollback.host + "/socket");
 			getConnection(socket, "testinguser");
 			socket.onmessage = function(msg) {

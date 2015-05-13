@@ -7,7 +7,8 @@
 /*global beforeEach*/
 /*global afterEach*/
 /*global getConnection*/
-
+"use strict";
+var timeOut = 2500;
 describe('Testing ACTION edit: ', function() {
 	describe('Authorized user', function() {
 		var socket;
@@ -19,6 +20,7 @@ describe('Testing ACTION edit: ', function() {
 		});
 
 		it('Editing text tag', function(done) {
+			this.timeout(timeOut);
 			socket.onmessage = function(msg) {
 				var id = uid(),
 					back = {
@@ -68,6 +70,7 @@ describe('Testing ACTION edit: ', function() {
 		});
 
 		it('Editing text content', function(done) {
+			this.timeout(timeOut);
 			socket.onmessage = function(msg) {
 				var id = uid(),
 
@@ -122,6 +125,7 @@ describe('Testing ACTION edit: ', function() {
 		});
 
 		it('Editing text with wrong text id', function(done) {
+			this.timeout(timeOut);
 			socket.onmessage = function(msg) {
 				var id = uid(),
 
@@ -181,6 +185,7 @@ describe('Testing ACTION edit: ', function() {
 	describe('Guest user', function() {
 		var socket;
 		it("Edit action from a guest user", function(done) {
+			this.timeout(timeOut);
 			socket = new SockJS(scrollback.host + "/socket");
 			getConnection(socket, "guest");
 			socket.onmessage = function(msg) {
@@ -195,12 +200,12 @@ describe('Testing ACTION edit: ', function() {
 						text: "I am guest-user",
 						id: id,
 						type: "text",
-						to: "test-room",
+						to: "test-room"
 					},
 					edit = {
 						tags: ["hidden"],
 						type: "edit",
-						to: "test-room",
+						to: "test-room"
 					};
 				msg = JSON.parse(msg.data);
 				console.log(msg);
@@ -234,6 +239,7 @@ describe('Testing ACTION edit: ', function() {
 	});
 	
 	describe('Unauthorized user', function() {
+		this.timeout(timeOut);
 		var socket;
 		it('Editing action from an unauthorized user', function(done) {
 			socket = new SockJS(scrollback.host + "/socket");

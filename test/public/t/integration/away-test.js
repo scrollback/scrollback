@@ -6,7 +6,8 @@
 /*global scrollback*/
 /*global beforeEach*/
 /*global afterEach*/
-
+"use strict";
+var timeOut = 2500;
 describe('Action: AWAY ', function() {
 	var socket,
 		b = {
@@ -21,6 +22,7 @@ describe('Action: AWAY ', function() {
 	});
 
 	it("away action with all property ", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
 				type: 'away',
@@ -42,9 +44,10 @@ describe('Action: AWAY ', function() {
 	});
 
 	it("away action without 'to' property ", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
-				type: 'away',
+				type: 'away'
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
@@ -62,6 +65,7 @@ describe('Action: AWAY ', function() {
 	});
 
 	it("away action with a wrong user", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
 				type: 'away',
