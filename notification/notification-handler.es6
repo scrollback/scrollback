@@ -30,6 +30,7 @@ module.exports = (core, config, store) => {
 			return;
 		}
 
+		// FIXME: ugly hack until messages in hidden threads are no longer received
 		if (text.thread) {
 			let thread = store.get("indexes", "threadsById", text.thread);
 
