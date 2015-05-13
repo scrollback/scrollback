@@ -8,7 +8,7 @@
 /*global afterEach*/
 /*global getConnection*/
 "use strict";
-var timeOut = 2500;
+var timeOut = 3000;
 describe('Testing ACTION edit: ', function() {
 	describe('Authorized user', function() {
 		var socket;

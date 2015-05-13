@@ -7,7 +7,7 @@
 /*global beforeEach*/
 /*global afterEach*/
 "use strict";
-var timeOut = 2500;
+var timeOut = 3000;
 describe('Action: AWAY ', function() {
 	var socket,
 		b = {

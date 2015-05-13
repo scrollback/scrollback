@@ -5,7 +5,7 @@
 /*global scrollback*/
 /*global getConnection*/
 "use strict";
-var timeOut = 2500;
+var timeOut = 3000;
 
 describe('Testing join/part action of a user: ', function() {
 
