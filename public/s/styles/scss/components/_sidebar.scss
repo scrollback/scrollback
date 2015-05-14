@@ -21,7 +21,7 @@
 
         &-content {
             max-height: 100%;
-            overflow: auto;
+            overflow-y: auto;
             -webkit-overflow-scrolling : touch; /* momentum scrolling in webkit */
         }
 
@@ -35,8 +35,10 @@
                 left: auto;
                 top: auto;
                 z-index: 100;
-                transform: translate3d(0,0,0);
+                transform: translate3d(0, 0, 0);
             }
+
+            .view-sidebar-right & { transform: translate3d(-100%, 0, 0); }
         }
 
         &-touch-target {
@@ -48,6 +50,8 @@
             overflow: hidden;
 
             &-right { left: -2em; }
+
+            .view-sidebar-right & { display: none; }
         }
 
         &-overlay {
@@ -71,6 +75,11 @@
             .view-sidebar-right & {
                 pointer-events: auto;
                 opacity: 1;
+            }
+
+            @media #{$screenxxxx}  {
+                opacity: 0;
+                pointer-events: none;
             }
         }
 
