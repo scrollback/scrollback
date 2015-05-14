@@ -53,7 +53,7 @@ module.exports = function(core, config, store) {
 		},
 
 		shareRoom: function() {
-			let url = config.server.protocol + "//" + config.server.host + "/" + this.props.roomId;
+			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId;
 
 			if (window.Android && typeof window.Android.shareLink === "function") {
 				window.Android.shareLink(url);
