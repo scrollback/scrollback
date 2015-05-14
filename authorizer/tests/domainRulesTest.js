@@ -17,13 +17,13 @@ module.exports = function () {
 				verified: false
 			};
 			var room;
-			assert(!domainAuth({room:room, origin:origin}), "undefined room was allowed");
+			assert(domainAuth({room:room, origin:origin}), "undefined room was allowed");
 		});
 		
 		it("missing origin", function(){
 			var origin;
 			var room = {};
-			assert(!domainAuth({room:room, origin:origin}), "unverified origin was allowed");
+			assert(domainAuth({room:room, origin:origin}), "unverified origin was allowed");
 		});
 		
 		it("not verified domain", function(){
@@ -32,7 +32,7 @@ module.exports = function () {
 				verified: false
 			};
 			var room = {};
-			assert(!domainAuth({room:room, origin:origin}), "unverified domain was allowed");
+			assert(domainAuth({room:room, origin:origin}), "unverified domain was allowed");
 		});
 		
 		it("action with verified domain on room with no allowed domains", function(){
@@ -41,7 +41,7 @@ module.exports = function () {
 				verified: true
 			};
 			var room = {guides:{}};
-			assert(domainAuth({room:room, origin:origin}), "this one should have been allowed");
+			assert(!domainAuth({room:room, origin:origin}), "this one should have been allowed");
 		});
 		
 		it("action with verified not allowed domain on room with allowed domains", function(){
@@ -50,7 +50,7 @@ module.exports = function () {
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io"]}};
-			assert(!domainAuth({room:room, origin:origin}), "this one should have been allowed");
+			assert(domainAuth({room:room, origin:origin}), "this one should have been allowed");
 		});
 		
 		
@@ -60,7 +60,7 @@ module.exports = function () {
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io", "sock.scrollback.io"]}};
-			assert(!domainAuth({room:room, origin:origin}), "this one should have been allowed");
+			assert(domainAuth({room:room, origin:origin}), "this one should have been allowed");
 		});
 		
 		
@@ -70,7 +70,7 @@ module.exports = function () {
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io", "dev.scrollback.io"]}};
-			assert(domainAuth({room:room, origin:origin}), "this one should have been allowed");
+			assert(!domainAuth({room:room, origin:origin}), "this one should have been allowed");
 		});
 		
 	});

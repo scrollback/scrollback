@@ -16,14 +16,14 @@ var roleWeights = {
 };
 
 module.exports = function(core, config) {
-	return function(action, callback) {
+	return function(action) {
 		var guides = action.room.guides,
 			readLevel;
 		
 		if (readActions.indexOf(action.type)) {
 			readLevel = (guides && guides.authorizer && typeof guides.authorizer.readLevel) ? guides.authorizer.readLevel : "guest";
 			if (permissionLevels[readLevel] > permissionLevels[action.user.role]){
-				return callback(new SbError('ERR_NOT_ALLOWED', {
+				return (new SbError('ERR_NOT_ALLOWED', {
 					source: 'authorizer',
 					action: action.type,
 					requiredRole: readLevel,
@@ -33,7 +33,7 @@ module.exports = function(core, config) {
 		} else if (writeActions.indexOf(action.type)) {
 			writeLevel = (guides && guides.authorizer && typeof guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest";
 			if (permissionLevels[writeLevel] > permissionLevels[action.user.role]){
-				return callback(new SbError('ERR_NOT_ALLOWED', {
+				return (new SbError('ERR_NOT_ALLOWED', {
 					source: 'authorizer',
 					action: action.type,
 					requiredRole: writeLevel,
@@ -41,6 +41,5 @@ module.exports = function(core, config) {
 				}));
 			}
 		}
-		callback();
 	};
 };

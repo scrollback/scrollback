@@ -20,6 +20,6 @@ describe("Authorizer app ", function () {
 //	require('./joinPart.js')(core, config.authorizer);
 //	require('./admitExpel.js')(core, config.authorizer);
 //	require('./query-test.js')(core, config.authorizer);
-	require('./domainRules-test.js')(core, config.authorizer);
-	require('./permission-test.js')(core, config.authorizer);
+	require('./domainRulesTest.js')(core, config.authorizer);
+	require('./permissionRulesTest.js')(core, config.authorizer);
 });
