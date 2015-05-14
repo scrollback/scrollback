@@ -170,6 +170,23 @@ function mergeRange(ranges, range, propName) {
 }
 
 
+
+/*
+
+	Warning: This is an untested function and probably doesn't work.
+	
+	It is intended to be a more aggressive variant of getItems,
+	which does not stop at the boundary of a known range but simply
+	inserts a "missing" and goes on to the next range. This allows
+	queries to return all the items that are missing.
+	
+	Todo: Write tests for this function, update higher-level wrappers
+	such as store.getTexts and store.getThreads to use this, update
+	consumers to handle "missing"s in the middle, especially 
+	loadTextsOnNav and loadThreadsOnNav.
+
+*/
+
 function getAllItems(ranges, req, propName) {
     var range, leftBefore = req.before, leftAfter = req.after;
 	var topRangeIndex, topItemIndex, bottomRangeIndex, bottomItemIndex, results = [], a, i;
@@ -185,7 +202,39 @@ function getAllItems(ranges, req, propName) {
 	// TODO: walk
 	
 	while(leftBefore > 0) {
-		if(topItemIndex > 0)
+		if(topRangeIndex < 0) break;
+		
+		if(topItemIndex >= 0) {
+			if(leftBefore > topItemIndex) {
+				leftBefore -= topItemIndex;
+				topItemIndex = -1;
+			} else {
+				topItemIndex -= leftBefore;
+				leftBefore = 0;
+			}
+		} else {
+			leftBefore -= 1; // Count "missing" as an item;
+			topRangeIndex--;
+			topItemIndex = ranges[topRangeIndex].items.length;
+		}
+	}
+
+	while(leftAfter > 0) {
+		if(bottomItemIndex >= ranges.length) break;
+		
+		if(bottomItemIndex >= 0) {
+			if(leftAfter > (ranges[bottomItemIndex].items.length - bottomItemIndex)) {
+				leftAfter -= (ranges[bottomItemIndex].items.length - bottomItemIndex);
+				bottomItemIndex = -1;
+			} else {
+				bottomItemIndex += leftAfter;
+				leftAfter = 0;
+			}
+		} else {
+			leftAfter -= 1; // Count "missing" as an item;
+			bottomRangeIndex++;
+			bottomItemIndex = 0;
+		}
 	}
 	
 	if(topRangeIndex === bottomRangeIndex) {
