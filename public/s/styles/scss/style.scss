@@ -351,6 +351,10 @@ button {
     }
 }
 
+.block { display: block; }
+
+.wide { width: 100%; }
+
 .progressbar {
     @include dropshadow(2);
 
