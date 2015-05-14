@@ -6,7 +6,7 @@ module.exports = (...args) => {
 	const React = require("react"),
 		  Share = require("./share.jsx")(...args);
 
-	let ShareDialog = React.createClass({
+	let AllDialogs = React.createClass({
 		render: function() {
 			return (
 				<div className="dialogs">
@@ -16,5 +16,5 @@ module.exports = (...args) => {
 		}
 	});
 
-	return ShareDialog;
+	return AllDialogs;
 };
