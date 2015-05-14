@@ -139,7 +139,7 @@ module.exports = function(core, config, store) {
 					dialogState: {
 						shareText: text,
 						shareUrl: url,
-						shareType: "room"
+						shareType: "discussion"
 					}
 				}
 			});
