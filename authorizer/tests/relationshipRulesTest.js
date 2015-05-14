@@ -499,10 +499,8 @@ module.exports = function() {
 			};
 
 			error = relationshipRules(action);
-			assert(!error, "error thrown");
-			assert.equal(action.transitionType, "invite", "transition type not set");
-			assert.equal(action.transitionRole, "moderator", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "action.role still there");
 		});
 		
 		

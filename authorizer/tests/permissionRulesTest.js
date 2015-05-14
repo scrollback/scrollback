@@ -171,15 +171,14 @@ module.exports = function() {
 					guides: {
 						authorizer: {
 							readLevel: "guest",
-							writeLevel: "follower",
-							
+							writeLevel: "follower"
 						}
 					}
 				}
 			};
 
 			error = permissionRule(action);
-			assert(!error, "guest allowed when writeLevel is set to guest");
+			assert(error, "guest allowed when writeLevel is set to follower");
 		});
 		
 		it("write level follower for action as guess follower", function() {
