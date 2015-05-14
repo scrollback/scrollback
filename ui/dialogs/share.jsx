@@ -27,7 +27,7 @@ module.exports = (core, config, store) => {
 							<a href={"https://twitter.com/intent/tweet?via=Scrollbackio&amp;url=" + url + (text ? "&amp;text=" + text : "")} target="_blank"
 							   className="button wide block twitter">Twitter</a>
 						</p>
-						<h4>Share the link manually</h4>
+						<h4>Link to share</h4>
 						<input className="wide block" type="text" value={this.state.url} onClick={this.selectLink} readonly="true" />
 					</div>
 				</Dialog>

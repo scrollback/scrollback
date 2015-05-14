@@ -95,6 +95,8 @@ module.exports = function(core, config, store) {
 				);
 			});
 
+			icons.push(<a className="card-header-icon card-header-icon-share card-cover-icon" key={"card-share-" + room} onClick={this.shareRoom}></a>);
+
 			if (user && !appUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
 					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
@@ -105,8 +107,6 @@ module.exports = function(core, config, store) {
 					           key={"card-follow-" + room} onClick={this.toggleFollowRoom}></a>);
 				}
 			}
-
-			icons.push(<a className="card-header-icon card-header-icon-share card-cover-icon" key={"card-share-" + room} onClick={this.shareRoom}></a>);
 
 			return (
 				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
