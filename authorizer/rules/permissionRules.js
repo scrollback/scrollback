@@ -3,18 +3,6 @@ var SbError = require('./../../lib/SbError.js');
 var readActions = ["away", "back", "getTexts", "getThreads"];
 var writeActions = ["text", "edit"];
 
-var roleWeights = {
-	banned: -2,
-	gagged: -1,
-	guest: 0,
-	registered: 1,
-	none: 1,
-	follower: 2,
-	moderator: 3,
-	owner: 4,
-	su: 5
-};
-
 module.exports = function(core, config) {
 	return function(action) {
 		var guides = action.room.guides,

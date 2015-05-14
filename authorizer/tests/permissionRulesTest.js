@@ -10,7 +10,7 @@ var config = {
 var permissionRule = require("../rules/permissionRules.js")({}, config);
 
 module.exports = function() {
-	describe("Testing domain validation rules:", function() {
+	describe("Testing actions permission rules:", function() {
 		it("no read/write level for action as guest", function() {
 			var error, action = {
 				type: "back",

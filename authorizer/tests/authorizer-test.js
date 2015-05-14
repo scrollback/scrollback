@@ -22,4 +22,5 @@ describe("Authorizer app ", function () {
 //	require('./query-test.js')(core, config.authorizer);
 	require('./domainRulesTest.js')(core, config.authorizer);
 	require('./permissionRulesTest.js')(core, config.authorizer);
+	require('./relationshipRulesTest.js')(core, config.authorizer);
 });

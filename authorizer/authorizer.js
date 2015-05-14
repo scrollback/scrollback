@@ -19,7 +19,8 @@ module.exports = function(core, config) {
 			if(error) return next(error);
 			error = permissionRules(action);
 			if(error) return next(error);
-			
+			error = relationshipRules(action);
+			if(error) return next(error);
 		}, "authorization");
 	});
 };
