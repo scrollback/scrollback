@@ -125,7 +125,7 @@ module.exports = function(core, config, store) {
 		shareThread: function() {
 			// Life would be easier if we had a function to convert a state object to URL
 			let url = window.location.protocol + "//" + window.location.host + "/" + store.get("nav", "room") + "/" + this.props.thread.id,
-				text = "Let's talk about " + this.props.thread.id;
+				text = "Let's talk about " + this.props.thread.title;
 
 			if (window.Android && typeof window.Android.shareLink === "function") {
 				window.Android.shareLink(url, text);
