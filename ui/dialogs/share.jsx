@@ -16,7 +16,7 @@ module.exports = (core, config, store) => {
 				text = encodeURIComponent(this.state.text);
 
 			return (
-				<Dialog ref="dialog" onDismiss={this.onDismiss}>
+				<Dialog ref="dialog" onDismiss={this.onDismiss} show={this.state.show}>
 					<div className="modal-content">
 						<h1 className="dialog-title">{"Share" + (this.state.type ? " this " + this.state.type : " ") + " via"}</h1>
 						<p className="dialog-buttons">
@@ -35,12 +35,14 @@ module.exports = (core, config, store) => {
 		},
 
 		getInitialState: function() {
-			let dialogState = store.get("nav", "dialogState") || {};
+			let dialog = store.get("nav", "dialog") || {},
+				dialogState = store.get("nav", "dialogState") || {};
 
 			return {
 				url: dialogState.shareUrl,
 				text: dialogState.shareText,
-				type: dialogState.shareType
+				type: dialogState.shareType,
+				show: (dialog === "share" && dialogState && dialogState.shareUrl)
 			};
 		},
 
@@ -55,22 +57,13 @@ module.exports = (core, config, store) => {
 						this.setState({
 							url: dialogState.shareUrl,
 							text: dialogState.shareText,
-							type: dialogState.shareType
+							type: dialogState.shareType,
+							show: true
 						});
 					} else {
-						this.refs.dialog.dismiss();
+						this.setState({ show: false });
 					}
 				}
-			}
-		},
-
-		componentDidUpdate: function() {
-			let dialog = store.get("nav", "dialog");
-
-			if (dialog === "share") {
-				this.refs.dialog.show();
-			} else {
-				this.refs.dialog.dismiss();
 			}
 		},
 

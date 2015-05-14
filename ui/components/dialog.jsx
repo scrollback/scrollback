@@ -7,7 +7,7 @@ module.exports = (core) => {
 
 	let Dialog = React.createClass({
 		getInitialState: function() {
-			return { show: false };
+			return { show: this.props.show };
 		},
 
 		dismiss: function(e) {
@@ -34,10 +34,6 @@ module.exports = (core) => {
 			backdrop.classList.add("out");
 		},
 
-		show: function() {
-			this.setState({ show: true });
-		},
-
 		render: function() {
 	        if (this.state.show) {
 				return (
@@ -52,6 +48,10 @@ module.exports = (core) => {
 			} else {
 				return <div data-mode="none" />;
 			}
+		},
+
+		componentWillReceiveProps: function(nextProps) {
+			this.setState({ show: nextProps.show });
 		},
 
 		componentDidUpdate: function() {
