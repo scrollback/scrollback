@@ -1,6 +1,6 @@
 "use strict";
 
-var store, core, config,
+var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	generate = require("../lib/generate.js"),
@@ -12,7 +12,6 @@ module.exports = function(c, conf, s) {
 
 	store = s;
 	core = c;
-	config = conf;
 
 	core.on("init-dn", onInit, 950);
 	core.on("join-dn", onJoinPart, 950);
@@ -30,7 +29,7 @@ module.exports = function(c, conf, s) {
 		if(text) {
 			text = objUtils.clone(text);
 			(text.tags = text.tags?text.tags:[]).push("failed");
-			
+
 			newState.texts[text.to] = [{ // put the text in all messages
 				start: text.time,
 				end: text.time,
@@ -44,11 +43,11 @@ module.exports = function(c, conf, s) {
 					items: [text]
 				}];
 			}
-			
-			
+
+
 			core.emit("setstate", newState);
 		}
-		
+
 		next();
 	}, 1000);
 	[
@@ -124,6 +123,10 @@ function onInit(init, next) {
 
 				break;
 		}
+
+		init.user = init.user || {};
+		init.user.type = "user";
+
 		entities[store.get("user")] = init.user;
 		newstate.entities = entities;
 		core.emit("setstate", newstate);
@@ -138,7 +141,8 @@ function onInit(init, next) {
 		user: init.user.id
 	});
 	core.emit("getRooms", {featured: true}, function(err, rooms) {
-		var featuredRooms = [], entities = {};
+		var featuredRooms = [];
+
 		if(rooms && rooms.results) {
 			rooms.results.forEach(function(e) {
 				if(e) {
