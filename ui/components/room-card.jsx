@@ -53,10 +53,11 @@ module.exports = function(core, config, store) {
 		},
 
 		shareRoom: function() {
-			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId;
+			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId,
+				text = this.props.roomId + " is on scrollback";
 
 			if (window.Android && typeof window.Android.shareLink === "function") {
-				window.Android.shareLink(url);
+				window.Android.shareLink(url, text);
 
 				return;
 			}
@@ -65,7 +66,7 @@ module.exports = function(core, config, store) {
 				nav: {
 					dialog: "share",
 					dialogState: {
-						shareText: this.props.roomId + " is on scrollback",
+						shareText: text,
 						shareUrl: url,
 						shareType: "room"
 					}

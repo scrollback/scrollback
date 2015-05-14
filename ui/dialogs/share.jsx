@@ -57,6 +57,8 @@ module.exports = (core, config, store) => {
 							text: dialogState.shareText,
 							type: dialogState.shareType
 						});
+					} else {
+						this.refs.dialog.dismiss();
 					}
 				}
 			}
