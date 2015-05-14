@@ -17,7 +17,7 @@ module.exports = function(core, config) {
 
 			error = domainAuth(action);
 			if(error) return next(error);
-			error = permissionLevels(action);
+			error = permissionRules(action);
 			if(error) return next(error);
 			
 		}, "authorization");

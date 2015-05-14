@@ -12,7 +12,7 @@ var permissionRule = require("../rules/permissionRules.js")({}, config);
 module.exports = function() {
 	describe("Testing domain validation rules:", function() {
 		it("no read/write level for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "guest"
@@ -24,13 +24,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(!err, "even guest allowed when no readLevel is set");
-			})
+			error = permissionRule(action)
+			assert(!error, "even guest allowed when no readLevel is set");
 		});
 
 		it("no read/write level for action as follower", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "follower"
@@ -42,14 +41,13 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(!err, "followers allowed when no readLevel is set");
-			})
+			error = permissionRule(action);
+			assert(!error, "followers allowed when no readLevel is set");
 		});
 
 
 		it("read level guest for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "guest"
@@ -63,12 +61,11 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(!err, "guest allowed when readLevel is set to guest");
-			})
+			error = permissionRule(action)
+			assert(!error, "guest allowed when readLevel is set to guest");
 		});
 		it("read level guest for action as follower", function() {
-			var action = {
+			var error, action = {
 				type: "away",
 				user: {
 					role: "guest"
@@ -82,14 +79,13 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(!err, "followers allowed when readLevel is set to guest");
-			})
+			error = permissionRule(action)
+			assert(!error, "followers allowed when readLevel is set to guest");
 		});
 
 
 		it("read level follower for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "guest"
@@ -103,12 +99,11 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "guest not allowed when readLevel is set to follower");
-			})
+			error = permissionRule(action)
+			assert(error, "guest not allowed when readLevel is set to follower");
 		});
 		it("read level follower for action as guess follower", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "follower"
@@ -122,13 +117,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "follower allowed when readLevel is set to follower");
-			})
+			error = permissionRule(action)
+			assert(!error, "follower allowed when readLevel is set to follower");
 		});
 
 		it("read level owner for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "back",
 				user: {
 					role: "owner"
@@ -142,13 +136,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "role > follower are allowed when readLevel is set to follower");
-			})
+			error = permissionRule(action)
+			assert(!error, "role > follower are allowed when readLevel is set to follower");
 		});
 		
 		it("write level guest for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "text",
 				user: {
 					role: "guest"
@@ -164,13 +157,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(!err, "guest allowed when writeLevel is set to guest");
-			})
+			error = permissionRule(action);
+			assert(!error, "guest allowed when writeLevel is set to guest");
 		});
 		
 		it("write level follower for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "text",
 				user: {
 					role: "guest"
@@ -186,13 +178,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "guest allowed when writeLevel is set to guest");
-			})
+			error = permissionRule(action);
+			assert(!error, "guest allowed when writeLevel is set to guest");
 		});
 		
 		it("write level follower for action as guess follower", function() {
-			var action = {
+			var error, action = {
 				type: "text",
 				user: {
 					role: "follower"
@@ -206,13 +197,12 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "follower allowed when writeLevel is set to follower");
-			})
+			error = permissionRule(action);
+			assert(!error, "follower allowed when writeLevel is set to follower");
 		});
 
 		it("write level  owner for action as guest", function() {
-			var action = {
+			var error, action = {
 				type: "text",
 				user: {
 					role: "owner"
@@ -226,9 +216,8 @@ module.exports = function() {
 				}
 			};
 
-			permissionRule(action, function(err) {
-				assert(err, "role > follower are allowed when writeLevel is set to follower");
-			})
+			error = permissionRule(action);
+			assert(!error, "role > follower are allowed when writeLevel is set to follower");
 		});
 	});
 };
