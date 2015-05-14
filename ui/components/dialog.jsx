@@ -2,21 +2,28 @@
 
 "use strict";
 
-module.exports = () => {
+module.exports = (core) => {
 	const React = require("react");
 
 	let Dialog = React.createClass({
-		onDismiss: function(e) {
+		getInitialState: function() {
+			return { show: false };
+		},
+
+		dismiss: function(e) {
+			if (this.state.show === false) {
+				return;
+			}
+
 			let modal = React.findDOMNode(this.refs.modal),
 				backdrop = React.findDOMNode(this.refs.backdrop);
 
-			if (typeof this.props.onDismiss === "function") {
-				this.props.onDismiss(e, modal);
-			}
-
 			setTimeout(() => {
-				modal.style.opacity = 0;
-				backdrop.style.opacity = 0;
+				this.setState({ show: false });
+
+				core.emit("setstate", {
+					nav: { dialog: null }
+				});
 
 				if (typeof this.props.onDismiss === "function") {
 					this.props.onDismiss(e, modal);
@@ -27,16 +34,32 @@ module.exports = () => {
 			backdrop.classList.add("out");
 		},
 
-		render: function() {
-			return (
-					<div className="modal-container dialog-container">
-						<div ref="backdrop" className="backdrop" onClick={this.onDismiss}></div>
+		show: function() {
+			this.setState({ show: true });
+		},
 
-                        <div ref="modal" {...this.props} className={"modal dialog " + this.props.className}>
-                            {this.props.children}
-                        </div>
+		render: function() {
+	        if (this.state.show) {
+				return (
+					<div className="modal-container dialog-container">
+						<div ref="backdrop" className="backdrop" onClick={this.dismiss}></div>
+
+	                    <div ref="modal" {...this.props} className={"modal dialog " + this.props.className}>
+	                        {this.props.children}
+	                    </div>
 					</div>
-			);
+				);
+			} else {
+				return <div data-mode="none" />;
+			}
+		},
+
+		componentDidUpdate: function() {
+			if (this.state.show && typeof this.props.onShow === "function") {
+				let modal = React.findDOMNode(this.refs.modal);
+
+				this.props.onShow({ type: "update" }, modal);
+			}
 		}
 	});
 

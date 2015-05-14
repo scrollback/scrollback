@@ -51,6 +51,10 @@ module.exports = function(core, config, store) {
 		var nav = store.get("nav"),
 			dialogStateChanged = false;
 
+		if (nav.dialog === "share") {
+			return;
+		}
+
 		if (changes.nav && changes.nav.dialogState) {
 			if (currentDialogState) {
 				for (var prop in changes.nav.dialogState) {
