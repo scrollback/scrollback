@@ -27,7 +27,10 @@ module.exports = (core, config, store) => {
 
 			roomObj.guides.customization.css = customCss;
 
-			core.emit("room-up", { to: roomObj.id, room: roomObj });
+			core.emit("room-up", {
+				to: roomObj.id,
+				room: roomObj
+			});
 		},
 
 		removeCss: function() {
@@ -63,9 +66,10 @@ module.exports = (core, config, store) => {
 		let roomId = store.get("nav", "room");
 
 		if ((changes.nav && ("room" in changes.nav || "mode" in changes.nav)) || (changes.entities && roomId in changes.entities)) {
-			let mode = store.get("nav", "mode");
+			let mode = store.get("nav", "mode"),
+				thread = store.get("nav", "thread");
 
-			if (mode === "room") {
+			if (mode === "room" || (mode === "chat" && !thread)) {
 				customStyle.applyCss();
 			} else {
 				customStyle.removeCss();
