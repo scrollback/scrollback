@@ -127,8 +127,8 @@ module.exports = function(core, config, store) {
 			let url = window.location.protocol + "//" + window.location.host + "/" + store.get("nav", "room") + "/" + this.props.thread.id,
 				text = "Let's talk about " + this.props.thread.title;
 
-			if (window.Android && typeof window.Android.shareLink === "function") {
-				window.Android.shareLink(url, text);
+			if (window.Android && typeof window.Android.shareItem === "function") {
+				window.Android.shareItem("Share discussion via", text + " - " + url);
 
 				return;
 			}
