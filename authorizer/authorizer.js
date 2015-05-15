@@ -1,6 +1,6 @@
 var events = ["text", "edit", "away", "back", "join", "part", "admit", "expel", "getTexts", "getThreads"];
 var domainAuth;
-var userOps = require("../lib/user.js");
+var userOps = require("../lib/user.js")();
 var SbError = require('./../lib/SbError.js');
 var readPermissionRules;
 var customHandlers = {
@@ -23,4 +23,9 @@ module.exports = function(core, config) {
 			if(error) return next(error);
 		}, "authorization");
 	});
+	require("./authRules/initAuth.js")(core, config);
+	require("./authRules/userAuth.js")(core, config);
+	require("./authRules/initAuth.js")(core, config);
+	require("./authRules/queryAuth.js")(core, config);
+	
 };
