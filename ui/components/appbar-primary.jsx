@@ -98,7 +98,7 @@ module.exports = function(core, config, store) {
 			classNames += this.state.following ? " following" : "";
 
 			return (
-				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar" onClick={this.toggleMinimize}>
+				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar-bg custom-titlebar-fg" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
 					<span data-mode="home" className="appbar-logotype appbar-title-logotype" />
 					<div data-mode="room chat" className="appbar-title-container">

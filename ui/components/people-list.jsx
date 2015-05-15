@@ -74,7 +74,7 @@ module.exports = function(core, config, store) {
 
 			return (
 			        <div className="sidebar-people-list">
-						<div className="searchbar custom-titlebar">
+						<div className="searchbar custom-titlebar-bg">
 							<input type="search" className="searchbar-input" placeholder="Filter people" required="true"
 								   value={this.state.query} onChange={this.onChange} />
 							<span className="searchbar-icon" />
