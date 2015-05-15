@@ -141,13 +141,13 @@ function onInit(init, next) {
 		user: init.user.id
 	});
 	core.emit("getRooms", {featured: true}, function(err, rooms) {
-		var featuredRooms = [];
+		var featuredRooms = [], roomObjs = {};
 
 		if(rooms && rooms.results) {
 			rooms.results.forEach(function(e) {
 				if(e) {
 					featuredRooms.push(e.id);
-					entities[e.id] = e;
+					roomObjs[e.id] = e;
 				}
 
 
@@ -157,7 +157,7 @@ function onInit(init, next) {
 			app:{
 				featuredRooms: featuredRooms
 			},
-			entities: entities
+			entities: roomObjs
 		});
 	});
 	next();
