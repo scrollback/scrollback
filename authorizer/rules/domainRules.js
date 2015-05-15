@@ -8,7 +8,7 @@ module.exports = function(core, config) {
 			source: 'authorizer',
 			action: 'text'
 		}));
-		
+		if(action.type === "room") room = action.old;
 		if (!origin || !room) return error;
 		guides = room.guides;
 		if (origin.verified !== true) {

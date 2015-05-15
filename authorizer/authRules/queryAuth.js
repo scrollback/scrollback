@@ -3,9 +3,7 @@ var permissionLevels = require('../permissionWeights.js');
 var utils = require('../../lib/app-utils.js');
 var log = require('../../lib/logger.js');
 
-var domainCheck;
 module.exports = function(core, config) {
-	domainCheck = require("../domain-auth.js")(core, config);
 	core.on('getRooms', function(query, next) {
 		if (utils.isInternalSession(query.session)) return next();
 		var isFull = true,
