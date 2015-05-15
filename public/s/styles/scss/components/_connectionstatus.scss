@@ -9,5 +9,7 @@
         text-align: center;
         z-index: 100;
         font-size: .9em;
+
+        &:empty { display: none; }
     }
 }
