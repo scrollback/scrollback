@@ -288,7 +288,7 @@ module.exports = function() {
 			assert(error, "error thrown");
 			assert.equal("ERR_NOT_ALLOWED", error.message);
 		});
-		
+
 		it("part from registered", function() {
 			var error, action = {
 				type: "part",
@@ -348,7 +348,7 @@ module.exports = function() {
 			assert(error, "error thrown");
 			assert.equal("OWNER_CANT_PART", error.message);
 		});
-		
+
 		it("part from moderator", function() {
 			var error, action = {
 				type: "part",
@@ -367,8 +367,8 @@ module.exports = function() {
 			error = relationshipRules(action);
 			assert(!error, "error not thrown");
 		});
-		
-			it("part from follower", function() {
+
+		it("part from follower", function() {
 			var error, action = {
 				type: "part",
 				user: {
@@ -384,7 +384,562 @@ module.exports = function() {
 			};
 
 			error = relationshipRules(action);
-			assert(!error, "error not thrown");
+			assert(!error, "error thrown");
 		});
+		
+		it("admit from guest", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "guest"
+				},
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal("ERR_NOT_ALLOWED", error.message, "invalid error message	");
+		});
+		
+		it("admit from follower", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "follower"
+				},
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal("ERR_NOT_ALLOWED", error.message, "invalid error message	");
+		});
+		
+		it("admit from moderator for invite for registered, no action.role", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "follower", "transition type not set");
+			assert(!action.role, "action.role still there");
+			
+		});
+		
+		it("admit from moderator for invite for registered, action.role = follower", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"follower",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "follower", "transition type not set");
+			assert(!action.role, "action.role still there");
+		});
+		
+		it("admit from moderator for invite for registered, action.role = moderator", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"moderator",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "moderator", "transition type not set");
+			assert(!action.role, "action.role still there");
+		});
+		
+		
+		it("admit from moderator for invite for registered, action.role = owner", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"owner",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
+		
+		it("admit from moderator for invite for registered, action.role = su", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"su",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
+		
+		it("expel from moderator for banning user who is registered", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from moderator for banning user who is registered", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from moderator for banning user who is follower", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "follower"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from moderator for banning user who is moderator", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "moderator"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
+		
+		it("expel from moderator for banning user who is owner", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "owner"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		it("admit from owner for invite for registered, no action.role", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "follower", "transition type not set");
+			assert(!action.role, "action.role still there");
+			
+		});
+		
+		it("admit from owner for invite for registered, action.role = follower", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"follower",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "follower", "transition type not set");
+			assert(!action.role, "action.role still there");
+		});
+		
+		it("admit from owner for invite for registered, action.role = moderator", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"moderator",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "moderator", "transition type not set");
+			assert(!action.role, "action.role still there");
+		});
+		
+		
+		it("admit from owner for invite for registered, action.role = owner", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"owner",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.transitionType, "invite", "transition type not set");
+			assert.equal(action.transitionRole, "owner", "transition role not set");
+			assert(!action.role, "action.role still there");
+		});
+		
+		
+		it("admit from owner for invite for registered, action.role = su", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"su",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
+		
+		it("expel from owner for banning user who is registered", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from owner for banning user who is registered", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "registered"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from owner for banning user who is follower", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "follower"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		it("expel from owner for banning user who is moderator", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "moderator"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role, "banned", "invalid role set");
+		});
+		
+		
+		it("expel from owner for banning user who is owner", function() {
+			var error, action = {
+				type: "expel",
+				user: {
+					role: "moderator"
+				},
+				victim:{
+					role: "owner"
+				},
+				role:"banned",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(error, "error not thrown");
+			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
+		});
+		
 	});
 };
+

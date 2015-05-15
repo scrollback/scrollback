@@ -6,51 +6,6 @@ var log = require('../../lib/logger.js');
 var domainCheck;
 module.exports = function(core, config) {
 	domainCheck = require("../domain-auth.js")(core, config);
-	core.on('getTexts', function(query, callback) {
-		if (utils.isInternalSession(query.session)) return callback();
-		log(query.origin);
-		if(!domainCheck(query.room, query.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
-		if (query.user.role === "none") {
-			if (/^guest-/.test(query.user.id)) {
-				query.user.role = "guest";
-			} else {
-				query.user.role = "registered";
-			}
-		}
-		if (!query.room.guides || !query.room.guides.authorizer || !query.room.guides.authorizer.readLevel) return callback();
-		if (query.room.guides || typeof query.room.guides.authorizer.readLevel === 'undefined') query.room.guides.authorizer.readLevel = 'guest';
-		if (permissionLevels[query.room.guides.authorizer.readLevel] <= permissionLevels[query.user.role]) return callback();
-		else return callback(new SbError('ERR_NOT_ALLOWED', {
-			source: 'authorizer',
-			action: 'getTexts',
-			requiredRole: query.room.guides.authorizer.readLevel,
-			currentRole: query.user.role
-		}));
-	}, "authorization");
-	core.on('getThreads', function(query, callback) {
-		if (utils.isInternalSession(query.session)) return callback();
-		var readLevel;
-		if(!domainCheck(query.room, query.origin)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
-		if (query.user && query.user.role === "none") {
-			if (/^guest-/.test(query.user.id)) {
-				query.user.role = "guest";
-			} else {
-				query.user.role = "registered";
-			}
-		}
-		if (query.q && !query.room) {
-			return callback();
-		}
-		readLevel = (query.room.guides && query.room.guides.authorizer && query.room.guides.authorizer.readLevel) || 'guest';
-		if (permissionLevels[readLevel] <= permissionLevels[query.user.role]) return callback();
-		else return callback(new SbError('ERR_NOT_ALLOWED', {
-			source: 'authorizer',
-			action: 'getThreads',
-			requiredRole: query.room.guides.authorizer.readLevel,
-			currentRole: query.user.role
-		}));
-	}, "authorization");
-
 	core.on('getRooms', function(query, next) {
 		if (utils.isInternalSession(query.session)) return next();
 		var isFull = true,
