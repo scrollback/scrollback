@@ -11,9 +11,13 @@ var assert = require('assert'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg'),
 	utils = require('./utils.js');
-	config.storage.pg.db = "testingdatabase"; // don't change this.
-var connString = "pg://" + config.storage.pg.username + ":" +
-	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
+config.storage.pg.db = "testingdatabase";// don't change this.
+
+if(process.env.TRAVIS){
+	config.storage.pg.username = "postgres";
+	config.storage.pg.password = " ";
+}
+var connString = "pg://" + config.storage.pg.username + ":" + config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
 describe("Storage Test(actions).", function() {
@@ -45,8 +49,8 @@ describe("Storage Test(actions).", function() {
 			log("inserted message");
 			pg.connect(connString, function(err, client, cb) {
 				postgres.runQueries(client,
-										 [{query: "SELECT * from texts where id=$1", values: [msg.id]},
-										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}],
+										 [{query: "SELECT * from texts where id=$1", values: [msg.id]}/*,
+										  {query: "SELECT * from threads where id=$1", values: [msg.thread]}*/],
 										 function(e, results) {
 					log.d("Arguments:", arguments);
 					results.forEach(function(result) {

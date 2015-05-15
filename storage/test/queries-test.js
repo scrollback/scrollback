@@ -1,4 +1,9 @@
 /* jshint mocha: true */
+/*global describe*/
+/*global before*/
+/*global beforeEach*/
+/*global it*/
+"use strict";
 var assert = require('assert'),
 	utils = require('./utils.js'),
 	core = new (require('ebus'))(),
@@ -9,6 +14,10 @@ var assert = require('assert'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg');
 	config.storage.pg.db = "testingdatabase"; // don't change this.
+if(process.env.TRAVIS){
+	config.storage.pg.username = "postgres";
+	config.storage.pg.password = " ";
+}
 var	connString = "pg://" + config.storage.pg.username + ":" +
 	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
@@ -113,10 +122,10 @@ describe("Storage Test(Queries)", function() {
 			utils.emitActions(core, rooms, function() {
 				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
 					assert.equal(results.results.length, n, "not n results");
-					for (var i = 0; i < results.results.length; i++) {
+					for (var j = 0; j < results.results.length; j++) {
 						//log.d("results:", (results.results[i] ? results.results[i].id : null), ref[i]);
-						var tt1 = (i % 2 === 0) ? rooms[i].room.id : null;
-						var tt2 = (i % 2 === 0) ? results.results[i].id : null;
+						var tt1 = (j % 2 === 0) ? rooms[j].room.id : null;
+						var tt2 = (j % 2 === 0) ? results.results[j].id : null;
 						assert.equal(tt2, tt1, "Incorrect results");
 					}
 					done();
@@ -227,7 +236,7 @@ describe("Storage Test(Queries)", function() {
 		var t1 = mathUtils.random(-10, 5) * 60;
 		var t2 = mathUtils.random(7, 12) * 60;
 		var n = mathUtils.random(5, 10);
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			users.push(utils.getNewUserAction());
 			users[i].user.timezone = mathUtils.random(t1, t2);
 		}
@@ -239,7 +248,7 @@ describe("Storage Test(Queries)", function() {
 					gte: t1,
 					lte: t2
 				}
-			}, function(err, reply) {
+			}, function(err1, reply) {
 				log.d("N=", n, reply.results.length);
 				assert.equal(reply.results.length >= n, true, "Timezone query failed"); // TODO write a better assertion.
 				done();
@@ -256,7 +265,7 @@ describe("Storage Test(Queries)", function() {
 		var n = mathUtils.random(5, 15);
 		var type, v;
 		var bannedCount = 0;
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			if (i % 3 === 0) {
 				type = 'expel';
 				v = 'banned';
@@ -302,7 +311,7 @@ describe("Storage Test(Queries)", function() {
 		var roomOwner = utils.getNewUserAction();
 		room.user = roomOwner.user;
 		var n = mathUtils.random(1, 10);
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			var user = utils.getNewUserAction();
 			users.push(user);
 		}
@@ -334,7 +343,7 @@ describe("Storage Test(Queries)", function() {
 		var roomOwner = utils.getNewUserAction();
 		room.user = roomOwner.user;
 		var n = mathUtils.random(1, 10);
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var user = utils.getNewUserAction();
 			relations[i].user = user.user;
@@ -371,7 +380,7 @@ describe("Storage Test(Queries)", function() {
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(1, 10);
 		var roomOwner = utils.getNewUserAction();
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -406,7 +415,7 @@ describe("Storage Test(Queries)", function() {
 		var n = mathUtils.random(1, 10);
 		var roomOwner = utils.getNewUserAction();
 		var ref = [];
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -428,8 +437,8 @@ describe("Storage Test(Queries)", function() {
 					}, function(err, reply) {
 						log.d("N=", n, reply.results.length, reply.results);
 						assert.equal(reply.results.length,ref.length , "hasMember query failed.");
-						reply.results.forEach(function(room, i) {
-							assert.equal(room.id, ref[i], "not equal");
+						reply.results.forEach(function(rm, j) {
+							assert.equal(rm.id, ref[j], "not equal");
 						});
 						done();
 					});
@@ -446,7 +455,7 @@ describe("Storage Test(Queries)", function() {
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(3, 10);
 		var roomOwner = utils.getNewUserAction();
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -515,9 +524,9 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", ref: ref}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
-				for (var i = 0; i < n; i++) {
-					var a1 = (i % t === 0 ? null : texts[i].id);
-					var a2 = (i % t === 0 ? null : results.results[i].id);
+				for (var j = 0; j < n; j++) {
+					var a1 = (j % t === 0 ? null : texts[j].id);
+					var a2 = (j % t === 0 ? null : results.results[j].id);
 					assert.equal(a2, a1, "Incorrect results");
 				}
 				done();
@@ -542,8 +551,8 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: null, before: 256, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
-				for (var i = 0; i < n; i++) {
-					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+				for (var j = 0; j < n; j++) {
+					assert.equal(results.results[j].id, texts[j].id, "Incorrect results");
 				}
 				done();
 			});
@@ -556,7 +565,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(257, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -567,8 +576,8 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: null, before: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
-				for (var i = n - num ; i < n; i++) {
-					assert.equal(results.results[i - (n - num)].id, texts[i].id, "Incorrect results");
+				for (var j = n - num; j < n; j++) {
+					assert.equal(results.results[j - (n - num)].id, texts[j].id, "Incorrect results");
 				}
 				done();
 			});
@@ -581,7 +590,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time  + i; // increasing time.
@@ -591,8 +600,8 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: time - 1, after: 256, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
-				for (var i = 0; i < n; i++) {
-					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+				for (var j = 0; j < n; j++) {
+					assert.equal(results.results[j].id, texts[j].id, "Incorrect results");
 				}
 
 				done();
@@ -606,7 +615,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(257, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -617,9 +626,9 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: time - 1, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
-				for (var i = 0; i < num; i++) {
+				for (var j = 0; j < num; j++) {
 					//log.d("values:", results.results[i].id, texts[i].id);
-					assert.equal(results.results[i].id, texts[i].id, "Incorrect results");
+					assert.equal(results.results[j].id, texts[j].id, "Incorrect results");
 				}
 				done();
 			});
@@ -633,7 +642,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -645,8 +654,8 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: time + at, after: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
-				for (var i = at; i < num; i++) {
-					assert.equal(results.results[i - at].id, texts[i].id, "Incorrect results");
+				for (var j = at; j < num; j++) {
+					assert.equal(results.results[j - at].id, texts[j].id, "Incorrect results");
 				}
 				done();
 			});
@@ -659,7 +668,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -671,9 +680,9 @@ describe("Storage Test(Queries)", function() {
 			core.emit("getTexts", {type: "getTexts", time: time + (n - 1) - at, before: num, to: to}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not correct");
-				for (var i = n - num - at; i < (n - at); i++) {
+				for (var j = n - num - at; j < (n - at); j++) {
 					//log.d("Results", results.results[i - (n - num - at)].id, texts[i].id, i - (n - num - at), i);
-					assert.equal(results.results[i - (n - num - at)].id, texts[i].id, "Incorrect results");
+					assert.equal(results.results[j - (n - num - at)].id, texts[j].id, "Incorrect results");
 				}
 				done();
 			});
@@ -686,7 +695,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -694,16 +703,16 @@ describe("Storage Test(Queries)", function() {
 		}
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function() {
-			function getTexts(time, index) {
+			function getTexts(tim, index) {
 
-				core.emit("getTexts", {type: "getTexts", time: time, before: num, to: to}, function(err, results) {
+				core.emit("getTexts", {type: "getTexts", time: tim, before: num, to: to}, function(err, results) {
 					log.d("Texts:", results);
 					//assert.equal(results.results.length, num, "Number of messages are not correct");
-					for (var i = results.results.length - 1; i >= 0; i--) {
+					for (var j = results.results.length - 1; j >= 0; j--) {
 						//log.d("Results:", results.results[i].id, texts[index].id, index);
-						assert.equal(results.results[i].id, texts[index--].id, "Incorrect results");
+						assert.equal(results.results[j].id, texts[index--].id, "Incorrect results");
 					}
-					if (results.results.length != num) {
+					if (results.results.length !== num) {
 						done();
 					} else getTexts(results.results[0].time, index + 1);
 				});
@@ -733,8 +742,8 @@ describe("Storage Test(Queries)", function() {
 					log.d("rooms:", results.results.length, n);
 
 					assert.equal(results.results.length, n, "not n rooms");
-					for (var i = 0; i < n; i++) {
-						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					for (var j = 0; j < n; j++) {
+						assert.equal(results.results[j].id, rooms[j].room.id, "Incorrect results");
 					}
 					done();
 				});
@@ -760,8 +769,8 @@ describe("Storage Test(Queries)", function() {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, n, "not n messages");
-					for (var i = 0; i < n; i++) {
-						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+					for (var j = 0; j < n; j++) {
+						assert.equal(results.results[j].id, rooms[j].room.id, "Incorrect results");
 					}
 					done();
 				});
@@ -788,8 +797,8 @@ describe("Storage Test(Queries)", function() {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, num, "not n messages");
-					for (var i = 0; i < results.results.length; i++) {
-						assert.equal(results.results[i].id, rooms[i + (n - num)].room.id, "Incorrect results");
+					for (var j = 0; i < results.results.length; j++) {
+						assert.equal(results.results[j].id, rooms[j + (n - num)].room.id, "Incorrect results");
 					}
 					done();
 				});
@@ -816,9 +825,9 @@ describe("Storage Test(Queries)", function() {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, num, "not n messages");
-					for (var i = 0; i < results.results.length; i++) {
+					for (var j = 0; j < results.results.length; j++) {
 						//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
-						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+						assert.equal(results.results[j].id, rooms[j].room.id, "Incorrect results");
 					}
 					done();
 				});
@@ -850,9 +859,9 @@ describe("Storage Test(Queries)", function() {
 					log.d("rooms:", results.results.length);
 
 					assert.equal(results.results.length, num, "not n messages");
-					for (var i = 0; i < results.results.length; i++) {
+					for (var j = 0; j < results.results.length; j++) {
 						//log.d("create room", results.results[i].id + "," + rooms[i].room.id);
-						assert.equal(results.results[i].id, rooms[i].room.id, "Incorrect results");
+						assert.equal(results.results[j].id, rooms[j].room.id, "Incorrect results");
 					}
 					done();
 				});
@@ -869,7 +878,7 @@ describe("Storage Test(Queries)", function() {
 		var time = new Date().getTime();
 		var numThreads = mathUtils.random(5, 20);
 		var threadIds = [];
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -884,13 +893,13 @@ describe("Storage Test(Queries)", function() {
 		utils.emitActions(core, texts, function(err) {
 			if (err) log.e("getThreads:", err);
 			assert.ok(!err, "Error while saving texts");
-			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(err, results) {
+			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(errr, results) {
 				log.d("Texts:", results);
 				log.d("Length: ", results.results.length, numThreads);
 				assert.equal(results.results.length, numThreads, "Number of threads are not correct");
-				for (var i = 0; i < results.results.length; i++) {
+				for (var j = 0; j < results.results.length; j++) {
 					//log.d("Results:", results.results[i].id, threadIds[i]);
-					assert.equal(results.results[i].id, threadIds[i], "Incorrect results");
+					assert.equal(results.results[j].id, threadIds[j], "Incorrect results");
 				}
 				done();
 			});
