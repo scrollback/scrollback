@@ -3,36 +3,7 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const objUtils = require("../lib/obj-utils.js");
-
 	let customStyle = {
-		setCss: function(customCss) {
-			if (typeof customCss !== "string") {
-				return;
-			}
-
-			let roomObj = objUtils.clone(store.getRoom());
-
-			if (!roomObj) {
-				return;
-			}
-
-			if (!roomObj.guides) {
-				roomObj.guides = {};
-			}
-
-			if (!roomObj.guides.customization) {
-				roomObj.guides.customization = {};
-			}
-
-			roomObj.guides.customization.css = customCss;
-
-			core.emit("room-up", {
-				to: roomObj.id,
-				room: roomObj
-			});
-		},
-
 		removeCss: function() {
 			let styleSheet = document.getElementById("scrollback-custom-css");
 
@@ -76,6 +47,4 @@ module.exports = (core, config, store) => {
 			}
 		}
 	}, 100);
-
-	window.customStyle = customStyle;
 };
