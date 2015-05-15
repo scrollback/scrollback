@@ -80,7 +80,7 @@
             }
 
             @media #{$screenxxx} {
-                .view-sidebar-left & { display: none; }
+                .view-sidebar-left &, .view-sidebar-right & { display: none; }
             }
         }
 
