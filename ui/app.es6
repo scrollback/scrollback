@@ -54,7 +54,7 @@
 	require("../irc/irc-client.js")(...args);
 	require("../threader/threader-client.js")(...args);
 	require("../twitter/twitter-client.js")(...args);
-	require("../customization/customization-client.js")(...args);
+	require("../customization/customization-client.es6")(...args);
 
 	// User menu providers
 	require("../browserid-auth/browserid-auth-client.js")(...args);

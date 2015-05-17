@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js");
@@ -50,6 +52,28 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		shareRoom: function() {
+			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId,
+				text = "Join " + this.props.roomId + " on scrollback";
+
+			if (window.Android && typeof window.Android.shareItem === "function") {
+				window.Android.shareItem("Share room via", text + " - " + url);
+
+				return;
+			}
+
+			core.emit("setstate", {
+				nav: {
+					dialog: "share",
+					dialogState: {
+						shareText: text,
+						shareUrl: url,
+						shareType: "room"
+					}
+				}
+			});
+		},
+
 		badgeFilter: function(notification) {
 			return notification.action.to === this.props.roomId;
 		},
@@ -70,6 +94,8 @@ module.exports = function(core, config, store) {
 					</div>
 				);
 			});
+
+			icons.push(<a className="card-header-icon card-header-icon-share card-cover-icon" key={"card-share-" + room} onClick={this.shareRoom}></a>);
 
 			if (user && !appUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {

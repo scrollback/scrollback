@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 "use strict";
 
 var appUtils = require("../../lib/app-utils.js"),
@@ -27,7 +29,7 @@ module.exports = function(core, config, store) {
 		},
 
 		goToThread: function(e) {
-			if (/(icon-more|reply)/.test(e.target.className)) {
+			if (/(card-header-icon|reply)/.test(e.target.className)) {
 				return;
 			}
 
@@ -120,6 +122,29 @@ module.exports = function(core, config, store) {
 			});
 		},
 
+		shareThread: function() {
+			// Life would be easier if we had a function to convert a state object to URL
+			let url = window.location.protocol + "//" + window.location.host + "/" + store.get("nav", "room") + "/" + this.props.thread.id,
+				text = "Let's talk about " + this.props.thread.title;
+
+			if (window.Android && typeof window.Android.shareItem === "function") {
+				window.Android.shareItem("Share discussion via", text + " - " + url);
+
+				return;
+			}
+
+			core.emit("setstate", {
+				nav: {
+					dialog: "share",
+					dialogState: {
+						shareText: text,
+						shareUrl: url,
+						shareType: "discussion"
+					}
+				}
+			});
+		},
+
 		badgeFilter: function(notification) {
 			return notification.action.thread === this.props.thread.id;
 		},
@@ -128,7 +153,8 @@ module.exports = function(core, config, store) {
 			var thread = this.props.thread,
 				classNames = "card thread-card",
 				rel = store.getRelation(),
-				menu, chats = [];
+				icons = [],
+				chats = [];
 
 			if (this.props.thread.tags) {
 				for (var i = 0, l = this.props.thread.tags.length; i < l; i++) {
@@ -151,10 +177,12 @@ module.exports = function(core, config, store) {
 				}
 			});
 
+			if (!(this.props.thread.tags && this.props.thread.tags.indexOf("thread-hidden") > -1)) {
+				icons.push(<a className="card-header-icon card-header-icon-share" key={"card-share-" + this.props.thread.id} onClick={this.shareThread}></a>);
+			}
+
 			if (rel && /(owner|moderator|su)/.test(rel.role)) {
-				menu = <a className="card-header-icon card-header-icon-more" onClick={this.showThreadMenu}></a>;
-			} else {
-				menu = [];
+				icons.push(<a className="card-header-icon card-header-icon-more" key={"card-more-" + this.props.thread.id} onClick={this.showThreadMenu}></a>);
 			}
 
 			return (
@@ -162,7 +190,7 @@ module.exports = function(core, config, store) {
 					<div className="card-header">
 						<h3 className="card-header-title">{thread.title}</h3>
 						<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
-						{menu}
+						{icons}
 					</div>
 					<div className="card-content">{chats}</div>
 					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>

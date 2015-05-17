@@ -77,6 +77,12 @@ button {
     &:focus { outline: 0; }
 }
 
+.app-client {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
 .app-container {
     @include flexbox;
     @include flex-direction(row);
@@ -88,7 +94,7 @@ button {
 
     word-wrap: break-word; /* wrap long lines to avoid horizontal scrollbar */
     overflow: hidden; /* fix overflow in firefox */
-    position: fixed; /* make sure that it works on ios when position: absolute */
+    position: absolute;
 }
 
 .sidebar {
@@ -230,11 +236,12 @@ button {
             width: 100%;
         }
 
-        .appbar-logotype {
+        .appbar-logotype-primary {
             position: absolute;
             left: 0;
             top: 100%;
             height: 100%;
+            margin-left: 0;
         }
     }
 
@@ -344,6 +351,10 @@ button {
         @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
     }
 }
+
+.block { display: block; }
+
+.wide { width: 100%; }
 
 .progressbar {
     @include dropshadow(2);

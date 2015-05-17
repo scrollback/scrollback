@@ -29,7 +29,13 @@
 
         &-logotype {
             float: left;
-            padding: .75em 0;
+            margin-left: .75em;
+            height: 100%;
+            width: 120px;
+            background-image: url("/s/assets/logo/scrollback-logo@2x.png");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: 100% auto;
         }
 
         &-title {
@@ -41,10 +47,7 @@
             text-overflow: ellipsis;
             font-weight: 700;
 
-            &-logotype {
-                float: left;
-                padding: .75em;
-            }
+            &-logotype { background-image: url("/s/assets/logo/scrollback-logo-white@2x.png"); }
 
             &-primary {
                 float: left;
@@ -71,7 +74,7 @@
 
                 position: absolute;
                 top: .75em;
-                right: .25em;
+                right: .75em;
                 min-height: 2em;
                 min-width: 2em;
                 background-color: $error-color;

@@ -148,6 +148,6 @@
 	"space-return-throw-case": 0,
 	"space-unary-ops": 0,
 	"spaced-line-comment": 0,
-	"wrap-regex": 0,
+	"wrap-regex": 0
   }
 }

@@ -17,7 +17,10 @@ auth(core, config.authorizer);
 describe("Authorizer app ", function () {
 	"use strict";
 	// TODO: Make test cases for other actions
-	require('./joinPart.js')(core, config.authorizer);
-	require('./admitExpel.js')(core, config.authorizer);
-	require('./query-test.js')(core, config.authorizer);
+//	require('./joinPart.js')(core, config.authorizer);
+//	require('./admitExpel.js')(core, config.authorizer);
+//	require('./query-test.js')(core, config.authorizer);
+	require('./domainRulesTest.js')(core, config.authorizer);
+	require('./permissionRulesTest.js')(core, config.authorizer);
+	require('./relationshipRulesTest.js')(core, config.authorizer);
 });

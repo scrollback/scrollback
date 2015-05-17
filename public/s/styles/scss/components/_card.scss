@@ -66,6 +66,8 @@
                     color: inherit;
                 }
 
+                &-share { @include icon(share); }
+
                 &-more { @include icon(more); }
 
                 &-configure { @include icon(configure); }

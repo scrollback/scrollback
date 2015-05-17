@@ -6,7 +6,8 @@
 /*global beforeEach*/
 /*global afterEach*/
 /*global getConnection*/
-
+"use strict";
+var timeOut = 3000;
 describe('Action: BACK ', function() {
 	var socket;
 	beforeEach(function(done) {
@@ -16,6 +17,7 @@ describe('Action: BACK ', function() {
 	});
 
 	it("back action with all property ", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var m = {
 				from: "testinguser",
@@ -34,10 +36,11 @@ describe('Action: BACK ', function() {
 		};
 	});
 	it("back action without 'to' property ", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var m = {
 				from: "testinguser",
-				type: 'back',
+				type: 'back'
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
@@ -53,6 +56,7 @@ describe('Action: BACK ', function() {
 
 
 	it("back action without 'from' property ", function(done) {
+		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var m = {
 				type: 'back',
