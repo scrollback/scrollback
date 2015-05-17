@@ -7,6 +7,7 @@ module.exports = (core, config, store) => {
 
 	let [ x1, x2, y1, y2 ] = [ 0, 0, 0, 0 ],
 		elemWidth = 0,
+		identifier = null,
 		sidebar, overlay;
 
 	function translate(elem, amount) {
@@ -48,8 +49,12 @@ module.exports = (core, config, store) => {
 
 			elemWidth = sidebar.clientWidth;
 
-			x1 = e.touches[0].pageX;
-			y1 = e.touches[0].pageY;
+			let touches = e.targetTouches[0];
+
+			x1 = x2 = touches.clientX;
+			y1 = y2 = touches.clientY;
+
+			identifier = touches.identifier;
 
 			if (e.target.className.indexOf("touch-target") && translate(sidebar) > -20) {
 				translate(sidebar, -20);
@@ -63,8 +68,18 @@ module.exports = (core, config, store) => {
 
 	function onmove(e) {
 		if (sidebar && sidebar.contains(e.target)) {
-			let posX = e.touches[0].pageX,
-				posY = e.touches[0].pageY;
+			let posX, posY;
+
+			for (let i = 0; i < e.targetTouches.length; i++) {
+				if (e.targetTouches[i].identifier === identifier) {
+					let touches = e.targetTouches[i];
+
+					posX = touches.clientX;
+					posY = touches.clientY;
+
+					break;
+				}
+			}
 
 			if (x2 !== posX) {
 				if (x2) {
@@ -123,6 +138,8 @@ module.exports = (core, config, store) => {
 			}
 
 			x1 = x2 = y1 = y2 = 0;
+
+			identifier = null;
 		}
 	}
 
