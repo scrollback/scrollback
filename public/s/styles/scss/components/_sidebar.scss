@@ -2,7 +2,7 @@
     $width-sidebar: 20em !default;
 
     .sidebar {
-        @include transition;
+        @include transition(1s);
 
         position: absolute;
         top: 0;
@@ -55,7 +55,7 @@
         }
 
         &-overlay {
-            @extend %transition;
+            @include transition(1s);
 
             position: absolute;
             z-index: 600;
