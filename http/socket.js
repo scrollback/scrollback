@@ -1,3 +1,4 @@
+"use strict";
 /*
 	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
@@ -56,7 +57,7 @@ sock.on('connection', function(socket) {
 		}
 
 		if (!d.type) return;
-		if (d.type == 'init' && d.session) {
+		if (d.type === 'init' && d.session) {
 			if (!/^web:/.test(d.session)) {
 				return conn.send(getErrorObject(d, "INVALID_SESSION"));
 			}
@@ -70,7 +71,7 @@ sock.on('connection', function(socket) {
 				sConns[d.session] = [];
 				sConns[d.session].push(conn);
 			} else {
-				if (sConns[d.session].indexOf(conn) == -1) {
+				if (sConns[d.session].indexOf(conn) === -1) {
 					sConns[d.session].push(conn);
 				}
 			}
@@ -80,7 +81,7 @@ sock.on('connection', function(socket) {
 			d.origin = conn.origin;
 		}
 
-		if (d.type == 'back') {
+		if (d.type === 'back') {
 			//just need for back as storeBack will be called before actionValidator
 			if (!d.to) {
 				return conn.send(getErrorObject(d, "INVALID_ROOM"));
@@ -115,28 +116,28 @@ sock.on('connection', function(socket) {
 				log("Sending Error: ", e);
 				return conn.send(e);
 			}
-			if (data.type == 'back') {
+			if (data.type === 'back') {
 				/* this is needed because we dont have the connection object
 				of the user in the rconn until storeBack is called*/
 				conn.send(censorAction(data, "room"));
 				storeBack(conn, data);
 				return;
 			}
-			if (data.type == 'room') {
+			if (data.type === 'room') {
 				/* this is need because we dont have the connection object in the
 				rconn until the room can be setup and a back message is sent.*/
 				if (!data.old || !data.old.id) conn.send(data);
 				// return;
 			}
-			if (data.type == 'away') storeAway(conn, data);
-			if (data.type == 'init') {
+			if (data.type === 'away') storeAway(conn, data);
+			if (data.type === 'init') {
 				if (data.old) {
 					log.i("Occupant of: ", data.occupantOf);
-					data.occupantOf.forEach(function(e) {
-						var role, i, l;
-						for (i = 0, l = data.memberOf.length; i < l; i++) {
-							if (data.memberOf[i].id == e.id) {
-								role = data.memberOf[i].role;
+					data.occupantOf.forEach(function(room) {
+						var role, cnt, l;
+						for (cnt = 0, l = data.memberOf.length; cnt < l; cnt++) {
+							if (data.memberOf[cnt].id === room.id) {
+								role = data.memberOf[cnt].role;
 								break;
 							}
 						}
@@ -145,22 +146,22 @@ sock.on('connection', function(socket) {
 						action = {
 							id: generate.uid(),
 							type: "back",
-							to: e.id,
+							to: room.id,
 							from: data.user.id,
 							session: data.session,
 							user: data.user,
-							room: e
+							room: room
 						};
 						emit({
 							id: generate.uid(),
 							type: "away",
-							to: e.id,
+							to: room.id,
 							from: data.old.id,
 							user: data.old,
-							room: e
+							room: room
 						});
 
-						if (conn.listeningTo && conn.listeningTo.indexOf(e.id) >= 0) {
+						if (conn.listeningTo && conn.listeningTo.indexOf(room.id) >= 0) {
 							if (verifyBack(conn, action)) emit(action);
 							storeBack(conn, action);
 						}
@@ -169,7 +170,7 @@ sock.on('connection', function(socket) {
 				}
 				storeInit(conn, data);
 			}
-			if (data.type == 'user') processUser(conn, data);
+			if (data.type === 'user') processUser(conn, data);
 			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
@@ -280,7 +281,7 @@ function censorAction(action, filter) {
 		i, j;
 	for (i in action) {
 		if (action.hasOwnProperty(i)) {
-			if (i == "room" || i == "user") {
+			if (i === "room" || i === "user") {
 				outAction[i] = {};
 				for (j in action[i]) {
 					if (action[i].hasOwnProperty(j)) {
@@ -294,7 +295,7 @@ function censorAction(action, filter) {
 	}
 	if (outAction.origin) delete outAction.origin;
 	if (outAction.eventStartTime) delete outAction.eventStartTime; //TODO: copy properties
-	if (filter == 'both' || filter == 'user') {
+	if (filter === 'both' || filter === 'user') {
 		outAction.user = {
 			id: action.user.id,
 			picture: action.user.picture,
@@ -305,7 +306,7 @@ function censorAction(action, filter) {
 		delete outAction.session;
 	}
 
-	if (filter == 'both' || filter == 'room') {
+	if (filter === 'both' || filter === 'room') {
 		delete outAction.room.identities;
 		delete outAction.room.params;
 	}
@@ -321,7 +322,7 @@ function emit(action, callback) {
 		conn.send(a);
 	}
 
-	if (action.type == 'init') {
+	if (action.type === 'init') {
 		if (sConns[action.session]) {
 			if(action.response) {
 				error = action.response;
@@ -337,7 +338,7 @@ function emit(action, callback) {
 			if(error) action.response = error;
 		}
 		return callback();
-	} else if (action.type == 'user') {
+	} else if (action.type === 'user') {
 		if (uConns[action.from] && uConns[action.from].length) {
 			uConns[action.from].forEach(function(e) {
 				dispatch(e, action);
@@ -351,8 +352,8 @@ function emit(action, callback) {
 
 	if (rConns[action.to]) {
 		rConns[action.to].forEach(function(e) {
-			if (e.session == action.session) {
-				if (action.type == "room") dispatch(e, action);
+			if (e.session === action.session) {
+				if (action.type === "room") dispatch(e, action);
 				else dispatch(e, myAction);
 			} else {
 				dispatch(e, outAction);
@@ -388,8 +389,8 @@ function handleClose(conn) {
 				};
 
 				if (!verifyAway(conn, awayAction)) return;
-				core.emit('away', awayAction, function(err, action) {
-					if (err) return;
+				core.emit('away', awayAction, function(error, action) {
+					if (error) return;
 					storeAway(conn, action);
 				});
 
