@@ -29,6 +29,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	beforeEach(function(done) {
+		this.timeout(3500);
 		log("Before each");
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
@@ -175,6 +176,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getRooms query (identity, params, guides)", function(done) {
+		this.timeout(3000);
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
 		room.user = user.user;
@@ -253,6 +255,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (memberOf)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var users = [];
 		var room = utils.getNewRoomAction();
@@ -333,6 +336,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (memberOf and ref)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var users = [];
 		var room = utils.getNewRoomAction();
@@ -371,6 +375,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (hasMember)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
@@ -405,6 +410,7 @@ describe("Storage Test(Queries)", function() {
 
 
 	it("getUsers query (hasMember and ref as an array)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
@@ -446,6 +452,7 @@ describe("Storage Test(Queries)", function() {
 
 
 	it("getUsers query (hasMember and ref)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
@@ -556,7 +563,7 @@ describe("Storage Test(Queries)", function() {
  	});
 
 	it("getTexts query-2 (time: null / msg > 256 / before)", function(done) {
-		this.timeout(20000);
+		this.timeout(25000);
 		var texts = [];
 		var to = generate.names(8);
 		var n = mathUtils.random(257, 500);
