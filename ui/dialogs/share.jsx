@@ -17,7 +17,7 @@ module.exports = (core, config, store) => {
 
 			return (
 				<Dialog ref="dialog" onDismiss={this.onDismiss} show={this.state.show}>
-					<div className="modal-content">
+					<div className="modal-content dialog-content">
 						<h1 className="dialog-title">{"Share" + (this.state.type ? " this " + this.state.type : " ") + " via"}</h1>
 						<p className="dialog-buttons">
 							<a href={"https://www.facebook.com/dialog/share?app_id=1389363534614084&display=popup&redirect_uri=" + url + "&href=" + this.state.url} target="_blank"

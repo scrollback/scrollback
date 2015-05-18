@@ -11,7 +11,7 @@ module.exports = (core) => {
 		},
 
 		dismiss: function(e) {
-			if (this.state.show === false) {
+			if (this.state.show === false || this.props.dismiss === false) {
 				return;
 			}
 
@@ -41,6 +41,8 @@ module.exports = (core) => {
 						<div ref="backdrop" className="backdrop" onClick={this.dismiss}></div>
 
 	                    <div ref="modal" {...this.props} className={"modal dialog " + this.props.className}>
+							{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss} />}
+
 	                        {this.props.children}
 	                    </div>
 					</div>
