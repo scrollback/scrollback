@@ -310,6 +310,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Update room.", function(done) {
+		this.timeout(3000);
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
 		var roomOwner = utils.getNewUserAction();
