@@ -13,10 +13,9 @@ var assert = require('assert'),
 	pg = require('pg');
 	config.storage.pg.db = "testingdatabase"; // don't change this.
 if(process.env.TRAVIS){
-	config.storage.pg.server = "stage.scrollback.io";
+	config.storage.pg.server = "direct.stage.scrollback.io";
 }
-var	connString = "pg://" + config.storage.pg.username + ":" +
-	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
+var	connString = "pg://" + config.storage.pg.username + ":" + config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
 describe("Storage Test(Queries)", function() {
