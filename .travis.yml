@@ -1,7 +1,6 @@
 language: node_js
 services: redis-server
 env: DB=postgres
-before_script: psql -c 'create database testingdatabase;' -U postgres && sleep 1 && psql -U postgres -d testingdatabase -a -f tools/pg/sbcontent.sql && sleep 1 && psql -U postgres -d testingdatabase -a -f tools/pg/sbentity.sql
 
 addons:
  postgresql: "9.3"
