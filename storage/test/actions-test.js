@@ -350,6 +350,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Join room.", function(done) {
+		this.timeout(3000);
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
@@ -381,6 +382,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("part room.", function(done) {
+		this.timeout(3000);
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
