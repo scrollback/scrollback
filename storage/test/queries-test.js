@@ -56,81 +56,81 @@ describe("Storage Test(Queries)", function() {
 		});
 	});
 
-//	it("getUsers query (ref is an empty array)", function(done) {
-//		var user = utils.getNewUserAction();
-//		core.emit("user", user, function() {
-//			core.emit("getUsers", {type: 'getUsers', ref: []}, function(err, reply) {
-//				log.d("Arguments:", arguments);
-//				assert.equal(reply.results.length, 0, "Not zero result");
-//				done();
-//			});
-//		});
-//	});
-//
-//	it("getRooms query (empty results)", function(done) {
-//		var room = utils.getNewRoomAction();
-//		var user = utils.getNewUserAction();
-//		room.user = user.user;
-//		core.emit("user", user, function() {
-//			core.emit("room", room, function() {
-//				core.emit("getRooms", {type: 'getRooms', ref: generate.names(10)}, function(err, reply) {
-//					log.d("Arguments:", arguments);
-//					assert.equal(reply.results.length, 0, "Should return 0 results");
-//					done();
-//				});
-//			});
-//		});
-//	});
-//
-//	it("getEntities query", function(done) {
-//		var room = utils.getNewRoomAction();
-//		var user = utils.getNewUserAction();
-//		room.user = user.user;
-//		core.emit("user", user, function() {
-//			core.emit("room", room, function() {
-//				core.emit("getEntities", {type: 'getEntities', ref: [room.room.id, user.user.id]}, function(err, reply) {
-//					log.d("Arguments:", arguments);
-//					assert.equal(reply.results.length, 2, "Should return 2 results");
-//					assert.equal(reply.results[0].id, room.room.id, "wrong room");
-//					assert.equal(reply.results[1].id, user.user.id, "wrong user");
-//					done();
-//				});
-//			});
-//		});
-//	});
-//
-//	it("getRooms query (ref is an array)", function(done) {
-//		this.timeout(7000);
-//		var rooms = [];
-//		var n = mathUtils.random(2, 100);
-//		var time = new Date().getTime();
-//		var user = utils.getNewUserAction();
-//		var ref = [];
-//		for (var i = 0; i < n; i++) {
-//			var room = utils.getNewRoomAction();
-//			room.user = user.user;
-//			room.room.createTime = time  + i; // increasing time.
-//			rooms.push(room);
-//			if (i % 2 === 0) ref.push(room.room.id); //valid room
-//			else ref.push(generate.names(10)); //invalid room
-//		}
-//
-//		core.emit("user", user, function() {
-//			utils.emitActions(core, rooms, function() {
-//				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
-//					assert.equal(results.results.length, n, "not n results");
-//					for (var i = 0; i < results.results.length; i++) {
-//						//log.d("results:", (results.results[i] ? results.results[i].id : null), ref[i]);
-//						var tt1 = (i % 2 === 0) ? rooms[i].room.id : null;
-//						var tt2 = (i % 2 === 0) ? results.results[i].id : null;
-//						assert.equal(tt2, tt1, "Incorrect results");
-//					}
-//					done();
-//				});
-//			});
-//		});
-//	});
-//
+	it("getUsers query (ref is an empty array)", function(done) {
+		var user = utils.getNewUserAction();
+		core.emit("user", user, function() {
+			core.emit("getUsers", {type: 'getUsers', ref: []}, function(err, reply) {
+				log.d("Arguments:", arguments);
+				assert.equal(reply.results.length, 0, "Not zero result");
+				done();
+			});
+		});
+	});
+
+	it("getRooms query (empty results)", function(done) {
+		var room = utils.getNewRoomAction();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				core.emit("getRooms", {type: 'getRooms', ref: generate.names(10)}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 0, "Should return 0 results");
+					done();
+				});
+			});
+		});
+	});
+
+	it("getEntities query", function(done) {
+		var room = utils.getNewRoomAction();
+		var user = utils.getNewUserAction();
+		room.user = user.user;
+		core.emit("user", user, function() {
+			core.emit("room", room, function() {
+				core.emit("getEntities", {type: 'getEntities', ref: [room.room.id, user.user.id]}, function(err, reply) {
+					log.d("Arguments:", arguments);
+					assert.equal(reply.results.length, 2, "Should return 2 results");
+					assert.equal(reply.results[0].id, room.room.id, "wrong room");
+					assert.equal(reply.results[1].id, user.user.id, "wrong user");
+					done();
+				});
+			});
+		});
+	});
+
+	it("getRooms query (ref is an array)", function(done) {
+		this.timeout(7000);
+		var rooms = [];
+		var n = mathUtils.random(2, 100);
+		var time = new Date().getTime();
+		var user = utils.getNewUserAction();
+		var ref = [];
+		for (var i = 0; i < n; i++) {
+			var room = utils.getNewRoomAction();
+			room.user = user.user;
+			room.room.createTime = time  + i; // increasing time.
+			rooms.push(room);
+			if (i % 2 === 0) ref.push(room.room.id); //valid room
+			else ref.push(generate.names(10)); //invalid room
+		}
+
+		core.emit("user", user, function() {
+			utils.emitActions(core, rooms, function() {
+				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
+					assert.equal(results.results.length, n, "not n results");
+					for (var i = 0; i < results.results.length; i++) {
+						//log.d("results:", (results.results[i] ? results.results[i].id : null), ref[i]);
+						var tt1 = (i % 2 === 0) ? rooms[i].room.id : null;
+						var tt2 = (i % 2 === 0) ? results.results[i].id : null;
+						assert.equal(tt2, tt1, "Incorrect results");
+					}
+					done();
+				});
+			});
+		});
+	});
+
 //	it("getRooms query (filled results)", function(done) {
 //		var room = utils.getNewRoomAction();
 //		core.emit("getRooms", {type: 'getRooms', ref: room.room.id, results: [room.room]}, function(err, reply) {
@@ -451,54 +451,54 @@ describe("Storage Test(Queries)", function() {
 	});
 
 
-//	it("getUsers query (hasMember and ref)", function(done) {
-//		this.timeout(3000);
-//		var relations = [];
-//		var rooms = [];
-//		var user = utils.getNewUserAction();
-//		var n = mathUtils.random(3, 10);
-//		var roomOwner = utils.getNewUserAction();
-//		for (var i = 0; i < n; i++) {
-//			relations.push(utils.getNewRelationAction('join', 'follower'));
-//			var room = utils.getNewRoomAction();
-//			room.user = roomOwner.user;
-//			relations[i].user = user.user;
-//			relations[i].room = room.room;
-//			rooms.push(room);
-//		}
-//		var index = mathUtils.random(0, n - 1);
-//		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
-//			utils.emitActions(core, rooms, function(err2, results2) {
-//				utils.emitActions(core, relations, function(err3, results3) {
-//					log.d("actions: ", err1, err2, err3, results1, results2, results3);
-//					core.emit("getRooms", {
-//						type: 'getRooms',
-//						hasMember: user.user.id,
-//						ref: rooms[index].room.id
-//					}, function(err, reply) {
-//						log.d("N, length=", n, reply.results.length, reply.results);
-//						assert.equal(reply.results.length, 1, "hasMember query failed.");
-//						assert.equal(reply.results[0].id, rooms[index].room.id, "Incorrect room");
-//						assert.equal(reply.results[0].role, "follower", "Incorrect role");
-//						done();
-//					});
-//				});
-//			});
-//
-//		});
-//	});
-//
-//
-//	it("getTexts query (ref)", function(done) {
-//		var text = utils.getNewTextAction();
-//		core.emit("text", text, function() {
-//			core.emit("getTexts", {type: "getTexts", ref: text.id}, function(err, reply) {
-//				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
-//				done();
-//			});
-//		});
-//	});
-//
+	it("getUsers query (hasMember and ref)", function(done) {
+		this.timeout(3000);
+		var relations = [];
+		var rooms = [];
+		var user = utils.getNewUserAction();
+		var n = mathUtils.random(3, 10);
+		var roomOwner = utils.getNewUserAction();
+		for (var i = 0; i < n; i++) {
+			relations.push(utils.getNewRelationAction('join', 'follower'));
+			var room = utils.getNewRoomAction();
+			room.user = roomOwner.user;
+			relations[i].user = user.user;
+			relations[i].room = room.room;
+			rooms.push(room);
+		}
+		var index = mathUtils.random(0, n - 1);
+		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+			utils.emitActions(core, rooms, function(err2, results2) {
+				utils.emitActions(core, relations, function(err3, results3) {
+					log.d("actions: ", err1, err2, err3, results1, results2, results3);
+					core.emit("getRooms", {
+						type: 'getRooms',
+						hasMember: user.user.id,
+						ref: rooms[index].room.id
+					}, function(err, reply) {
+						log.d("N, length=", n, reply.results.length, reply.results);
+						assert.equal(reply.results.length, 1, "hasMember query failed.");
+						assert.equal(reply.results[0].id, rooms[index].room.id, "Incorrect room");
+						assert.equal(reply.results[0].role, "follower", "Incorrect role");
+						done();
+					});
+				});
+			});
+
+		});
+	});
+
+
+	it("getTexts query (ref)", function(done) {
+		var text = utils.getNewTextAction();
+		core.emit("text", text, function() {
+			core.emit("getTexts", {type: "getTexts", ref: text.id}, function(err, reply) {
+				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
+				done();
+			});
+		});
+	});
+
 //	it("getTexts query (ref is an empty array)", function(done) {
 //		var text = utils.getNewTextAction();
 //		core.emit("text", text, function() {
