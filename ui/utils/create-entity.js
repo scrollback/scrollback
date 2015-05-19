@@ -16,7 +16,7 @@ module.exports = function(core, config, store) {
 		}
 
 		if (type === "room") {
-			validateEntity("Room", name, function(res) {
+			validateEntity("Room", name, function(res, msg) {
 				var room, roomObj, newRoom, identities, context,
 					nav = store.get("nav");
 
@@ -25,7 +25,7 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "error") {
-					return callback("error", name || roomError);
+					return callback("error", msg || roomError);
 				}
 
 				if (res === "ok") {
@@ -74,7 +74,7 @@ module.exports = function(core, config, store) {
 				}
 			});
 		} else if (type === "user") {
-			validateEntity("User", name, function(res) {
+			validateEntity("User", name, function(res, msg) {
 				var userObj;
 
 				if (res === "wait") {
@@ -82,7 +82,7 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "error") {
-					return callback("error", name || userError);
+					return callback("error", msg || userError);
 				}
 
 				if (res === "ok") {
