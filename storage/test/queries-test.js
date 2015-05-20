@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 /* eslint no-shadow: 0 */
 /* eslint max-nested-callbacks: 0*/
-/*eslint handle-callback-err: 0*/
+/* eslint handle-callback-err: 0*/
 
 "use strict";
 var assert = require('assert'),
