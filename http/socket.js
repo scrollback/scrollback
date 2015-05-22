@@ -94,6 +94,11 @@ sock.on('connection', function(socket) {
 				return;
 			}
 		}
+
+		if(d.type === 'getPolicy') {
+			d.type = "http/" + d.type;
+		}
+
 		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
@@ -177,6 +182,11 @@ sock.on('connection', function(socket) {
                 log.d("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
+			}
+			if(data.type === 'http/getPolicy') {
+				log.d("sending policy back", data);
+				data.type = 'getPolicy';
+				conn.send(data);
 			}
 		});
 	});
