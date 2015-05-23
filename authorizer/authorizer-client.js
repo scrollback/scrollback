@@ -6,25 +6,28 @@ var formField = require("../ui/utils/form-field.js"),
 module.exports = function(core) {
 	core.on('conf-show', function(tabs, next) {
 		var room = tabs.room,
-//			guestPermRead = false,
+			guestPermRead = false,
 			guestPermWrite = false,
-//			registeredPermRead = false,
+			registeredPermRead = false,
 			registeredPermWrite = false,
-//			followerPermRead = false,
+			followerPermRead = false,
 			followerPermWrite = false,
-//			readLevel,
-			writeLevel;
+			readLevel,
+			writeLevel,
+			openRoom;
 
 		room.guides = room.guides || {};
 		room.guides.authorizer = room.guides.authorizer || {};
 
 		room.guides.authorizer.readLevel = room.guides.authorizer.readLevel || 'guest';
 		room.guides.authorizer.writeLevel = room.guides.authorizer.writeLevel || 'guest';
-
-//		readLevel = room.guides.authorizer.readLevel; // guest, registered, follower
+		
+		if (!room.guides) room.guides = {};
+		openRoom = (room.guides.authorizer && typeof room.guides.authorizer.openRoom === "boolean") ? room.guides.authorizer.openRoom : true;
+		readLevel = room.guides.authorizer.readLevel; // guest, registered, follower
 		writeLevel = room.guides.authorizer.writeLevel;
 
-		/*switch (readLevel) {
+		switch (readLevel) {
 		case 'guest':
 			guestPermRead = true;
 			break;
@@ -34,7 +37,7 @@ module.exports = function(core) {
 		case 'follower':
 			followerPermRead = true;
 		}
-*/
+
 		switch (writeLevel) {
 		case 'guest':
 			guestPermWrite = true;
@@ -47,8 +50,11 @@ module.exports = function(core) {
 		}
 
 		var div = $('<div>').append(
-//			formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
-			formField('Who can post messages?', 'radio', "authorizer-write", [['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]])
+			formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
+			formField('Who can post messages?', 'radio', "authorizer-write", [['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]]),
+			formField("open room", "check", "open-room-check", [
+						[ "open-room", "", openRoom ]
+					])
 		);
 
 		tabs.authorizer = {
@@ -65,14 +71,16 @@ module.exports = function(core) {
 				users: 'registered',
 				followers: 'follower'
 			},
-//			readLevel = mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)],
+			openRoom = $('input:radio[name="authorizer-read"]:checked'),
+			readLevel = mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)],
 			writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
 
 		room.guides = room.guides || {};
 
 		room.guides.authorizer = {
-			readLevel: 'guest',
-			writeLevel: writeLevel
+			readLevel: readLevel,
+			writeLevel: writeLevel,
+			openRoom: $("#open-room").is(':checked')
 		};
 		next();
 	}, 500);

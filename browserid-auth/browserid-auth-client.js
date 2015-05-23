@@ -1,6 +1,7 @@
 /* jshint browser: true */
 
 module.exports = function(core, config, store) {
+	"use strict";
 	core.on("auth", function(auth, next) {
 		if (/(web|embed)/.test(store.get("context", "env"))) {
 			auth.buttons.persona = {

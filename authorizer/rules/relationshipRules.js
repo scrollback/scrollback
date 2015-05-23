@@ -1,6 +1,7 @@
 "use strict";
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('./../../lib/SbError.js');
+var log = require('../../lib/logger.js');
 
 var handlers = {
 	join: function(action) {
@@ -20,7 +21,6 @@ var handlers = {
 				action: action.type
 			}));
 		}
-
 		if (!openRoom || permissionWeights[action.role] > permissionWeights.follower) {
 			action.transitionType = "request";
 			action.transitionRole = action.role;
@@ -52,6 +52,7 @@ var handlers = {
 
 
 function admitExpel (action	) {
+	log.d("victim:", action.victim);
 	if (permissionWeights[action.user.role] < permissionWeights.moderator) {
 		return (new SbError("ERR_NOT_ALLOWED", {
 			source: 'authorizer',
@@ -69,7 +70,7 @@ function admitExpel (action	) {
 			currentRole: action.user.role
 		}));
 	}
-
+	
 	if (action.victim.transitionType === "request") {
 		if (permissionWeights[action.victim.transitionRole] > permissionWeights[action.user.role]) {
 			return (new SbError("ERR_NOT_ALLOWED", {
@@ -79,8 +80,10 @@ function admitExpel (action	) {
 				currentRole: action.user.role
 			}));
 		}
-
+		
 		if (!action.role) action.role = action.transitionRole;
+		action.transitionType = null;
+		action.transitionRole = null;
 	} else {
 		if (permissionWeights[action.victim.role] >= permissionWeights[action.user.role]) {
 			return (new SbError("ERR_NOT_ALLOWED", {
@@ -97,6 +100,7 @@ function admitExpel (action	) {
 			delete action.role;
 		}
 	}
+	log.d("Relationship action:", action);
 }
 
 module.exports = function() {

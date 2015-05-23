@@ -80,6 +80,9 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 				role: row.role,
 				roleSince: row.roletime
 			};
+			if(row.transitiontype) entity.transitionType = row.transitiontype;
+			if(row.transitionrole) entity.transitionRole = row.transitionrole;
+			log.d(entity);
 			results.push(entity);
 		});
 

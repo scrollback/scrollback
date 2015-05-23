@@ -1,3 +1,4 @@
+'use strict';
 var log = require('../lib/logger.js');
 /**
 select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
@@ -82,9 +83,17 @@ select * from entities INNER JOIN relations on (relations.user=entities.id AND r
 
 exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	var q = makeQuery('select'),
-		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
+		type;
 	q.source = "entities";
-	
+	log.i(iq, q);
+	if (iq.type === 'getEntities') {
+		type = null;
+	} else if (iq.type === 'getUsers') {
+		type = "user";
+	} else {
+		type = "room";
+	}
+
 	if (type) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
@@ -103,7 +112,12 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.sources.push('entities');
 		q.sources.push('relations');
 		if (!iq.role) {
-			q.filters.push([['relations', 'role'], 'gt', 'none']);
+			if(['owner', 'su', 'moderator'].indexOf(iq.user.role) >= 0) {
+				q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
+			} else {
+				q.filters.push([['relations', 'role'], 'gt', 'none']);
+			}	
+			
 		} else {
 			q.filters.push([['relations', 'role'], 'eq', iq.role]);
 		}
@@ -140,5 +154,6 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.limit = iq.after || 20000; // TODO: temp fix. need to create iterators for these kind of queries.
 		q.iterate.reverse = false;
 	}
+	log.i(iq, q);
 	return [q];
 };
