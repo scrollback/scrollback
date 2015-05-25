@@ -15,57 +15,46 @@ module.exports = function(core, config, store) {
 				     <footer className="footer" >
 				     	<div className="footer-inner">
 
-							<ul className="div1">
-
+							<ul className="footer-item-container">
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >ABOUT US
+								<a href="http://blog.scrollback.io/" target="_blank" >About us
 								</a></li>
 
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >CAREERS
+								<a href="http://blog.scrollback.io/" target="_blank" >Careers
 								</a></li>
 
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >PRIVACY
+								<a href="http://blog.scrollback.io/" target="_blank" >Privacy
 								</a></li>
 
-								<li className="footer-item footer-itemtemp" >
-								<a href="http://blog.scrollback.io/" target="_blank">BLOG
+								<li className="footer-item" >
+								<a href="http://blog.scrollback.io/" target="_blank">Blog
 								</a></li>
 
 							</ul>
 
-							<ul className="div2">
-								<li className="footer-social">
-								<a href="https://www.facebook.com/scrollback" target="_blank">
-								<img src="/s/assets/footer/facebook.png" >
-								</img></a>
+							<ul className="footer-social-container">
+								<li className="footer-social footer-social-facebook">
+								<a href="https://www.facebook.com/scrollback" target="_blank">Facebook</a>
 
 								</li>
-								<li className="footer-social">
-								<a href="https://twitter.com/Scrollbackio" target="_blank">
-								<img src="/s/assets/footer/twitter.png" >
-								</img></a>
+								<li className="footer-social footer-social-twitter">
+								<a href="https://twitter.com/Scrollbackio" target="_blank">Twitter</a>
 								</li>
 
-								<li className="footer-social">
-								<a  href="https://www.linkedin.com/company/scrollback" target="_blank" >
-								<img src="/s/assets/footer/linkedin.png" >
-								</img></a>
+								<li className="footer-social footer-social-linkedin">
+								<a  href="https://www.linkedin.com/company/scrollback" target="_blank">LinkedIn</a>
 								</li>
 
-								<li className="footer-social"  >
-								<a href="https://github.com/scrollback/scrollback" target="_blank" >
-								<img src="/s/assets/footer/github.png" >
-								</img></a>
+								<li className="footer-social footer-social-github">
+								<a href="https://github.com/scrollback/scrollback" target="_blank">GitHub</a>
 								</li>
-
 							</ul>
-							<ul className="div3">
-
+							
+							<ul className="footer-playstore-container">
 								<li className="footer-playstore">
-								<a href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">
-								<img className="footer-playstore" src="/s/assets/footer/googleplay.png" ></img>GET THE APP</a>
+								<a href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">Get the app</a>
 								</li>
 							</ul>
 
