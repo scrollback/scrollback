@@ -79,6 +79,7 @@
     "blanket": "latest",
     "bower": "latest",
     "browserify": "latest",
+    "browserify-optional": "latest",
     "browserstack-webdriver": "latest",
     "chai": "latest",
     "del": "latest",
