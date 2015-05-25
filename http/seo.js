@@ -41,8 +41,11 @@ module.exports = function(core, conf) {
 
 		function done() {
 			if (++ct === 2) {
-				if (room) callback(genHeadHtml(room, thread));
-				else callback("");
+				if (room && room.guides && room.guides.authorizer && room.guides.authorizer.readLevel === "guest") {
+					callback(genHeadHtml(room, thread));
+				} else {
+					callback("");
+				}
 			}
 		}
 		if (a[0]) {
