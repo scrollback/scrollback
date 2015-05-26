@@ -104,13 +104,6 @@
 	"no-new-require": 0,
 	"no-path-concat": 0,
 	"no-process-exit": 0,
-	"no-restricted-modules": [2,
-		"assert", "buffer", "child_process", "cluster", "crypto",
-		"dgram", "dns", "domain", "events", "freelist", "fs",
-		"http", "https", "module", "net", "os", "path", "punycode",
-		"querystring", "readline", "repl", "smalloc", "stream", "string_decoder", "sys",
-		"timers", "tls", "tracing", "tty", "url", "util", "vm", "zlib"
-	],
 	"no-sync": 0,
 
 	"brace-style": 0,
