@@ -33,13 +33,9 @@ var defaults = {
 };
 
 module.exports = (function() {
-	var changes;
+	var changes = require("./client-config.js");
 
-	try {
-		changes = require("./client-config.js");
-	} catch (e) {
-		changes = {};
-	}
+	if (!changes) changes = {};
 
 	return merge(defaults, changes);
 }());

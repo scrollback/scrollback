@@ -1,7 +1,7 @@
 /* eslint-env browser */
 
 "use strict";
-var config = require("../client-config-defaults.js");
+var config = require("../client-config.js");
 var host = config.server.protocol + "//" + config.server.host;
 var iframeCount = 0,
 	widgets = {};
