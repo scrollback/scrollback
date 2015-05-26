@@ -178,6 +178,23 @@ sock.on('connection', function(socket) {
 				conn.send(data);
 				data.eventStartTime = t;
 			}
+			if(["join", "part", "admit", "expel"].indexOf(data.type) >= 0) {
+				var refObject, connections, censoredAction;
+				if(data.type == "join" || data.type == "part" ) {
+					refObject = action.user;
+				} else {
+					refObject = action.victim;
+				}
+				connections = uConns[refObject.id];
+				
+				if(connections) {
+					censoredAction = censorAction(data);
+					connections.forEach(function(c) {
+						c.send(data);
+					});
+				}
+				
+			}
 		});
 	});
 

@@ -146,7 +146,7 @@ function getTextHtml(r, roomid, threadid) {
 
 function getURL(time, roomid) {
 	log("time", time, "roomId", roomid);
-	return "\"/" + roomid + "?time=" + new Date(time).toISOString() + "&amp;tab=threads\"";
+	return "\"/" + roomid + "?t=" + new Date(time).toISOString() + "&amp;tab=threads\"";
 }
 
 function getThreadsHtml(r, roomid) {
