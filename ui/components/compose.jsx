@@ -69,8 +69,31 @@ module.exports = function(core, config, store) {
 			React.findDOMNode(this.refs.filechooser).click();
 		},
 
-		uploadFile: function(e) {
+		showFileError: function(text) {
 			let button = React.findDOMNode(this.refs.filebutton),
+				popover = document.createElement("div"),
+				message = document.createElement("div");
+
+			message.textContent = text;
+
+			message.classList.add("popover-content");
+			popover.classList.add("error");
+
+			popover.appendChild(message);
+
+			$(popover).popover({ origin: button });
+
+			$(document).on("popoverDismissed.fileerr", () => {
+				button.classList.remove("progress");
+				button.classList.remove("error");
+
+				$(document).off("popoverDismissed.fileerr");
+			});
+		},
+
+		uploadFiles: function(e) {
+			let formData = new FormData(),
+				button = React.findDOMNode(this.refs.filebutton),
 				files = e.target.files;
 
 			if (files && files.length) {
@@ -78,27 +101,55 @@ module.exports = function(core, config, store) {
 					let file = files[i];
 
 					if (file.size > 5242880) {
-						let popover = document.createElement("div"),
-							message = document.createElement("div"),
-							size = Math.round(file.size * 100 / 1048576) / 100;
+						let size = Math.round(file.size * 100 / 1048576) / 100;
 
-						message.textContent = "File is too big (" + size + "MB). Only files upto 5MB are allowed.";
+						this.showFileError("File is too big (" + size + "MB). Only files upto 5MB are allowed.");
 
-						message.classList.add("popover-content");
-						popover.classList.add("error");
-
-						popover.appendChild(message);
-
-						$(popover).popover({ origin: button });
-
-						break;
+						return;
 					}
 
-					console.log("Uploading file:", file);
-
-					// TODO: implement upload to AWS
+					formData.append("photos[]", file, file.name);
 				}
 			}
+
+			button.classList.add("progress");
+
+			let xhr = new XMLHttpRequest();
+
+			xhr.open("POST", "/upload", true);
+
+			let circle = React.findDOMNode(this.refs.progresscircle);
+
+			xhr.addEventListener("progress", event => {
+				if (event.lengthComputable) {
+					circle.setAttribute("stroke-dashoffset", 100 - (event.loaded / event.total));
+				}
+			}, false);
+
+			xhr.addEventListener("load", () => {
+				button.classList.add("complete");
+
+				circle.setAttribute("stroke-dashoffset", 0);
+
+				setTimeout(() => {
+					button.classList.remove("progress");
+					button.classList.remove("complete");
+				}, 3000);
+			}, false);
+
+			xhr.addEventListener("error", () => {
+				button.classList.add("error");
+
+				this.showFileError("Upload failed!");
+			}, false);
+
+			xhr.addEventListener("abort", () => {
+				button.classList.add("error");
+
+				this.showFileError("Upload aborted!");
+			}, false);
+
+			xhr.send();
 
 			// Hacky way to clear file input
 			try {
@@ -174,7 +225,12 @@ module.exports = function(core, config, store) {
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
 							<div ref="filebutton" className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
-								<input ref="filechooser" type="file" onChange={this.uploadFile} multiple={true} accept="image/*" />
+								<input ref="filechooser" type="file" onChange={this.uploadFiles} multiple={true} accept="image/*" />
+								<svg className="progress-indicator" width="35" height="35">
+								    <circle ref="progresscircle" cx="18" cy="18" r="16" fill="none" strokeWidth="2" />
+								    <path className="check" d="M6,11.2 L1.8,7 L0.4,8.4 L6,14 L18,2 L16.6,0.6 L6,11.2 Z" transform="translate(27, 25) rotate(180)"/>
+								    <path className="warn" d="M0,19 L22,19 L11,0 L0,19 L0,19 Z M12,16 L10,16 L10,14 L12,14 L12,16 L12,16 Z M12,12 L10,12 L10,8 L12,8 L12,12 L12,12 Z" transform="translate(29, 28) rotate(180)" />
+								</svg>
 							</div>
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
 						</div>

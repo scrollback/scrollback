@@ -129,6 +129,44 @@
 
                 [type="file"] { opacity: 0; }
 
+                .progress-indicator {
+                    @extend %transition;
+
+                    fill: transparent;
+                    stroke: transparent;
+                    stroke-dasharray: 100;
+                    stroke-dashoffset: 100;
+                    transform: rotateZ(180deg);
+                    position: absolute;
+                    top: .35em;
+                    left: .45em;
+
+                    .check, .warn { @extend %transition; }
+                }
+
+                &.progress {
+                    color: $info-color;
+                    opacity: 1;
+
+                    &:before { opacity: .3; }
+
+                    &.complete {
+                        color: $success-color;
+
+                        .check { fill: currentColor; }
+                    }
+
+                    &.error {
+                        color: $error-color;
+
+                        .progress-indicator { stroke: transparent; }
+
+                        .warn { fill: currentColor; }
+                    }
+
+                    .progress-indicator { stroke: currentColor; }
+                }
+
                 .chat-area-input.empty & { display: block; }
             }
         }
