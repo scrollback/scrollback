@@ -46,8 +46,6 @@ module.exports = function(core, config, store) {
 				nav = store.get("nav"),
 				text;
 
-			text = composeBox.val();
-
 			if (!text) {
 				return;
 			}
@@ -64,6 +62,30 @@ module.exports = function(core, config, store) {
 			});
 
 			composeBox.val("");
+		},
+
+		showChooser: function() {
+			React.findDOMNode(this.refs.filechooser).click();
+		},
+
+		uploadFile: function(e) {
+			let files = e.target.files;
+
+			console.log("Selected files:", files);
+
+			// TODO: implement upload to AWS
+		},
+
+		setEmpty: function() {
+			let el = React.findDOMNode(this),
+				composeBox = this.refs.composeBox;
+
+			if (composeBox.val()) {
+				el.classList.remove("empty");
+			} else {
+				el.classList.add("empty");
+			}
+
 		},
 
 		onKeyDown: function(e) {
@@ -103,6 +125,8 @@ module.exports = function(core, config, store) {
 			if (document.hasFocus()) {
 				composeBox.focus();
 			}
+
+			this.setEmpty();
 		},
 
 		render: function() {
@@ -110,9 +134,14 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
-								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur}
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.setEmpty}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
-						<div className="chat-area-input-send" onClick={this.sendMessage}></div>
+						<div className="chat-area-input-actions">
+							<div className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
+								<input ref="filechooser" type="file" onChange={this.uploadFile} multiple={true} accept="image/*" />
+							</div>
+							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
+						</div>
 					</div>
 				</div>
 			);
@@ -140,7 +169,7 @@ module.exports = function(core, config, store) {
 					placeholder = "Connecting...";
 					disabled = true;
 				} else if (connection === "online") {
-					placeholder = "Reply as " + appUtils.formatUserName(store.get("user"));
+					placeholder = "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
 					disabled = false;
 				} else {
 					placeholder = "You are offline";
@@ -154,9 +183,10 @@ module.exports = function(core, config, store) {
 				});
 			}
 		},
-
 		componentDidMount: function() {
 			core.on("statechange", this.onStateChange, 400);
+
+			this.setEmpty();
 		},
 
 		componentWillUnmount: function() {
