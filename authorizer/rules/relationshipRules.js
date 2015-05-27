@@ -1,58 +1,8 @@
 "use strict";
 var permissionWeights = require('../permissionWeights.js');
 var SbError = require('./../../lib/SbError.js');
-var log = require('../../lib/logger.js');
-
-var handlers = {
-	join: function(action) {
-		var openRoom = action.room.guides.authorizer.openRoom;
-		if (!action.role) action.role = "follower";
-
-		if (action.user.role === action.role) {
-			return (new SbError("YOU_ARE_ALREADY_" + action.role.toUpperCase(), {
-				source: 'authorizer',
-				action: action.type
-			}));
-		}
-
-		if (permissionWeights[action.user.role] === permissionWeights.owner) {
-			return (new SbError("OWNER_CANT_CHANGE_ROLE", {
-				source: 'authorizer',
-				action: action.type
-			}));
-		}
-		if (!openRoom || permissionWeights[action.role] > permissionWeights.follower) {
-			action.transitionType = "request";
-			action.transitionRole = action.role;
-			delete action.role;
-		}
-	},
-
-	part: function(action) {
-		if (permissionWeights[action.user.role] === permissionWeights.owner) {
-			return (new SbError("OWNER_CANT_PART", {
-				source: 'authorizer',
-				action: action.type
-			}));
-		}
-
-		if (permissionWeights[action.user.role] < permissionWeights.follower) {
-			return (new SbError("NOT_A_FOLLOWER", {
-				source: 'authorizer',
-				action: action.type
-			}));
-		}
-
-		action.role = "none";
-	},
-
-	admit: admitExpel,
-	expel: admitExpel
-};
-
-
+//var log = require('../../lib/logger.js');
 function admitExpel (action	) {
-	log.d("victim:", action.victim);
 	if (permissionWeights[action.user.role] < permissionWeights.moderator) {
 		return (new SbError("ERR_NOT_ALLOWED", {
 			source: 'authorizer',
@@ -62,7 +12,7 @@ function admitExpel (action	) {
 		}));
 	}
 
-	if (action.role && permissionWeights[action.role] >= permissionWeights[action.user.role] && action.user.role != "owner") {
+	if (action.role && permissionWeights[action.role] >= permissionWeights[action.user.role] && action.user.role !== "owner") {
 		return (new SbError("ERR_NOT_ALLOWED", {
 			source: 'authorizer',
 			action: action.type,
@@ -100,9 +50,74 @@ function admitExpel (action	) {
 			delete action.role;
 		}
 	}
-	log.d("Relationship action:", action);
 }
 
+function setOpenRoom(room) {
+	if (!room.guides) room.guides = {};
+	if (!room.guides.authorizer) room.guides.authorizer = {};
+	room.guides.authorizer.openRoom = (room.guides.authorizer && typeof room.guides.authorizer.openRoom === "boolean") ? room.guides.authorizer.openRoom : true;
+}
+
+var handlers = {
+	join: function(action) {
+		var openRoom = action.room.guides.authorizer.openRoom;
+		if (!action.role) action.role = "follower";
+
+		if (action.user.role === action.role) {
+			return (new SbError("YOU_ARE_ALREADY_" + action.role.toUpperCase(), {
+				source: 'authorizer',
+				action: action.type
+			}));
+		}
+
+		if (permissionWeights[action.user.role] === permissionWeights.owner) {
+			return (new SbError("OWNER_CANT_CHANGE_ROLE", {
+				source: 'authorizer',
+				action: action.type
+			}));
+		}
+		
+		if(action.user.transitionType === "invite") {
+			if(permissionWeights[action.user.transitionRole] < permissionWeights[action.role]) {
+				action.role = action.user.transitionRole;
+				action.transitionRole = action.role;
+				action.transitionType = "request";
+			} else {
+				action.transitionRole = null;
+				action.transitionType = null;
+			}
+		} else if (!openRoom || permissionWeights[action.role] > permissionWeights.follower) {
+			action.transitionType = "request";
+			action.transitionRole = action.role;
+			delete action.role;
+		} else {
+			delete action.transitionType;
+			delete action.transitionRole;
+		}
+	},
+
+	part: function(action) {
+		if (permissionWeights[action.user.role] === permissionWeights.owner) {
+			return (new SbError("OWNER_CANT_PART", {
+				source: 'authorizer',
+				action: action.type
+			}));
+		}
+
+		if (permissionWeights[action.user.role] < permissionWeights.follower) {
+			return (new SbError("NOT_A_FOLLOWER", {
+				source: 'authorizer',
+				action: action.type
+			}));
+		}
+		action.role = "none";
+		delete action.transitionType;
+		delete action.transitionRole;
+	},
+
+	admit: admitExpel,
+	expel: admitExpel
+};
 module.exports = function() {
 	return function(action) {
 		if(!handlers[action.type]) return;
@@ -120,8 +135,4 @@ module.exports = function() {
 };
 
 
-function setOpenRoom(room) {
-	if (!room.guides) room.guides = {};
-	if (!room.guides.authorizer) room.guides.authorizer = {};
-	room.guides.authorizer.openRoom = (room.guides.authorizer && typeof room.guides.authorizer.openRoom === "boolean") ? room.guides.authorizer.openRoom : true;
-}
+

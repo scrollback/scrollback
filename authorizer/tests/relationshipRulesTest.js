@@ -845,6 +845,30 @@ module.exports = function() {
 			assert.equal(action.role, "follower", "role should be set to follower");
 		});
 		
+		it("join from registered for invite for owner", function() {
+			var error, action = {
+				type: "join",
+				user: {
+					role: "none",
+					transitionType: "invite",
+					transitionRole: "owner"
+				},
+				role: "owner",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert(!action.transitionType, "transition type still there");
+			assert(!action.transitionRole, "transition role still there");
+			assert.equal(action.role, "owner", "role should be set to follower");
+		});
 		
 		
 		it("admit from owner for invite for registered, action.role = su", function() {
