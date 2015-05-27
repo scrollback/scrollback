@@ -1,8 +1,7 @@
 "use strict";
 
 var getAvatar = require("../../lib/get-avatar.js"),
-	appUtils = require("../../lib/app-utils.js"),
-	stringUtils = require("../../lib/string-utils.js");
+	appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -22,15 +21,13 @@ module.exports = function(core, config, store) {
 					offline: []
 				},
 				sections = [],
-				user, rel, role, items, regex;
-
-			try {
-				regex = new RegExp(stringUtils.escapeRegExp(this.state.query));
-			} catch (e) {
-				return [];
-			}
+				user, rel, role, items;
 
 			for (var i = 0, l = people.length; i < l; i++) {
+				if (!people[i]) {
+					continue;
+				}
+
 				people[i].status = people[i].status || "offline";
 
 				if (headers[people[i].status]) {
@@ -45,7 +42,7 @@ module.exports = function(core, config, store) {
 						role = null;
 					}
 
-					if (regex.test(user.id)) {
+					if (user.id && user.id.indexOf(this.state.query) > -1) {
 						headers[people[i].status].push({
 							key: "people-list-" + user.id,
 							elem: (
