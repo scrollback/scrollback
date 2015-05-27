@@ -1,3 +1,4 @@
+"use strict";
 var config;
 var log = require("../lib/logger.js");
 var send;
@@ -7,19 +8,6 @@ var core, digestJade;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
 
-module.exports.init = function (coreObj, conf) {
-	config = conf;
-	core = coreObj;
-	send = require('./sendEmail.js')(config);
-	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
-	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
- 	redis = require('redis').createClient();
-	redis.select(config.redisDB);
-	init();
-};
-module.exports.initMailSending = initMailSending;
-module.exports.trySendingToUsers = trySendingToUsers;
-module.exports.sendPeriodicMails = sendPeriodicMails;
 
 /**
  * Read digest,jade
@@ -72,12 +60,13 @@ function trySendingToUsers() {
  */
  function initMailSending(username) {
 	log.d("init mail sending for user  " + username);
-	redis.get("email:" + username + ":lastsent", function(err, lastSent) {
-		log.d("data returned form redis for username "+ username + " " + lastSent  +" , " , err);
-		if (err) return;
+	redis.get("email:" + username + ":lastsent", function(error, lastSent) {
+		log.d("data returned form redis for username "+ username + " " + lastSent  +" , " , error);
+		if (error) return;
 		redis.get("email:" + username + ":isMentioned", function(err, data) {
 			var ct = new Date().getTime();
-			var interval = waitingTime2 ;
+			var interval = waitingTime2;
+			if(err) log.e(err);
 			if (data) interval = waitingTime1;
 			if (config.debug) {
 				log.d("username " + username + " is mentioned ", data);
@@ -90,10 +79,10 @@ function trySendingToUsers() {
 			if (parseInt(lastSent, 10) + interval <= ct) {
 				//get rooms that user is following...
 				log.d("getting rooms that user is following....", username);
-				core.emit("getRooms", {hasMember: username, session: "internal-email"}, function(err, following) {
+				core.emit("getRooms", {hasMember: username, session: "internal-email"}, function(e, following) {
 					log.d("results:", following);
 					if(err || !following) {
-						log.d("error in getting members information" , err);
+						log.d("error in getting members information" , e);
 						return;
 					}
 					if(!following.results || !following.results.length) {
@@ -108,16 +97,16 @@ function trySendingToUsers() {
 					following.results.forEach(function(r) {
 						rooms.push(r.id);
 					});
-					prepareEmailObject(username, rooms, lastSent, function(err, email) {
-						log.d(err, email);
-						if (!err) sendMail(email);
+					prepareEmailObject(username, rooms, lastSent, function(errObj, email) {
+						log.d(errObj, email);
+						if (!errObj) sendMail(email);
 					});
 				});
 				redis.srem("email:toSend", username);
 			}else {
 				log.d("can not send email to user ", username, " now");
-				redis.sadd("email:toSend", username, function(err, res) {
-					if (err) log.d.d(err, res);
+				redis.sadd("email:toSend", username, function(e, res) {
+					if (e) log.d(e, res);
 				});
 			}
 		});
@@ -162,10 +151,10 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 	rooms.forEach(function(room) {
 		var roomsObj = [];
 		var qc = 0;
-		var m = "email:mentions:" + room + ":" + username ;
+		var m = "email:mentions:" + room + ":" + username;
 		qc++;
-		redis.smembers(m, function(err, mentions) {
-			if (!err) {
+		redis.smembers(m, function(error, mentions) {
+			if (!error) {
 				mentions.sort(function(a, b) {
 					a = JSON.parse(a);
 					b = JSON.parse(b);
@@ -184,9 +173,9 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 							isThread = true;
 							var lc = "email:thread:" + room + ":" + thread + ":count";
 							qc++;
-							redis.get(lc, function(err,count) {
-								if (err) {
-									callback(err);
+							redis.get(lc, function(e,count) {
+								if (e) {
+									callback(e);
 								}else {
 									var ll = {
 										thread: thread ,
@@ -211,7 +200,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				});
 			}
 			else {
-				callback(err);
+				callback(error);
 			}
 		});
 		function isNoThread() {
@@ -268,7 +257,7 @@ function sortThreads(room, roomObj, mentions,callback) {
 				thread.title = title;
 			} else thread.title = "Title";
 			var pos = r.threads.length;
-			for (var i = 0;i < r.threads.length;i++ ) {
+			for (var i = 0; i < r.threads.length; i++ ) {
 				if (r.threads[i].interesting.length < thread.interesting.length ) {
 					pos = i;
 					break;
@@ -345,7 +334,7 @@ function sortThreads(room, roomObj, mentions,callback) {
  */
 function deleteMentions(username , rooms) {
 	rooms.forEach(function(room) {
-		var m = "email:mentions:" + room + ":" + username ;
+		var m = "email:mentions:" + room + ":" + username;
 		var multi = redis.multi();
 		multi.del(m);
 		m = "email:" + username + ":isMentioned";
@@ -378,8 +367,8 @@ function sendMail(email) {
 						email.heading = getHeading(email);
 						log.d("email object" + JSON.stringify(email));
 						html = digestJade(email);
-					}catch(err) {
-						log.e("Error while rendering email: ", err);
+					}catch(caughtError) {
+						log.e("Error while rendering email: ", caughtError);
 						return;
 					}
 					log.d(email , "sending email to user " , html );
@@ -391,8 +380,8 @@ function sendMail(email) {
 					}
 					email.rooms.forEach(function(room) {
 						redis.zremrangebyscore("email:thread:" + room.id + ":threads", 0,
-							new Date().getTime() - interval , function(err, data) {
-								log.d("deleted old threads from that room " , err ,data);
+							new Date().getTime() - interval , function(error, res) {
+								log.d("deleted old threads from that room " , error ,res);
 							});//ZREMRANGEBYSCORE email:scrollback:threads -1 1389265655284
 					});
 				}
@@ -406,7 +395,7 @@ function sendMail(email) {
  */
 function getHeading(email) {
 	var heading = "";
-	var bestThread ;
+	var bestThread;
 	var bestMention = {};
 	var threadCount = 0;
 	var more = 0;
@@ -510,3 +499,19 @@ function sendPeriodicMails(){
 
 
 }
+
+
+
+module.exports.init = function (coreObj, conf) {
+	config = conf;
+	core = coreObj;
+	send = require('./sendEmail.js')(config);
+	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
+	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
+ 	redis = require('redis').createClient();
+	redis.select(config.redisDB);
+	init();
+};
+module.exports.initMailSending = initMailSending;
+module.exports.trySendingToUsers = trySendingToUsers;
+module.exports.sendPeriodicMails = sendPeriodicMails;

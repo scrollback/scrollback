@@ -46,6 +46,7 @@
 	require("../anti-abuse/anti-abuse-client.js")(...args);
 	require("../authorizer/authorizer-client.js")(...args);
 	require("../authorizer/requests.js")(...args);
+	require("../authorizer/invites.js")(...args);
 	require("../email/email-client.js")(...args);
 	require("../embed/embed-config-client.js")(...args);
 	require("../http/notifications-client.js")(...args);
