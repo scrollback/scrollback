@@ -45,7 +45,7 @@ module.exports = function(core, config, store) {
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
-				text;
+				text = composeBox.val();
 
 			if (!text) {
 				return;
@@ -221,7 +221,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
-								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.setEmpty}
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
 							<div ref="filebutton" className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
