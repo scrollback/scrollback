@@ -17,12 +17,22 @@ module.exports = function(core, conf) {
 		var query = req.query;
 		if (!query.embed) {
 			getHeadHtml(req, function(head) {
-				getBodyHtml(req, function(body) {
+				log.d("Seo content:" + head + "kdjnksjdnfksnd");
+				if(!head) {
 					callback({
-						head: head,
-						body: body
+						head:"",
+						body:""
 					});
-				});
+				} else {
+					log.d("loading seo body ");
+					getBodyHtml(req, function(body) {
+						log.d("loaded seo body ", body);
+						callback({
+							head: head,
+							body: body
+						});
+					});
+				}
 			});
 		} else {
 			callback({
@@ -42,8 +52,10 @@ module.exports = function(core, conf) {
 		function done() {
 			if (++ct === 2) {
 				if (room && room.guides && room.guides.authorizer && room.guides.authorizer.readLevel === "guest") {
+					log.d("generating head html:", room.guides);
 					callback(genHeadHtml(room, thread));
 				} else {
+					log.d("Not generating head html:", room);
 					callback("");
 				}
 			}
