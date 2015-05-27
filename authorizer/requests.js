@@ -20,6 +20,7 @@ module.exports = function(core, config, store) {
 			var button = $("<button>Approve</button>");
 			button.data("room", tabs.room.id);
 			button.data("user", user.id);
+			button.data("role", user.transitionRole);
 			button.addClass("auth-admit");
 			element.append(button);
 			items.push(element);
@@ -38,11 +39,12 @@ module.exports = function(core, config, store) {
 	$(document).on('click', '.auth-admit', function(e) {
 		var element = e.target;
 		var room = $(element).data("room"),
+			role = $(element).data("role"),
 			user = $(element).data("user");
 		core.emit("admit-up", {
 			to: room,
 			ref: user,
-			role: 'follower'
+			role: role
 		});
 	});
 };

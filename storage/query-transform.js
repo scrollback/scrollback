@@ -111,26 +111,33 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	} else if (iq.memberOf || iq.hasMember) {
 		q.sources.push('entities');
 		q.sources.push('relations');
-		if (!iq.role) {
-			if(['owner', 'su', 'moderator'].indexOf(iq.user.role) >= 0) {
-				q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
-			} else {
-				q.filters.push([['relations', 'role'], 'gt', 'none']);
-			}	
-			
-		} else {
-			q.filters.push([['relations', 'role'], 'eq', iq.role]);
-		}
 		if (iq.memberOf) {
+			if (!iq.role) {
+				if(['owner', 'su', 'moderator'].indexOf(iq.user.role) >= 0) {
+					q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
+				} else {
+					q.filters.push([['relations', 'role'], 'gt', 'none']);
+				}
+			} else {
+				q.filters.push([['relations', 'role'], 'eq', iq.role]);
+			}
 			q.filters.push([['relations', 'room'], 'eq', iq.memberOf]);
 			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id'], 'column']);
 		} else if (iq.hasMember) {
+			if (!iq.role) {
+				if(iq.hasMember === iq.user.id) {
+					q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
+				} else {
+					q.filters.push([['relations', 'role'], 'gt', 'none']);
+				}
+			} else {
+				q.filters.push([['relations', 'role'], 'eq', iq.role]);
+			}
+
 			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
 			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);	
 		}
 	} else if (iq.role) q.filters.push(['role', 'eq', q.role]);
-	
-	
 	
 	
 	//if (iq.locale) q.quantFilter('locale', iq.locale);

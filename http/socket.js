@@ -181,9 +181,9 @@ sock.on('connection', function(socket) {
 			if(["join", "part", "admit", "expel"].indexOf(data.type) >= 0) {
 				var refObject, connections, censoredAction;
 				if(data.type === "join" || data.type === "part" ) {
-					refObject = action.user;
+					refObject = data.user;
 				} else {
-					refObject = action.victim;
+					refObject = data.victim;
 				}
 				connections = uConns[refObject.id];
 				
