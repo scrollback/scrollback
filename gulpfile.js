@@ -6,7 +6,6 @@ var gulp = require("gulp"),
 	bower = require("bower"),
 	browserify = require("browserify"),
 	optional = require("browserify-optional"),
-	reactify = require("reactify"),
 	babelify = require("babelify").configure({ extensions: [ ".es6", ".jsx" ] }),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
@@ -162,7 +161,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 gulp.task("bundle", function() {
 	return bundle([ "ui/app.es6" ], {
 		debug: true,
-		transform: [ babelify, reactify, optional ]
+		transform: [ babelify, optional ]
 	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
