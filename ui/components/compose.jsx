@@ -1,4 +1,5 @@
 /* eslint-env es6, browser */
+/* global $ */
 
 "use strict";
 
@@ -29,7 +30,7 @@ module.exports = function(core, config, store) {
 							return mention;
 						} else {
 							return " " + mention;
-					    }
+						}
 					});
 				}
 
@@ -69,11 +70,47 @@ module.exports = function(core, config, store) {
 		},
 
 		uploadFile: function(e) {
-			let files = e.target.files;
+			let button = React.findDOMNode(this.refs.filebutton),
+				files = e.target.files;
 
-			console.log("Selected files:", files);
+			if (files && files.length) {
+				for (let i = 0, l = files.length; i < l; i++) {
+					let file = files[i];
 
-			// TODO: implement upload to AWS
+					if (file.size > 5242880) {
+						let popover = document.createElement("div"),
+							message = document.createElement("div"),
+							size = Math.round(file.size * 100 / 1048576) / 100;
+
+						message.textContent = "File is too big (" + size + "MB). Only files upto 5MB are allowed.";
+
+						message.classList.add("popover-content");
+						popover.classList.add("error");
+
+						popover.appendChild(message);
+
+						$(popover).popover({ origin: button });
+
+						break;
+					}
+
+					console.log("Uploading file:", file);
+
+					// TODO: implement upload to AWS
+				}
+			}
+
+			// Hacky way to clear file input
+			try {
+				e.target.value = "";
+
+				if (e.target.value) {
+					e.target.type = "text";
+					e.target.type = "file";
+				}
+			} catch (err) {
+				console.log("Error clearing file input", err);
+			}
 		},
 
 		setEmpty: function() {
@@ -85,7 +122,6 @@ module.exports = function(core, config, store) {
 			} else {
 				el.classList.add("empty");
 			}
-
 		},
 
 		onKeyDown: function(e) {
@@ -137,7 +173,7 @@ module.exports = function(core, config, store) {
 								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onChange={this.setEmpty}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
-							<div className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
+							<div ref="filebutton" className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
 								<input ref="filechooser" type="file" onChange={this.uploadFile} multiple={true} accept="image/*" />
 							</div>
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
@@ -163,8 +199,8 @@ module.exports = function(core, config, store) {
 			}
 
 			if ((changes.nav && changes.nav.mode) ||
-			    (changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
-			    connection = store.get("app", "connectionStatus");
+				(changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
+				connection = store.get("app", "connectionStatus");
 				if (connection === "connecting") {
 					placeholder = "Connecting...";
 					disabled = true;
