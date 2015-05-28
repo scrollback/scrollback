@@ -5,6 +5,8 @@
 const getAvatar = require("../lib/get-avatar.js");
 
 module.exports = (core, config, store) => {
+	let actionIds = {};
+
 	core.on("conf-show", tabs => {
 		let container = document.createElement("div"),
 			users;
@@ -64,7 +66,7 @@ module.exports = (core, config, store) => {
 				decline.classList.add("disabled");
 				decline.classList.remove("working");
 
-				message.textContent = text;
+				message.textContent = text === false ? "An error occured!" : text;
 			}
 
 			function onApprove() {
@@ -75,7 +77,9 @@ module.exports = (core, config, store) => {
 					to: tabs.room.id,
 					ref: user,
 					role: user.transitionRole
-				}, () => onDone(user.id + " is now a " + user.transitionRole));
+				}, action => {
+					actionIds[action.id] = res => onDone(res.role !== user.role ? (user.id + " is now a " + res.role) : false);
+				});
 			}
 
 			function onDecline() {
@@ -86,12 +90,30 @@ module.exports = (core, config, store) => {
 					to: tabs.room.id,
 					ref: user,
 					role: user.role
-				}, () => onDone(user.id + " was declined to be a " + user.transitionRole));
+				}, action => {
+					actionIds[action.id] = res => onDone(res.role === user.role ? (user.id + " was declined to be a " + user.transitionRole) : false);
+				});
 			}
 
 			approve.addEventListener("click", onApprove, false);
 			decline.addEventListener("click", onDecline, false);
 		});
+
+		function onAdmitDn(action) {
+			if (Object.keys(actionIds).length) {
+				let fn = actionIds[action.id];
+
+				if (typeof fn === "function") {
+					fn(action);
+				}
+
+				delete actionIds[action.id];
+			} else {
+				core.off("admit-dn", onAdmitDn);
+			}
+		}
+
+		core.on("admit-dn", onAdmitDn, 100);
 
 		tabs.requests = {
 			html: container,
