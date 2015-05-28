@@ -47,7 +47,7 @@ function admitExpel (action	) {
 		if (permissionWeights[action.role] >= permissionWeights.follower) {
 			action.transitionRole = action.role;
 			action.transitionType = "invite";
-			delete action.role;
+			action.role = action.victim.role;
 		}
 	}
 }

@@ -474,7 +474,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 			
 		});
 		
@@ -501,7 +501,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role == "registered", "action.role still there");
 		});
 		
 		it("admit from moderator for invite for registered, action.role = moderator", function() {
@@ -733,7 +733,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 			
 		});
 		
@@ -760,7 +760,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 		});
 		
 		it("admit from owner for invite for registered, action.role = moderator", function() {
@@ -786,7 +786,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "moderator", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 		});
 		
 		
@@ -813,7 +813,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "owner", "transition role not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 		});
 		
 		
