@@ -16,7 +16,7 @@ function send(from,to,subject,html) {
 
 	transport.sendMail(email, function(error) {
         if(!error){
-            log('Text message sent successfully!');
+            log('Text message sent successfully!', email.to);
         }
         else{
             log("error in sending email: ",error, "retrying...");

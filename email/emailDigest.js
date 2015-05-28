@@ -253,9 +253,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 		});
 		ct++;
 		redis.get ("email:thread:" + room + ":" + thread.thread + ":title", function(err, title) {
-			if (!err && title) {
-				thread.title = title;
-			} else thread.title = "Title";
 			var pos = r.threads.length;
 			for (var i = 0; i < r.threads.length; i++ ) {
 				if (r.threads[i].interesting.length < thread.interesting.length ) {
@@ -280,7 +277,20 @@ function sortThreads(room, roomObj, mentions,callback) {
 			if (rm !== -1) {
 				r.threads.splice(rm,1);
 			}
-			done();
+			
+			if (!err && title) {
+				thread.title = title;
+				done();
+			} else {
+				core.emit("getThreads", {to:room, ref: thread.thread, session: "internal-email"}, function(err, result) {
+					if(err || !result || !result.results || !result.results.length) {
+						thread.title = "Title";
+					} else {
+						thread.title = result.results[0].title || "Title";
+					}					
+					done();
+				});
+			}
 		});
 	});
 	function done() {
