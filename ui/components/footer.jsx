@@ -17,15 +17,15 @@ module.exports = function(core, config, store) {
 
 							<ul className="footer-item-container">
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >About us
+								<a href="http://web.scrollback.io/about" target="_blank" >About us
 								</a></li>
 
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >Careers
+								<a href="http://web.scrollback.io/careers" target="_blank" >Careers
 								</a></li>
 
 								<li className="footer-item" >
-								<a href="http://blog.scrollback.io/" target="_blank" >Privacy
+								<a href="http://web.scrollback.io/privacy" target="_blank" >Privacy
 								</a></li>
 
 								<li className="footer-item" >
