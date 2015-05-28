@@ -1,0 +1,28 @@
+@include exports("requests") {
+    .request-item {
+        @extend %clearfix;
+
+        margin: 1em .5em;
+
+        &-message {
+            img {
+                float: left;
+                margin-right: 1em;
+                border-radius: $roundness;
+                height: 64px;
+                width: 64px;
+            }
+        }
+
+        &-actions {
+            .approve { @extend .button.info; }
+
+            .decline { @extend .button.secondary; }
+
+            .button {
+                margin-right: .5em;
+                padding: .25em 1em;
+            }
+        }
+    }
+}
