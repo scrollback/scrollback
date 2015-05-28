@@ -89,7 +89,7 @@ var handlers = {
 		} else if (!openRoom || permissionWeights[action.role] > permissionWeights.follower) {
 			action.transitionType = "request";
 			action.transitionRole = action.role;
-			delete action.role;
+			action.role = action.user.role;
 		} else {
 			delete action.transitionType;
 			delete action.transitionRole;

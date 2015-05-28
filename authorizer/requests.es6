@@ -75,9 +75,9 @@ module.exports = (core, config, store) => {
 
 				core.emit("admit-up", {
 					to: tabs.room.id,
-					ref: user,
+					ref: user.id,
 					role: user.transitionRole
-				}, action => {
+				}, (err, action) => {
 					actionIds[action.id] = res => onDone(res.role !== user.role ? (user.id + " is now a " + res.role) : false);
 				});
 			}
@@ -88,9 +88,9 @@ module.exports = (core, config, store) => {
 
 				core.emit("admit-up", {
 					to: tabs.room.id,
-					ref: user,
+					ref: user.id,
 					role: user.role
-				}, action => {
+				}, (err, action) => {
 					actionIds[action.id] = res => onDone(res.role === user.role ? (user.id + " was declined to be a " + user.transitionRole) : false);
 				});
 			}
