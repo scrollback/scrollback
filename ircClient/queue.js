@@ -3,7 +3,7 @@ var log = require('../lib/logger.js');
 var events = require('events');
 var event = new events.EventEmitter();
 var q = [];
-var or = new require('../lib/ObjectReader.js')(event);
+var or = new require('../lib/object-reader.js')(event);
 var timestamp = new Date().getTime();
 var fn = "ircClient/Data/queue" + timestamp + ".txt";
 deleteFolder("ircClient/Data");
@@ -42,14 +42,14 @@ module.exports.pop = function() {
 			if (q.length !== 0) break;
 		}
 	}
-	if (q.length === 0 ) return null; 
+	if (q.length === 0 ) return null;
 	return q.shift();
 };
 module.exports.length = function(){
 	return q.length;
 };
 
-function writeObject(obj) {//move this inside objectWriter 
+function writeObject(obj) {//move this inside objectWriter
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
