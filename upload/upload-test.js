@@ -1,10 +1,15 @@
 // S3 policy generator test
 // Run with `mocha s3polgen-test.js`
 
-var Ebus = require("ebus");
-	core = new Ebus();
+/* eslint-env mocha */
 
-require("./s3polgen.js")(core);
+"use strict";
+
+var Ebus = require("ebus"),
+	core = new Ebus(),
+	config = require("../server-config-defaults");
+
+require("./upload.js")(core, config.upload);
 
 it("should generate policies", function () {
 	// This is sample action (ie, request)
