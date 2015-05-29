@@ -8,9 +8,10 @@ var generate = require("../lib/generate.js"),
 	config, core, client, store;
 
 var backOff = 1,
-	client, pendingQueries = {},
+	pendingQueries = {},
 	pendingActions = {},
-	session, resource, queue = [],
+	session,
+	queue = [],
 	initDone = false,
 	actionQueue = [];
 
@@ -21,7 +22,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities" ].forEach(function(e) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "getPolicy" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -151,9 +152,10 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "error"].indexOf(data.type) !== -1) {
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "getPolicy",  "error"].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
-			pendingQueries[data.id].query.results = data.results;
+			if(data.results) pendingQueries[data.id].query.results = data.results;
+			if(data.response) pendingQueries[data.id].query.response = data.response;
 			pendingQueries[data.id]();
 			delete pendingQueries[data.id];
 		}
@@ -173,7 +175,7 @@ function receiveMessage(event) {
 function sendInit() {
 	var init = {};
 	init.id = generate.uid();
-	resource = init.resource = generate.uid();
+	init.resource = generate.uid();
 	init.type = "init";
 	init.to = "me";
 	init.origin = {};

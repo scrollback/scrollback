@@ -15,7 +15,7 @@ function getDate(long) {
 }
 
 function getExpiration(){
-	var validity = 5 * 60 * 1000; // five minutes
+	var validity = 30 * 60 * 1000; // five minutes
 	return (new Date(Date.now() + validity)).toISOString();
 }
 
@@ -45,6 +45,7 @@ function getPolicy(keyPrefix, config) {
 			{"bucket": config.bucket},
 			{"acl": config.acl},
 			["starts-with", "$key", keyPrefix],
+			{"success_action_status": "201"},
 			{"x-amz-credential": getCredential(config)},
 			{"x-amz-algorithm": config.algorithm},
 			{"x-amz-date": getDate(true)}
@@ -71,6 +72,7 @@ module.exports = function(core, config) {
 			acl: config.acl,
 			policy: policy,
 			keyPrefix: keyPrefix,
+			bucket: config.bucket,
 			"x-amz-algorithm": config.algorithm,
 			"x-amz-credential": getCredential(config),
 			"x-amz-date": getDate(true),
