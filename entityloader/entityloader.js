@@ -1,3 +1,5 @@
+"use strict";
+
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
 var utils = require('../lib/app-utils.js');
@@ -115,6 +117,7 @@ module.exports = function(c, conf) {
 	});
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
+	core.on('http/getPolicy', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
 	core.on('init', loadProps, 500);
 	core.on('getThreads', function(action, cb) {
@@ -133,13 +136,6 @@ module.exports = function(c, conf) {
 };
 
 function userHandler(action, callback) {
-	var ref;
-
-	if(utils.isInternalSession(action.session)) {
-		ref = action.user.id;
-	}else{
-		ref = "me";
-	}
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
 		function done() {
 			if(action.user.identities) {
@@ -399,7 +395,7 @@ function generatePick(id) {
 
 
 
- function  loadProps(action, callback) {
+function  loadProps(action, callback) {
 	var wait = true, userID = action.user.id;
 	log("Loading user content", action.user.id);
 	core.emit("getRooms", {
