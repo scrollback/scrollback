@@ -1,3 +1,5 @@
+"use strict";
+
 var pg = require('pg'),
 	log = require('../lib/logger.js'),
 	config, conString, 

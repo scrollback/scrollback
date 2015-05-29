@@ -26,7 +26,6 @@ function toQuery(transform) {
 		case 'update': ret = makeUpdateQuery(transform); break;
 		case 'upsert': ret = makeUpsertQuery(transform); break;
 		case 'select': ret = makeSelectQuery(transform); break;
-
 	}
 	log.d("Queries: ", ret);
 	return ret;

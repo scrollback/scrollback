@@ -8,13 +8,6 @@ function makePut(type, source) {
 	return r;
 }
 
-/*
-	BEGIN TRANSACTION;
-	DELETE FROM $source WHERE wherify($key);
-	INSERT INTO $source
-
-*/
-
 
 exports.text = function (text) {
 	var puts = [], put;
@@ -56,7 +49,7 @@ exports.text = function (text) {
 			starttime: new Date(text.time),
 			length: 1,
 			tags: text.tags || [],
-			concerns: [],
+			concerns: text.mentions,
 			updatetime: new Date(text.time),
 			updater: text.from
 			/* concerns: [text.from].concat(text.mentions) */
@@ -66,6 +59,13 @@ exports.text = function (text) {
 			['updatetime', 'set', new Date(text.time)],
 			['updater', 'set', text.from],
 			['length', 'incr', 1]
+			/*
+			concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES ('aravind'), ('satya'), ('sindhu')) AS a(n) WHERE NOT (thr.concerns @> ARRAY[a.n]))
+			{
+				query: "concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $) AS a(n) WHERE NOT (threads.concerns @> ARRAY[a.n])),
+				values: [ text.mentions.map(function (id) { return [id]; }) ]
+			}
+			*/
 		];
 		if (text.title) put.update.push(['title', 'set', text.title]);
 		puts.push(put);
