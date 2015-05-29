@@ -1,5 +1,7 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
+
+"use strict";
 
 var formField = require("../ui/utils/form-field.js"),
 	twitterUsername;
@@ -43,7 +45,7 @@ module.exports = function(core) {
 	        if ($twitterButton.hasClass("twitter-signed-out")) {
 			  window.open("../r/twitter/login", "mywin", "left=20,top=20,width=500,height=500,toolbar=1,resizable=0");
 	        } else if ($twitterButton.hasClass("twitter-signed-in")) {
-	            twitterUsername = undefined;
+	            twitterUsername = null;
 	            updateFields();
 	        }
 		});
@@ -55,11 +57,11 @@ module.exports = function(core) {
 
 			try {
 	            data = JSON.parse(e.originalEvent.data);
-	        } catch (e) {
+	        } catch (err) {
 	            return;
 	        }
 
-	        if (!isOrigin || !data.twitter ) { return;}
+	        if (!isOrigin || !data.twitter ) { return; }
 
 	        twitterUsername = data.twitter.username;
 	        updateFields();
@@ -79,7 +81,7 @@ module.exports = function(core) {
 		};
 
 		next();
-	}, 700);
+	}, 600);
 
 	core.on("conf-save", function(room, next) {
 	    var tags = $("#twitter-hashtags").multientry("items", true).join(" ");
