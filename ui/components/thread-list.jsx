@@ -190,12 +190,19 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			var room = store.get("nav", "room");
+			let room = store.get("nav", "room");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.threads && changes.threads[room]) || (changes.texts &&
-			    Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
-				this.setState({ show: (store.get("nav", "mode") === "room") });
+			    (changes.entities && changes.entities[room]) ||
+				(changes.threads && changes.threads[room]) || (changes.texts &&
+				Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
+				let rel = store.getRelation(),
+					roomObj = store.getRoom(),
+					show = (store.get("nav", "mode") === "room" && !(roomObj && roomObj.guides && roomObj.guides.authorizer &&
+																	 roomObj.guides.authorizer.readLevel === "follower" &&
+																	 !(rel && rel.role === "follower")));
+
+				this.setState({ show: show });
 			}
 		},
 
