@@ -3,7 +3,9 @@
 
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+const S3Upload = require("../../lib/s3-upload.es6"),
+	  appUtils = require("../../lib/app-utils.js"),
+	  gen = require("../../lib/generate.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -74,6 +76,8 @@ module.exports = function(core, config, store) {
 				popover = document.createElement("div"),
 				message = document.createElement("div");
 
+			button.classList.add("error");
+
 			message.textContent = text;
 
 			message.classList.add("popover-content");
@@ -85,6 +89,7 @@ module.exports = function(core, config, store) {
 
 			$(document).on("popoverDismissed.fileerr", () => {
 				button.classList.remove("progress");
+				button.classList.remove("unknown");
 				button.classList.remove("error");
 
 				$(document).off("popoverDismissed.fileerr");
@@ -92,64 +97,51 @@ module.exports = function(core, config, store) {
 		},
 
 		uploadFiles: function(e) {
-			let formData = new FormData(),
-				button = React.findDOMNode(this.refs.filebutton),
-				files = e.target.files;
+			let button = React.findDOMNode(this.refs.filebutton),
+				file = e.target.files[0];
 
-			if (files && files.length) {
-				for (let i = 0, l = files.length; i < l; i++) {
-					let file = files[i];
+			if (file.size > 5242880) {
+				let size = Math.round(file.size * 100 / 1048576) / 100;
 
-					if (file.size > 5242880) {
-						let size = Math.round(file.size * 100 / 1048576) / 100;
+				this.showFileError("File is too big (" + size + "MB). Only files upto 5MB are allowed.");
 
-						this.showFileError("File is too big (" + size + "MB). Only files upto 5MB are allowed.");
-
-						return;
-					}
-
-					formData.append("photos[]", file, file.name);
-				}
+				return;
 			}
 
 			button.classList.add("progress");
+			button.classList.add("unknown");
 
-			let xhr = new XMLHttpRequest();
+			let textId = gen.uid(),
+				userId = store.get("user"),
+				upload = new S3Upload({
+					uploadType: "content",
+					userId,
+					textId
+				}, core);
 
-			xhr.open("POST", "/upload", true);
+			upload.onfinish = () => {
+				let text = "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")";
 
-			let circle = React.findDOMNode(this.refs.progresscircle);
+				core.emit("text-up", {
+					thread: store.get("nav", "thread"),
+					to: store.get("nav", "room"),
+					id: textId,
+					from: userId,
+					text
+				});
 
-			xhr.addEventListener("progress", event => {
-				if (event.lengthComputable) {
-					circle.setAttribute("stroke-dashoffset", 100 - (event.loaded / event.total));
-				}
-			}, false);
-
-			xhr.addEventListener("load", () => {
+				button.classList.remove("unknown");
 				button.classList.add("complete");
-
-				circle.setAttribute("stroke-dashoffset", 0);
 
 				setTimeout(() => {
 					button.classList.remove("progress");
 					button.classList.remove("complete");
 				}, 3000);
-			}, false);
+			};
 
-			xhr.addEventListener("error", () => {
-				button.classList.add("error");
+			upload.onerror = () => this.showFileError("Failed to upload image. May be try again?");
 
-				this.showFileError("Upload failed!");
-			}, false);
-
-			xhr.addEventListener("abort", () => {
-				button.classList.add("error");
-
-				this.showFileError("Upload aborted!");
-			}, false);
-
-			xhr.send();
+			upload.start(file);
 
 			// Hacky way to clear file input
 			try {
@@ -225,7 +217,7 @@ module.exports = function(core, config, store) {
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
 							<div ref="filebutton" className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
-								<input ref="filechooser" type="file" onChange={this.uploadFiles} multiple={true} accept="image/*" />
+								<input ref="filechooser" type="file" onChange={this.uploadFiles} accept="image/*" />
 								<svg className="progress-indicator" width="35" height="35">
 								    <circle ref="progresscircle" cx="18" cy="18" r="16" fill="none" strokeWidth="2" />
 								    <path className="check" d="M6,11.2 L1.8,7 L0.4,8.4 L6,14 L18,2 L16.6,0.6 L6,11.2 Z" transform="translate(27, 25) rotate(180)"/>

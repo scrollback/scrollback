@@ -1,4 +1,21 @@
 @include exports(chat) {
+    @include keyframes(uploadprogress) {
+        0% {
+            transform: rotate(0);
+            stroke-dashoffset: 0;
+        }
+
+        50% { transform: rotate(180deg); }
+
+        75% { stroke-dashoffset: -100; }
+
+        100% {
+            transform: rotate(360deg);
+            stroke-dashoffset: -200;
+        }
+    }
+
+
     .chat-area {
         @include flexbox;
         @include flex-direction(column);
@@ -117,6 +134,7 @@
             }
 
             &-image {
+                @extend %transition;
                 @include icon(image);
 
                 display: none;
@@ -146,12 +164,22 @@
 
                 &.progress {
                     color: $info-color;
+                    pointer-events: none;
                     opacity: 1;
 
                     &:before { opacity: .3; }
 
+                    &.unknown {
+                        circle {
+                            transform-origin: 50%;
+                            animation: uploadprogress 1.5s infinite linear;
+                        }
+                    }
+
                     &.complete {
                         color: $success-color;
+
+                        circle { stroke-dashoffset: 0; }
 
                         .check { fill: currentColor; }
                     }

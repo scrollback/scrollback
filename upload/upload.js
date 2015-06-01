@@ -4,7 +4,7 @@ var crypto = require('crypto');
 
 function getDate(long) {
 	var date = new Date();
-	
+
 	if(long) {
 		return date.toISOString().replace(/[\-\:]/g, "").replace(/\.\d+/g, "");
 	} else {
@@ -24,12 +24,12 @@ function sign(key, data){
 }
 
 function getKeyPrefix(userId, uploadType, textId) {
-	switch(uploadType) {
+	switch (uploadType) {
 		case "avatar":
 		case "banner":
-			return userId + "/" + uploadType + "/";
+			return "uploaded/" + uploadType + "/" + userId + "/";
 		case "content":
-			return userId + "/" + uploadType + "/" + textId + "/";
+			return "uploaded/" + uploadType + "/" + userId + "/" + textId + "/";
 	}
 }
 
@@ -63,11 +63,11 @@ function getSignature(policy, config) {
 }
 
 module.exports = function(core, config) {
-	core.on('http/getPolicy', function(policyReq, next){		
+	core.on('http/getPolicy', function(policyReq, next){
 		var keyPrefix = getKeyPrefix(policyReq.user.id, policyReq.uploadType, policyReq.textId),
 			policy = getPolicy(keyPrefix, config),
 			signature = getSignature(policy, config);
-		
+
 		policyReq.response = {
 			acl: config.acl,
 			policy: policy,
