@@ -120,23 +120,50 @@ module.exports = function(core, config, store) {
 				}, core);
 
 			upload.onfinish = () => {
-				let text = "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")";
+				let thumbTimer, startTime = Date.now(),
+					checkThumb = () => {
+						let req = new XMLHttpRequest();
 
-				core.emit("text-up", {
-					thread: store.get("nav", "thread"),
-					to: store.get("nav", "room"),
-					id: textId,
-					from: userId,
-					text
-				});
+						req.open("GET", upload.thumb, true);
 
-				button.classList.remove("unknown");
-				button.classList.add("complete");
+						req.send();
 
-				setTimeout(() => {
-					button.classList.remove("progress");
-					button.classList.remove("complete");
-				}, 3000);
+						req.onreadystatechange = () => {
+					        if (req.readyState === XMLHttpRequest.DONE ) {
+								if (req.status === 200) {
+									if (thumbTimer) {
+										clearTimeout(thumbTimer);
+									}
+
+									core.emit("text-up", {
+										thread: store.get("nav", "thread"),
+										to: store.get("nav", "room"),
+										id: textId,
+										from: userId,
+										text: "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")"
+									});
+
+									button.classList.remove("unknown");
+									button.classList.add("complete");
+
+									setTimeout(() => {
+										button.classList.remove("progress");
+										button.classList.remove("complete");
+									}, 3000);
+								} else {
+									if (Date.now() - startTime > 30000) {
+										this.showFileError("Failed to upload image. May be try again?");
+
+										return;
+									}
+
+					               thumbTimer = setTimeout(checkThumb, 1000);
+								}
+					        }
+					    };
+					};
+
+				setTimeout(checkThumb, 3000);
 			};
 
 			upload.onerror = () => this.showFileError("Failed to upload image. May be try again?");
