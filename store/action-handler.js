@@ -12,7 +12,9 @@ module.exports = function(c, conf, s) {
 
 	store = s;
 	core = c;
-
+	
+	core.on("admit-dn", onAdmitDn, 950);
+	core.on("expel-dn", onAdmitDn, 950);
 	core.on("init-dn", onInit, 950);
 	core.on("join-dn", onJoinPart, 950);
 	core.on("part-dn", onJoinPart, 950);
@@ -320,9 +322,6 @@ function onEdit (edit, next) {
 			items: pleb && thread.tags.indexOf("thread-hidden")>=0? []: [thread]
 		}];
 	}
-
-	console.log("edit change", edit, text, thread, changes);
-
 	core.emit("setstate", changes);
 	next();
 }
@@ -348,3 +347,25 @@ function onJoinPart(join, next) {
 	return next();
 }
 
+
+
+function onAdmitDn(action) {
+	var roomObj = action.room;
+	var victim = action.victim;
+	var relation = {},
+		entities = {};
+
+	relation.user = victim.id;
+	relation.room = roomObj.id;
+	relation.role = action.role? action.role : victim.role;
+	relation.transitionRole = action.transitionRole? action.transitionRole : victim.transitionRole;
+	relation.transitionType = action.transitionType? action.transitionType : victim.transitionType;
+
+	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
+	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
+	entities[roomObj.id + "_" + victim.id] = relation;
+
+	core.emit("setstate", {
+		entities: entities
+	});
+}
