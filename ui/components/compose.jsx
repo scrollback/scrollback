@@ -136,11 +136,11 @@ module.exports = function(core, config, store) {
 
 						req.onreadystatechange = () => {
 					        if (req.readyState === XMLHttpRequest.DONE ) {
-								if (req.status === 200) {
-									if (thumbTimer) {
-										clearTimeout(thumbTimer);
-									}
+								if (thumbTimer) {
+									clearTimeout(thumbTimer);
+								}
 
+								if (req.status === 200) {
 									core.emit("text-up", {
 										thread: store.get("nav", "thread"),
 										to: store.get("nav", "room"),
