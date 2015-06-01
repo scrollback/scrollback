@@ -1,61 +1,136 @@
 @include exports(footer) {
+
     .footer {
+        @extend %clearfix;
+
         width: 100%;
-        padding: 1em;
-        background-color: darken($light-color, 7%);
+        background-color: #eeeeee;
         border-top: 1px solid rgba(0, 0, 0, .05);
-        color: lighten($dark-color, 20%);
+        color: #777777;
+        margin: auto; 
+
 
         &:after {
             content: "";
             display: block;
-            height: $bar-height;
+            height: 3.5em;
         }
+
+
 
         &-inner {
             @extend %clearfix;
-
-            max-width: 1000px;
+            max-width: 850px;
             margin: auto;
-        }
 
-        &-playstore {
-            display: inline-block;
-            border: 0;
-            margin: 0.5em 0;
-        }
 
-        &-social {
-            a {
-                border: 0;
-                padding: .25em;
+            @media #{$screenx} {
 
-                &:first-of-type { padding-left: 0; }
+                width: 17em;
 
-                &:last-of-type { padding-right: 0; }
+                .footer-item-container, .footer-social-container, .footer-playstore-container {
+                    width: 100%;
+                    margin: auto;
+                    padding: 0 1em;
+                    float: left;
+                    padding-left: 0px;
+                }
+            }
+
+
+            @media #{$screenxxxx} {
+                width: 46em;
+                margin: auto;
+            }
+
+            @media #{$screenxxxxx} {
+                width: 66em;
+                margin: auto;
+
+                .footer-item-container {
+                  width: 48%;
+                  margin: auto;
+                }
+
+                .footer-social-container {
+                  width: 32%;
+                  margin: auto;
+                }
+
+                .footer-playstore-container {
+                  width: 20%;
+                  margin: auto;
+
+                }
             }
         }
 
-        h5 {
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: .5em;
-        }
+
 
         ul { margin: 0; }
+        li { list-style: none; }
 
-        li {
-            list-style: none;
-            line-height: 1.8;
+        &-item, &-social, &-playstore {
+            float: left;
+            
+            > a {
+                display: block;
+                line-height: $bar-height;
+                text-transform: uppercase;
+                font-weight: bold;
+                color: #777777;
+                border-radius: $roundness;
+                border: 0;
+                opacity: .5;
+                vertical-align: middle;
+
+                &:focus, &:hover, &:active {
+                    opacity: 1;
+                }
+            }
         }
 
-        a {
-            color: currentColor;
-            border-bottom-color: lighten($dark-color, 50%);
+        &-social {
+            margin-right: 1em;
+            > a {
+                background: url('/s/assets/footer/sprites.png') no-repeat; 
+                text-indent: -9999px;
+                width: 40px;
+            }
+            
+            &-facebook > a { background-position: 0px center; }
+            &-twitter > a { background-position: -160px center; }
+            &-linkedin > a { background-position: -120px center; }
+            &-github > a{ background-position: -40px center; }
+        }
 
-            &:hover, &:focus { color: $link-color; }
+        &-item {
+            float: none;
+            border-right: none;
+            > a { padding: 0; line-height: 0.75*$bar-height; }
+            &:first-child { margin-top: 1em; }
+            &:last-child { margin-bottom: 1em; }
+            
+            @media #{$screenxxxx} {
+                float: left;
+                > a { line-height: $bar-height; padding: 0 1em; }
+                border-right: 1px solid #e1e1e1;
+                &:first-child, &:last-child { margin: 0; }
+                &:first-child > a { padding-left: 0; }
+                &:last-child { border-right: none; }
 
-            &:active { color: darken($link-color, 15%); }
+            }
+        }
+
+        &-playstore {
+            > a:before {
+                content: '';
+                width: 40px; height: $bar-height; float: left;
+                margin-right: 0.5em;
+                background: url('/s/assets/footer/sprites.png') no-repeat;
+                background-position: -80px center;
+            }
         }
     }
+
 }

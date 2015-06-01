@@ -1,3 +1,4 @@
+/*eslint-disable */
 var config;
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
@@ -90,7 +91,7 @@ module.exports = function (core, conf) {
         var result = validator.validate(action, valid);
         log.d("validation results", result);
         if (!result.status) {
-            log.e("Error: invalid action params", JSON.stringify(result), " ID: ",action.id);
+            log.e("Error: invalid action params", JSON.stringify(result), JSON.stringify(action));
             if (!(action.type && typeof action.type === 'string')) action.type = '';
             callback(new Error("INVALID_" + action.type.toUpperCase() + "_PARAMS"));
             return false;

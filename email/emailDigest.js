@@ -1,3 +1,5 @@
+/*eslint-disable */
+"use strict";
 var config;
 var log = require("../lib/logger.js");
 var send;
@@ -77,7 +79,7 @@ function trySendingToUsers() {
 		if (err) return;
 		redis.get("email:" + username + ":isMentioned", function(err, data) {
 			var ct = new Date().getTime();
-			var interval = waitingTime2 ;
+			var interval = waitingTime2;
 			if (data) interval = waitingTime1;
 			if (config.debug) {
 				log.d("username " + username + " is mentioned ", data);
@@ -264,9 +266,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 		});
 		ct++;
 		redis.get ("email:thread:" + room + ":" + thread.thread + ":title", function(err, title) {
-			if (!err && title) {
-				thread.title = title;
-			} else thread.title = "Title";
 			var pos = r.threads.length;
 			for (var i = 0;i < r.threads.length;i++ ) {
 				if (r.threads[i].interesting.length < thread.interesting.length ) {
@@ -291,7 +290,20 @@ function sortThreads(room, roomObj, mentions,callback) {
 			if (rm !== -1) {
 				r.threads.splice(rm,1);
 			}
-			done();
+
+			if (!err && title) {
+				thread.title = title;
+				done();
+			} else {
+				core.emit("getThreads", {to:room, ref: thread.thread, session: "internal-email"}, function(err, result) {
+					if(err || !result || !result.results || !result.results.length) {
+						thread.title = "Title";
+					} else {
+						thread.title = result.results[0].title || "Title";
+					}
+					done();
+				});
+			}
 		});
 	});
 	function done() {
@@ -506,7 +518,4 @@ function sendPeriodicMails(){
 	core.emit("getUsers", {timezone: {gte: start2, lte: end2}, session: "internal-email"}, function(err, data) {
 		processResults(err, data);
 	});
-
-
-
 }

@@ -6,14 +6,12 @@
 
 "use strict";
 
-module.exports = function (core, config, store) {
-	core.on('setstate', function (changes, next) {
-		if(changes.nav && (changes.nav.room || changes.nav.threadRange)) {
+module.exports = function(core, config, store) {
+	core.on('setstate', function(changes) {
+		if (changes.nav && (changes.nav.room || changes.nav.threadRange)) {
 			handleThreadRangeChange(changes);
 		}
-		next();
 	}, 850);
-
 
 	function threadResponse(err, threads) {
 		var updatingState = {
@@ -26,12 +24,14 @@ module.exports = function (core, config, store) {
 
 			if (threads.before) {
 				range.end = threads.time;
-				range.start = threads.results.length < threads.before? null: threads.results[0].startTime;
-			} else if(threads.after) {
-				range.start = threads.time;
-				range.end = threads.results.length < threads.after? null: threads.results[threads.results.length - 1].startTime;
+				range.start = threads.results.length < threads.before ? null : threads.results[0].startTime;
+			} else if (threads.after) {
+				range.start = threads.time ? threads.time : Date.now();
+				range.end = threads.results.length < threads.after ? null : threads.results[threads.results.length - 1].startTime;
 			}
+
 			range.items = threads.results;
+
 			updatingState.threads[threads.to].push(range);
 
 			core.emit("setstate", updatingState);
@@ -45,6 +45,7 @@ module.exports = function (core, config, store) {
 			r;
 
 		r = store.getThreads(roomId, time, (threadRange.after || 0) + 5);
+
 		if (r[r.length - 1] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
@@ -54,6 +55,7 @@ module.exports = function (core, config, store) {
 		}
 
 		r = store.getThreads(roomId, time, -(threadRange.before || 0) - 5);
+
 		if (r[0] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,

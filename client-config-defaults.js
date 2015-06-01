@@ -1,3 +1,4 @@
+"use strict";
 var merge = require("./merge-config.js");
 
 var defaults = {
@@ -33,9 +34,13 @@ var defaults = {
 };
 
 module.exports = (function() {
-	var changes = require("./client-config.js");
+	var changes;
 
-	if (!changes) changes = {};
+	try {
+		changes = require("./client-config.js");
+	} catch (e) {
+		changes = {};
+	}
 
 	return merge(defaults, changes);
 }());
