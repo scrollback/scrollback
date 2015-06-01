@@ -109,7 +109,7 @@ class S3Upload {
 	}
 
 	set onerror(fn) {
-		this.request.addEventListener("abort", fn, false);
+		this.request.addEventListener("error", fn, false);
 
 		this._policy.catch(fn);
 	}

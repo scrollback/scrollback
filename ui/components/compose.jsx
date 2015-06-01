@@ -103,7 +103,13 @@ module.exports = function(core, config, store) {
 			if (file.size > 5242880) {
 				let size = Math.round(file.size * 100 / 1048576) / 100;
 
-				this.showFileError("File is too big (" + size + "MB). Only files upto 5MB are allowed.");
+				this.showFileError("File is too big (" + size + "MB). Only files upto 5MB can be uploaded.");
+
+				return;
+			}
+
+			if (!/^image\//.test(file.type)) {
+				this.showFileError("Only images can be uploaded.");
 
 				return;
 			}
@@ -152,12 +158,12 @@ module.exports = function(core, config, store) {
 									}, 3000);
 								} else {
 									if (Date.now() - startTime > 30000) {
-										this.showFileError("Failed to upload image. May be try again?");
+										this.showFileError("Failed to upload the image. May be try again?");
 
 										return;
 									}
 
-					               thumbTimer = setTimeout(checkThumb, 1000);
+					               thumbTimer = setTimeout(checkThumb, 1500);
 								}
 					        }
 					    };
@@ -166,7 +172,7 @@ module.exports = function(core, config, store) {
 				setTimeout(checkThumb, 3000);
 			};
 
-			upload.onerror = () => this.showFileError("Failed to upload image. May be try again?");
+			upload.onerror = () => this.showFileError("Failed to upload the image. May be try again?");
 
 			upload.start(file);
 
