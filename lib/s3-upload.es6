@@ -84,14 +84,14 @@ class S3Upload {
 			let baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
 
 			this.request.addEventListener("load", event => {
-				let path = "uploaded/" + this._opts.uploadType + "/" + this._opts.userId + "/";
+				let path = this._opts.uploadType + "/" + this._opts.userId + "/";
 
 				if (this._opts.uploadType === "content") {
 					path += this._opts.textId + "/1/";
 				}
 
-				this.url = baseurl + encodeURIComponent(path) + file.name.replace(/\s/g, "+");
-				this.thumb = baseurl + encodeURIComponent(path) + "480x960.jpg";
+				this.url = baseurl + encodeURIComponent("uploaded/" + path) + file.name.replace(/\s/g, "+");
+				this.thumb = baseurl + "generated/" + path + "480x960.jpg";
 
 				if (typeof this.onfinish === "function") {
 					this.onfinish(event);
