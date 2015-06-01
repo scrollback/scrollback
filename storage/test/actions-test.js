@@ -1,5 +1,6 @@
 /* eslint-env mocha */
-
+/* eslint max-nested-callbacks: 0*/
+/* eslint handle-callback-err: 0*/
 "use strict";
 
 var assert = require('assert'),
@@ -11,22 +12,27 @@ var assert = require('assert'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg'),
 	utils = require('./utils.js');
-	config.storage.pg.db = "testingdatabase"; // don't change this.
-var connString = "pg://" + config.storage.pg.username + ":" +
-	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
+config.storage.pg.db = "testingdatabase";// don't change this.
+
+if(process.env.TRAVIS){
+	config.storage.pg.server = "direct.stage.scrollback.io";
+}
+var connString = "pg://" + config.storage.pg.username + ":" + config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
 describe("Storage Test(actions).", function() {
 	before(function(done) {
+		this.timeout(3500);
 		storage(core, config.storage);
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;
 		}
-		setTimeout(done, 1500);
+		setTimeout(done, 3000);
 	});
 
 	beforeEach(function(done) {
+		this.timeout(3500);
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;
@@ -40,6 +46,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Insert new text messagee", function(done) {
+		this.timeout(3500);
 		var msg = utils.getNewTextAction();
 		core.emit("text", msg, function() {
 			log("inserted message");
@@ -60,6 +67,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Insert new text message. (Labels and tags)", function(done) {
+		this.timeout(3500);
 		var msg = utils.getNewTextAction();
 		msg.tags.push("abusive");
 		msg.tags.push("hidden");
@@ -82,6 +90,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Update Thread", function(done) {
+		this.timeout(5000);
 		var m1 = utils.getNewTextAction();
 		core.emit("text", m1, function() {
 			var m2 = utils.getNewTextAction();
@@ -302,6 +311,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Update room.", function(done) {
+		this.timeout(3000);
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
 		var roomOwner = utils.getNewUserAction();
@@ -341,6 +351,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("Join room.", function(done) {
+		this.timeout(3000);
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
@@ -372,6 +383,7 @@ describe("Storage Test(actions).", function() {
 	});
 
 	it("part room.", function(done) {
+		this.timeout(3000);
 		var relation = utils.getNewRelationAction('join', 'follower');
 		var user = utils.getNewUserAction();
 		var room = utils.getNewRoomAction();
