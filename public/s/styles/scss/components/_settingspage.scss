@@ -55,6 +55,19 @@
                     &.current, &:focus, &:hover { background-color: rgba(0,0,0,0.075); }
 
                     &:active { background-color: rgba(0,0,0,0.1); }
+
+                    .badge {
+                        float: right;
+                        font-size: .8em;
+                        background-color: $error-color;
+                        color: $light-color;
+                        line-height: 1.8em;
+                        height: 1.8em;
+                        min-width: 1.8em;
+                        text-align: center;
+                        border-radius: 50%;
+                        margin: .2em;
+                    }
                 }
             }
 

@@ -21,8 +21,9 @@ module.exports = function(core) {
 
 		room.guides.authorizer.readLevel = room.guides.authorizer.readLevel || 'guest';
 		room.guides.authorizer.writeLevel = room.guides.authorizer.writeLevel || 'guest';
-		
-		if (!room.guides) room.guides = {};
+
+		room.guides = room.guides || {};
+
 		openRoom = (room.guides.authorizer && typeof room.guides.authorizer.openRoom === "boolean") ? room.guides.authorizer.openRoom : true;
 		readLevel = room.guides.authorizer.readLevel; // guest, registered, follower
 		writeLevel = room.guides.authorizer.writeLevel;
@@ -50,11 +51,9 @@ module.exports = function(core) {
 		}
 
 		var div = $('<div>').append(
-			formField('Who can read messages?', 'radio', "authorizer-read",[['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
+			formField('Who can read messages?', 'radio', "authorizer-read", [['authorizer-read-guest', 'Anyone (Public)', guestPermRead], ['authorizer-read-users', 'Logged in users', registeredPermRead], ['authorizer-read-followers', 'Followers', followerPermRead]]),
 			formField('Who can post messages?', 'radio', "authorizer-write", [['authorizer-post-guest', 'Anyone (Public)', guestPermWrite], ['authorizer-post-users', 'Logged in users', registeredPermWrite], ['authorizer-post-followers', 'Followers', followerPermWrite]]),
-			formField("open room", "check", "open-room-check", [
-						[ "open-room", "", openRoom ]
-					])
+			formField("Anyone can follow without request", "toggle", "authorizer-open-room", openRoom)
 		);
 
 		tabs.authorizer = {
@@ -63,7 +62,7 @@ module.exports = function(core) {
 		};
 
 		next();
-	}, 700);
+	}, 800);
 
 	core.on('conf-save', function(room, next) {
 		var mapRoles = {
@@ -71,7 +70,6 @@ module.exports = function(core) {
 				users: 'registered',
 				followers: 'follower'
 			},
-			openRoom = $('input:radio[name="authorizer-read"]:checked'),
 			readLevel = mapRoles[$('input:radio[name="authorizer-read"]:checked').attr('id').substring(16)],
 			writeLevel = mapRoles[$('input:radio[name="authorizer-write"]:checked').attr('id').substring(16)];
 
@@ -80,7 +78,7 @@ module.exports = function(core) {
 		room.guides.authorizer = {
 			readLevel: readLevel,
 			writeLevel: writeLevel,
-			openRoom: $("#open-room").is(':checked')
+			openRoom: $("#authorizer-open-room").is(':checked')
 		};
 		next();
 	}, 500);
