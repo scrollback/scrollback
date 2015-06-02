@@ -130,7 +130,7 @@ class S3Upload {
 			let baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
 
 			this._request.addEventListener("load", event => {
-				this.url = baseurl + key;
+				this.url = baseurl + encodeURIComponent(key);
 
 				if (typeof this.onfinish === "function") {
 					if (this._opts.generateThumb) {
