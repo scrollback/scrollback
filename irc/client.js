@@ -2,7 +2,7 @@ var net = require('net');
 var log = require('../lib/logger.js');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
-var ObjectReader = require('../lib/ObjectReader.js');
+var ObjectReader = require('../lib/object-reader.js');
 var or = new ObjectReader(eventEmitter);
 var log = require("../lib/logger.js");
 var config;
@@ -22,7 +22,7 @@ module.exports = function(c, conf) {
 	server = config.server;
 	return {
 		init: init,
-		connected: isConnected,	
+		connected: isConnected,
 	};
 };
 
@@ -48,20 +48,20 @@ function connect() {
 		connected = true;
 	});
 	client.on("data", function(data){
-		or.addData(data);	
+		or.addData(data);
 	});
 	client.on('error', function(error){
 		log("Can not connect to ircClient process", error);
 		connected = false;
 		setTimeout(function(){
-			connect();	
+			connect();
 		}, reconnectTime);
 	});
 	client.on('end', function() {
 		log('connection terminated');
 		connected = false;
 		setTimeout(function(){
-			connect();	
+			connect();
 		}, reconnectTime);
 	});
 }
@@ -70,7 +70,7 @@ function writeObject(obj) {
 	var v = JSON.stringify(obj);
 	var r = v.length + " ";
 	r += v;
-	if(connected) client.write(r);	
+	if(connected) client.write(r);
 }
 
 
