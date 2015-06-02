@@ -46,8 +46,6 @@ class S3Upload {
 		});
 
 		this._policy.catch(err => {
-			console.log(err);
-
 			if (typeof this.onerror === "function") {
 				this.onerror(err);
 			}
