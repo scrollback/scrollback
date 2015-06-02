@@ -5,7 +5,7 @@ services: redis-server
 #addons:
 # postgresql: "9.3"
 
-notifications:
- email:
-  - "ja.chandrakant@gmail.com"
-  - "chandra@scrollback.io"
+# notifications:
+#  email:
+#   - "ja.chandrakant@gmail.com"
+#   - "chandra@scrollback.io"
