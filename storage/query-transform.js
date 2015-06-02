@@ -1,7 +1,7 @@
 'use strict';
 var log = require('../lib/logger.js');
 /**
-select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
+select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256
 only non [hidden].
 
 if delete time is set.
@@ -19,30 +19,30 @@ exports.getTexts = exports.getThreads = function(query) {
 	log("query:", query);
 	var q = makeQuery('select');
 	q.source = (query.type === 'getThreads'? 'threads': 'texts');
-	
+
 	if (query.to) {
 		q.filters.push(["to", "eq", query.to]);
 	}
-	
+
 	if (query.thread && query.type === 'getTexts') {
 		q.filters.push(["thread", "eq", query.thread]);
-	} 
-	
+	}
+
 	if (query.tag) {
 		q.filters.push(["tags", "cts", query.tag]);
 	}
-	
+
 	if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator" && query.user.role !== "su") {
 		q.filters.push({sql: 'NOT("tags" @> $)', values: [[
 			query.type === 'getThreads'? "thread-hidden": "hidden"
 		]]});
-		
+
 		log.d("HIDDEN EXCLUDED", query.type, q.filters);
 	}
-	
+
 	if (query.ref) {
 		if (query.ref instanceof Array) {
-			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);	
+			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);
 			else return []; // no results.
 		} else q.filters.push(["id", "eq", query.ref]);
 	} else if (query.updateTime) {
@@ -59,10 +59,10 @@ exports.getTexts = exports.getThreads = function(query) {
 		TODO: TEXT SEARCH
 		q.filters.push(["terms", "ts", iq.q]);
 		q.iterate.key = ["tsrank" "terms", iq.q];
-		
+
 		Maybe it won't go here at all.
 	}*/
-	
+
 	if(query.after) {
 		q.iterate.limit = query.after;
 		q.iterate.reverse = false;
@@ -100,9 +100,9 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	if (iq.ref) {
 		if (iq.ref instanceof Array ) {
 			if (iq.ref.length) q.filters.push(['id', 'in', iq.ref]);
-			else return []; // no results because ref is an empty array. 
+			else return []; // no results because ref is an empty array.
 		} else q.filters.push(["id", "eq", iq.ref]);
-	} 
+	}
 	if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);
 	} else if (iq.timezone) {
@@ -116,7 +116,8 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 				if(['owner', 'su', 'moderator'].indexOf(iq.user.role) >= 0) {
 					q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
 				} else {
-					q.filters.push([['relations', 'role'], 'gt', 'none']);
+					q.filters.push({sql: "(role > $ or (relations.user = $ and transitionRole > $))", values:["none", iq.user.id, "none"]});
+					// q.filters.push([['relations', 'role'], 'gt', 'none']);
 				}
 			} else {
 				q.filters.push([['relations', 'role'], 'eq', iq.role]);
@@ -135,13 +136,13 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 			}
 
 			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
-			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);	
+			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);
 		}
 	} else if (iq.role) q.filters.push(['role', 'eq', q.role]);
-	
-	
+
+
 	//if (iq.locale) q.quantFilter('locale', iq.locale);
-	
+
 /*	if (iq.roleTime) {
 		q.iterate.key = 'roleTime';
 		q.iterate.start = iq.roleTime;
@@ -153,7 +154,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.keys.push('id');
 		q.iterate.start.push(iq.iterator || "");
 	}
-	
+
 	if (iq.before) {
 		q.iterate.reverse = true;
 		q.iterate.limit = iq.before;
