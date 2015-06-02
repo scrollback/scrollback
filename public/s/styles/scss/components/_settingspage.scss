@@ -85,25 +85,45 @@
         }
     }
 
+    .profile-picture-list { @extend %clearfix; }
+
     .twitter-account-chooser, .profile-user-avatar {
+        @extend %snappy;
+        @include icon(done);
+
+        float: left;
         position: relative;
         display: block;
         height: 80px;
         width: 80px;
-        margin: 0 .25em;
-        background-size: contain;
-        border-width: 0.5em;
-        border-style: solid;
-        border-color: transparent;
-        display: inline-block;
+        margin: 0 .5em;
         border-radius: $roundness;
         cursor: pointer;
 
-        &:focus, &:hover { border-color: fade-out($dark-color, .7); }
+        &:before {
+            @extend %snappy;
 
-        &:active { border-color: fade-out($dark-color, .5); }
+            position: absolute;
+            color: $light-color;
+            font-size: 2em;
+            background-color: rgba(0,0,0,.5);
+            border-radius: 50%;
+            padding: .25em;
+            margin: .675em;
+            opacity: 0;
+        }
 
-        &.current { border-color: $accent-color; }
+        &:focus, &:hover {
+            &:before { opacity: .5; }
+        }
+
+        &:active {
+            &:before { opacity: .7; }
+        }
+
+        &.current {
+            &:before { opacity: 1; }
+        }
 
         &:first-child { margin-left: 0; }
 
@@ -113,6 +133,23 @@
             border-radius: $roundness;
             height: 100%;
             width: 100%;
+        }
+
+        &-upload {
+            @include icon(camera);
+
+            background-color: $info-color;
+
+            &, &:focus, &:hover, &:active {
+                &:before {
+                    background-color: transparent;;
+                    opacity: 1;
+                }
+            }
+
+            &:focus, &:hover { background-color: darken($info-color, 10%); }
+
+            &:active { background-color: darken($info-color, 20%); }
         }
     }
 
