@@ -41,6 +41,43 @@ class S3Upload {
 		this.request = new XMLHttpRequest();
 	}
 
+	_generateThumb(event) {
+		let thumbTimer, startTime = Date.now(),
+			checkThumb = () => {
+				let req = new XMLHttpRequest();
+
+				req.open("GET", this.thumb, true);
+
+				req.send();
+
+				req.onreadystatechange = () => {
+					if (req.readyState === XMLHttpRequest.DONE ) {
+						if (thumbTimer) {
+							clearTimeout(thumbTimer);
+						}
+
+						if (req.status === 200) {
+							if (typeof this.onfinish === "function") {
+								this.onfinish(event);
+							}
+						} else {
+							if (Date.now() - startTime > 30000) {
+								if (typeof this.onerror === "function") {
+									this.onerror(new Error("Thumbnail generation timed out!"));
+								}
+
+								return;
+							}
+
+							thumbTimer = setTimeout(checkThumb, 1500);
+						}
+					}
+				};
+			};
+
+		setTimeout(checkThumb, 3000);
+	}
+
 	start(file) {
 		this.request.addEventListener("progress", event => {
 			if (typeof this.onprogress === "function") {
@@ -91,10 +128,15 @@ class S3Upload {
 				}
 
 				this.url = baseurl + encodeURIComponent("uploaded/" + path) + file.name.replace(/\s/g, "+");
-				this.thumb = baseurl + "generated/" + path + "480x960.jpg";
 
 				if (typeof this.onfinish === "function") {
-					this.onfinish(event);
+					if (this._opts.generateThumb) {
+						this.thumb = baseurl + "generated/" + path + "480x960.jpg";
+
+						this._generateThumb(event);
+					} else {
+						this.onfinish(event);
+					}
 				}
 			}, false);
 

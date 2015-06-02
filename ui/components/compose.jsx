@@ -121,55 +121,27 @@ module.exports = function(core, config, store) {
 				userId = store.get("user"),
 				upload = new S3Upload({
 					uploadType: "content",
+					generateThumb: true,
 					userId,
 					textId
 				}, core);
 
 			upload.onfinish = () => {
-				let thumbTimer, startTime = Date.now(),
-					checkThumb = () => {
-						let req = new XMLHttpRequest();
+				core.emit("text-up", {
+					thread: store.get("nav", "thread"),
+					to: store.get("nav", "room"),
+					id: textId,
+					from: userId,
+					text: "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")"
+				});
 
-						req.open("GET", upload.thumb, true);
+				button.classList.remove("unknown");
+				button.classList.add("complete");
 
-						req.send();
-
-						req.onreadystatechange = () => {
-							if (req.readyState === XMLHttpRequest.DONE ) {
-								if (thumbTimer) {
-									clearTimeout(thumbTimer);
-								}
-
-								if (req.status === 200) {
-									core.emit("text-up", {
-										thread: store.get("nav", "thread"),
-										to: store.get("nav", "room"),
-										id: textId,
-										from: userId,
-										text: "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")"
-									});
-
-									button.classList.remove("unknown");
-									button.classList.add("complete");
-
-									setTimeout(() => {
-										button.classList.remove("progress");
-										button.classList.remove("complete");
-									}, 3000);
-								} else {
-									if (Date.now() - startTime > 30000) {
-										this.showFileError("Failed to upload the image. May be try again?");
-
-										return;
-									}
-
-								   thumbTimer = setTimeout(checkThumb, 1500);
-								}
-							}
-						};
-					};
-
-				setTimeout(checkThumb, 3000);
+				setTimeout(() => {
+					button.classList.remove("progress");
+					button.classList.remove("complete");
+				}, 3000);
 			};
 
 			upload.onerror = () => this.showFileError("Failed to upload the image. May be try again?");
@@ -249,7 +221,8 @@ module.exports = function(core, config, store) {
 								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
-							<div data-role="user follower" ref="filebutton"
+							<div ref="filebutton"
+								 data-role="user follower owner moderator"
 								 className="chat-area-input-action chat-area-input-image"
 								 onClick={this.showChooser}>
 
