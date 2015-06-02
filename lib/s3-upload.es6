@@ -54,7 +54,7 @@ class S3Upload {
 		this._request = new XMLHttpRequest();
 	}
 
-	_generateThumb(event) {
+	_pollThumbUrl(event) {
 		let thumbTimer, startTime = Date.now(),
 			checkThumb = () => {
 				let req = new XMLHttpRequest();
@@ -107,38 +107,36 @@ class S3Upload {
 				formData.append(field, policy[field]);
 			}
 
-			let filename;
+			let key = policy.keyPrefix,
+				filename = file.name.replace(/\s+/g, "+"),
+				thumbpath;
 
 			switch (this._opts.uploadType) {
 			case "avatar":
 			case "banner":
-				filename = "original." + file.name.split(".").pop();
+				thumbpath = "256x256.jpg";
+				key += "original." + file.name.split(".").pop();
 				break;
 			case "content":
-				filename = "1/${filename}";
+				thumbpath = "1/480x960.jpg";
+				key += "1/" + filename;
 				break;
 			}
 
-			formData.append("key", policy.keyPrefix + filename);
+			formData.append("key", key);
 			formData.append("success_action_status", "201");
 			formData.append("file", file);
 
 			let baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
 
 			this._request.addEventListener("load", event => {
-				let path = this._opts.uploadType + "/" + this._opts.userId + "/";
-
-				if (this._opts.uploadType === "content") {
-					path += this._opts.textId + "/1/";
-				}
-
-				this.url = baseurl + encodeURIComponent("uploaded/" + path) + file.name.replace(/\s/g, "+");
+				this.url = baseurl + key;
 
 				if (typeof this.onfinish === "function") {
 					if (this._opts.generateThumb) {
-						this.thumb = baseurl + "generated/" + path + "480x960.jpg";
+						this.thumb = baseurl + policy.keyPrefix.replace(/^uploaded/, "generated") + thumbpath;
 
-						this._generateThumb(event);
+						this._pollThumbUrl(event);
 					} else {
 						this.onfinish(event);
 					}
