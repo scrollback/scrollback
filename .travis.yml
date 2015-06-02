@@ -7,4 +7,5 @@ services: redis-server
 
 notifications:
  email:
-  "chandra@scrollback.io"
+  - "chandra@scrollback.io"
+  - "ja.chandrakant@gmail.com"
