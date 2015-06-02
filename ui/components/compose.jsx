@@ -135,7 +135,7 @@ module.exports = function(core, config, store) {
 						req.send();
 
 						req.onreadystatechange = () => {
-					        if (req.readyState === XMLHttpRequest.DONE ) {
+							if (req.readyState === XMLHttpRequest.DONE ) {
 								if (thumbTimer) {
 									clearTimeout(thumbTimer);
 								}
@@ -163,10 +163,10 @@ module.exports = function(core, config, store) {
 										return;
 									}
 
-					               thumbTimer = setTimeout(checkThumb, 1500);
+								   thumbTimer = setTimeout(checkThumb, 1500);
 								}
-					        }
-					    };
+							}
+						};
 					};
 
 				setTimeout(checkThumb, 3000);
@@ -249,12 +249,15 @@ module.exports = function(core, config, store) {
 								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
-							<div ref="filebutton" className="chat-area-input-action chat-area-input-image" onClick={this.showChooser}>
+							<div data-role="user follower" ref="filebutton"
+								 className="chat-area-input-action chat-area-input-image"
+								 onClick={this.showChooser}>
+
 								<input ref="filechooser" type="file" onChange={this.uploadFiles} accept="image/*" />
 								<svg className="progress-indicator" width="35" height="35">
-								    <circle ref="progresscircle" cx="18" cy="18" r="16" fill="none" strokeWidth="2" />
-								    <path className="check" d="M6,11.2 L1.8,7 L0.4,8.4 L6,14 L18,2 L16.6,0.6 L6,11.2 Z" transform="translate(27, 25) rotate(180)"/>
-								    <path className="warn" d="M0,19 L22,19 L11,0 L0,19 L0,19 Z M12,16 L10,16 L10,14 L12,14 L12,16 L12,16 Z M12,12 L10,12 L10,8 L12,8 L12,12 L12,12 Z" transform="translate(29, 28) rotate(180)" />
+									<circle ref="progresscircle" cx="18" cy="18" r="16" fill="none" strokeWidth="2" />
+									<path className="check" d="M6,11.2 L1.8,7 L0.4,8.4 L6,14 L18,2 L16.6,0.6 L6,11.2 Z" transform="translate(27, 25) rotate(180)"/>
+									<path className="warn" d="M0,19 L22,19 L11,0 L0,19 L0,19 Z M12,16 L10,16 L10,14 L12,14 L12,16 L12,16 Z M12,12 L10,12 L10,8 L12,8 L12,12 L12,12 Z" transform="translate(29, 28) rotate(180)" />
 								</svg>
 							</div>
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
