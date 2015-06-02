@@ -1,1 +1,10 @@
 language: node_js
+services: redis-server
+#env: DB=postgres
+#
+#addons:
+# postgresql: "9.3"
+
+notifications:
+ email:
+  "devs@scrollback.io"
