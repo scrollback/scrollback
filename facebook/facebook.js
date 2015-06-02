@@ -1,3 +1,6 @@
+/* eslint no-use-before-define: 0*/
+/* eslint no-shadow: 0*/
+"use strict";
 var config,
 	crypto = require('crypto'),
 	request = require("request"),
@@ -29,7 +32,7 @@ function loginUser(token, action, callback) {
 			user = JSON.parse(body);
 			if (user.error || !user.email) {
 				if (!user.email) log.e("Facebook login failed: ", body);
-				return callback(new Error(user.error || "Error in facebook sign in."));
+				return callback(new Error(user.error || "ERR_FB_SIGNIN_NO_EMAIL"));
 			}
 			core.emit("getUsers", {
 				identity: "mailto:" + user.email,
