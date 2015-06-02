@@ -12,61 +12,56 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-					<footer className="footer">
-						<div className="footer-inner">
-							<div className="row">
-								<div className="col large-4 medium-4 small-12">
-									<h5>Contact us</h5>
-									 <ul>
-										 <li>Scrollback is a product of Askabt.</li>
-										 <li>#05-16, 71 Ayer Rajah Crescent,</li>
-										 <li>Tel - +91-98451 68036,</li>
-										 <li>Mail - evans@scrollback.io</li>
-									 </ul>
-								</div>
+				     <footer className="footer" >
+				     	<div className="footer-inner">
 
-								<div className="col large-4 medium-4 small-12">
-									<ul>
-										<li>
-											<a href="http://web.scrollback.io/about/" target="_blank">About Us</a>
-										</li>
-										<li>
-											<a href="http://web.scrollback.io/careers/" target="_blank">We are Hiring</a>
-										</li>
-										<li>
-											<a href="http://web.scrollback.io/privacy-policy/" target="_blank">Privacy Policy</a>
-										</li>
-										<li>
-											<a href="http://blog.scrollback.io/" target="_blank">Blog</a>
-										</li>
-										<li>
-											<a className="footer-playstore" href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">
-												<img src="/s/assets/footer/google.png" />
-											</a>
-										</li>
-									 </ul>
-								</div>
+							<ul className="footer-item-container">
+								<li className="footer-item" >
+								<a href="http://web.scrollback.io/about" target="_blank" >About us
+								</a></li>
 
-								<div className="col large-4 medium-4 small-12">
-									<h5>Connect with us on</h5>
-									<p className="footer-social">
-										<a href="https://www.facebook.com/scrollback" target="_blank" >
-											<img src="/s/assets/footer/facebook.png"  ></img>
-										</a>
-										<a href="https://twitter.com/Scrollbackio" target="_blank" >
-											<img src="/s/assets/footer/twitter.png"  ></img>
-										</a>
-										<a href="https://www.linkedin.com/company/scrollback" target="_blank" >
-											<img src="/s/assets/footer/linkedin.png" ></img>
-										</a>
-										<a href="https://github.com/scrollback/scrollback" target="_blank" s>
-											<img  src="/s/assets/footer/github.png"  ></img>
-										</a>
-									</p>
-								</div>
-							</div>
+								<li className="footer-item" >
+								<a href="http://web.scrollback.io/careers" target="_blank" >Careers
+								</a></li>
+
+								<li className="footer-item" >
+								<a href="http://web.scrollback.io/privacy" target="_blank" >Privacy
+								</a></li>
+
+								<li className="footer-item" >
+								<a href="http://blog.scrollback.io/" target="_blank">Blog
+								</a></li>
+
+							</ul>
+
+							<ul className="footer-social-container">
+								<li className="footer-social footer-social-facebook">
+								<a href="https://www.facebook.com/scrollback" target="_blank">Facebook</a>
+
+								</li>
+								<li className="footer-social footer-social-twitter">
+								<a href="https://twitter.com/Scrollbackio" target="_blank">Twitter</a>
+								</li>
+
+								<li className="footer-social footer-social-linkedin">
+								<a  href="https://www.linkedin.com/company/scrollback" target="_blank">LinkedIn</a>
+								</li>
+
+								<li className="footer-social footer-social-github">
+								<a href="https://github.com/scrollback/scrollback" target="_blank">GitHub</a>
+								</li>
+							</ul>
+							
+							<ul className="footer-playstore-container">
+								<li className="footer-playstore">
+								<a href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">Get the app</a>
+								</li>
+							</ul>
+
+	
 						</div>
-					</footer>
+    				</footer>
+		
 
 					);
 		},

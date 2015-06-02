@@ -37,7 +37,7 @@ module.exports = function(core, config, store) {
 			if (roomName) {
 				core.emit("setstate", {
 					nav: {
-						room: roomName,
+						room: roomName.toLowerCase(),
 						mode: "room",
 						view: null,
 						thread: null

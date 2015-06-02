@@ -5,7 +5,7 @@ var gulp = require("gulp"),
 	del = require("del"),
 	bower = require("bower"),
 	browserify = require("browserify"),
-	reactify = require("reactify"),
+	optional = require("browserify-optional"),
 	babelify = require("babelify").configure({ extensions: [ ".es6", ".jsx" ] }),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
@@ -161,7 +161,7 @@ gulp.task("polyfills", [ "bower" ], function() {
 gulp.task("bundle", function() {
 	return bundle([ "ui/app.es6" ], {
 		debug: true,
-		transform: [ babelify, reactify ]
+		transform: [ babelify, optional ]
 	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
@@ -177,7 +177,7 @@ gulp.task("bundle", function() {
 gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", {
 		debug: true,
-		transform: [ babelify ]
+		transform: [ babelify, optional ]
 	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
@@ -189,7 +189,7 @@ gulp.task("embed-legacy", function() {
 gulp.task("embed-apis", function() {
 	return bundle("widget/index.js", {
 		debug: true,
-		transform: [ babelify ]
+		transform: [ babelify, optional ]
 	})
 	.pipe(sourcemaps.init({ loadMaps: true }))
 	.pipe(buildscripts())
