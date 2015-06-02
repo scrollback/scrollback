@@ -3,8 +3,7 @@
 var permissionLevels = require("../permissionWeights.js"),
 	SbError = require("./../../lib/SbError.js"),
 	readActions = [ "away", "back", "getTexts", "getThreads"],
-	writeActions = [ "text", "edit", "http/getPolicy" ],
-	registeredUserActions = [ "http/getPolicy" ];
+	writeActions = [ "text", "edit" ];
 
 module.exports = function() {
 	return function(action) {
@@ -26,23 +25,6 @@ module.exports = function() {
 
 		if (writeActions.indexOf(action.type) > -1) {
 			writeLevel = (guides && guides.authorizer && guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest";
-
-			if (permissionLevels[writeLevel] > permissionLevels[action.user.role]) {
-				return (new SbError("ERR_NOT_ALLOWED", {
-					source: "authorizer",
-					action: action.type,
-					requiredRole: writeLevel,
-					currentRole: action.user.role
-				}));
-			}
-		}
-
-		if (registeredUserActions.indexOf(action.type) > -1) {
-			if (guides && guides.authorizer && guides.authorizer.writeLevel) {
-				writeLevel = guides.authorizer.writeLevel;
-			}
-
-			writeLevel = (permissionLevels[writeLevel] && permissionLevels[writeLevel] > permissionLevels.guest) ? writeLevel : "registered";
 
 			if (permissionLevels[writeLevel] > permissionLevels[action.user.role]) {
 				return (new SbError("ERR_NOT_ALLOWED", {

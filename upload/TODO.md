@@ -1,8 +1,8 @@
 ### `s3polgen.js`:
 
 * Refer to your old mocha tests to get USER object and get username out of it
-* Listen to a new event http/getPolicy 
-* Design payload of http/getPolicy (must contain username, what type of upload,
+* Listen to a new event upload/getPolicy
+* Design payload of upload/getPolicy (must contain username, what type of upload,
    generatedPolicy, generatedSignature)
 
 ### Other TODOs

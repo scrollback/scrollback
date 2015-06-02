@@ -60,7 +60,7 @@ module.exports = function(c, conf, s) {
 		}, 1000);
 	});
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "getPolicy" ].forEach(function(event) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(event) {
 		core.on(event, function(query) {
 			if (!query.id) { query.id = generate.uid(); }
 		}, 1000);

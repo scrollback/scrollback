@@ -16,14 +16,17 @@ class S3Upload {
 			throw new Error("userId must be specified.");
 		}
 
-		if (opts.uploadType === "content" && !opts.textId) {
+		let uploadType = opts.uploadType,
+			textId = opts.textId;
+
+		if (uploadType === "content" && !textId) {
 			throw new Error("textId must be specified for content.");
 		}
 
 		this._opts = opts;
 
 		this._policy = new Promise((resolve, reject) => {
-			core.emit("getPolicy", opts, (err, req) => {
+			core.emit("upload/getPolicy", { uploadType, textId }, (err, req) => {
 				if (err) {
 					reject(err);
 
@@ -31,11 +34,23 @@ class S3Upload {
 				}
 
 				if (req) {
-					resolve(req.response);
+					if (req.response) {
+						resolve(req.response);
+					} else {
+						reject(err);
+					}
 
 					return;
 				}
 			});
+		});
+
+		this._policy.catch(err => {
+			console.log(err);
+
+			if (typeof this.onerror === "function") {
+				this.onerror(err);
+			}
 		});
 
 		this.request = new XMLHttpRequest();
@@ -79,17 +94,9 @@ class S3Upload {
 	}
 
 	start(file) {
-		this.request.addEventListener("progress", event => {
-			if (typeof this.onprogress === "function") {
-				this.onprogress(event);
-			}
-		}, false);
-
-		this.request.addEventListener("abort", event => {
-			if (typeof this.onabort === "function") {
-				this.onabort(event);
-			}
-		}, false);
+		this.request.onprogress = this.onprogress;
+		this.request.onabort = this.onabort;
+		this.request.onerror = this.onaerror;
 
 		return this._policy.then(policy => {
 			let formData = new FormData(),
@@ -148,12 +155,6 @@ class S3Upload {
 
 	abort() {
 		return this.request.abort();
-	}
-
-	set onerror(fn) {
-		this.request.addEventListener("error", fn, false);
-
-		this._policy.catch(fn);
 	}
 }
 

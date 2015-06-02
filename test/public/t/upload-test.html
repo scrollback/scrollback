@@ -2,15 +2,15 @@
 
 <html>
 	<head>
-		
+
 	</head>
-	
-	
+
+
 	<body>
 		Pick a file: <input type="file" id="picker" />
 		<div id="status"></div>
 	</body>
-	
+
 	<script>
 	var response = { acl: 'public-read',
      policy: 'eyJleHBpcmF0aW9uIjoiMjAxNS0wNS0yOVQxMjo0NTozMS45MzVaIiwiY29uZGl0aW9ucyI6W3siYnVja2V0Ijoic2NyYmsifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJzaW5kaHVzL2F2YXRhci8iXSx7InN1Y2Nlc3NfYWN0aW9uX3N0YXR1cyI6IjIwMSJ9LHsieC1hbXotY3JlZGVudGlhbCI6IkFLSUFJU1pXSDZERlA3Q1NQNEFRLzIwMTUwNDI5L3VzLWVhc3QtMS9zMy9hd3M0X3JlcXVlc3QifSx7IngtYW16LWFsZ29yaXRobSI6IkFXUzQtSE1BQy1TSEEyNTYifSx7IngtYW16LWRhdGUiOiIyMDE1MDUyOVQxMjE1MzFaIn1dfQ==',
@@ -21,27 +21,27 @@
      'x-amz-date': '20150529T121531Z',
      'x-amz-signature': '40a51a27407637bf83e2fcbcd25941403e47bb534469ebc830c4c27dcf10a52f' };
 	</script>
-	
-	
+
+
 	<script>
 		function Upload (uploadType, textId, core) {
 			var self = this;
-			core.emit("getPolicy", { uploadType: uploadType, textId: textId }, function (err, policyReq) {
+			core.emit("upload/getPolicy", { uploadType: uploadType, textId: textId }, function (err, policyReq) {
 				self.params = policyReq.response;
 				self.uploadType = uploadType;
 			});
 		}
-		
+
 		Upload.prototype.start = function (files) {
 			console.log(files);
 			console.log("Beginning file upload with parameters", this.params);
-			
+
 			var formData = new FormData(),
 				self = this,
 				filename,
 				xhr,
 				noop = function () {};
-			
+
 			switch(self.uploadType) {
 				case "avatar":
 				case "banner":
@@ -50,18 +50,18 @@
 				case "content":
 					filename = "1/${filename}";
 			}
-			
+
 			[ "acl", "policy", "x-amz-algorithm", "x-amz-credential", "x-amz-date", "x-amz-signature"
 			].forEach(function (fieldName) {
 				formData.append(fieldName, self.params[fieldName]);
 			});
-			
+
 			formData.append("key", this.params.keyPrefix + filename);
 			formData.append("success_action_status", "201");
 			formData.append("file", files[0]);
-			
+
 			console.log("About to upload ", formData);
-			
+
 			setTimeout(function () {
 				xhr = new XMLHttpRequest();
 
@@ -74,12 +74,12 @@
 				xhr.send(formData);
 			}, 0);
 		}
-		
+
 		Upload.prototype.abort = function () {
 		}
 	</script>
-	
-	
+
+
 	<script>
 		var u, picker = document.getElementById("picker"),
 			mockCore = {
@@ -90,21 +90,21 @@
 					}, 200);
 				}
 			};
-		
+
 		picker.addEventListener("click", function (event) {
 			u = new Upload("avatar", null, mockCore);
 		});
-		
+
 		picker.addEventListener("change", function (event) {
 			u.start(picker.files);
 			u.onProgress = madeProgress;
 			u.onFinish = doneUpload;
 			u.onError = error;
 		});
-		
+
 		function madeProgress () { console.log("progress!", arguments); }
 		function doneUpload () { console.log("uploaded!", arguments); }
-		function error () { console.log("error :(", arguments); }		
+		function error () { console.log("error :(", arguments); }
 	</script>
-	
+
 </html>

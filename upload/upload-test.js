@@ -13,8 +13,8 @@ require("./upload.js")(core, config.upload);
 
 it("should generate policies", function () {
 	// This is sample action (ie, request)
-	core.emit("http/getPolicy", {
-		user: { 
+	core.emit("upload/getPolicy", {
+		user: {
 				id: "sindhus"
 			},
 		uploadType: "avatar",

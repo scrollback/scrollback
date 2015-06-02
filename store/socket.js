@@ -22,7 +22,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "getPolicy" ].forEach(function(e) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -72,11 +72,14 @@ module.exports = function(c, conf, s) {
 
 	core.on("init-up", function(init, next) {
 		if (!init.session) session = init.session = "web://" + generate.uid();
+
 		init.type = "init";
 		init.to = "me";
+
 		client.send(JSON.stringify(init));
-		pendingActions[init.id] = function(init) {
-			if (init.type === "init") {
+
+		pendingActions[init.id] = function(action) {
+			if (action.type === "init") {
 				initDone = true;
 				while (queue.length) {
 					queue.splice(0, 1)[0]();
@@ -85,7 +88,7 @@ module.exports = function(c, conf, s) {
 					app: {
 						connectionStatus: "online"
 					},
-					user: init.user.id
+					user: action.user.id
 				});
 			}
 		};
@@ -131,6 +134,7 @@ function connect() {
 
 function disconnected() {
 	console.log("Disconnected:", backOff);
+
 	if (backOff === 1) {
 		core.emit("setstate", {
 			app: {
@@ -140,8 +144,12 @@ function disconnected() {
 			if (err) console.log(err.message);
 		});
 	}
-	if (backOff < 180) backOff *= 2;
-	else backOff = 180;
+	if (backOff < 180) {
+		backOff *= 2;
+	} else {
+		backOff = 180;
+	}
+
 	setTimeout(connect, backOff * 1000);
 }
 
@@ -152,11 +160,18 @@ function receiveMessage(event) {
 	} catch (err) {
 		core.emit("error", err);
 	}
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "getPolicy",  "error"].indexOf(data.type) !== -1) {
+
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy",  "error"].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
-			if(data.results) pendingQueries[data.id].query.results = data.results;
-			if(data.response) pendingQueries[data.id].query.response = data.response;
-			pendingQueries[data.id]();
+			if (data.results) { pendingQueries[data.id].query.results = data.results; }
+			if (data.response) { pendingQueries[data.id].query.response = data.response; }
+
+			if (data.type === "error") {
+				pendingQueries[data.id](data);
+			} else {
+				pendingQueries[data.id]();
+			}
+
 			delete pendingQueries[data.id];
 		}
 	}

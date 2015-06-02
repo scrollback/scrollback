@@ -95,10 +95,6 @@ sock.on('connection', function(socket) {
 			}
 		}
 
-		if(d.type === 'getPolicy') {
-			d.type = "http/" + d.type;
-		}
-
 		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
@@ -183,9 +179,8 @@ sock.on('connection', function(socket) {
 				conn.send(data);
 				data.eventStartTime = t;
 			}
-			if(data.type === 'http/getPolicy') {
+			if(data.type === 'upload/getPolicy') {
 				log.d("sending policy back", data);
-				data.type = 'getPolicy';
 				conn.send(data);
 			}
 		});
@@ -344,7 +339,7 @@ function emit(action, callback) {
 				conn.user = action.user;
 				dispatch(conn, action);
 			});
-			
+
 			if(error) action.response = error;
 		}
 		return callback();

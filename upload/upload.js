@@ -63,7 +63,7 @@ function getSignature(policy, config) {
 }
 
 module.exports = function(core, config) {
-	core.on('http/getPolicy', function(policyReq, next){
+	core.on('upload/getPolicy', function(policyReq, next){
 		var keyPrefix = getKeyPrefix(policyReq.user.id, policyReq.uploadType, policyReq.textId),
 			policy = getPolicy(keyPrefix, config),
 			signature = getSignature(policy, config);

@@ -117,7 +117,7 @@ module.exports = function(c, conf) {
 	});
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
-	core.on('http/getPolicy', loadUser, "loader");
+	core.on('upload/getPolicy', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
 	core.on('init', loadProps, 500);
 	core.on('getThreads', function(action, cb) {
