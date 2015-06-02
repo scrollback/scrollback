@@ -51,7 +51,7 @@ class S3Upload {
 			}
 		});
 
-		this.request = new XMLHttpRequest();
+		this._request = new XMLHttpRequest();
 	}
 
 	_generateThumb(event) {
@@ -92,9 +92,9 @@ class S3Upload {
 	}
 
 	start(file) {
-		this.request.onprogress = this.onprogress;
-		this.request.onabort = this.onabort;
-		this.request.onerror = this.onaerror;
+		this._request.onprogress = this.onprogress;
+		this._request.onabort = this.onabort;
+		this._request.onerror = this.onaerror;
 
 		return this._policy.then(policy => {
 			let formData = new FormData(),
@@ -125,7 +125,7 @@ class S3Upload {
 
 			let baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
 
-			this.request.addEventListener("load", event => {
+			this._request.addEventListener("load", event => {
 				let path = this._opts.uploadType + "/" + this._opts.userId + "/";
 
 				if (this._opts.uploadType === "content") {
@@ -145,14 +145,14 @@ class S3Upload {
 				}
 			}, false);
 
-			this.request.open("POST", baseurl, true);
+			this._request.open("POST", baseurl, true);
 
-			this.request.send(formData);
+			this._request.send(formData);
 		});
 	}
 
 	abort() {
-		return this.request.abort();
+		return this._request.abort();
 	}
 }
 
