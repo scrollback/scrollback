@@ -38,7 +38,7 @@ module.exports = function(core, config, store) {
 
 	core.on('error-dn', function(error, next) {
 		if (error.message === "ERR_FB_SIGNIN_NO_EMAIL") {
-			$("<div>").html("Facebook did not provide your email address, which is needed to sign you in. Please try again.").
+			$("<div>").html("Facebook did not provide us your email address. Please try again.").
 			alertbar({ type: "error" });
 		}
 
