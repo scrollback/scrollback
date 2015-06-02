@@ -1,5 +1,5 @@
-@include exports("requests") {
-    .request-item {
+@include exports("request") {
+    .request-item, .invite-item {
         @extend %clearfix;
 
         margin: 1em .5em;
@@ -19,9 +19,9 @@
         }
 
         &-actions {
-            .approve { @extend .button.info; }
+            .approve, .accept { @extend .button.info; }
 
-            .decline { @extend .button.secondary; }
+            .decline, .reject { @extend .button.secondary; }
 
             .button {
                 margin-right: .5em;
