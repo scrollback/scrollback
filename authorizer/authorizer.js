@@ -36,7 +36,7 @@ module.exports = function(core, config) {
 	require("./authRules/queryAuth.js")(core, config);
 
 	core.on("upload/getPolicy", function(action, next) {
-		if (action.user && action.user.role === "guest") {
+		if (userOps.isGuest(action.user.id)) {
 			next(new SbError("ERR_NOT_ALLOWED", {
 				source: "authorizer",
 				action: action.type,
