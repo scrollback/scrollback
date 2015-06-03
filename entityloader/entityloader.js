@@ -28,15 +28,15 @@ var handlers = {
 		core.emit('getUsers', {
 			session: "internal-loader",
 			memberOf: action.to
-		}, function(err, members) {
+		}, function(membersError, members) {
 			core.emit('getUsers', {
 				session: "internal-loader",
 				occupantOf: action.to
-			}, function(err, occupants) {
-				members = members.results;
-				occupants = occupants.results;
+			}, function(occupantsError, occupants) {
+				members = membersError? [] : members.results;
+				occupants = occupantsError? []: occupants.results;
 				users = members.concat(occupants);
-
+								
 				users = users.map(function(u) {
 					if (/guest-/.test(u.id)) u.id = u.id.replace('guest-', '');
 					return u.id;
@@ -56,6 +56,8 @@ var handlers = {
 					return m;
 				});
 				action.mentions = _.compact(mentions);
+				action.members = members;
+				action.occupants = occupants;
 				callback();
 			});
 		});
