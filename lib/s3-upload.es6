@@ -107,19 +107,23 @@ class S3Upload {
 				formData.append(field, policy[field]);
 			}
 
+			const baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
+
 			let key = policy.keyPrefix,
-				filename = file.name.replace(/\s+/g, "+"),
+				filename = file.name.replace(/\s+/g, " "),
 				thumbpath;
 
 			switch (this._opts.uploadType) {
 			case "avatar":
 			case "banner":
 				thumbpath = "256x256.jpg";
-				key += "original." + file.name.split(".").pop();
+				key += "original." + filename.split(".").pop();
+				this.url = baseurl + key;
 				break;
 			case "content":
 				thumbpath = "1/480x960.jpg";
 				key += "1/" + filename;
+				this.url = baseurl + policy.keyPrefix + "1/" + encodeURIComponent(filename);
 				break;
 			}
 
@@ -127,11 +131,7 @@ class S3Upload {
 			formData.append("success_action_status", "201");
 			formData.append("file", file);
 
-			let baseurl = "https://" + policy.bucket + ".s3.amazonaws.com/";
-
 			this._request.addEventListener("load", event => {
-				this.url = baseurl + encodeURIComponent(key);
-
 				if (typeof this.onfinish === "function") {
 					if (this._opts.generateThumb) {
 						this.thumb = baseurl + policy.keyPrefix.replace(/^uploaded/, "generated") + thumbpath;
