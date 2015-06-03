@@ -11,12 +11,14 @@ module.exports = (core, config, store) => {
 			this.notification = notification;
 		}
 
+		_truncate(text, count = 42) {
+			text = typeof text === "string" ? text.trim() : "";
+
+			return (text.length > count ? (text.slice(0, count) + "…") : text);
+		}
+
 		_format(text) {
-			text = typeof text === "string" ? text : "";
-
-			text = text.length > 42 ? (text.slice(0, 42) + "…") : text;
-
-			return format.textToHtml(text);
+			return this._truncate(format.mdToText(text));
 		}
 
 		dismiss() {
