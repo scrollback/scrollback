@@ -72,7 +72,7 @@
 	require("./modules/settings-user.js")(...args);
 	require("./modules/signin-handler.js")(...args);
 	require("./modules/view-manager.js")(...args);
-	require("./modules/swipes.js")(...args);
+	require("./modules/sidebar-swipe.es6")(...args);
 
 	// Render the client
 	require("./components/client.jsx")(...args);
