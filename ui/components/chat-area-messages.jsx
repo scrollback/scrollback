@@ -35,26 +35,23 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var chatitems = [], atTop = false, atBottom = true,
-				nav = store.get("nav"),
+				roomId = store.get("nav", "room"),
+				threadId = store.get("nav", "thread"),
 				chatAreaClassNames = "main-content-chat chat-area",
 				before, after, beforeItems, afterItems, positionKey,
+				textRange = this.state.textRange,
 				loading = false;
-
-			// Don't show
-			if (!this.state.show) {
-				return <div data-mode="none" />;
-			}
 
 			// Enhance chat area layout in modern browsers
 			if (window.CSS.supports("display", "flex")) {
 				chatAreaClassNames += " chat-area-enhanced";
 			}
 
-			before = (nav.textRange && nav.textRange.before ? nav.textRange.before : 0) + 11; /* one item will get removed */
-			after = (nav.textRange && nav.textRange.after ? nav.textRange.after : 0) + 10;
+			before = (textRange && textRange.before ? textRange.before : 0) + 11; /* one item will get removed */
+			after = (textRange && textRange.after ? textRange.after : 0) + 10;
 
-			beforeItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, -before);
-			afterItems = store.getTexts(nav.room, nav.thread, nav.textRange.time || null, after);
+			beforeItems = store.getTexts(roomId, threadId, textRange.time || null, -before);
+			afterItems = store.getTexts(roomId, threadId, textRange.time || null, after);
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
@@ -86,9 +83,9 @@ module.exports = function(core, config, store) {
 					continuation = (i !== 0 && items[i - 1].from === text.from &&
 								!(items[i - 1].tags && items[i - 1].tags.indexOf("hidden") > -1));
 
-					key = "chat-list-" + nav.room + "-" + (nav.thread || "all") + "-" + text.id + "-" + text.time;
+					key = "chat-list-" + roomId + "-" + (threadId || "all") + "-" + text.id + "-" + text.time;
 
-					if (!atTop && !atBottom && text.time <= nav.textRange.time) {
+					if (!atTop && !atBottom && text.time <= textRange.time) {
 						positionKey = key;
 					}
 
@@ -98,9 +95,9 @@ module.exports = function(core, config, store) {
 				}
 			});
 
-			if (nav.textRange.time === 1) {
+			if (textRange.time === 1) {
 				positionKey = "top";
-			} else if (!nav.textRange.time) {
+			} else if (!textRange.time) {
 				positionKey = "bottom";
 			}
 
@@ -108,7 +105,7 @@ module.exports = function(core, config, store) {
 				return (
 							<div className="chat-area-messages">
 								<div className="chat-area-messages-list">
-									<Endless key={"chat-area-" + nav.room + "-" + nav.thread}
+									<Endless key={"chat-area-" + roomId + "-" + threadId}
 										items={chatitems} onScroll={this.onScroll}
 										position={positionKey}
 										atTop={atTop} atBottom={atBottom} />
@@ -125,7 +122,7 @@ module.exports = function(core, config, store) {
 		},
 
 		getInitialState: function() {
-			return { show: false };
+			return { textRange: store.get("nav", "textRange") };
 		},
 
 		onStateChange: function(changes) {
@@ -133,10 +130,8 @@ module.exports = function(core, config, store) {
 				  roomId = store.get("nav", "room"),
 				  key = thread ? roomId + "_" + thread : roomId;
 
-			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
-				(changes.texts && changes.texts[key] && changes.texts[key].length)) {
-
-				this.setState({ show: (store.get("nav", "mode") === "chat") });
+			if (changes.nav && changes.nav.textRange || (changes.texts && changes.texts[key] && changes.texts[key].length)) {
+				this.setState({ textRange: store.get("nav", "textRange") });
 			}
 		},
 

@@ -19,6 +19,11 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
+			// Don't show
+			if (!this.state.show) {
+				return <div data-mode="none" />;
+			}
+
 			if (!this.state.read) {
 				return (
 					<div className="chat-area-empty blankslate-area" data-mode="chat">
@@ -56,8 +61,13 @@ module.exports = function(core, config, store) {
 			const roomId = store.get("nav", "room"),
 				  userId = store.get("user");
 
-			if (changes.entities && (changes.entities[roomId] || changes.entities[userId])) {
-				this.setState({ read: room.isReadable() });
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) ||
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId]))) {
+
+				this.setState({
+					show: (store.get("nav", "mode") === "chat"),
+					read: room.isReadable()
+				});
 			}
 		},
 
