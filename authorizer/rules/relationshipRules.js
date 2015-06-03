@@ -103,8 +103,15 @@ var handlers = {
 				action: action.type
 			}));
 		}
-
-		if (permissionWeights[action.user.role] < permissionWeights.follower) {
+		
+		if(action.user.transitionType === 'invite' || action.user.transitionType === 'request' ) {
+			action.role = 'none';
+			action.transitionRole = null;
+			action.transitionType = null;
+			return null;
+		}
+		
+		if (permissionWeights[action.user.role] < permissionWeights.follower ) {
 			return (new SbError("NOT_A_FOLLOWER", {
 				source: 'authorizer',
 				action: action.type
