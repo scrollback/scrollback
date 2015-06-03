@@ -94,6 +94,7 @@ sock.on('connection', function(socket) {
 				return;
 			}
 		}
+
 		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action;
@@ -177,6 +178,10 @@ sock.on('connection', function(socket) {
                 log.d("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
+			}
+			if(data.type === 'upload/getPolicy') {
+				log.d("sending policy back", data);
+				conn.send(data);
 			}
 		});
 	});
@@ -334,7 +339,7 @@ function emit(action, callback) {
 				conn.user = action.user;
 				dispatch(conn, action);
 			});
-			
+
 			if(error) action.response = error;
 		}
 		return callback();

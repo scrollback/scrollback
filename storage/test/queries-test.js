@@ -1,16 +1,23 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
+/* eslint no-shadow: 0 */
+/* eslint max-nested-callbacks: 0*/
+/* eslint handle-callback-err: 0*/
+
+"use strict";
 var assert = require('assert'),
 	utils = require('./utils.js'),
-	core = new (require('ebus'))(),
+	core = new(require('ebus'))(),
 	mathUtils = require('../../lib/math-utils.js'),
 	generate = require("../../lib/generate.js"),
 	log = require("../../lib/logger.js"),
 	storage = require('./../storage.js'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg');
-	config.storage.pg.db = "testingdatabase"; // don't change this.
-var	connString = "pg://" + config.storage.pg.username + ":" +
-	config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
+config.storage.pg.db = "testingdatabase"; // don't change this.
+if (process.env.TRAVIS) {
+	config.storage.pg.server = "direct.stage.scrollback.io";
+}
+var connString = "pg://" + config.storage.pg.username + ":" + config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
 describe("Storage Test(Queries)", function() {
@@ -24,13 +31,14 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	beforeEach(function(done) {
+		this.timeout(3500);
 		log("Before each");
 		if (config.env === 'production') {
 			log.w("Can not run test cases in production.");
 			return;
 		}
 		pg.connect(connString, function(err, client, cb) {
-			if(err) throw err;
+			if (err) throw err;
 			utils.clearTables(client, ['relations', 'entities', 'texts', 'threads'], function() {
 				cb();
 				done();
@@ -41,7 +49,10 @@ describe("Storage Test(Queries)", function() {
 	it("getUsers query (ref)", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
-			core.emit("getUsers", {type: 'getUsers', ref: user.user.id}, function(err, reply) {
+			core.emit("getUsers", {
+				type: 'getUsers',
+				ref: user.user.id
+			}, function(err, reply) {
 				log.d("Arguments:", arguments);
 				assert.equal(reply.results.length, 1, "Not one result");
 				assert.equal(reply.results[0].id, user.user.id, "Get user failed");
@@ -53,7 +64,10 @@ describe("Storage Test(Queries)", function() {
 	it("getUsers query (ref is an empty array)", function(done) {
 		var user = utils.getNewUserAction();
 		core.emit("user", user, function() {
-			core.emit("getUsers", {type: 'getUsers', ref: []}, function(err, reply) {
+			core.emit("getUsers", {
+				type: 'getUsers',
+				ref: []
+			}, function(err, reply) {
 				log.d("Arguments:", arguments);
 				assert.equal(reply.results.length, 0, "Not zero result");
 				done();
@@ -67,7 +81,10 @@ describe("Storage Test(Queries)", function() {
 		room.user = user.user;
 		core.emit("user", user, function() {
 			core.emit("room", room, function() {
-				core.emit("getRooms", {type: 'getRooms', ref: generate.names(10)}, function(err, reply) {
+				core.emit("getRooms", {
+					type: 'getRooms',
+					ref: generate.names(10)
+				}, function(err, reply) {
 					log.d("Arguments:", arguments);
 					assert.equal(reply.results.length, 0, "Should return 0 results");
 					done();
@@ -82,7 +99,10 @@ describe("Storage Test(Queries)", function() {
 		room.user = user.user;
 		core.emit("user", user, function() {
 			core.emit("room", room, function() {
-				core.emit("getEntities", {type: 'getEntities', ref: [room.room.id, user.user.id]}, function(err, reply) {
+				core.emit("getEntities", {
+					type: 'getEntities',
+					ref: [room.room.id, user.user.id]
+				}, function(err, reply) {
 					log.d("Arguments:", arguments);
 					assert.equal(reply.results.length, 2, "Should return 2 results");
 					assert.equal(reply.results[0].id, room.room.id, "wrong room");
@@ -103,7 +123,7 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			rooms.push(room);
 			if (i % 2 === 0) ref.push(room.room.id); //valid room
 			else ref.push(generate.names(10)); //invalid room
@@ -111,7 +131,10 @@ describe("Storage Test(Queries)", function() {
 
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {type: "getRooms", ref: ref}, function(err, results) {
+				core.emit("getRooms", {
+					type: "getRooms",
+					ref: ref
+				}, function(err, results) {
 					assert.equal(results.results.length, n, "not n results");
 					for (var i = 0; i < results.results.length; i++) {
 						//log.d("results:", (results.results[i] ? results.results[i].id : null), ref[i]);
@@ -127,7 +150,11 @@ describe("Storage Test(Queries)", function() {
 
 	it("getRooms query (filled results)", function(done) {
 		var room = utils.getNewRoomAction();
-		core.emit("getRooms", {type: 'getRooms', ref: room.room.id, results: [room.room]}, function(err, reply) {
+		core.emit("getRooms", {
+			type: 'getRooms',
+			ref: room.room.id,
+			results: [room.room]
+		}, function(err, reply) {
 			log.d("Arguments:", arguments);
 			assert.equal(reply.results.length, 1, "Should return 0 results");
 			done();
@@ -141,7 +168,10 @@ describe("Storage Test(Queries)", function() {
 		room.user = user.user;
 		core.emit("user", user, function() {
 			core.emit("room", room, function() {
-				core.emit("getRooms", {type: 'getRooms', ref: room.room.id}, function(err, reply) {
+				core.emit("getRooms", {
+					type: 'getRooms',
+					ref: room.room.id
+				}, function(err, reply) {
 					log.d("Arguments:", arguments);
 					assert.equal(reply.results.length, 1, "Not one result");
 					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
@@ -159,7 +189,10 @@ describe("Storage Test(Queries)", function() {
 			core.emit("room", room, function() {
 				var identity = room.room.identities[0];
 				log("Identity:", identity);
-				core.emit("getRooms", {type: 'getRooms', identity: identity.substr(0, identity.indexOf(":"))}, function(err, reply) {
+				core.emit("getRooms", {
+					type: 'getRooms',
+					identity: identity.substr(0, identity.indexOf(":"))
+				}, function(err, reply) {
 					log.d("Arguments:", arguments);
 					assert.equal(reply.results.length, 1, "Not one result");
 					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
@@ -170,6 +203,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getRooms query (identity, params, guides)", function(done) {
+		this.timeout(3000);
 		var room = utils.getNewRoomAction();
 		var user = utils.getNewUserAction();
 		room.user = user.user;
@@ -177,14 +211,19 @@ describe("Storage Test(Queries)", function() {
 			core.emit("room", room, function() {
 				var updatedRoom = utils.copy(room);
 				updatedRoom.old = room.room;
-				updatedRoom.room.description =  generate.sentence(14);
+				updatedRoom.room.description = generate.sentence(14);
 				updatedRoom.room.params = {
-					test: { test1: 1}
+					test: {
+						test1: 1
+					}
 				};
 				updatedRoom.room.identities = [generate.names(6) + "://" + generate.names(10), generate.names(5) + "://" + generate.names(10)];
 				updatedRoom.room.timezone = mathUtils.random(0, 24) * 30;
 				core.emit("room", updatedRoom, function() {
-					core.emit("getRooms", {type: 'getRooms', ref: room.room.id}, function(err, reply) {
+					core.emit("getRooms", {
+						type: 'getRooms',
+						ref: room.room.id
+					}, function(err, reply) {
 						log.d("Arguments:", arguments);
 						log.d("room:", room);
 						log.d("Updated Room", updatedRoom);
@@ -212,7 +251,10 @@ describe("Storage Test(Queries)", function() {
 			core.emit("room", room, function() {
 				var identity = room.room.identities[0];
 				log("Identity:", identity);
-				core.emit("getRooms", {type: 'getRooms', identity: identity}, function(err, reply) {
+				core.emit("getRooms", {
+					type: 'getRooms',
+					identity: identity
+				}, function(err, reply) {
 					log.d("Arguments:", arguments);
 					assert.equal(reply.results.length, 1, "Not one result");
 					assert.equal(reply.results[0].id, room.room.id, "Get room failed");
@@ -227,7 +269,7 @@ describe("Storage Test(Queries)", function() {
 		var t1 = mathUtils.random(-10, 5) * 60;
 		var t2 = mathUtils.random(7, 12) * 60;
 		var n = mathUtils.random(5, 10);
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			users.push(utils.getNewUserAction());
 			users[i].user.timezone = mathUtils.random(t1, t2);
 		}
@@ -239,7 +281,7 @@ describe("Storage Test(Queries)", function() {
 					gte: t1,
 					lte: t2
 				}
-			}, function(err, reply) {
+			}, function(err1, reply) {
 				log.d("N=", n, reply.results.length);
 				assert.equal(reply.results.length >= n, true, "Timezone query failed"); // TODO write a better assertion.
 				done();
@@ -248,6 +290,7 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (memberOf)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var users = [];
 		var room = utils.getNewRoomAction();
@@ -256,7 +299,7 @@ describe("Storage Test(Queries)", function() {
 		var n = mathUtils.random(5, 15);
 		var type, v;
 		var bannedCount = 0;
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			if (i % 3 === 0) {
 				type = 'expel';
 				v = 'banned';
@@ -276,7 +319,7 @@ describe("Storage Test(Queries)", function() {
 			users.push(user);
 		}
 		core.emit("user", roomOwner, function() {
-			utils.emitActions(core, [room] , function(err1, results1) {
+			utils.emitActions(core, [room], function(err1, results1) {
 				utils.emitActions(core, users, function(err2, results2) {
 					utils.emitActions(core, relations, function(err3, results3) {
 						log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -302,13 +345,13 @@ describe("Storage Test(Queries)", function() {
 		var roomOwner = utils.getNewUserAction();
 		room.user = roomOwner.user;
 		var n = mathUtils.random(1, 10);
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			var user = utils.getNewUserAction();
 			users.push(user);
 		}
 		var index = mathUtils.random(0, n - 1);
 		core.emit("user", roomOwner, function() {
-			utils.emitActions(core, [room] , function(err1, results1) {
+			utils.emitActions(core, [room], function(err1, results1) {
 				utils.emitActions(core, users, function(err2, results2) {
 					log.d("actions: ", err1, err2, results1, results2);
 					core.emit("getUsers", {
@@ -328,13 +371,14 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (memberOf and ref)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var users = [];
 		var room = utils.getNewRoomAction();
 		var roomOwner = utils.getNewUserAction();
 		room.user = roomOwner.user;
 		var n = mathUtils.random(1, 10);
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var user = utils.getNewUserAction();
 			relations[i].user = user.user;
@@ -343,7 +387,7 @@ describe("Storage Test(Queries)", function() {
 		}
 		var index = mathUtils.random(0, n - 1);
 		core.emit("user", roomOwner, function() {
-			utils.emitActions(core, [room] , function(err1, results1) {
+			utils.emitActions(core, [room], function(err1, results1) {
 				utils.emitActions(core, users, function(err2, results2) {
 					utils.emitActions(core, relations, function(err3, results3) {
 						log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -366,12 +410,13 @@ describe("Storage Test(Queries)", function() {
 	});
 
 	it("getUsers query (hasMember)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(1, 10);
 		var roomOwner = utils.getNewUserAction();
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -379,7 +424,7 @@ describe("Storage Test(Queries)", function() {
 			relations[i].room = room.room;
 			rooms.push(room);
 		}
-		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+		utils.emitActions(core, [user, roomOwner], function(err1, results1) {
 			utils.emitActions(core, rooms, function(err2, results2) {
 				utils.emitActions(core, relations, function(err3, results3) {
 					log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -400,13 +445,14 @@ describe("Storage Test(Queries)", function() {
 
 
 	it("getUsers query (hasMember and ref as an array)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(1, 10);
 		var roomOwner = utils.getNewUserAction();
 		var ref = [];
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -417,7 +463,7 @@ describe("Storage Test(Queries)", function() {
 			}
 			rooms.push(room);
 		}
-		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+		utils.emitActions(core, [user, roomOwner], function(err1, results1) {
 			utils.emitActions(core, rooms, function(err2, results2) {
 				utils.emitActions(core, relations, function(err3, results3) {
 					log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -427,9 +473,9 @@ describe("Storage Test(Queries)", function() {
 						ref: ref
 					}, function(err, reply) {
 						log.d("N=", n, reply.results.length, reply.results);
-						assert.equal(reply.results.length,ref.length , "hasMember query failed.");
-						reply.results.forEach(function(room, i) {
-							assert.equal(room.id, ref[i], "not equal");
+						assert.equal(reply.results.length, ref.length, "hasMember query failed.");
+						reply.results.forEach(function(rm, j) {
+							assert.equal(rm.id, ref[j], "not equal");
 						});
 						done();
 					});
@@ -441,12 +487,13 @@ describe("Storage Test(Queries)", function() {
 
 
 	it("getUsers query (hasMember and ref)", function(done) {
+		this.timeout(3000);
 		var relations = [];
 		var rooms = [];
 		var user = utils.getNewUserAction();
 		var n = mathUtils.random(3, 10);
 		var roomOwner = utils.getNewUserAction();
-		for (var i = 0;i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			relations.push(utils.getNewRelationAction('join', 'follower'));
 			var room = utils.getNewRoomAction();
 			room.user = roomOwner.user;
@@ -455,7 +502,7 @@ describe("Storage Test(Queries)", function() {
 			rooms.push(room);
 		}
 		var index = mathUtils.random(0, n - 1);
-		utils.emitActions(core, [user, roomOwner] , function(err1, results1) {
+		utils.emitActions(core, [user, roomOwner], function(err1, results1) {
 			utils.emitActions(core, rooms, function(err2, results2) {
 				utils.emitActions(core, relations, function(err3, results3) {
 					log.d("actions: ", err1, err2, err3, results1, results2, results3);
@@ -480,7 +527,10 @@ describe("Storage Test(Queries)", function() {
 	it("getTexts query (ref)", function(done) {
 		var text = utils.getNewTextAction();
 		core.emit("text", text, function() {
-			core.emit("getTexts", {type: "getTexts", ref: text.id}, function(err, reply) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				ref: text.id
+			}, function(err, reply) {
 				assert.equal(reply.results[0].id, text.id, "getTexts(ref) not working");
 				done();
 			});
@@ -490,7 +540,10 @@ describe("Storage Test(Queries)", function() {
 	it("getTexts query (ref is an empty array)", function(done) {
 		var text = utils.getNewTextAction();
 		core.emit("text", text, function() {
-			core.emit("getTexts", {type: "getTexts", ref: []}, function(err, reply) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				ref: []
+			}, function(err, reply) {
 				assert.equal(reply.results.length, 0, "array length is not zero");
 				done();
 			});
@@ -506,13 +559,16 @@ describe("Storage Test(Queries)", function() {
 		var t = mathUtils.random(1, 2) + 1;
 		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
-			text.time = time  + i; // increasing time.
+			text.time = time + i; // increasing time.
 			texts.push(text);
 			if (i % t === 0) ref.push(generate.uid());
 			else ref.push(text.id);
 		}
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", ref: ref}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				ref: ref
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
 				for (var i = 0; i < n; i++) {
@@ -535,11 +591,16 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
-			text.time = time  + i; // increasing time.
+			text.time = time + i; // increasing time.
 			texts.push(text);
 		}
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: null, before: 256, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: null,
+				before: 256,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
 				for (var i = 0; i < n; i++) {
@@ -548,15 +609,15 @@ describe("Storage Test(Queries)", function() {
 				done();
 			});
 		});
- 	});
+	});
 
 	it("getTexts query-2 (time: null / msg > 256 / before)", function(done) {
-		this.timeout(20000);
+		this.timeout(25000);
 		var texts = [];
 		var to = generate.names(8);
 		var n = mathUtils.random(257, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -564,10 +625,15 @@ describe("Storage Test(Queries)", function() {
 		}
 		var num = 256;
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: null, before: num, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: null,
+				before: num,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
-				for (var i = n - num ; i < n; i++) {
+				for (var i = n - num; i < n; i++) {
 					assert.equal(results.results[i - (n - num)].id, texts[i].id, "Incorrect results");
 				}
 				done();
@@ -581,14 +647,19 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(1, 256);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
-			text.time = time  + i; // increasing time.
+			text.time = time + i; // increasing time.
 			texts.push(text);
 		}
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: time - 1, after: 256, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: time - 1,
+				after: 256,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, n, "not n messages");
 				for (var i = 0; i < n; i++) {
@@ -606,7 +677,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(257, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -614,7 +685,12 @@ describe("Storage Test(Queries)", function() {
 		}
 		var num = 256;
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: time - 1, after: num, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: time - 1,
+				after: num,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
 				for (var i = 0; i < num; i++) {
@@ -633,7 +709,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -642,7 +718,12 @@ describe("Storage Test(Queries)", function() {
 		var num = 256;
 		var at = mathUtils.random(1, 45);
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: time + at, after: num, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: time + at,
+				after: num,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not 256");
 				for (var i = at; i < num; i++) {
@@ -659,7 +740,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -668,7 +749,12 @@ describe("Storage Test(Queries)", function() {
 		var num = mathUtils.random(1, 256);
 		var at = mathUtils.random(1, 25);
 		utils.emitActions(core, texts, function() {
-			core.emit("getTexts", {type: "getTexts", time: time + (n - 1) - at, before: num, to: to}, function(err, results) {
+			core.emit("getTexts", {
+				type: "getTexts",
+				time: time + (n - 1) - at,
+				before: num,
+				to: to
+			}, function(err, results) {
 				log.d("Texts:", results);
 				assert.equal(results.results.length, num, "Number of messages are not correct");
 				for (var i = n - num - at; i < (n - at); i++) {
@@ -686,7 +772,7 @@ describe("Storage Test(Queries)", function() {
 		var to = generate.names(8);
 		var n = mathUtils.random(300, 500);
 		var time = new Date().getTime();
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
@@ -694,16 +780,21 @@ describe("Storage Test(Queries)", function() {
 		}
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function() {
-			function getTexts(time, index) {
+			function getTexts(tim, index) {
 
-				core.emit("getTexts", {type: "getTexts", time: time, before: num, to: to}, function(err, results) {
+				core.emit("getTexts", {
+					type: "getTexts",
+					time: tim,
+					before: num,
+					to: to
+				}, function(err, results) {
 					log.d("Texts:", results);
 					//assert.equal(results.results.length, num, "Number of messages are not correct");
 					for (var i = results.results.length - 1; i >= 0; i--) {
 						//log.d("Results:", results.results[i].id, texts[index].id, index);
 						assert.equal(results.results[i].id, texts[index--].id, "Incorrect results");
 					}
-					if (results.results.length != num) {
+					if (results.results.length !== num) {
 						done();
 					} else getTexts(results.results[0].time, index + 1);
 				});
@@ -724,12 +815,16 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			rooms.push(room);
 		}
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {type: "getRooms", createTime: time - 1, after: 256}, function(err, results) {
+				core.emit("getRooms", {
+					type: "getRooms",
+					createTime: time - 1,
+					after: 256
+				}, function(err, results) {
 					log.d("rooms:", results.results.length, n);
 
 					assert.equal(results.results.length, n, "not n rooms");
@@ -751,12 +846,16 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			rooms.push(room);
 		}
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", { type: "getRooms", createTime: time + n + 2, before: 256}, function(err, results) {
+				core.emit("getRooms", {
+					type: "getRooms",
+					createTime: time + n + 2,
+					before: 256
+				}, function(err, results) {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, n, "not n messages");
@@ -778,13 +877,17 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			rooms.push(room);
 		}
 		var num = 256;
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {type: "getRooms", createTime: time + n + 2, before: num}, function(err, results) {
+				core.emit("getRooms", {
+					type: "getRooms",
+					createTime: time + n + 2,
+					before: num
+				}, function(err, results) {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, num, "not n messages");
@@ -806,13 +909,17 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			rooms.push(room);
 		}
 		var num = 256;
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {type: "getRooms", createTime: time - 1, after: num}, function(err, results) {
+				core.emit("getRooms", {
+					type: "getRooms",
+					createTime: time - 1,
+					after: num
+				}, function(err, results) {
 					log.d("rooms:", results);
 
 					assert.equal(results.results.length, num, "not n messages");
@@ -836,17 +943,27 @@ describe("Storage Test(Queries)", function() {
 		for (var i = 0; i < n; i++) {
 			var room = utils.getNewRoomAction();
 			room.user = user.user;
-			room.room.createTime = time  + i; // increasing time.
+			room.room.createTime = time + i; // increasing time.
 			room.room.identities.push("twitter://" + generate.names(15));
 			rooms.push(room);
 		}
 		var num = 256;
 		rooms.sort(function(r1, r2) {
-			return r1.room.id > r2.room.id ? 1 : (r1.room.id === r2.room.id ? 0 : -1);
+			if (r1.room.id > r2.room.id) {
+				return 1;
+			} else if (r1.room.id === r2.room.id) {
+				return 0;
+			} else {
+				return -1;
+			}
+
+			//return r1.room.id > r2.room.id ? 1 : (r1.room.id === r2.room.id ? 0 : -1);
 		});
 		core.emit("user", user, function() {
 			utils.emitActions(core, rooms, function() {
-				core.emit("getRooms", {identity: "twitter"}, function(err, results) {
+				core.emit("getRooms", {
+					identity: "twitter"
+				}, function(err, results) {
 					log.d("rooms:", results.results.length);
 
 					assert.equal(results.results.length, num, "not n messages");
@@ -869,22 +986,29 @@ describe("Storage Test(Queries)", function() {
 		var time = new Date().getTime();
 		var numThreads = mathUtils.random(5, 20);
 		var threadIds = [];
-		for (var i = 0;i < n;i++) {
+		for (var i = 0; i < n; i++) {
 			var text = utils.getNewTextAction();
 			text.to = to;
 			text.time = time + i; // increasing time.
 			texts.push(text);
 			if (i < numThreads) {
-				threadIds.push(text.threads[0].id);
+				threadIds.push(text.thread);
 			} else {
-				text.threads = [{id: threadIds[i % numThreads]}];
+				text.thread = [{
+					id: threadIds[i % numThreads]
+				}];
 			}
 		}
 		var num = mathUtils.random(1, 256);
 		utils.emitActions(core, texts, function(err) {
 			if (err) log.e("getThreads:", err);
 			assert.ok(!err, "Error while saving texts");
-			core.emit("getThreads", {type: "getThreads", time: time - 1, after: num, to: to}, function(err, results) {
+			core.emit("getThreads", {
+				type: "getThreads",
+				time: time - 1,
+				after: num,
+				to: to
+			}, function(errr, results) {
 				log.d("Texts:", results);
 				log.d("Length: ", results.results.length, numThreads);
 				assert.equal(results.results.length, numThreads, "Number of threads are not correct");
