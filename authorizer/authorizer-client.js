@@ -1,10 +1,12 @@
 /* global $ */
+
 "use strict";
+
 var formField = require("../ui/utils/form-field.js"),
 	handleAuthErrors = require('./handleAuthErrors.es6');
 
 module.exports = function(core) {
-	core.on('conf-show', function(tabs, next) {
+	core.on('conf-show', function(tabs) {
 		var room = tabs.room,
 			guestPermRead = false,
 			guestPermWrite = false,
@@ -60,11 +62,9 @@ module.exports = function(core) {
 			html: div,
 			text: "Permissions"
 		};
-
-		next();
 	}, 800);
 
-	core.on('conf-save', function(room, next) {
+	core.on('conf-save', function(room) {
 		var mapRoles = {
 				guest: 'guest',
 				users: 'registered',
@@ -80,16 +80,13 @@ module.exports = function(core) {
 			writeLevel: writeLevel,
 			openRoom: $("#authorizer-open-room").is(':checked')
 		};
-		next();
 	}, 500);
 
-	core.on('error-dn', function(error, next) {
+	core.on('error-dn', function(error) {
 		var errorActions = [ "admit", "expel", "edit", "join", "part", "room", "user", "text" ];
 
 		if (error.message === "ERR_NOT_ALLOWED" && errorActions.indexOf(error.action) > -1) {
 			handleAuthErrors(error);
 		}
-
-		next();
 	}, 1000);
 };
