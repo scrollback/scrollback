@@ -431,6 +431,28 @@ button {
     &-logout { @include icon(off); }
 }
 
+.popover-action {
+    display: block;
+    padding: .75em 1.25em;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, .1);
+    font-weight: 700;
+    font-size: .9em;
+    text-transform: uppercase;
+    text-align: right;
+    color: currentColor;
+
+    &:focus, &:hover {
+        background-color: rgba(0, 0, 0, .1);
+        color: currentColor;
+    }
+
+    &:active {
+        background-color: rgba(0, 0, 0, .2);
+        color: currentColor;
+    }
+}
+
 .thread-color {
     background-color: $accent-color;
 

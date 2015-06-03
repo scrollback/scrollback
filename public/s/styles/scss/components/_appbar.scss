@@ -141,6 +141,23 @@
                 @include icon(star-empty);
 
                 &.following { @include icon(star); }
+
+                &.requested {
+                    position: relative;
+
+                    &:after {
+                        @include dropshadow(2);
+
+                        content: "";
+                        position: absolute;
+                        top: .5em;
+                        right: .6em;
+                        height: 8px;
+                        width: 8px;
+                        border-radius: 50%;
+                        background-color: rgba(0, 0, 0, 0.6);
+                    }
+                }
             }
         }
     }
