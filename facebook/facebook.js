@@ -31,7 +31,7 @@ function loginUser(token, action, callback) {
 		try {
 			user = JSON.parse(body);
 			if (user.error || !user.email) {
-				if (!user.email) log.e("Facebook login failed: ", body);
+				if (!user.email) log.i("Facebook login failed: ", body);
 				return callback(new Error(user.error || "ERR_FB_SIGNIN_NO_EMAIL"));
 			}
 			core.emit("getUsers", {
