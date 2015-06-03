@@ -1,4 +1,21 @@
 @include exports(chat) {
+    @include keyframes(uploadprogress) {
+        0% {
+            transform: rotate(0);
+            stroke-dashoffset: 0;
+        }
+
+        50% { transform: rotate(180deg); }
+
+        75% { stroke-dashoffset: -100; }
+
+        100% {
+            transform: rotate(360deg);
+            stroke-dashoffset: -200;
+        }
+    }
+
+
     .chat-area {
         @include flexbox;
         @include flex-direction(column);
@@ -86,21 +103,99 @@
                 @media #{$screenxxxx} { padding: 1em 4em; }
             }
 
-            &-send {
-                @include icon(right-big);
-
+            &-actions {
                 position: absolute;
                 right: 0;
                 bottom: 0;
+                height: ($bar-height / 1.5);
                 display: block;
-                padding: (1em / 1.5);
                 font-size: 1.5em;
                 line-height: 1;
+            }
+
+            &-action {
+                @extend %snappy;
+
+                float: left;
+                padding: (1em / 1.5) (1.125em / 1.5);
                 cursor: pointer;
+            }
+
+            &-send {
+                @include icon(right-big);
+
+                display: block;
 
                 @for $i from 1 through length($palette) {
                     .color-#{$i - 1} & { color: nth($palette, $i); }
                 }
+
+                .chat-area-input.empty & { display: none; }
+            }
+
+            &-image {
+                @extend %transition;
+                @include icon(image);
+
+                display: none;
+                height: 100%;
+                width: 2.5em;
+                overflow: hidden;
+                opacity: .7;
+
+                &:focus, &:hover, &:active { opacity: 1; }
+
+                [type="file"] { opacity: 0; }
+
+                .progress-indicator {
+                    @extend %transition;
+
+                    fill: transparent;
+                    stroke: transparent;
+                    stroke-dasharray: 100;
+                    stroke-dashoffset: 100;
+                    transform: rotateZ(180deg);
+                    position: absolute;
+                    top: .35em;
+                    left: .45em;
+
+                    .check, .warn { @extend %transition; }
+                }
+
+                &.progress {
+                    color: $info-color;
+                    pointer-events: none;
+                    opacity: 1;
+
+                    &:before { opacity: .3; }
+
+                    &.unknown {
+                        circle {
+                            transform-origin: 50%;
+                            animation: uploadprogress 1.5s infinite linear;
+                        }
+                    }
+
+                    &.complete {
+                        color: $success-color;
+
+                        circle { stroke-dashoffset: 0; }
+
+                        .check { fill: currentColor; }
+                    }
+
+                    &.error {
+                        color: $error-color;
+
+                        .progress-indicator { stroke: transparent; }
+
+                        .warn { fill: currentColor; }
+                    }
+
+                    .progress-indicator { stroke: currentColor; }
+                }
+
+                .chat-area-input.empty & { display: block; }
             }
         }
     }
@@ -166,7 +261,7 @@
                 color: $error-color;
                 font-style: italic;
             }
-            
+
             &-hidden {
                 font-style: italic;
                 opacity: .5;

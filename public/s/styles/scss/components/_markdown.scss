@@ -30,11 +30,15 @@
 
             & + p, & + h1, & + h2, & + h3, & + h4, & + h5, & + h6 { margin-top: 1em; }
         }
+
+        img { min-height: 1em; }
+
+        [imageanchor] { border: 0; }
     }
 
     .emoji {
-       height: 1em;
-       width: 1em;
-       vertical-align: -.1em;
+        height: 1em;
+        width: 1em;
+        vertical-align: -.1em;
     }
 }
