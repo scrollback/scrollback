@@ -1,7 +1,7 @@
 /* global $ */
 "use strict";
 var formField = require("../ui/utils/form-field.js"),
-	handleAuthErrors = require('./handleAuthErrors.js');
+	handleAuthErrors = require('./handleAuthErrors.es6');
 
 module.exports = function(core) {
 	core.on('conf-show', function(tabs, next) {
@@ -84,7 +84,9 @@ module.exports = function(core) {
 	}, 500);
 
 	core.on('error-dn', function(error, next) {
-		if (error.message === "ERR_NOT_ALLOWED") {
+		var errorActions = [ "admit", "expel", "edit", "join", "part", "room", "user", "text" ];
+
+		if (error.message === "ERR_NOT_ALLOWED" && errorActions.indexOf(error.action) > -1) {
 			handleAuthErrors(error);
 		}
 
