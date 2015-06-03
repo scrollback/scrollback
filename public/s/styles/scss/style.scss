@@ -363,14 +363,23 @@ button {
     background-color: $light-color;
 }
 
-.thread-list-empty {
-    padding: 1em;
+.blankslate-area {
+    width: 100%;
+    height: 100%;
+    padding: 2em 1.4em;
+    font-size: 1.2em;
+    text-align: center;
     opacity: .5;
+
+    img {
+        display: block;
+        margin: auto;
+        max-height: 100%;
+    }
 }
 
 .thread-feed-empty {
-    padding: 2em 1.5em;
-    opacity: .5;
+    &.blankslate-area { text-align: left; }
 }
 
 .dialog {

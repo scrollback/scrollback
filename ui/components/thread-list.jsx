@@ -2,6 +2,8 @@
 
 "use strict";
 
+const permissionWeights = require("../../authorizer/permissionWeights.js");
+
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ThreadCard = require("./thread-card.jsx")(core, config, store),
@@ -65,6 +67,14 @@ module.exports = function(core, config, store) {
 			// Don't show
 			if (!this.state.show) {
 				return <div data-mode="none" />;
+			}
+
+			if (!this.state.read) {
+				return (
+					<div className="blankslate-area">
+						<img src="/s/assets/blankslate/private-room.png" />
+					</div>
+					);
 			}
 
 			cols = this.getCols();
@@ -164,7 +174,7 @@ module.exports = function(core, config, store) {
 				});
 			} else {
 				empty = (
-					<div className="thread-feed-empty">
+					<div className="thread-feed-empty blankslate-area">
 						{loading ? "Loading discussions..." : <img src="/s/assets/blankslate/no-messages.png" />}
 					</div>
 				);
@@ -190,19 +200,25 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			let room = store.get("nav", "room");
+			let roomId = store.get("nav", "room"),
+				userId = store.get("user");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.entities && changes.entities[room]) ||
-				(changes.threads && changes.threads[room]) || (changes.texts &&
-				Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId])) ||
+				(changes.threads && changes.threads[roomId]) ||
+				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
+
 				let rel = store.getRelation(),
 					roomObj = store.getRoom(),
-					show = (store.get("nav", "mode") === "room" && !(roomObj && roomObj.guides && roomObj.guides.authorizer &&
-																	 roomObj.guides.authorizer.readLevel === "follower" &&
-																	 !(rel && rel.role === "follower")));
+					readLevel;
 
-				this.setState({ show: show });
+				readLevel = (roomObj && roomObj.guides && roomObj.guides.authorizer &&
+					         roomObj.guides.authorizer.readLevel) ? roomObj.guides.authorizer.readLevel : "guest";
+
+				this.setState({
+					show: (store.get("nav", "mode") === "room"),
+					read: (permissionWeights[rel && rel.role ? rel.role : "guest"] >= permissionWeights[readLevel])
+				});
 			}
 		},
 

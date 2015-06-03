@@ -1,18 +1,23 @@
+/* eslint-env es6 */
+
 "use strict";
+
+const permissionWeights = require("../../authorizer/permissionWeights.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", changes => {
 		let future = store.with(changes),
-			rel = future.getRelation(),
-			room = future.getRoom(),
 			mode = future.get("nav", "mode");
 
-		if (!room || (rel && rel.role === "follower")) {
-			return;
-		}
+		if (mode === "chat") {
+			let roomObj = future.getRoom(),
+				rel = future.getRelation(),
+				readLevel = (roomObj && roomObj.guides && roomObj.guides.authorizer &&
+							 roomObj.guides.authorizer.readLevel) ? roomObj.guides.authorizer.readLevel : "guest";
 
-		if (mode === "chat" && room.guides && room.guides.authorizer && room.guides.authorizer.readLevel === "follower") {
-			changes.nav.mode = "room";
+			if (permissionWeights[readLevel] > permissionWeights[rel && rel.role ? rel.role : "guest"]) {
+				changes.nav.mode = "room";
+			}
 		}
 	}, 50);
 };

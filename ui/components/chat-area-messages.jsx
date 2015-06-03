@@ -118,7 +118,7 @@ module.exports = function(core, config, store) {
 				);
 			} else {
 				return (
-					<div className="chat-area-empty">
+					<div className="chat-area-empty blankslate-area">
 						{loading ? "Loading messages..." : <img src="/s/assets/blankslate/no-discussions.png" />}
 					</div>
 				);
