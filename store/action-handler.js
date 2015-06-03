@@ -336,7 +336,13 @@ function onJoinPart(join, next) {
 	relation.room = roomObj.id;
 	relation.role = join.role || (join.type === 'join'? 'follower': null);
 	if(relation.role === 'none') relation.role = null;
-
+	if(join.type === 'join'){
+		if(join.transitionType) relation.transitionType = join.transitionType;
+		if(join.transitionRole) relation.transitionRole = join.transitionRole;
+	} else {
+		relation.transitionRole = null;
+		relation.transitionType= null;
+	}
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[userObj.id] = entityOps.relatedEntityToEntity(userObj);
 	entities[roomObj.id + "_" + userObj.id] = relation;
@@ -358,8 +364,8 @@ function onAdmitDn(action) {
 	relation.user = victim.id;
 	relation.room = roomObj.id;
 	relation.role = action.role? action.role : victim.role;
-	relation.transitionRole = action.transitionRole? action.transitionRole : victim.transitionRole;
-	relation.transitionType = action.transitionType? action.transitionType : victim.transitionType;
+	relation.transitionRole = action.transitionRole? action.transitionRole : null;
+	relation.transitionType = action.transitionType? action.transitionType : null;
 
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
