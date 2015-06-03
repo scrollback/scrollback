@@ -3,12 +3,11 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ChatItem = require("./chat-item.jsx")(core, config, store),
-		Endless = require("../../bower_components/endless/endless.js"),
-		ChatAreaMessages;
+	const React = require("react"),
+		  ChatItem = require("./chat-item.jsx")(core, config, store),
+		  Endless = require("../../bower_components/endless/endless.js");
 
-	ChatAreaMessages = React.createClass({
+	let ChatAreaMessages = React.createClass({
 		onScroll: function(key, before, after) {
 			var time;
 
@@ -130,9 +129,9 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			var thread = store.get("nav", "thread"),
-				room = store.get("nav", "room"),
-				key = thread ? room + "_" + thread : room;
+			const thread = store.get("nav", "thread"),
+				  roomId = store.get("nav", "room"),
+				  key = thread ? roomId + "_" + thread : roomId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
 				(changes.texts && changes.texts[key] && changes.texts[key].length)) {

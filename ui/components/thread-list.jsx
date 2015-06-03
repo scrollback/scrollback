@@ -2,16 +2,14 @@
 
 "use strict";
 
-const permissionWeights = require("../../authorizer/permissionWeights.js");
-
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ThreadCard = require("./thread-card.jsx")(core, config, store),
-		ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
-		GridView = require("./grid-view.jsx")(core, config, store),
-		ThreadList;
+	const React = require("react"),
+		  ThreadCard = require("./thread-card.jsx")(core, config, store),
+		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
+		  GridView = require("./grid-view.jsx")(core, config, store),
+		  room = require("../../lib/room.js")(core, config, store);
 
-	ThreadList = React.createClass({
+	let ThreadList = React.createClass({
 		scrollToTop: function() {
 			core.emit("setstate", {
 				nav: {
@@ -196,28 +194,23 @@ module.exports = function(core, config, store) {
 		},
 
 		getInitialState: function() {
-			return { show: false };
+			return {
+				show: false,
+				read: true
+			};
 		},
 
 		onStateChange: function(changes) {
-			let roomId = store.get("nav", "room"),
-				userId = store.get("user");
+			const roomId = store.get("nav", "room"),
+				  userId = store.get("user");
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
 			    (changes.entities && (changes.entities[roomId] || changes.entities[userId])) ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
-
-				let rel = store.getRelation(),
-					roomObj = store.getRoom(),
-					readLevel;
-
-				readLevel = (roomObj && roomObj.guides && roomObj.guides.authorizer &&
-					         roomObj.guides.authorizer.readLevel) ? roomObj.guides.authorizer.readLevel : "guest";
-
 				this.setState({
 					show: (store.get("nav", "mode") === "room"),
-					read: (permissionWeights[rel && rel.role ? rel.role : "guest"] >= permissionWeights[readLevel])
+					read: room.isReadable()
 				});
 			}
 		},
