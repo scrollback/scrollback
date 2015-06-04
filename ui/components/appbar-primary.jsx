@@ -49,7 +49,7 @@ module.exports = function(core, config, store) {
 			const room = store.get("nav", "room"),
 				  rel = store.getRelation(room);
 
-			if (rel && rel.transitionRole === "follower") {
+			if (rel && rel.transitionRole === "follower" && rel.transitionType === "request") {
 				this.showRequestStatus();
 			} else if (rel && rel.role === "follower") {
 				core.emit("part-up",  { to: room });
@@ -124,7 +124,7 @@ module.exports = function(core, config, store) {
 			let classNames = "appbar-icon appbar-icon-follow";
 
 			if (rel) {
-				if (rel.transitionRole === "follower") {
+				if (rel.transitionRole === "follower" && rel.transitionType === "request") {
 					classNames += " requested";
 				} else if (rel.role === "follower") {
 					classNames += " following";
