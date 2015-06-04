@@ -206,7 +206,7 @@ module.exports = function(core, config, store) {
 				  rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) ||
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
 

@@ -6,14 +6,18 @@
 
 "use strict";
 
-module.exports = function (core, config, store) {
-	core.on('setstate', function (changes, next) {
-		if(changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) {
-			handleTextChange(changes);
-		}
-		next();
-	}, 850);
+module.exports = function(core, config, store) {
+	core.on('setstate', function(changes) {
+			var future = store.with(changes),
+				roomId = future.get("nav", "room"),
+				userId = future.get("user"),
+				rel = roomId + "_" + userId;
 
+		if ((changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
+	        (changes.entities && changes.entities[rel])) {
+			handleTextChange(future);
+		}
+	}, 850);
 
 	function textResponse(err, texts) {
 		var updatingState = {
@@ -27,10 +31,10 @@ module.exports = function (core, config, store) {
 		if (!err && texts.results) {
 			if (texts.before) {
 				range.end = texts.time;
-				range.start = texts.results.length < texts.before? null: texts.results[0].time;
-			} else if(texts.after) {
+				range.start = texts.results.length < texts.before ? null : texts.results[0].time;
+			} else if (texts.after) {
 				range.start = texts.time;
-				range.end = texts.results.length < texts.after? null: texts.results[texts.results.length - 1].time;
+				range.end = texts.results.length < texts.after ? null : texts.results[texts.results.length - 1].time;
 			}
 			range.items = texts.results;
 
@@ -39,17 +43,17 @@ module.exports = function (core, config, store) {
 		}
 	}
 
-	function handleTextChange(newState) {
-		var textRange = newState.nav.textRange || {},
-			thread = (typeof newState.nav.thread !== 'undefined' ? newState.nav.thread : store.get("nav", "thread")),
+	function handleTextChange(future) {
+		var textRange = future.get("nav", "textRange") || {},
+			thread = future.get("nav", "thread"),
 			/* threads may be in the process of being reset using null; in this case, use null. */
-			roomId = (newState.nav.room ? newState.nav.room : store.get("nav", "room")),
+			roomId = future.get("nav", "room"),
 			time = textRange.time || null,
 			r;
 
 		if (textRange.after) {
 			r = store.getTexts(roomId, thread, time, textRange.after);
-			if(r[r.length-1] === "missing") {
+			if (r[r.length - 1] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
