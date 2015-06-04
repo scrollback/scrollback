@@ -34,11 +34,7 @@ git pull
 sudo stop scrollback
 
 # clear redis
-redis-cli FLUSHALL
-#backing up previous data
-mv "$data" "$backup"
-#recovering data
-cp -a "$testing_state/data" "$leveldb_storage/"
+#redis-cli FLUSHALL
 
 # Setup
 npm install
