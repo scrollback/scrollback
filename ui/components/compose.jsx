@@ -129,6 +129,7 @@ module.exports = function(core, config, store) {
 			upload.onfinish = () => {
 				core.emit("text-up", {
 					thread: store.get("nav", "thread"),
+					tags: [ "image" ],
 					to: store.get("nav", "room"),
 					id: textId,
 					from: userId,
