@@ -114,7 +114,7 @@ module.exports = (core, config, store) => {
 							return;
 						}
 
-						actionIds[action.id] = res => onDone(res.role === user.role ? (user.id + " was declined to be a " + user.transitionRole) : false);
+						actionIds[action.id] = res => onDone(res.role === user.role ? (user.id + "'s request was declined.") : false);
 					});
 				}
 
