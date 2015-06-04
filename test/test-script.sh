@@ -34,7 +34,8 @@ git pull
 sudo stop scrollback
 
 # clear redis
-redis-cli FLUSHALL
+redis-cli SELECT 11
+redis-cli FLUSHDB
 #backing up previous data
 mv "$data" "$backup"
 #recovering data
