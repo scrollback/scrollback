@@ -1,0 +1,32 @@
+@include exports("request") {
+    .request-item, .invite-item {
+        @extend %clearfix;
+
+        margin: 1em .5em;
+
+        &-empty {
+            margin: 1.5em 1em;
+        }
+
+        &-message {
+            img {
+                float: left;
+                margin-right: 1em;
+                border-radius: $roundness;
+                height: 64px;
+                width: 64px;
+            }
+        }
+
+        &-actions {
+            .approve, .accept { @extend .button.info; }
+
+            .decline, .reject { @extend .button.secondary; }
+
+            .button {
+                margin-right: .5em;
+                padding: .25em 1em;
+            }
+        }
+    }
+}

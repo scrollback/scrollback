@@ -1,3 +1,4 @@
+'use strict';
 module.exports = {
-	relations: ['role', 'roleSince']
+	relations: ['role', 'roleSince','transitionRole', 'transitionType', 'officer']
 };

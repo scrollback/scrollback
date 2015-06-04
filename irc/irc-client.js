@@ -1,5 +1,7 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
+
+"use strict";
 
 var formField = require("../ui/utils/form-field.js");
 
@@ -23,9 +25,8 @@ module.exports = function(core, config, store) {
 		$errMsg = formField("", "error", "irc-message-text", "");
 		$errString = $errMsg.find("#irc-message-text");
 
-		$div.append(formField("Enable IRC", "check", "irc-enable-check", [
-						[ "irc-enable", "", enabled ]
-					]),
+		$div.append(
+					formField("IRC integration", "toggle", "irc-enable", enabled),
 					formField("IRC server", "text", "irc-server", ircServer),
 					formField("IRC channel", "text", "irc-channel", ircChannel),
 					$displayMsg
@@ -84,7 +85,7 @@ module.exports = function(core, config, store) {
 		};
 
 		next();
-	}, 800);
+	}, 600);
 
 	core.on('conf-save', function(room, next) {
 		var server = $('#irc-server').val(),

@@ -3,7 +3,7 @@
 var permissionLevels = require("../permissionWeights.js"),
 	SbError = require("./../../lib/SbError.js"),
 	readActions = [ "away", "back", "getTexts", "getThreads"],
-	writeActions = [ "text", "edit" ];
+	writeActions = [ "text", "edit"];
 
 module.exports = function() {
 	return function(action) {

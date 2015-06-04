@@ -3,35 +3,63 @@
 
 "use strict";
 
-var showMenu = require("../utils/show-menu.js"),
-	appUtils = require("../../lib/app-utils.js"),
-	stringUtils = require("../../lib/string-utils.js"),
-	getAvatar = require("../../lib/get-avatar.js");
+const showMenu = require("../utils/show-menu.js"),
+	  appUtils = require("../../lib/app-utils.js"),
+	  stringUtils = require("../../lib/string-utils.js"),
+	  getAvatar = require("../../lib/get-avatar.js");
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		Badge = require("./badge.jsx")(core, config, store),
-		NotificationCenter = require("../../notification/notification-center.es6")(core, config, store),
-		AppbarPrimary;
+	const React = require("react"),
+		  Badge = require("./badge.jsx")(core, config, store),
+		  NotificationCenter = require("../../notification/notification-center.es6")(core, config, store);
 
-	AppbarPrimary = React.createClass({
+	let AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
 			core.emit("setstate", { nav: { view: "sidebar-right" }});
 		},
 
-		toggleFollowRoom: function() {
-			var room = store.get("nav", "room"),
-				rel = store.getRelation(room);
+		showRequestStatus: function() {
+			let popover = document.createElement("div"),
+				message = document.createElement("div"),
+				content = document.createElement("div"),
+				action = document.createElement("a"),
+				$popover = $(popover);
 
-			if (rel && rel.role === "follower") {
-				core.emit("part-up",  {
-					to: room,
-					room: room
-				});
+			message.textContent = "A request has been sent to follow the room.";
+
+			content.classList.add("popover-content");
+			content.appendChild(message);
+
+			action.classList.add("popover-action");
+			action.textContent = "Cancel request";
+
+			action.addEventListener("click", () => {
+				core.emit("part-up",  { to: store.get("nav", "room") });
+
+				$popover.popover("dismiss");
+			}, false);
+
+			popover.appendChild(content);
+			popover.appendChild(action);
+
+			$popover.popover({ origin: React.findDOMNode(this.refs.followButton) });
+		},
+
+		toggleFollowRoom: function() {
+			const room = store.get("nav", "room"),
+				  rel = store.getRelation(room);
+
+			if (rel && rel.transitionRole === "follower" && rel.transitionType === "request") {
+				this.showRequestStatus();
+			} else if (rel && rel.role === "follower") {
+				core.emit("part-up",  { to: room });
 			} else {
-				core.emit("join-up",  {
-					to: room,
-					room: room
+				core.emit("join-up",  { to: room }, () => {
+					const roomObj = store.getRoom(room);
+
+					if (roomObj && roomObj.guides && roomObj.guides.authorizer && roomObj.guides.authorizer.openRoom === false) {
+						this.showRequestStatus();
+					}
 				});
 			}
 		},
@@ -73,9 +101,7 @@ module.exports = function(core, config, store) {
 				origin: e.currentTarget,
 				buttons: {},
 				items: {}
-			}, function(err, menu) {
-				showMenu("user-menu", menu);
-			});
+			}, (err, menu) => showMenu("user-menu", menu));
 		},
 
 		goBack: function() {
@@ -93,9 +119,17 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			var classNames = "appbar-icon appbar-icon-follow";
+			const rel = store.getRelation();
 
-			classNames += this.state.following ? " following" : "";
+			let classNames = "appbar-icon appbar-icon-follow";
+
+			if (rel) {
+				if (rel.transitionRole === "follower" && rel.transitionType === "request") {
+					classNames += " requested";
+				} else if (rel.role === "follower") {
+					classNames += " following";
+				}
+			}
 
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar-bg custom-titlebar-fg" onClick={this.toggleMinimize}>
@@ -114,7 +148,8 @@ module.exports = function(core, config, store) {
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online" className={classNames} onClick={this.toggleFollowRoom}></a>
+					<a data-embed="none" data-role="user follower" data-mode="room chat" data-state="online"
+						ref="followButton" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);
 		},
@@ -131,14 +166,13 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				userObj, threadObj, nav, relation, title;
+				userObj, threadObj, nav, title;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 
 				nav = store.get("nav");
-				relation = store.getRelation();
 
 				switch (nav.mode) {
 				case "room":
@@ -146,7 +180,15 @@ module.exports = function(core, config, store) {
 					break;
 				case "chat":
 					threadObj = store.get("indexes", "threadsById", nav.thread);
-					title = threadObj ? threadObj.title : nav.thread ? "" : "All messages";
+
+					if (threadObj) {
+						title = threadObj.title;
+					} else if (nav.thread) {
+						title = "";
+					} else {
+						title = "All messages";
+					}
+
 					break;
 				case "home":
 					title = "My feed";
@@ -158,8 +200,7 @@ module.exports = function(core, config, store) {
 				this.setState({
 					title: title,
 					username: appUtils.formatUserName(user),
-					picture: userObj ? getAvatar(userObj.picture, 48) : "",
-					following: !!(relation && relation.role === "follower")
+					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
 			}
 		},

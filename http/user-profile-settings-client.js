@@ -1,5 +1,7 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
+
+"use strict";
 
 var formField = require("../ui/utils/form-field.js"),
 	getAvatar = require("../lib/get-avatar.js");
@@ -12,15 +14,17 @@ module.exports = function(core) {
 		user = tabs.user || {};
 		user.params = user.params || {};
 
-		if (user.params.pictures) {
+		if (user.params.pictures && user.params.pictures.length) {
 			avatars = user.params.pictures.map(function(pic) {
 				return $("<div>").append(
 						$("<img>").attr("src", getAvatar(pic, 80))
 					).data("url", pic).addClass("profile-user-avatar" + ((user.picture === pic) ? " current" : ""));
 			});
-		}
 
-		$avatar = formField("Picture", null, "profile-picture-list", avatars);
+			$avatar = formField("Picture", null, "profile-picture-list", avatars);
+
+			$avatar.addClass("profile-picture-list");
+		}
 
 		$about = formField("About me", "area", "profile-about-me", user.description);
 

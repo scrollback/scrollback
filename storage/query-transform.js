@@ -1,6 +1,7 @@
+'use strict';
 var log = require('../lib/logger.js');
 /**
-select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256 
+select * from texts where time > 123456373 and "from"='roomname' and time > text.room.createTime && order by time desc limit 256
 only non [hidden].
 
 if delete time is set.
@@ -18,30 +19,30 @@ exports.getTexts = exports.getThreads = function(query) {
 	log("query:", query);
 	var q = makeQuery('select');
 	q.source = (query.type === 'getThreads'? 'threads': 'texts');
-	
+
 	if (query.to) {
 		q.filters.push(["to", "eq", query.to]);
 	}
-	
+
 	if (query.thread && query.type === 'getTexts') {
 		q.filters.push(["thread", "eq", query.thread]);
-	} 
-	
+	}
+
 	if (query.tag) {
 		q.filters.push(["tags", "cts", query.tag]);
 	}
-	
+
 	if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator" && query.user.role !== "su") {
 		q.filters.push({sql: 'NOT("tags" @> $)', values: [[
 			query.type === 'getThreads'? "thread-hidden": "hidden"
 		]]});
-		
+
 		log.d("HIDDEN EXCLUDED", query.type, q.filters);
 	}
-	
+
 	if (query.ref) {
 		if (query.ref instanceof Array) {
-			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);	
+			if (query.ref.length) q.filters.push(['id', 'in', query.ref]);
 			else return []; // no results.
 		} else q.filters.push(["id", "eq", query.ref]);
 	} else if (query.updateTime) {
@@ -58,10 +59,10 @@ exports.getTexts = exports.getThreads = function(query) {
 		TODO: TEXT SEARCH
 		q.filters.push(["terms", "ts", iq.q]);
 		q.iterate.key = ["tsrank" "terms", iq.q];
-		
+
 		Maybe it won't go here at all.
 	}*/
-	
+
 	if(query.after) {
 		q.iterate.limit = query.after;
 		q.iterate.reverse = false;
@@ -82,18 +83,26 @@ select * from entities INNER JOIN relations on (relations.user=entities.id AND r
 
 exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	var q = makeQuery('select'),
-		type = (iq.type === 'getEntities' ? undefined : (iq.type === 'getUsers' ? 'user' : 'room'));
+		type;
 	q.source = "entities";
-	
+	log.i(iq, q);
+	if (iq.type === 'getEntities') {
+		type = null;
+	} else if (iq.type === 'getUsers') {
+		type = "user";
+	} else {
+		type = "room";
+	}
+
 	if (type) {
 		q.filters.push([["entities", "type"], "eq", type]);
 	}
 	if (iq.ref) {
 		if (iq.ref instanceof Array ) {
 			if (iq.ref.length) q.filters.push(['id', 'in', iq.ref]);
-			else return []; // no results because ref is an empty array. 
+			else return []; // no results because ref is an empty array.
 		} else q.filters.push(["id", "eq", iq.ref]);
-	} 
+	}
 	if (iq.identity) {
 		q.filters.push(['identities', 'cts', [iq.identity]]);
 	} else if (iq.timezone) {
@@ -102,25 +111,38 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 	} else if (iq.memberOf || iq.hasMember) {
 		q.sources.push('entities');
 		q.sources.push('relations');
-		if (!iq.role) {
-			q.filters.push([['relations', 'role'], 'gt', 'none']);
-		} else {
-			q.filters.push([['relations', 'role'], 'eq', iq.role]);
-		}
 		if (iq.memberOf) {
+			if (!iq.role) {
+				if(['owner', 'su', 'moderator'].indexOf(iq.user.role) >= 0) {
+					q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
+				} else {
+					q.filters.push({sql: "(role > $ or (relations.user = $ and transitionRole > $))", values:["none", iq.user.id, "none"]});
+					// q.filters.push([['relations', 'role'], 'gt', 'none']);
+				}
+			} else {
+				q.filters.push([['relations', 'role'], 'eq', iq.role]);
+			}
 			q.filters.push([['relations', 'room'], 'eq', iq.memberOf]);
 			q.filters.push([['relations', 'user'], 'eq', ['entities', 'id'], 'column']);
 		} else if (iq.hasMember) {
+			if (!iq.role) {
+				if(iq.hasMember === iq.user.id) {
+					q.filters.push({sql: "(role > $ or transitionRole > $)", values:["none", "none"]});
+				} else {
+					q.filters.push([['relations', 'role'], 'gt', 'none']);
+				}
+			} else {
+				q.filters.push([['relations', 'role'], 'eq', iq.role]);
+			}
+
 			q.filters.push([['relations', 'user'], 'eq', iq.hasMember]);
-			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);	
+			q.filters.push([['relations', 'room'], 'eq', ['entities', 'id'], 'column']);
 		}
 	} else if (iq.role) q.filters.push(['role', 'eq', q.role]);
-	
-	
-	
-	
+
+
 	//if (iq.locale) q.quantFilter('locale', iq.locale);
-	
+
 /*	if (iq.roleTime) {
 		q.iterate.key = 'roleTime';
 		q.iterate.start = iq.roleTime;
@@ -132,7 +154,7 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.keys.push('id');
 		q.iterate.start.push(iq.iterator || "");
 	}
-	
+
 	if (iq.before) {
 		q.iterate.reverse = true;
 		q.iterate.limit = iq.before;
@@ -140,5 +162,6 @@ exports.getEntities = exports.getRooms = exports.getUsers = function (iq) {
 		q.iterate.limit = iq.after || 20000; // TODO: temp fix. need to create iterators for these kind of queries.
 		q.iterate.reverse = false;
 	}
+	log.i(iq, q);
 	return [q];
 };

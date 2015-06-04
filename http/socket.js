@@ -179,7 +179,25 @@ sock.on('connection', function(socket) {
 				conn.send(data);
 				data.eventStartTime = t;
 			}
-			if(data.type === 'upload/getPolicy') {
+
+			if (["join", "part", "admit", "expel"].indexOf(data.type) >= 0) {
+				var refObject, connections, censoredAction;
+				if (data.type === "join" || data.type === "part" ) {
+					refObject = data.user;
+				} else {
+					refObject = data.victim;
+				}
+				connections = uConns[refObject.id];
+
+				if (connections) {
+					censoredAction = censorAction(data);
+					connections.forEach(function(c) {
+						c.send(censoredAction);
+					});
+				}
+			}
+
+			if (data.type === 'upload/getPolicy') {
 				log.d("sending policy back", data);
 				conn.send(data);
 			}
