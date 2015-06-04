@@ -1,7 +1,8 @@
 module.exports = {
 	server: {
 		protocol: "https:",
-		host: "$branch.stage.scrollback.io"
+		host: "$branch.stage.scrollback.io",
+		apiHost: "$branch.stage.scrollback.io"
 	},
 	analytics: {
 		"id": "UA-XXXXXXXX-1"
