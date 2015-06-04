@@ -43,7 +43,7 @@ module.exports = (core, config, store) => {
 		if (rel && rel.role) {
 			newClassList.push("role-" + rel.role);
 		} else {
-			newClassList.push("role-" + (user.isGuest() ? "guest" : "user"));
+			newClassList.push("role-" + (user.isGuest(store.get("user")) ? "guest" : "user"));
 		}
 
 		if (room.isWritable()) {
