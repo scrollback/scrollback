@@ -240,40 +240,41 @@ module.exports = function(core, config, store) {
 			);
 		},
 
+		getDisabledStatus: function(connection) {
+			if (connection === "online") {
+				return false;
+			} else {
+				return true;
+			}
+		},
+
+		getPlaceholder: function(connection) {
+			if (connection === "connecting") {
+				return "Connecting...";
+			} else if (connection === "online") {
+				return "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
+			} else {
+				return "You are offline";
+			}
+		},
+
 		getInitialState: function() {
+			let connection = store.get("app", "connectionStatus");
+
 			return {
-				placeholder: "",
-				autofocus: false,
-				disabled: true
+				placeholder: this.getPlaceholder(connection),
+				disabled: this.getDisabledStatus(connection),
+				autofocus: document.hasFocus()
 			};
 		},
 
 		onStateChange: function(changes) {
-			var connection, placeholder, disabled;
-
 			if (!this.isMounted()) {
 				return;
 			}
 
-			if ((changes.nav && changes.nav.mode) ||
-				(changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
-				connection = store.get("app", "connectionStatus");
-				if (connection === "connecting") {
-					placeholder = "Connecting...";
-					disabled = true;
-				} else if (connection === "online") {
-					placeholder = "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
-					disabled = false;
-				} else {
-					placeholder = "You are offline";
-					disabled = true;
-				}
-
-				this.setState({
-					placeholder: placeholder,
-					autofocus: document.hasFocus(),
-					disabled: disabled
-				});
+			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
+				this.replaceState(this.getInitialState());
 			}
 		},
 		componentDidMount: function() {

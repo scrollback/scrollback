@@ -195,23 +195,22 @@ module.exports = function(core, config, store) {
 
 		getInitialState: function() {
 			return {
-				show: false,
-				read: true
+				show: (store.get("nav", "mode") === "room"),
+				read: room.isReadable()
 			};
 		},
 
 		onStateChange: function(changes) {
 			const roomId = store.get("nav", "room"),
-				  userId = store.get("user");
+				  userId = store.get("user"),
+				  rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.entities && (changes.entities[roomId] || changes.entities[userId])) ||
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
-				this.setState({
-					show: (store.get("nav", "mode") === "room"),
-					read: room.isReadable()
-				});
+
+				this.setState(this.getInitialState());
 			}
 		},
 

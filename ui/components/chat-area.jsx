@@ -59,10 +59,11 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes) {
 			const roomId = store.get("nav", "room"),
-				  userId = store.get("user");
+				  userId = store.get("user"),
+				  rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread)) ||
-			    (changes.entities && (changes.entities[roomId] || changes.entities[userId]))) {
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user) {
 
 				this.setState({
 					show: (store.get("nav", "mode") === "chat"),

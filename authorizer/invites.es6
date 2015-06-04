@@ -39,7 +39,7 @@ module.exports = (core, config, store) => {
 
 				avatar.src = getRoomPics(room).picture;
 
-				let message = document.createTextNode("You are invited to be a " + room.transitionRole + " of " + room.id);
+				let message = document.createTextNode(room.officer + " invited you to be a " + room.transitionRole + " of " + room.id);
 
 				messagediv.appendChild(avatar);
 				messagediv.appendChild(message);
