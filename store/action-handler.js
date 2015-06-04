@@ -359,7 +359,8 @@ function onAdmitDn(action) {
 	var roomObj = action.room;
 	var victim = action.victim;
 	var relation = {},
-		entities = {};
+		entities = {},
+		newState, roomId;
 
 	relation.user = victim.id;
 	relation.room = roomObj.id;
@@ -370,8 +371,13 @@ function onAdmitDn(action) {
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
 	entities[roomObj.id + "_" + victim.id] = relation;
-
-	core.emit("setstate", {
+	
+	newState = {
 		entities: entities
-	});
+	};
+	
+	roomId = store.get("nav", "room");
+	if(roomId === roomObj.id) newState.nav = {room: roomId};
+	
+	core.emit("setstate",newState);
 }
