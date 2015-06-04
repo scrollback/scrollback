@@ -30,9 +30,13 @@ module.exports = function(core, config, store) {
 		},
 
 		goToThread: function(e) {
+			if(e.button !== 0) return;
+
 			if (/(card-header-icon|reply)/.test(e.target.className)) {
 				return;
 			}
+
+			e.preventDefault();
 
 			if (this.state.quickReplyShown) {
 				return;
@@ -193,7 +197,7 @@ module.exports = function(core, config, store) {
 						<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
 						{icons}
 					</div>
-					<div className="card-content">{chats}</div>
+					<div className="card-content">{chats}<a href="https://google.com" className="overlay-link"></a></div>
 					<div ref="quickReply" className="card-quick-reply" onClick={this.showQuickReply}>
 						<div className="card-quick-reply-content">
 							<div className="card-button card-button-reply">Quick reply</div>

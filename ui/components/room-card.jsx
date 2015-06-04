@@ -38,9 +38,13 @@ module.exports = function(core, config, store) {
 		},
 
 		goToRoom: function(e) {
+			if(e.button !== 0) return;
+
 			if (/card-header-icon/.test(e.target.className)) {
 				return;
 			}
+
+			e.preventDefault();
 
 			core.emit("setstate", {
 				nav: {
@@ -109,7 +113,8 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
+			   <div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
+			   		<a href="https://google.com" className="overlay-link"></a>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
 						<div className="card-cover-header card-header">
 							<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
