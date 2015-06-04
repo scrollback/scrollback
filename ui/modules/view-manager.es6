@@ -2,11 +2,17 @@
 
 "use strict";
 
-const appUtils = require("../../lib/app-utils.js"),
-	  keys = [ "view", "mode" ],
-	  types = [ "view", "mode", "color", "role", "embed", "toast", "canvas", "input", "state" ];
+const keys = [ "view", "mode" ],
+	  types = [
+				"view", "mode", "role", "permission",
+				"embed", "toast", "canvas",
+				"color", "input", "state"
+			];
 
 module.exports = (core, config, store) => {
+	const user = require("../../lib/user.js")(core, config, store),
+		  room = require("../../lib/room.js")(core, config, store);
+
 	let oldClassName;
 
 	// Listen to navigate and add class names
@@ -37,7 +43,13 @@ module.exports = (core, config, store) => {
 		if (rel && rel.role) {
 			newClassList.push("role-" + rel.role);
 		} else {
-			newClassList.push("role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user"));
+			newClassList.push("role-" + (user.isGuest(store.get("user")) ? "guest" : "user"));
+		}
+
+		if (room.isWritable()) {
+			newClassList.push("permission-write");
+		} else if (room.isReadable()) {
+			newClassList.push("permission-read");
 		}
 
 		if (store.get("context", "env") === "embed") {

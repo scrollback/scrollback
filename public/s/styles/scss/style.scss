@@ -64,6 +64,7 @@ html, body {
 body {
     @include filter((
                     role: $roles,
+                    permission: $permissions,
                     embed: $embeds,
                     mode: $modes,
                     context: $contexts,
