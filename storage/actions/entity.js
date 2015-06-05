@@ -1,13 +1,12 @@
 "use strict";
 
-var pglib = require("./psqllib.js");
+var pg = require("../../lib/pg.js");
 
 /*
 	Warning: This does not lock the table or do proper upserts.
 	If two inserts are done with the same key very close to each
 	other, the second one will fail.
 */
-
 
 module.exports = function (action) {
 	var entity = action[action.type],
@@ -38,7 +37,7 @@ module.exports = function (action) {
 			});
 		}
 		
-		return inserts.map(pglib.paramize);
+		return inserts;
 	} else {
 		// Update an existing entity;
 		
@@ -73,69 +72,11 @@ module.exports = function (action) {
 			});
 		}
 		
-		return [pglib.join(["UPDATE entities SET"].concat(
-			updates,
-			[{ $: "WHERE id=${id}", id: entity.id }]
-		))].map(pglib.paramize);
+		return [pg.cat([
+			"UPDATE entities SET",
+			pg.cat(updates, ", "),
+			{ $: "WHERE id=${id}", id: entity.id }
+		])];
 	}
 };
 
-
-/*
-
-TODO 1. if delete time is set then update the type also.
-2. check if identities array is a set.
-
-exports.room = exports.user = function (action) {
-
-	var entity = action[action.type],
-		put = makePut('upsert', 'entities'),
-		putOwner = makePut('insert', 'relations');
-	put.lock = entity.id;
-	put.insert = {
-		id: entity.id,
-		type: action.type,
-		description: entity.description,
-		picture: entity.picture,
-
-		identities: entity.identities.map(function(ident) {
-			return [ident.split(':', 2)[0], ident];
-		}),
-		timezone: entity.timezone,
-		//locale: entity.locale,
-		params: entity.params,
-		guides: entity.guides
-	};
-	put.filters.push(['id', 'eq', entity.id]);
-	['description', 'picture', 'timezone', 'params', 'guides'].forEach(function(p) {
-			// column name in database are lower case of property name of entity.
-			put.update.push([p.toLowerCase(), 'set', entity[p]]);
-	});
-
-	if (entity.identities) {
-		put.update.push(['identities', 'set', entity.identities.map(function(ident) {
-			return [ident.split(':', 2)[0], ident];
-		})]);
-	}
-	if (entity.createTime) {
-		put.update.push(['createtime', 'set', new Date(entity.createTime)]);
-		put.insert.createtime = new Date(entity.createTime);
-	}
-	if (entity.deleteTime) {
-		put.update.push(['deletetime', 'set', new Date(entity.deleteTime)]);
-		put.insert.deletetime = new Date(entity.deleteTime);
-	}
-	var ret = [put];
-	if ((!(action.old && action.old.id)) && (action.type === 'room')) { // add relationship role = owner
-		putOwner.insert = {
-			room: action.room.id,
-			user: action.user.id,
-			role: "owner",
-			roletime: new Date(action.time)
-		};
-		ret.push(putOwner);
-	}
-	return ret;
-};
-
-*/

@@ -4,7 +4,7 @@ exports.getTexts = function(query, texts) {
 	log("Texts:", texts);
 	var results = [];
 	if (texts.length) {
-		texts[0].rows.forEach(function(row) {
+		texts.forEach(function(row) {
 			var text = {
 				id: row.id,
 				to: row.to,
@@ -33,7 +33,7 @@ exports.getThreads = function(query, threads) {
 	log("Threads:", threads);
 	var results = [];
 	if (threads.length) {
-		threads[0].rows.forEach(function(row) {
+		threads.forEach(function(row) {
 			var thread = {
 				id: row.id,
 				to: row.to,
@@ -63,7 +63,7 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 	log("Entities:", entities);
 	var results = [];
 	if (entities.length) {
-		entities[0].rows.forEach(function(row) {
+		entities.forEach(function(row) {
 			var identities = [];
 			row.identities.forEach(function(identity) {
 				identities.push(identity[1]);

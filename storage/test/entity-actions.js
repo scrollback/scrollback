@@ -1,7 +1,11 @@
-var userRoom = require("../userRoom.js");
+"use strict";
+
+/* eslint-env mocha */
+
+var entity = require("../actions/entity.js");
 
 it("should make an insert query", function () {
-	var query = userRoom({
+	var query = entity({
 		id: "actionid8347",
 		type: "room",
 		user: { id: "userid1" },
@@ -20,7 +24,7 @@ it("should make an insert query", function () {
 });
 
 it("should make an update query", function () {
-	var query = userRoom({
+	var query = entity({
 		id: "actionid8347",
 		type: "user",
 		user: { id: "userid1",
