@@ -14,9 +14,9 @@ var assert = require('assert'),
 	config = require('./../../server-config-defaults.js'),
 	pg = require('pg');
 config.storage.pg.db = "testingdatabase"; // don't change this.
-if (process.env.TRAVIS) {
+//if (process.env.TRAVIS) {
 	config.storage.pg.server = "direct.stage.scrollback.io";
-}
+//}
 var connString = "pg://" + config.storage.pg.username + ":" + config.storage.pg.password + "@" + config.storage.pg.server + "/" + config.storage.pg.db;
 
 
@@ -325,8 +325,12 @@ describe("Storage Test(Queries)", function() {
 						log.d("actions: ", err1, err2, err3, results1, results2, results3);
 						core.emit("getUsers", {
 							type: 'getUsers',
-							memberOf: room.room.id
+							memberOf: room.room.id,
+							user: {
+								role: "owner"
+							}
 						}, function(err, reply) {
+							if(err) throw(err);
 							log.d("N=", n, reply.results.length);
 
 							assert.equal(reply.results.length, n - bannedCount + 1, "member of query failed.");
@@ -357,7 +361,10 @@ describe("Storage Test(Queries)", function() {
 					core.emit("getUsers", {
 						type: 'getUsers',
 						ref: users[index].user.id,
-						memberOf: room.room.id
+						memberOf: room.room.id,
+						user: {
+								role: "none"
+							}
 					}, function(err, reply) {
 						log.d("N=", 0, reply.results.length);
 						assert.equal(reply.results.length, 0, "member of query failed.");
@@ -394,7 +401,10 @@ describe("Storage Test(Queries)", function() {
 						core.emit("getUsers", {
 							type: 'getUsers',
 							ref: users[index].user.id,
-							memberOf: room.room.id
+							memberOf: room.room.id,
+							user: {
+								role: "owner"
+							}
 						}, function(err, reply) {
 							log.d("N=", n, reply.results.length);
 							assert.equal(reply.results.length, 1, "member of query failed.");
@@ -430,7 +440,10 @@ describe("Storage Test(Queries)", function() {
 					log.d("actions: ", err1, err2, err3, results1, results2, results3);
 					core.emit("getRooms", {
 						type: 'getRooms',
-						hasMember: user.user.id
+						hasMember: user.user.id,
+						user: {
+								role: "owner"
+							}
 					}, function(err, reply) {
 						log.d("N=", n, reply.results.length);
 						assert.equal(reply.results.length, n, "hasMember query failed.");
@@ -470,7 +483,10 @@ describe("Storage Test(Queries)", function() {
 					core.emit("getRooms", {
 						type: 'getRooms',
 						hasMember: user.user.id,
-						ref: ref
+						ref: ref,
+						user: {
+								role: "owner"
+							}
 					}, function(err, reply) {
 						log.d("N=", n, reply.results.length, reply.results);
 						assert.equal(reply.results.length, ref.length, "hasMember query failed.");
@@ -509,7 +525,10 @@ describe("Storage Test(Queries)", function() {
 					core.emit("getRooms", {
 						type: 'getRooms',
 						hasMember: user.user.id,
-						ref: rooms[index].room.id
+						ref: rooms[index].room.id,
+						user: {
+								role: "owner"
+							}
 					}, function(err, reply) {
 						log.d("N, length=", n, reply.results.length, reply.results);
 						assert.equal(reply.results.length, 1, "hasMember query failed.");

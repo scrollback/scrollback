@@ -1,3 +1,4 @@
+"use strict";
 var cd = __dirname;
 
 cd = cd.substring(0, cd.length - 4);
@@ -16,7 +17,7 @@ require("blanket")({
 //require("../irc/irc-test.js");
 require("../authorizer/tests/authorizer-test.js");
 require("../threader/threader-test.js");
-require("../storage/storage-test.js");
+//require("../storage/storage-test.js");
 require("../redis-storage/redis-test.js");
 require("../lib/validate-test.js");
 require("../lib/obj-utils-test.js");
