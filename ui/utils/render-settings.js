@@ -10,7 +10,7 @@ module.exports = function(core, config, store) {
 		var pluginErr;
 
 		if (!(room && room.params)) {
-			return;
+			return null;
 		}
 
 		Object.keys(room.params).forEach(function(p) {
@@ -39,6 +39,7 @@ module.exports = function(core, config, store) {
 		var $page = $("<div>").addClass("settings-page"),
 			$list = $("<ul>").addClass("settings-page-content-list"),
 			$view = $("<div>").addClass("settings-page-content-view"),
+			$li,
 			nav = store.get("nav"),
 			settingsItem, title;
 
@@ -47,10 +48,14 @@ module.exports = function(core, config, store) {
 				continue;
 			}
 
-			$("<li>").addClass("settings-page-content-list-item")
+			$li = $("<li>").addClass("settings-page-content-list-item")
 					 .attr("data-settings-list", i)
 					 .text(items[i].text)
 					 .appendTo($list);
+
+			if (items[i].badge) {
+				$li.append($("<span>").addClass("badge").text(items[i].badge));
+			}
 
 			$("<div>").addClass("settings-page-content-view-item")
 					 .attr("data-settings-view", i)
@@ -128,6 +133,7 @@ module.exports = function(core, config, store) {
 				errorItem = i;
 			}
 		}
+
 		if (error) {
 			core.emit("conf-show", {
 				room: objUtils.clone(action.room)
@@ -136,13 +142,9 @@ module.exports = function(core, config, store) {
 
 				renderSettings(items);
 
-				$(".list-item-" + errorItem + "-settings").addClass("error");
+				$("[data-settings-list=" + errorItem + "]").addClass("current");
 
-				core.emit("setstate", {
-					nav: {
-						dialogState: errorItem
-					}
-				});
+				setPage(errorItem);
 			});
 		}
 	}, 500);

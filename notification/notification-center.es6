@@ -63,4 +63,4 @@ module.exports = (core, ...args) => {
 	}
 
 	return NotificationCenter;
-}
+};

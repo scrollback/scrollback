@@ -172,7 +172,7 @@ module.exports = function(core, config, store) {
 					chats.push((
 						<div key={"thread-card-chat-" + store.get("nav", "room") + "-" + thread.id + "-" + chat.id} className="card-chat">
 							<span className="card-chat-nick">{appUtils.formatUserName(chat.from)}</span>
-							<span className="card-chat-message">{format.htmlToText(format.mdToHtml(chat.text))}</span>
+							<span className="card-chat-message">{format.mdToText(chat.text)}</span>
 						</div>
 					));
 				}

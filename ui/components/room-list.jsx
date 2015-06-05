@@ -34,13 +34,11 @@ module.exports = function(core, config, store) {
 			relatedRooms = store.getRelatedRooms();
 
 			relatedRooms.forEach(function(room) {
-				var role;
-
 				if (typeof room !== "object") {
 					return;
 				}
 
-				role = room.role || "visitor";
+				let role = secs[room.role] ? room.role : "visitor";
 
 				secs[role].items.push({
 					key: "home-room-card-" + role + "-" + room.id,

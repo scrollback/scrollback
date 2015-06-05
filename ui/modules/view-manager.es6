@@ -2,23 +2,28 @@
 
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+const keys = [ "view", "mode" ],
+	  types = [
+				"view", "mode", "role", "permission",
+				"embed", "toast", "canvas",
+				"color", "input", "state"
+			];
 
-module.exports = function(core, config, store) {
-	var keys = [ "view", "mode" ],
-		types = [ "view", "mode", "color", "role", "embed", "toast", "canvas", "input", "state" ],
-		oldClassName;
+module.exports = (core, config, store) => {
+	const user = require("../../lib/user.js")(core, config, store),
+		  room = require("../../lib/room.js")(core, config, store);
+
+	let oldClassName;
 
 	// Listen to navigate and add class names
-	core.on("statechange", function() {
-		var newClassList = [],
-			currentClassName, newClassName,
-			relation, value, nav, thread, form, minimize;
+	core.on("statechange", () => {
+		let newClassList = [],
+			currentClassName, newClassName;
 
-		nav = store.get("nav");
+		const nav = store.get("nav");
 
 		for (var i = 0, l = keys.length; i < l; i++) {
-			value = nav[keys[i]];
+			let value = nav[keys[i]];
 
 			if (value) {
 				newClassList.push(keys[i] + "-" + value);
@@ -26,29 +31,35 @@ module.exports = function(core, config, store) {
 		}
 
 		if (nav.mode === "chat" && nav.thread) {
-			thread = store.get("indexes", "threadsById", nav.thread);
+			const thread = store.get("indexes", "threadsById", nav.thread);
 
 			if (thread && thread.color) {
 				newClassList.push("color-" + thread.color);
 			}
 		}
 
-		relation = store.getRelation();
+		const rel = store.getRelation();
 
-		if (relation && relation.role) {
-			newClassList.push("role-" + relation.role);
+		if (rel && rel.role) {
+			newClassList.push("role-" + rel.role);
 		} else {
-			newClassList.push("role-" + (appUtils.isGuest(store.get("user")) ? "guest" : "user"));
+			newClassList.push("role-" + (user.isGuest(store.get("user")) ? "guest" : "user"));
+		}
+
+		if (room.isWritable()) {
+			newClassList.push("permission-write");
+		} else if (room.isReadable()) {
+			newClassList.push("permission-read");
 		}
 
 		if (store.get("context", "env") === "embed") {
-			form = store.get("context", "embed", "form");
+			const form = store.get("context", "embed", "form");
 
 			if (form) {
 				newClassList.push("embed-" + form);
 			}
 
-			minimize = store.get("context", "embed", "minimize");
+			const minimize = store.get("context", "embed", "minimize");
 
 			if (minimize) {
 				newClassList.push(form + "-minimized");

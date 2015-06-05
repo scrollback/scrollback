@@ -1,3 +1,5 @@
+"use strict";
+
 var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
 var names = require('../lib/generate.js').names;
 var utils = require('../lib/app-utils.js');
@@ -83,17 +85,50 @@ var handlers = {
 	expel: loadVictim
 };
 
-function loadVictim(action, callback) {
-	log.d("Entity Loader:", action);
-	if (action.ref) {
-		core.emit("getUsers", {
-			ref: action.ref,
-			session: action.session
-		}, function(err, data) {
-			if (err || !data || !data.results || !data.results.length) {
-				return callback(new Error("user " + action.ref + " not found"));
+
+function loadRelatedUser(room, user, session, callback) {
+	core.emit("getUsers", {
+		id: uid(),
+		ref: user,
+		session: session
+	}, function(err, data) {
+		var userObj, roomName;
+		if (err || !data || !data.results || !data.results.length) {
+			return callback(new Error("USER_NOT_FOUND"));
+		} else {
+			userObj = data.results[0];
+			if (!/guest-/.test(userObj.id)) {
+				var id = uid();
+				core.emit("getUsers", {
+					id: id,
+					session: session,
+					ref: user,
+					memberOf: room
+				}, function(err, relations) {
+					var resp;
+					log.d("Loaded victim:", relations, relations.results);
+					if (err || !relations || !relations.results || !relations.results.length) {
+						resp = userObj;
+						userObj.role = "registered";
+						callback(null, resp);
+					} else {
+						callback(null, relations.results[0]);
+					}
+				});
+			} else {
+				userObj.role = "guest";
+				callback(null, userObj);
 			}
-			action.victim = data.results[0];
+		}
+	});
+}
+function loadVictim(action, callback) {
+	
+	if (action.ref) {
+		loadRelatedUser(action.to, action.ref, action.session, function(err, victim){
+			if (err)return callback(err);
+			action.victim = victim;
+			log.d("Entity Loader:", action);
 			callback();
 		});
 	} else {
@@ -117,6 +152,7 @@ module.exports = function(c, conf) {
 	});
 	core.on('getUsers', loadUser, "loader");
 	core.on('getRooms', loadUser, "loader");
+	core.on('upload/getPolicy', loadUser, "loader");
 	core.on('getTexts', basicLoader, "loader");
 	core.on('init', loadProps, 500);
 	core.on('getThreads', function(action, cb) {
@@ -135,13 +171,6 @@ module.exports = function(c, conf) {
 };
 
 function userHandler(action, callback) {
-	var ref;
-
-	if(utils.isInternalSession(action.session)) {
-		ref = action.user.id;
-	}else{
-		ref = "me";
-	}
 	core.emit("getUsers", {ref: "me", session: action.session}, function(err, data){
 		function done() {
 			if(action.user.identities) {
@@ -247,13 +276,12 @@ function loadUser(action, callback) {
 		};
 		return callback();
 	}
-
 	core.emit("getUsers", {
 		id: uid(),
 		ref: "me",
 		session: action.session
 	}, function(err, data) {
-		var user;
+		var user, roomName;
 		if (err || !data || !data.results || !data.results.length) {
 			return callback(new Error("USER_NOT_INITED"));
 		} else {
@@ -261,12 +289,16 @@ function loadUser(action, callback) {
 			if ((action.type && events.indexOf(action.type) >= 0) || action.type == "init") action.from = data.results[0].id;
 			if (action.type == "user") {
 				action.old = data.results[0];
-			} else if (!/guest-/.test(user.id) && action.to) {
+			} else if (!/guest-/.test(user.id)) {
+				if(action.to) roomName = action.to;
+				else if(action.memberOf) roomName = action.memberOf;
+				else if(action.occupantOf) roomName = action.occupantOf;
+				
 				core.emit("getUsers", {
 					id: uid(),
-					session: action.session,
+					session: "internal-loader",
 					ref: user.id,
-					memberOf: action.to
+					memberOf: roomName
 				}, function(err, data) {
 					if (err || !data || !data.results || !data.results.length) {
 						action.user = user;
@@ -287,36 +319,49 @@ function loadUser(action, callback) {
 }
 
 function loadRoom(action, callback) {
-	core.emit("getRooms", {
-		id: uid(),
-		ref: action.to,
-		session: "internal-loader"
-	}, function(err, rooms) {
-		var room;
-		if (err || !rooms || !rooms.results || !rooms.results.length) {
-			if (action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
+	var room;
+	if(action.type === 'getUsers') {
+		if(action.memberOf) room = action.memberOf;
+		else if(action.occupantOf) room = action.occupantOf;
+	} else {
+		room = action.to;
+	}
+	
+	
+	if(room) {
+		core.emit("getRooms", {
+			id: uid(),
+			ref: room,
+			session: "internal-loader"
+		}, function(err, rooms) {
+			var room;
+			if (err || !rooms || !rooms.results || !rooms.results.length) {
+				if (action.type != "room") return callback(new Error("NO_ROOM_WITH_GIVEN_ID"));
 
-			core.emit("getUsers", {
-				session: "internal-loader",
-				ref: action.to
-			}, function(err, users) {
-				if (users && users.results && users.results.length) {
-					return callback(new Error("NOT_A_ROOM"));
-				}
-				action.old = {};
-				return callback();
-			});
-		} else {
-			room = rooms.results[0];
-			if (action.type == "room") {
-				if (room && room.id) action.old = room;
-				else action.old = {};
+				core.emit("getUsers", {
+					session: "internal-loader",
+					ref: action.to
+				}, function(err, users) {
+					if (users && users.results && users.results.length) {
+						return callback(new Error("NOT_A_ROOM"));
+					}
+					action.old = {};
+					return callback();
+				});
 			} else {
-				action.room = room;
+				room = rooms.results[0];
+				if (action.type == "room") {
+					if (room && room.id) action.old = room;
+					else action.old = {};
+				} else {
+					action.room = room;
+				}
+				callback();
 			}
-			callback();
-		}
-	});
+		});
+	} else {
+		callback();
+	}
 }
 
 function basicLoader(action, callback) {
@@ -401,9 +446,9 @@ function generatePick(id) {
 
 
 
- function  loadProps(action, callback) {
+function  loadProps(action, callback) {
 	var wait = true, userID = action.user.id;
-	log("Loading user content", action.user.id);
+	log.d("Loading user content", action.user.id);
 	core.emit("getRooms", {
 		id: uid(),
 		hasOccupant: userID,
@@ -414,7 +459,7 @@ function generatePick(id) {
 		} else {
 			action.occupantOf = rooms.results;
 		}
-		log("Loading user content: occupants", rooms.results);
+		log.d("Loading user content: occupants", rooms.results);
 		if (wait) wait = false;
 		else callback();
 	});

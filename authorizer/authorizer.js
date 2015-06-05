@@ -1,11 +1,14 @@
-"use strict";	
+"use strict";
 
-var events = ["text", "edit", "away", "back", "join", "part", "admit", "expel", "getTexts", "getThreads"];
-var userOps = require("../lib/user.js")();
+var SbError = require("../lib/SbError.js"),
+	events = ["text", "edit", "away", "back", "join", "part", "admit", "expel", "getTexts", "getThreads"],
+	userOps = require("../lib/user.js")();
+
 module.exports = function(core, config) {
-	var domainAuth = require("./rules/domainRules.js")(core, config);
-	var permissionRules = require("./rules/permissionRules.js")(core, config);
-	var relationshipRules = require("./rules/relationshipRules.js")(core, config);
+	var domainAuth = require("./rules/domainRules.js")(core, config),
+		permissionRules = require("./rules/permissionRules.js")(core, config),
+		relationshipRules = require("./rules/relationshipRules.js")(core, config);
+
 	events.forEach(function(event) {
 		core.on(event, function(action, next) {
 			var error;
@@ -26,9 +29,22 @@ module.exports = function(core, config) {
 			next();
 		}, "authorization");
 	});
+
 	require("./authRules/initAuth.js")(core, config);
 	require("./authRules/userAuth.js")(core, config);
 	require("./authRules/roomAuth.js")(core, config);
 	require("./authRules/queryAuth.js")(core, config);
-	
+
+	core.on("upload/getPolicy", function(action, next) {
+		if (userOps.isGuest(action.user.id)) {
+			next(new SbError("ERR_NOT_ALLOWED", {
+				source: "authorizer",
+				action: action.type,
+				requiredRole: "registered",
+				currentRole: "guest"
+			}));
+		} else {
+			next();
+		}
+	},  "authorization");
 };
