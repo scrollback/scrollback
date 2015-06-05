@@ -1,5 +1,7 @@
 /* jshint browser:true */
-
+/* eslint no-shadow: 0*/
+/* eslint no-undef: 0*/
+"use strict";
 module.exports = function(core, config, store) {
 	var login;
 
@@ -32,5 +34,15 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 100);
+
+
+	core.on('error-dn', function(error, next) {
+		if (error.message === "ERR_FB_SIGNIN_NO_EMAIL") {
+			$("<div>").html("Facebook did not give us your email address, which we need to sign you in. Please try anothher signin method.").
+			alertbar({ type: "error" });
+		}
+
+		next();
+	}, 1000);
 
 };

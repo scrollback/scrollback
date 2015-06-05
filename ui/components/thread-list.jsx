@@ -3,13 +3,13 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ThreadCard = require("./thread-card.jsx")(core, config, store),
-		ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
-		GridView = require("./grid-view.jsx")(core, config, store),
-		ThreadList;
+	const React = require("react"),
+		  ThreadCard = require("./thread-card.jsx")(core, config, store),
+		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
+		  GridView = require("./grid-view.jsx")(core, config, store),
+		  room = require("../../lib/room.js")(core, config, store);
 
-	ThreadList = React.createClass({
+	let ThreadList = React.createClass({
 		scrollToTop: function() {
 			core.emit("setstate", {
 				nav: {
@@ -65,6 +65,14 @@ module.exports = function(core, config, store) {
 			// Don't show
 			if (!this.state.show) {
 				return <div data-mode="none" />;
+			}
+
+			if (!this.state.read) {
+				return (
+					<div className="blankslate-area">
+						<img src="/s/assets/blankslate/private-room.png" />
+					</div>
+					);
 			}
 
 			cols = this.getCols();
@@ -164,7 +172,7 @@ module.exports = function(core, config, store) {
 				});
 			} else {
 				empty = (
-					<div className="thread-feed-empty">
+					<div className="thread-feed-empty blankslate-area">
 						{loading ? "Loading discussions..." : <img src="/s/assets/blankslate/no-messages.png" />}
 					</div>
 				);
@@ -186,16 +194,23 @@ module.exports = function(core, config, store) {
 		},
 
 		getInitialState: function() {
-			return { show: false };
+			return {
+				show: (store.get("nav", "mode") === "room"),
+				read: room.isReadable()
+			};
 		},
 
 		onStateChange: function(changes) {
-			var room = store.get("nav", "room");
+			const roomId = store.get("nav", "room"),
+				  userId = store.get("user"),
+				  rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
-			    (changes.threads && changes.threads[room]) || (changes.texts &&
-			    Object.keys(changes.texts).filter(function(key) { return key.indexOf(room) === 0; }).length > 0)) {
-				this.setState({ show: (store.get("nav", "mode") === "room") });
+			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
+				(changes.threads && changes.threads[roomId]) ||
+				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
+
+				this.setState(this.getInitialState());
 			}
 		},
 

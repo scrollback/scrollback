@@ -1,3 +1,5 @@
+"use strict";
+
 var log = require('../lib/logger.js');
 function makePut(type, source) {
 	if (!type || !source) {
@@ -158,6 +160,11 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 	var put = makePut('upsert', 'relations');
 	var user;
 	var officer;
+
+	function sanitizeRole(role) {
+		return role === "registered"? "none": role;
+	}
+
 	if (action.type === 'admit' || action.type === 'expel') {
 		officer = action.user.id;
 		user = action.victim.id;
@@ -167,8 +174,8 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 	put.insert = {
 		room: action.room.id,
 		user: user,
-		role: action.role,
-		transitionrole: action.transitionRole,
+		role: sanitizeRole(action.role),
+		transitionrole: sanitizeRole(action.transitionRole),
 		transitiontype: action.transitionType,
 		message: action.text,
 		officer: officer,
@@ -177,7 +184,7 @@ exports.join = exports.part = exports.admit = exports.expel = function (action) 
 	};
 
 	var columnNames = ['role', 'roletime', 'officer', 'message', 'transitionrole', 'transitiontype'];
-	var values = [action.role, new Date(action.time), officer, action.text, action.transitionRole, action.transitionType];
+	var values = [sanitizeRole(action.role), new Date(action.time), officer, action.text, sanitizeRole(action.transitionRole), action.transitionType];
 
 	for (var i = 0; i < columnNames.length; i++) {
 		put.update.push([columnNames[i], 'set', values[i]]);

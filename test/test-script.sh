@@ -3,14 +3,9 @@
 currdir=`cd $(dirname "${BASH_SOURCE[0]}") && pwd`
 basedir="${currdir%/*}"
 logfile="${basedir}/logs/test-$(date +%y%m%d%H).log"
-backup="${basedir}/leveldb-storage/backup-$(date +%y%m%d%H)"
-data="${basedir}/leveldb-storage/data"
-testing_state="${basedir}/leveldb-storage/testing-state"
-leveldb_storage="${basedir}/leveldb-storage"
 
 # Create logfile
 touch "$logfile"
-
 exec &>> "$logfile"
 
 # Show error messages
@@ -34,11 +29,8 @@ git pull
 sudo stop scrollback
 
 # clear redis
-redis-cli FLUSHALL
-#backing up previous data
-mv "$data" "$backup"
-#recovering data
-cp -a "$testing_state/data" "$leveldb_storage/"
+redis-cli SELECT 11
+redis-cli FLUSHDB
 
 # Setup
 npm install

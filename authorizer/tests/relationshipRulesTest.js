@@ -95,7 +95,7 @@ module.exports = function() {
 			assert.equal(error.message, "YOU_ARE_ALREADY_OWNER");
 		});
 
-		it("join from registered for role follower should throw error", function() {
+		it("join from registered for role follower should not throw error", function() {
 			var error, action = {
 				type: "join",
 				user: {
@@ -113,7 +113,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 		});
 
-		it("join from registered for role follower on openRoom should throw error", function() {
+		it("join from registered for role follower on openRoom should not throw error", function() {
 			var error, action = {
 				type: "join",
 				user: {
@@ -151,12 +151,37 @@ module.exports = function() {
 
 			error = relationshipRules(action);
 			assert(!error, "error thrown");
-			assert(!action.role, "action.role still present");
+			assert.equal(action.role, "registered", "action.role not retained");
 			assert.equal(action.transitionType, "request", "set transition type to request");
 			assert.equal(action.transitionRole, "follower", "set transition type to request");
 
 		});
+		
+		it("join from registered for role none on openRoom = false	", function() {
+			var error, action = {
+				type: "join",
+				user: {
+					role: "none"
+				},
+				role: "follower",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
 
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert.equal(action.role,'none', "action.role not retained");
+			assert.equal(action.transitionType, "request", "set transition type to request");
+			assert.equal(action.transitionRole, "follower", "set transition type to request");
+
+		});
+		
+		
 		it("join from registered for role owner on openRoom = false	", function() {
 			var error, action = {
 				type: "join",
@@ -175,7 +200,7 @@ module.exports = function() {
 
 			error = relationshipRules(action);
 			assert(!error, "error thrown");
-			assert(!action.role, "action.role still present");
+			assert.equal(action.role, 'registered', "action.role not retained");
 			assert.equal(action.transitionType, "request", "set transition type to request");
 			assert.equal(action.transitionRole, "owner", "set transition type to request");
 		});
@@ -198,7 +223,7 @@ module.exports = function() {
 
 			error = relationshipRules(action);
 			assert(!error, "error thrown");
-			assert(!action.role, "action.role still present");
+			assert.equal(action.role, 'registered', "action.role not retained");
 			assert.equal(action.transitionType, "request", "set transition type to request");
 			assert.equal(action.transitionRole, "owner", "set transition type to request");
 		});
@@ -221,7 +246,7 @@ module.exports = function() {
 
 			error = relationshipRules(action);
 			assert(!error, "error thrown");
-			assert(!action.role, "action.role still present");
+			assert.equal(action.role, 'registered', "action.role not retained");
 			assert.equal(action.transitionType, "request", "set transition type to request");
 			assert.equal(action.transitionRole, "moderator", "set transition type to request");
 		});
@@ -293,7 +318,9 @@ module.exports = function() {
 			var error, action = {
 				type: "part",
 				user: {
-					role: "registered"
+					role: "registered",
+					transitionRole: 'follower',
+					transitionType: 'request'
 				},
 				room: {
 					guides: {
@@ -305,8 +332,11 @@ module.exports = function() {
 			};
 
 			error = relationshipRules(action);
-			assert(error, "error thrown");
-			assert.equal("NOT_A_FOLLOWER", error.message);
+			assert(!error, "error thrown" + error);
+			assert.equal(action.role, 'none', 'role not set to none');
+			assert.equal(action.TransitionRole, null, 'transitionRole not set to none');
+			assert.equal(action.TransitionType, null, 'transitionType not set to null');
+			
 		});
 
 		it("part from banned", function() {
@@ -449,7 +479,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 			
 		});
 		
@@ -476,7 +506,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role == "registered", "action.role still there");
 		});
 		
 		it("admit from moderator for invite for registered, action.role = moderator", function() {
@@ -708,7 +738,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 			
 		});
 		
@@ -735,7 +765,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "follower", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 		});
 		
 		it("admit from owner for invite for registered, action.role = moderator", function() {
@@ -761,7 +791,7 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "moderator", "transition type not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
 		});
 		
 		
@@ -788,7 +818,61 @@ module.exports = function() {
 			assert(!error, "error thrown");
 			assert.equal(action.transitionType, "invite", "transition type not set");
 			assert.equal(action.transitionRole, "owner", "transition role not set");
-			assert(!action.role, "action.role still there");
+			assert(action.role === "registered", "action.role still there");
+		});
+		
+		
+		it("admit from owner for request for follower", function() {
+			var error, action = {
+				type: "admit",
+				user: {
+					role: "owner"
+				},
+				victim:{
+					role: "none",
+					transitionType: "request",
+					transitionRole: "follower"
+				},
+				role:"follower",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert(!action.transitionType, "transition type still there");
+			assert(!action.transitionRole, "transition role still there");
+			assert.equal(action.role, "follower", "role should be set to follower");
+		});
+		
+		it("join from registered for invite for owner", function() {
+			var error, action = {
+				type: "join",
+				user: {
+					role: "none",
+					transitionType: "invite",
+					transitionRole: "owner"
+				},
+				role: "owner",
+				room: {
+					guides: {
+						authorizer: {
+							openRoom: false
+						}
+					}
+				}
+			};
+
+			error = relationshipRules(action);
+			assert(!error, "error thrown");
+			assert(!action.transitionType, "transition type still there");
+			assert(!action.transitionRole, "transition role still there");
+			assert.equal(action.role, "owner", "role should be set to follower");
 		});
 		
 		
@@ -815,6 +899,8 @@ module.exports = function() {
 			assert(error, "error not thrown");
 			assert.equal(error.message, "ERR_NOT_ALLOWED", "invalid error message");
 		});
+		
+		
 		
 		
 		it("expel from owner for banning user who is registered", function() {

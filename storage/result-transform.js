@@ -1,3 +1,4 @@
+'use strict';
 var log = require('../lib/logger.js');
 exports.getTexts = function(query, texts) {
 	log("Texts:", texts);
@@ -80,6 +81,10 @@ exports.getRooms = exports.getUsers = exports.getEntities = function(query, enti
 				role: row.role,
 				roleSince: row.roletime
 			};
+			if(row.transitiontype) entity.transitionType = row.transitiontype;
+			if(row.transitionrole) entity.transitionRole = row.transitionrole;
+			if(row.officer) entity.officer = row.officer;
+			log.d(entity);
 			results.push(entity);
 		});
 
@@ -98,7 +103,7 @@ function orderResultsBasedOnRef(query, results) {
 	var tr = results;
 	var posMap = {};
 	results = [];
-	for (var i = 0;i < query.ref.length;i++) {
+	for (var i = 0; i < query.ref.length; i++) {
 		posMap[query.ref[i]] = i;
 		results.push(null);
 	}

@@ -1,4 +1,6 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
+/* eslint max-nested-callbacks: 0*/
+"use strict";
 var assert = require('assert');
 var core = new(require('ebus'))();
 var generate = require("../lib/generate.js");
@@ -71,7 +73,7 @@ describe("user and room action", function() {
 				params: {}
 			},
 			user: {
-				id: "harish",
+				id: "harish"
 			}
 		}, function(err, data) {
 			assert(!err, "Error thrown");
@@ -90,7 +92,7 @@ describe("user and room action", function() {
 				params: {}
 			},
 			user: {
-				id: "arvind",
+				id: "arvind"
 			}
 		}, function(err, data) {
 			assert(!err, err);
@@ -204,7 +206,7 @@ describe("get queries: ", function() {
 				params: {}
 			},
 			user: {
-				id: "harish",
+				id: "harish"
 			}
 		}, function(err, data) {
 			assert(!err, err);
