@@ -214,6 +214,14 @@ module.exports = function(core, config, store) {
 			this.setEmpty();
 		},
 
+		isFileUploadAvailable: function() {
+			if (window.Android) {
+				return (typeof window.Android.isFileUploadAvailable === "function" && window.Android.isFileUploadAvailable());
+			} else {
+				return true;
+			}
+		},
+
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
@@ -223,7 +231,7 @@ module.exports = function(core, config, store) {
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
 							{
-								window.Android && !window.Android.fileUploadAvailable ? null :
+								this.isFileUploadAvailable() ?
 								<div ref="filebutton"
 									 data-role="user follower owner moderator"
 									 className="chat-area-input-action chat-area-input-image"
@@ -236,6 +244,7 @@ module.exports = function(core, config, store) {
 										<path className="warn" d="M0,19 L22,19 L11,0 L0,19 L0,19 Z M12,16 L10,16 L10,14 L12,14 L12,16 L12,16 Z M12,12 L10,12 L10,8 L12,8 L12,12 L12,12 Z" transform="translate(29, 28) rotate(180)" />
 									</svg>
 								</div>
+								: null
 							}
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
 						</div>
