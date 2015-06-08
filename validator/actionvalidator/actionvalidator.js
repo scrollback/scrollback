@@ -1,3 +1,7 @@
+/*eslint no-unused-vars: 0*/
+/*eslint consistent-return: 0*/
+/*eslint no-use-before-define: 0*/
+"use strict";
 var config;
 var generate = require("../../lib/generate.js");
 var validateRoom = require('../../lib/validate.js');
@@ -173,7 +177,6 @@ module.exports = function (core, conf) {
 
     events.forEach(function (event) {
         core.on(event, function (action, callback) {
-            if (!validate(action, actionValidator, callback)) return;
             basicValidation(action, function (err) {
                 if (err) return callback(err);
                 if (handlers[event]) {
@@ -182,6 +185,7 @@ module.exports = function (core, conf) {
                     callback();
                 }
             });
+            if (!validate(action, actionValidator, callback)) return;
         }, "validation");
     });
 
