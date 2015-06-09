@@ -1,4 +1,7 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
+/*eslint no-unused-vars: 0*/
+/*eslint no-console: 0*/
+"use strict";
 var assert = require("assert");
 var core = new (require('ebus'))();
 var config = require("../server-config-defaults.js");
@@ -25,7 +28,7 @@ describe('Validator Test', function() {
 
 	before(function(done) {
 		validator= require("./validator.js")(core, config.validator);
-		setTimeout(done, 1000);
+		done();//setTimeout(done, 2000);
 	});
 
 	it("should not allow init action if suggested nick is an object.", function(done) {
@@ -35,6 +38,18 @@ describe('Validator Test', function() {
 		core.emit("init", t, function(err) {
 			console.log("Init", arguments);
 			assert.equal(err instanceof Error, true, "Not throwing error for invalid Init..");
+			done();
+		});
+
+	});
+
+	it("Valid init action with time 'null'", function(done) {
+		var t = copy(action);
+		t.type = "init";
+		t.to = "me";
+		t.time = null;
+		core.emit("init", t, function(err) {
+			assert.equal(err instanceof Error, false, "validation successful");
 			done();
 		});
 
@@ -63,6 +78,19 @@ describe('Validator Test', function() {
 		});
 	});
 
+	it("valid text action with time null", function(done) {
+		var t = copy(action);
+		t.type = "text";
+		t.text = "this is testing message";
+		t.to = "scrollback";
+		t.from = "testinguser";
+		t.time = null;
+		core.emit("text", t, function(err) {
+			assert.equal(err instanceof Error, false, "not allowing valid text action.");
+			done();
+		});
+	});
+
 	it("valid text action", function(done) {
 		var t = copy(action);
 		t.type = "text";
@@ -83,7 +111,7 @@ describe('Validator Test', function() {
 		t.room = {
 			id: "scrollback",
 			type: "room",
-			identities: ["web://testing.com"],
+			identities: ["web://testing.com"]
 
 		};
 		core.emit("room", t, function(err) {
@@ -116,7 +144,7 @@ describe('Validator Test', function() {
 		t.user = {
 			id: "testinguser",
 			type: "user",
-			identities: ["web://testing.com"],
+			identities: ["web://testing.com"]
 
 		};
 		core.emit("user", t, function(err) {
