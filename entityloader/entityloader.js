@@ -135,4 +135,6 @@ module.exports = function(c, conf) {
 	});
 	require("./useHandler.js")(core, config);
 	require("./initHandler.js")(core, config);
+	require("./queryHandler.js")(core, config);
+
 };

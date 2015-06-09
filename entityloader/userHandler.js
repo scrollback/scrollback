@@ -26,7 +26,7 @@ function userHandler(action, callback) {
 				ref: action.user.id,
 				session: "internal-loader"
 			}, function(err, data) {
-				if(err) return callback(err);
+				if (err) return callback(err);
 				if (utils.isGuest(action.from)) { // signup
 					if (data && data.results && data.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
@@ -40,7 +40,7 @@ function userHandler(action, callback) {
 					session: "internal-loader",
 					ref: action.user.id
 				}, function(roomErr, rooms) {
-					if(roomErr) return callback(roomErr);
+					if (roomErr) return callback(roomErr);
 					if (rooms && rooms.results && rooms.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
 					}
@@ -59,7 +59,7 @@ module.exports = function(c) {
 	core.on("user", function(action, next) {
 		userHandler(action, function(err) {
 			if (err) return next(err);
-			action.user.createTime = action.old.createTime? action.old.createTime: action.user.createTime;
+			action.user.createTime = action.old.createTime ? action.old.createTime : action.user.createTime;
 			next();
 		});
 	}, "loader");

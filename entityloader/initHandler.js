@@ -9,13 +9,15 @@ var core, config;
 
 
 function generateNick(sNick, next) {
-	var lowBound = 1, upBound = 1;
+	var lowBound = 1,
+		upBound = 1;
 	if (!sNick) sNick = names(6);
 	sNick = sNick.toLowerCase();
 
 
 	function checkUser(suggestedNick, attemptC, callback) {
-		var ct = 0, result = true;
+		var ct = 0,
+			result = true;
 		var trying = suggestedNick;
 
 		if (attemptC) {
@@ -25,6 +27,7 @@ function generateNick(sNick, next) {
 		}
 
 		if (attemptC >= config.nickRetries) return callback(names(6));
+
 		function done(r) {
 			result &= r;
 			if (++ct >= 3) {
@@ -35,6 +38,7 @@ function generateNick(sNick, next) {
 				}
 			}
 		}
+
 		function checkRoomUser(type, name) {
 			core.emit(type, {
 				ref: name,
@@ -42,7 +46,7 @@ function generateNick(sNick, next) {
 			}, function(err, data) {
 				if (!err && data && data.results && data.results.length > 0) {
 					done(false);
-				}  else {
+				} else {
 					done(true);
 				}
 			});
@@ -98,8 +102,9 @@ function initHandler(action, callback) {
 		} else {
 			old = action.user = data.results[0];
 		}
+
 		function allowSuggested(user) {
-			if(user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
+			if (user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
 			else return true;
 		}
 		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
@@ -130,8 +135,9 @@ function initHandler(action, callback) {
 }
 
 
-function  loadProps(action, callback) {
-	var wait = true, userID = action.user.id;
+function loadProps(action, callback) {
+	var wait = true,
+		userID = action.user.id;
 	core.emit("getRooms", {
 		hasOccupant: userID,
 		session: action.session
@@ -144,7 +150,7 @@ function  loadProps(action, callback) {
 		if (wait) wait = false;
 		else callback();
 	});
-	if(!utils.isGuest(userID)) {
+	if (!utils.isGuest(userID)) {
 		core.emit("getRooms", {
 			hasMember: userID,
 			session: action.session
@@ -157,7 +163,7 @@ function  loadProps(action, callback) {
 			if (wait) wait = false;
 			else callback();
 		});
-	}else{
+	} else {
 		action.memberOf = [];
 		if (wait) wait = false;
 		else callback();
@@ -171,7 +177,7 @@ module.exports = function(c, conf) {
 	config = conf;
 	core.on("init", function(init, next) {
 		initHandler(init, function(err) {
-			if(err) return next(err);
+			if (err) return next(err);
 			loadProps(init, next);
 		});
 	}, "loader");

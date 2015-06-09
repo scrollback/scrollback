@@ -3,6 +3,7 @@ var core, userOps = require("../lib/user.js");
 
 
 function checkPresense(room, user, callback) {
+	if (!room) return callback(false);
 	core.emit("getUsers", {
 		occupantOf: room,
 		ref: user,
@@ -18,7 +19,8 @@ function checkPresense(room, user, callback) {
 function loadRelatedUser(room, user, session, callback) {
 	var count = 0,
 		queriesCount = 2,
-		isErr = false, returnValue, presense = "offline";
+		isErr = false,
+		returnValue, presense = "offline";
 
 	function done(error) {
 		if (isErr) return;
@@ -31,7 +33,7 @@ function loadRelatedUser(room, user, session, callback) {
 
 		count++;
 		if (count === queriesCount) {
-			returnValue.status = presense? "online" : "offline";
+			if (room) returnValue.status = presense ? "online" : "offline";
 			callback(null, returnValue);
 		}
 	}
@@ -44,6 +46,7 @@ function loadRelatedUser(room, user, session, callback) {
 			return done(new Error("USER_NOT_FOUND"));
 		} else {
 			returnValue = data.results[0];
+			if (!room) return done();
 			if (userOps.isGuest(returnValue.id)) {
 				returnValue.role = "guest";
 				done();
@@ -53,7 +56,7 @@ function loadRelatedUser(room, user, session, callback) {
 					ref: user,
 					memberOf: room
 				}, function(memberErr, relations) {
-					if(memberErr) return done(memberErr);
+					if (memberErr) return done(memberErr);
 					if (!relations || !relations.results || !relations.results.length) {
 						returnValue.role = "registered";
 						done();
@@ -65,8 +68,7 @@ function loadRelatedUser(room, user, session, callback) {
 			}
 		}
 	});
-	
-	
+
 	checkPresense(room, user, function(result) {
 		presense = result;
 		done();
