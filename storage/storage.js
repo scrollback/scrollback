@@ -3,69 +3,63 @@
 var writeEntity = require("./actions/entity"),
 	writeRelation = require("./actions/relation"),
 	writeContent = require("./actions/content"),
-//	writeNotification = require("./actions/notification"),
+	writeNote = require("./actions/note"),
 	
 	readEntity = require("./queries/entity"),
 	readContent = require("./queries/content"),
-//	readNotification = require("./queries/notification"),
-	
-	resultTransforms = require("./result-transform"),
-	
+	readNote = require("./queries/note"),
+		
 	pg = require("../lib/pg"),
 	connString;
 
 function handleEntityAction(action, next) {
-	var sql = writeEntity(action); //.concat(writeNotification(action));
+	var sql = writeEntity(action).concat(writeNote(action));
 	pg.write(connString, sql, function (err) {
 		next(err);
 	});
 }
 
 function handleRelationAction(action, next) {
-	var sql = writeRelation(action); //.concat(writeNotification(action));
+	var sql = writeRelation(action).concat(writeNote(action));
 	pg.write(connString, sql, function (err) {
 		next(err);
 	});
 }
 
 function handleContentAction(action, next) {
-	var sql = writeContent(action); //.concat(writeNotification(action));
+	var sql = writeContent(action).concat(writeNote(action));
 	
 	pg.write(connString, sql, function (err) {
 		next(err);
 	});
 }
 
+function runQuery(handlers, query, results, i, callback) {
+	var sql;
+	if(i < handlers.length && (sql = handlers[i](query, results))) {
+		pg.read(connString, sql, function (err, res) {
+			if(err) return callback(err);
+			runQuery(handlers, query, res, i + 1, callback);
+		});
+	} else {
+		callback();
+	}
+}
+
 function handleEntityQuery(query, next) {
 	if(query.results) return next();
-	
-	var sql = readEntity(query);
-	pg.read(connString, sql, function (err, results) {
-		if(err) return next(err);
-		query.results = resultTransforms[query.type](query, results);
-		next();
-	});
+	runQuery(readEntity, query, null, 0, next);
 }
 
 function handleContentQuery(query, next) {
 	if(query.results) return next();
-	
-	var sql = readContent(query);
-	pg.read(connString, sql, function (err, results) {
-		if(err) return next(err);
-		query.results = resultTransforms[query.type](query, results);
-		next();
-	});
+	runQuery(readContent, query, null, 0, next);
 }
 
-//function handleNotificationQuery(query, next) {
-//	var sql = readNotification(query);
-//	pg.read(connString, sql, function (err, results) {
-//		if(err) return next(err);
-//		query.results = resultTransforms[query.type](query, [{rows: results}]);
-//		next();
-//	});
-//}
+function handleNoteQuery(query, next) {
+	if(query.results) return next();
+	runQuery(readNote, query, null, 0, next);
+}
 
 module.exports = function (core, config) {
 	connString = "pg://" + config.pg.username + ":" +
@@ -94,5 +88,5 @@ module.exports = function (core, config) {
 	core.on("getTexts", handleContentQuery, "storage");
 	core.on("getThreads", handleContentQuery, "storage");
 	
-//	core.on("getNotifications", handleNotificationQuery, "storage");
+	core.on("getNotes", handleNoteQuery, "storage");
 };
