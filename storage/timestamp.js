@@ -1,5 +1,10 @@
+"use strict";
+
 var redis;
 var locks = {};
+
+
+
 module.exports = function (core, config) {
 	redis = require('redis').createClient();
 	redis.select(config.redisDB);
