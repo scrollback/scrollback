@@ -1,7 +1,8 @@
 CREATE TYPE actType AS ENUM('room', 'user',
 						    'text', 'edit',
 						    'back', 'away',
-						    'admit', 'expel');
+						    'admit', 'expel',
+						    'join', 'part');
 
 CREATE TABLE notes (
 	"user" text,
