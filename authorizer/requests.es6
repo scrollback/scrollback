@@ -5,27 +5,13 @@
 const getAvatar = require("../lib/get-avatar.js");
 
 module.exports = (core, config, store) => {
-	let actionIds = {};
+	const promisedAction = require("../lib/promised-action.es6")(core, config, store);
 
 	core.on("conf-show", tabs => {
 		let container = document.createElement("div"),
 			users;
 
 		users = store.getRelatedUsers(tabs.room.id).filter(user => user.transitionType === "request");
-
-		function onAdmitDn(action) {
-			if (Object.keys(actionIds).length) {
-				let fn = actionIds[action.id];
-
-				if (typeof fn === "function") {
-					fn(action);
-				}
-
-				delete actionIds[action.id];
-			} else {
-				core.off("admit-dn", onAdmitDn);
-			}
-		}
 
 		if (users.length) {
 			container.classList.add("request-item");
@@ -84,45 +70,31 @@ module.exports = (core, config, store) => {
 					decline.classList.add("disabled");
 					approve.classList.add("working");
 
-					core.emit("admit-up", {
+					promisedAction("admit-up", {
 						to: tabs.room.id,
 						ref: user.id,
 						role: user.transitionRole
-					}, (err, action) => {
-						if (err) {
-							onDone(false);
-
-							return;
-						}
-
-						actionIds[action.id] = res => onDone(res.role !== user.role ? (user.id + " is now a " + res.role) : false);
-					});
+					})
+					.catch(() => onDone(false))
+					.then(res => onDone(res.role !== user.role ? (user.id + " is now a " + res.role) : false));
 				}
 
 				function onDecline() {
 					approve.classList.add("disabled");
 					decline.classList.add("working");
 
-					core.emit("admit-up", {
+					promisedAction("admit-up", {
 						to: tabs.room.id,
 						ref: user.id,
 						role: user.role
-					}, (err, action) => {
-						if (err) {
-							onDone(false);
-
-							return;
-						}
-
-						actionIds[action.id] = res => onDone(res.role === user.role ? (user.id + "'s request was declined.") : false);
-					});
+					})
+					.catch(() => onDone(false))
+					.then(res => onDone(res.role === user.role ? (user.id + "'s request was declined.") : false));
 				}
 
 				approve.addEventListener("click", onApprove, false);
 				decline.addEventListener("click", onDecline, false);
 			});
-
-			core.on("admit-dn", onAdmitDn, 100);
 		} else {
 			container.classList.add("request-item-empty");
 

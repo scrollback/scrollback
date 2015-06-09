@@ -3,29 +3,14 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const getRoomPics = require("../ui/utils/room-pics.js")(core, config, store);
-
-	let actionIds = {};
+	const promisedAction = require("../lib/promised-action.es6")(core, config, store),
+		  getRoomPics = require("../ui/utils/room-pics.js")(core, config, store);
 
 	core.on("pref-show", tabs => {
 		let container = document.createElement("div"),
 			rooms;
 
 		rooms = store.getRelatedRooms().filter(user => user.transitionType === "invite");
-
-		function onJoinDn(action) {
-			if (Object.keys(actionIds).length) {
-				let fn = actionIds[action.id];
-
-				if (typeof fn === "function") {
-					fn(action);
-				}
-
-				delete actionIds[action.id];
-			} else {
-				core.off("join-dn", onJoinDn);
-			}
-		}
 
 		if (rooms.length) {
 			container.classList.add("invite-item");
@@ -84,43 +69,29 @@ module.exports = (core, config, store) => {
 					reject.classList.add("disabled");
 					accept.classList.add("working");
 
-					core.emit("join-up", {
+					promisedAction("join-up", {
 						to: room.id,
 						role: room.transitionRole
-					}, (err, action) => {
-						if (err) {
-							onDone(false);
-
-							return;
-						}
-
-						actionIds[action.id] = res => onDone(res.role !== room.role ? ("You are now a " + res.role + " of " + room.id) : false);
-					});
+					})
+					.catch(() => onDone(false))
+					.then(res => onDone(res.role !== room.role ? ("You are now a " + res.role + " of " + room.id) : false));
 				}
 
 				function onDecline() {
 					accept.classList.add("disabled");
 					reject.classList.add("working");
 
-					core.emit("join-up", {
+					promisedAction("join-up", {
 						to: room.id,
 						role: room.role
-					}, (err, action) => {
-						if (err) {
-							onDone(false);
-
-							return;
-						}
-
-						actionIds[action.id] = res => onDone(res.role === room.role ? ("You rejected to be a " + room.transitionRole + " of " + room.id) : false);
-					});
+					})
+					.catch(() => onDone(false))
+					.then(res => onDone(res.role === room.role ? ("You rejected to be a " + room.transitionRole + " of " + room.id) : false));
 				}
 
 				accept.addEventListener("click", onApprove, false);
 				reject.addEventListener("click", onDecline, false);
 			});
-
-			core.on("join-dn", onJoinDn, 100);
 		} else {
 			container.classList.add("invite-item-empty");
 

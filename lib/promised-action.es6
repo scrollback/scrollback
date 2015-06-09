@@ -1,0 +1,47 @@
+/* eslint-env es6 */
+
+"use strict";
+
+module.exports = core => {
+	return (name, params = {}, prio = 1) => {
+		if (typeof name !== "string") {
+			throw new TypeError(`Invalid action ${name}`);
+		}
+
+		return new Promise((resolve, reject) => {
+			let down = name.replace(/\-up$/, "-dn"),
+				id;
+
+			function onError(error) {
+				if (id === error.id) {
+					reject(error);
+
+					core.off(down, onDone);
+					core.off("error-dn", onError);
+				}
+			}
+
+			function onDone(action) {
+				if (id === action.id) {
+					resolve(action);
+
+					core.off(down, onDone);
+					core.off("error-dn", onError);
+				}
+			}
+
+			core.on(down, onDone, prio);
+			core.on("error-dn", onError, prio);
+
+			core.emit(name, params, (err, action) => {
+				if (err) {
+					reject(err);
+
+					return;
+				}
+
+				id = action.id;
+			});
+		});
+	};
+};
