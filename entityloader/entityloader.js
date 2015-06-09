@@ -131,9 +131,9 @@ module.exports = function(c, conf) {
 	loadRelatedUser = require("./relatedUser.js")(core, config);
 	loadEntity = require("./entity.js")(core, config);
 	events.forEach(function(event) {
-		core.emit(event, basicLoad, "loader");
+		core.on(event, basicLoad, "loader");
 	});
-	require("./useHandler.js")(core, config);
+	require("./userHandler.js")(core, config);
 	require("./initHandler.js")(core, config);
 	require("./queryHandler.js")(core, config);
 

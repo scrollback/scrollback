@@ -1,6 +1,6 @@
 "use strict";
-var core, userOps = require("../lib/user.js");
 
+var core, userOps;
 
 function checkPresense(room, user, callback) {
 	if (!room) return callback(false);
@@ -21,10 +21,8 @@ function loadRelatedUser(room, user, session, callback) {
 		queriesCount = 2,
 		isErr = false,
 		returnValue, presense = "offline";
-
 	function done(error) {
 		if (isErr) return;
-
 		if (error) {
 			isErr = true;
 			callback(error);
@@ -41,7 +39,7 @@ function loadRelatedUser(room, user, session, callback) {
 	core.emit("getUsers", {
 		ref: user,
 		session: session
-	}, function(userErr, data) {
+	}, function(userErr, data) {	
 		if (userErr || !data || !data.results || !data.results.length) {
 			return done(new Error("USER_NOT_FOUND"));
 		} else {
@@ -52,8 +50,8 @@ function loadRelatedUser(room, user, session, callback) {
 				done();
 			} else {
 				core.emit("getUsers", {
-					session: session,
-					ref: user,
+					session: "internal-loader",
+					ref: returnValue.id,
 					memberOf: room
 				}, function(memberErr, relations) {
 					if (memberErr) return done(memberErr);
@@ -79,6 +77,7 @@ function loadRelatedUser(room, user, session, callback) {
 
 function exp(c) {
 	core = c;
+	 userOps = require("../lib/user.js")(c);
 	return loadRelatedUser;
 }
 
