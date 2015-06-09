@@ -2,103 +2,146 @@
 
 var pg = require("../../lib/pg.js");
 
-module.exports = function (query) {
-	var type,
-		filters = [],
-		source = "entities",
-		limit, orderBy, startPosition;
-	
-	if(query.type === 'getUsers') {
-		type = 'user';
-	} else if(query.type === 'getRooms') {
-		type = 'room';
-	} else if(query.memberOf || query.occupantOf) {
-		type = 'user';
-	} else if(query.hasMember || query.hasOccupant) {
-		type = 'room';
-	}
-	
-	if (type) {
-		filters.push({$: "entities.type=${type}", type: type });
-	}
-	
-	if (query.ref) {
-		if (Array.isArray(query.ref)) {
-			filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
-		} else {
-			filters.push({ $: "entities.id=${id}", id: query.ref });
+module.exports = [
+	function (query) {
+		var type,
+			filters = [],
+			source = "entities",
+			limit, orderBy, startPosition;
+
+		if(query.type === 'getUsers') {
+			type = 'user';
+		} else if(query.type === 'getRooms') {
+			type = 'room';
+		} else if(query.memberOf || query.occupantOf) {
+			type = 'user';
+		} else if(query.hasMember || query.hasOccupant) {
+			type = 'room';
 		}
-	}
-	
-	if (query.identity) {
-		filters.push({ $: "entities.identities @> ${identities}", identities: [query.identity] });
-	} else if (query.timezone) {
-		if (typeof query.timezone.gte === 'number') {
-			filters.push({ $: "entities.timezone >= ${mintz}", mintz: query.timezone.gte });
+
+		if (type) {
+			filters.push({$: "entities.type=${type}", type: type });
 		}
-		if (typeof query.timezone.lte === 'number') {
-			filters.push({ $: "entities.timezone <= ${maxtz}", maxtz: query.timezone.lte });
-		}
-	} else if (query.memberOf || query.hasMember) {
-		source = "entities " + (query.ref? "LEFT OUTER": "INNER") + 
-			" JOIN relations ON (entities.id=relations." + type + ")";
-		
-		if (query.memberOf) {
-			filters.push({ $: "relations.room=${room}", room: query.memberOf });
-		} else if (query.hasMember) {
-			filters.push({ $: "relations.user=${user}", user: query.hasMember });
-		}
-		
-		if (query.role) {
-			filters.push({ $: "relations.role=${role}'", role: query.role });
-		} else {
-			var roleFilters = ["relations.role > 'none'"];
-			
-			if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id) {
-				// Show people who are transitioning to a visible role and
-				// rooms the current user is in the process of joining
-				roleFilters.push("relations.transitionrole > 'none'");
-			} else if (query.memberOf) {
-				// Add the current user if in the process of joining
-				roleFilters.push({ $: "(relations.user = ${me} AND relations.transitionrole > 'none')", me: query.user.id });
+
+		if (query.ref) {
+			if (Array.isArray(query.ref)) {
+				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
+			} else {
+				filters.push({ $: "entities.id=${id}", id: query.ref });
 			}
-			
-			filters.push(pg.cat(["(", pg.cat(roleFilters, " OR "), ")"]));
 		}
-		
-		
+
+		if (query.identity) {
+			filters.push({ $: "entities.identities @> ${identities}", identities: [query.identity] });
+		} else if (query.timezone) {
+			if (typeof query.timezone.gte === 'number') {
+				filters.push({ $: "entities.timezone >= ${mintz}", mintz: query.timezone.gte });
+			}
+			if (typeof query.timezone.lte === 'number') {
+				filters.push({ $: "entities.timezone <= ${maxtz}", maxtz: query.timezone.lte });
+			}
+		} else if (query.memberOf || query.hasMember) {
+			source = "entities " + (query.ref? "LEFT OUTER": "INNER") + 
+				" JOIN relations ON (entities.id=relations." + type + ")";
+
+			if (query.memberOf) {
+				filters.push({ $: "relations.room=${room}", room: query.memberOf });
+			} else if (query.hasMember) {
+				filters.push({ $: "relations.user=${user}", user: query.hasMember });
+			}
+
+			if (query.role) {
+				filters.push({ $: "relations.role=${role}'", role: query.role });
+			} else {
+				var roleFilters = ["relations.role > 'none'"];
+
+				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id) {
+					// Show people who are transitioning to a visible role and
+					// rooms the current user is in the process of joining
+					roleFilters.push("relations.transitionrole > 'none'");
+				} else if (query.memberOf) {
+					// Add the current user if in the process of joining
+					roleFilters.push({ $: "(relations.user = ${me} AND relations.transitionrole > 'none')", me: query.user.id });
+				}
+
+				filters.push(pg.cat(["(", pg.cat(roleFilters, " OR "), ")"]));
+			}
+
+
+		}
+
+		if (query.createTime) {
+			orderBy = "entities.createtime";
+			startPosition = new Date(query.createTime);
+		} else if (query.roleTime) {
+			orderBy = "relations.roletime";
+			startPosition = new Date(query.roleTime);
+		} /* else if (query.q) {
+
+		}
+
+		*/
+
+		if(query.after) {
+			limit = query.after;
+			filters.push({
+				$: "\"" + orderBy + "\" >= ${start}",
+				start: startPosition
+			});
+		} else if(query.before) {
+			limit = query.before;
+			filters.push({
+				$: "\"" + orderBy + "\" <= ${start}",
+				start: startPosition
+			});
+		} else {
+			limit = 256;
+		}
+		return pg.cat([
+			"SELECT * FROM " + source + " WHERE",
+			pg.cat(filters, " AND "),
+			{ $: (orderBy? "ORDER BY " + orderBy : "") + " LIMIT ${limit}", limit: limit }
+		]);
+	},
+	
+	function(query, entities) {
+		var results = [];
+		if (entities.length) {
+			entities.forEach(function(row) {
+				var identities = [];
+				row.identities.forEach(function(identity) {
+					identities.push(identity[1]);
+				});
+				var entity = {
+					id: row.id,
+					type: row.type,
+					createTime: (row.createtime ? row.createtime.getTime() : null),
+					description: row.description,
+					identities: identities,
+					params: row.params,
+					guides: row.guides,
+					picture: row.picture,
+					timezone: row.timezone,
+					role: row.role,
+					roleSince: row.roletime
+				};
+				if(row.transitiontype) entity.transitionType = row.transitiontype;
+				if(row.transitionrole) entity.transitionRole = row.transitionrole;
+				if(row.officer) entity.officer = row.officer;
+				results.push(entity);
+			});
+
+			if (query.before) {
+				results.reverse();
+			} else if (query.ref instanceof Array) {
+				var refMap = {};
+				query.ref.forEach(function (ref, i) { refMap[ref] = i; });
+				results.sort(function (a, b) { return refMap[a.id] - refMap[b.id]; });
+			}
+		}
+
+		query.results = results;
 	}
 
-	if (query.createTime) {
-		orderBy = "entities.createtime";
-		startPosition = new Date(query.createTime);
-	} else if (query.roleTime) {
-		orderBy = "relations.roletime";
-		startPosition = new Date(query.roleTime);
-	} /* else if (query.q) {
-		
-	}
-	
-	*/
-	
-	if(query.after) {
-		limit = query.after;
-		filters.push({
-			$: "\"" + orderBy + "\" >= ${start}",
-			start: startPosition
-		});
-	} else if(query.before) {
-		limit = query.before;
-		filters.push({
-			$: "\"" + orderBy + "\" <= ${start}",
-			start: startPosition
-		});
-	} else {
-		limit = 256;
-	}
-	return pg.cat([
-		"SELECT * FROM " + source + " WHERE",
-		pg.cat(filters, " AND "),
-		{ $: (orderBy? "ORDER BY " + orderBy : "") + " LIMIT ${limit}", limit: limit }
-	]);
-};
+
+];
