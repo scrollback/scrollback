@@ -37,10 +37,10 @@ it("query for admit/expel action", function(){
     transitiontype: 'invite',
     message: 'some message',
     officer: 'userid1',
-    roletime: new Date(1234567890) } ]);
+    roletime: new Date(1234567890) } ], "wrong query for adimt/expel action");
 });
 
-it.only("query without any action type", function(){
+it("query without any action type", function(){
 	var query = relation({
 		text: "some message",
 		user: {id: "userid2"},
@@ -71,5 +71,5 @@ it.only("query without any action type", function(){
     transitiontype: 'invite',
     message: 'some message',
     officer: null,
-    roletime: new Date(1234567890) } ]);
+    roletime: new Date(1234567890) } ], "wrong query without any action type");
 });
