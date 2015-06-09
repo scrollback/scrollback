@@ -8,7 +8,7 @@ var note = require("../actions/note.js"),
 it("notification query test", function() {
 	var query = note({
 		type: "note",
-		action: "mntion",
+		action: "text",
 		user: {
 			id: "user1"
 		},
@@ -23,7 +23,7 @@ it("notification query test", function() {
 	}));
 	assert.deepEqual(query, [ { '$': 'UPDATE "notes" SET  "user"=${user}, "action"=${action}, "group"=${group}, "notetype"=${notetype}, "ref"=${ref}, "readTime"=${readTime}',
     user: 'user1',
-    action: 'mntion',
+    action: 'text',
     group: 'scrollback',
     notetype: 'mention',
     ref: '4egwqyt326gewe23',
