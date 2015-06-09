@@ -18,10 +18,8 @@ module.exports = (core, ...args) => {
 
 			content.innerHTML = not.html;
 			content.className = "notification-center-item-content content";
-			content.addEventListener("click", () => {
-				not.handlers[0]();
-				not.dismiss();
-			}, false);
+
+			content.addEventListener("click", () => not.act(), false);
 
 			close = document.createElement("span");
 

@@ -3,16 +3,15 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const user = require("../lib/user.js")(core, config, store),
-		  generate = require("../lib/generate.js");
+	const user = require("../lib/user.js")(core, config, store);
 
-	core.on("notification-dn", notification => {
+	core.on("note-dn", notification => {
 		core.emit("setstate", {
 			notifications: [ notification ]
 		});
 	}, 100);
 
-	core.on("notification-up", notification => {
+	core.on("note-up", notification => {
 		core.emit("setstate", {
 			notifications: [ notification ]
 		});
@@ -30,32 +29,35 @@ module.exports = (core, config, store) => {
 			return;
 		}
 
+		let group = text.to,
+			title;
+
 		// FIXME: ugly hack until messages in hidden threads are no longer received
 		if (text.thread) {
 			let thread = store.get("indexes", "threadsById", text.thread);
 
 			if (thread && thread.tags.indexOf("thread-hidden") > -1) {
 				return;
+			} else {
+				title = thread.title;
+				group += "/" + text.thread;
 			}
 		}
 
-		let subtype;
+		let roomId = store.get("nav", "room"),
+			type;
 
 		if (text.mentions && text.mentions.indexOf(userId) > -1) {
-			subtype = "mention";
+			type = "mention";
 		} else {
-			let roomId = store.get("nav", "room"),
-				mode = store.get("nav", "mode");
+			let mode = store.get("nav", "mode");
 
 			if (text.id === text.thread) {
-				let roomId = store.get("nav", "room"),
-					mode = store.get("nav", "mode");
-
 				if (roomId === text.to && mode === "room" && !user.isAdmin(userId, roomId)) {
 					return;
 				}
 
-				subtype = "thread";
+				type = "thread";
 			} else {
 				let threadId = store.get("nav", "thread");
 
@@ -63,17 +65,22 @@ module.exports = (core, config, store) => {
 					return;
 				}
 
-				subtype = "text";
+				type = "reply";
 			}
 		}
 
-		core.emit("notification-dn", {
-			id: generate.uid(),
-			time: Date.now(),
-			type: "notification",
-			subtype: subtype,
-			action: text,
-			status: "unread"
+		core.emit("note-dn", {
+			to: store.get("user"),
+			action: "text",
+			notetype: type,
+			group: group,
+			count: 1,
+			ref: text.id,
+			notedata: {
+				title: title,
+				text: text.text,
+				from: text.from
+			}
 		});
 	}, 100);
 };

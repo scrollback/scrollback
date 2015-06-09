@@ -65,12 +65,12 @@ function applyChanges(changes, base) {
 function updateNotifications(baseNotifications, notifications) {
 	for (let notif of notifications) {
 		for (let i = 0, l = baseNotifications.length; i < l; i++) {
-			if (baseNotifications[i] && baseNotifications[i].id === notif.id) {
+			if (baseNotifications[i] && baseNotifications[i].ref === notif.ref) {
 				baseNotifications.splice(i, 1);
 			}
 		}
 
-		if (notif.status !== "dismissed") {
+		if (typeof notif.dismissTime !== "number") {
 			baseNotifications.push(objUtils.deepFreeze(notif));
 		}
 	}

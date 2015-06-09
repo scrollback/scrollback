@@ -7,8 +7,8 @@ module.exports = (core, config, store) => {
 		  format = require("../lib/format.js");
 
 	class NotificationItem {
-		constructor(notification) {
-			this.notification = notification;
+		constructor(note) {
+			this.note = note;
 		}
 
 		_truncate(text, count = 42) {
@@ -21,123 +21,130 @@ module.exports = (core, config, store) => {
 			return this._truncate(format.mdToText(text));
 		}
 
+		_getcomponent(index) {
+			return typeof this.note.group === "string" ? this.note.group.split("/")[index] : null;
+		}
+
+		_getthread() {
+			return this._getcomponent(1) || "";
+		}
+
+		_getroom() {
+			return this._getcomponent(0) || "";
+		}
+
 		dismiss() {
-			core.emit("notification-up", {
-				id: this.notification.id,
-				status: "dismissed"
+			core.emit("note-up", {
+				ref: this.note.ref,
+				dismissTime: Date.now()
 			});
 		}
 
+		act() {
+			if (typeof this.handlers.default === "function") {
+				this.handlers.default();
+			}
+
+			this.dismiss();
+		}
+
 		get title() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
 				title;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-				title = `New mention in ${action.to}`;
+				title = `New mention in ${this._getroom()}`;
 				break;
-			case "text":
-				let thread;
-
-				if (action.thread) {
-					thread = store.get("indexes", "threadsById", action.thread);
-				}
-
-				title = `New ${thread ? "reply" : "message"} in ${thread && thread.title ? thread.title : action.to}`;
+			case "reply":
+				title = `New ${data.title ? "reply" : "message"} in ${data.title || this._getroom()}`;
 				break;
 			case "thread":
-				title = `New discussion in ${action.to}`;
+				title = `New discussion in ${this._getroom()}`;
 				break;
 			default:
-				title = `New notification in ${action.to}`;
+				title = `New notification in ${data.title || this._getroom()}`;
 			}
 
 			return title;
 		}
 
 		get summary() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
 				summary;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "thread":
-				summary = `${user.getNick(action.from)} : ${this._format(action.title)}`;
+				summary = `${user.getNick(data.from)} : ${this._format(data.title)}`;
 				break;
 			default:
-				summary = `${user.getNick(action.from)} : ${this._format(action.text)}`;
+				summary = `${user.getNick(data.from)} : ${this._format(data.text)}`;
 			}
 
 			return summary;
 		}
 
 		get html() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
 				html;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-				html = `<strong>${user.getNick(action.from)}</strong> mentioned you in <strong>${action.to}</strong>: <strong>${this._format(action.text)}</strong>`;
+				html = `<strong>${user.getNick(data.from)}</strong> mentioned you in <strong>${data.to}</strong>: <strong>${this._format(data.text)}</strong>`;
 				break;
-			case "text":
-				let thread;
-
-				if (action.thread) {
-					thread = store.get("indexes", "threadsById", action.thread);
-				}
-
-				html = `<strong>${user.getNick(action.from)}</strong> ${thread ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(thread && thread.title ? thread.title : action.to)}</strong>`;
+			case "reply":
+				html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong> in <strong>${this._format(data.title || this._getroom())}</strong>`;
 				break;
 			case "thread":
-				html = `<strong>${user.getNick(action.from)}</strong> started a discussion on <strong>${this._format(action.title)}</strong> in <strong>${action.to}</strong>`;
+				html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong> in <strong>${this._format(this._getroom())}</strong>`;
 				break;
 			default:
-				html = `New notification in <strong>${action.to}</strong>`;
+				html = `New notification in <strong>${this._format(this._getroom())}</strong>`;
 			}
 
 			return html;
 		}
 
 		get handlers() {
-			let action = this.notification.action,
-				handlers = [];
+			let handlers = {};
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-			case "text":
-				handlers.push(() => {
+			case "reply":
+				handlers.default = () => {
 					core.emit("setstate", {
 						nav: {
-							room: action.to,
-							thread: action.thread,
+							room: this._getroom(),
+							thread: this._getthread(),
 							mode: "chat",
-							textRange: { time: action.time }
+							textRange: { time: this.note.time }
 						}
 					});
-				});
+				};
 
 				break;
 			case "thread":
-				handlers.push(() => {
+				handlers.default = () => {
 					core.emit("setstate", {
 						nav: {
-							room: action.to,
-							thread: action.id,
+							room: this._getroom(),
+							thread: this._getthread(),
 							mode: "chat",
-							threadRange: { time: action.time }
+							threadRange: { time: this.note.time }
 						}
 					});
-				});
+				};
 
 				break;
 			default:
-				handlers.push(() => {
+				handlers.default = () => {
 					core.emit("setstate", {
 						nav: {
-							room: action.to,
+							room: this._getroom(),
 							mode: "room"
 						}
 					});
-				});
+				};
 			}
 
 			return handlers;
