@@ -1,47 +1,92 @@
-var queryTr = require('./query-transform.js'),
-	actionTr = require('./action-transform.js'),
-	resultTr = require('./result-transform.js'),
-	log = require('../lib/logger.js'),
-	config, ps;
+"use strict";
+
+var writeEntity = require("./actions/entity"),
+	writeRelation = require("./actions/relation"),
+	writeContent = require("./actions/content"),
+	writeNote = require("./actions/note"),
 	
-function getHandler(type) {
-	return function(query, next) {
-		if (!query.results) {
-			var t = new Date().getTime();
-			ps.get(queryTr[type](query), function(err, results) {
-				log("query:", query, (new Date().getTime() - t));
-				log("Time taken by query:", query.id, ":", (new Date().getTime() - t));
-				if(err) return next(err);
-				query.results = resultTr[type](query, results); // reply of run queries is passed here.
-				next();
-			});
-		} else next();
-	};
-}
+	readEntity = require("./queries/entity"),
+	readContent = require("./queries/content"),
+	readNote = require("./queries/note"),
+		
+	pg = require("../lib/pg"),
+	connString;
 
-function putHandler(type) {
-	return function(object, next) {
-		log("put: ", object);
-		var t = new Date().getTime();
-		ps.put(actionTr[type](object), function(err) {
-			log("Time taken by action:", object.id, ":", (new Date().getTime() - t));
-			if(err) next(err);
-			else next();
-		});
-	};
-}
-
-module.exports = function(core, conf) {
-	//var s = "storage";
-	config = conf;
-	ps = require('./postgres-storage.js')(config);
-	require('./timestamp.js')(core, config);
-	["text", "edit", "room", "user", "join", "part", "admit", "expel"].forEach(function(action) {
-		core.on(action, putHandler(action), "storage");
+function handleEntityAction(action, next) {
+	var sql = writeEntity(action).concat(writeNote(action));
+	pg.write(connString, sql, function (err) {
+		next(err);
 	});
-	if (!config.disableQueries) {
-		["getTexts", "getThreads", "getRooms", "getUsers", "getEntities"].forEach(function(query) {
-			core.on(query, getHandler(query), "storage");
+}
+
+function handleRelationAction(action, next) {
+	var sql = writeRelation(action).concat(writeNote(action));
+	pg.write(connString, sql, function (err) {
+		next(err);
+	});
+}
+
+function handleContentAction(action, next) {
+	var sql = writeContent(action).concat(writeNote(action));
+	
+	pg.write(connString, sql, function (err) {
+		next(err);
+	});
+}
+
+function runQuery(handlers, query, results, i, callback) {
+	var sql;
+	if(i < handlers.length && (sql = handlers[i](query, results))) {
+		pg.read(connString, sql, function (err, res) {
+			if(err) return callback(err);
+			runQuery(handlers, query, res, i + 1, callback);
 		});
+	} else {
+		callback();
 	}
+}
+
+function handleEntityQuery(query, next) {
+	if(query.results) return next();
+	runQuery(readEntity, query, null, 0, next);
+}
+
+function handleContentQuery(query, next) {
+	if(query.results) return next();
+	runQuery(readContent, query, null, 0, next);
+}
+
+function handleNoteQuery(query, next) {
+	if(query.results) return next();
+	runQuery(readNote, query, null, 0, next);
+}
+
+module.exports = function (core, config) {
+	connString = "pg://" + config.pg.username + ":" +
+		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
+	
+	require('./timestamp.js')(core, config);
+	// timestamp.js ensures that timestamps of texts and threads are unique in
+	// a room (by incrementing by one or two milliseconds where they don't)
+	// Assumes that no room has hundreds of messages a second.
+	
+	core.on("room", handleEntityAction, "storage");
+	core.on("user", handleEntityAction, "storage");
+	
+	core.on("text", handleContentAction, "storage");
+	core.on("edit", handleContentAction, "storage");
+	
+	core.on("join", handleRelationAction, "storage");
+	core.on("part", handleRelationAction, "storage");
+	core.on("admit", handleRelationAction, "storage");
+	core.on("expel", handleRelationAction, "storage");
+	
+	core.on("getRooms", handleEntityQuery, "storage");
+	core.on("getUsers", handleEntityQuery, "storage");
+	core.on("getEntities", handleEntityQuery, "storage");
+	
+	core.on("getTexts", handleContentQuery, "storage");
+	core.on("getThreads", handleContentQuery, "storage");
+	
+	core.on("getNotes", handleNoteQuery, "storage");
 };
