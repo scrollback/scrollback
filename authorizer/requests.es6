@@ -70,7 +70,7 @@ module.exports = (core, config, store) => {
 					decline.classList.add("disabled");
 					approve.classList.add("working");
 
-					promisedAction("admit-up", {
+					promisedAction("admit", {
 						to: tabs.room.id,
 						ref: user.id,
 						role: user.transitionRole
@@ -83,7 +83,7 @@ module.exports = (core, config, store) => {
 					approve.classList.add("disabled");
 					decline.classList.add("working");
 
-					promisedAction("admit-up", {
+					promisedAction("admit", {
 						to: tabs.room.id,
 						ref: user.id,
 						role: user.role

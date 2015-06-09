@@ -9,7 +9,7 @@ module.exports = core => {
 		}
 
 		return new Promise((resolve, reject) => {
-			let down = name.replace(/\-up$/, "-dn"),
+			let down = name + "-dn",
 				id;
 
 			function onError(error) {
@@ -33,7 +33,7 @@ module.exports = core => {
 			core.on(down, onDone, prio);
 			core.on("error-dn", onError, prio);
 
-			core.emit(name, params, (err, action) => {
+			core.emit(name + "-up", params, (err, action) => {
 				if (err) {
 					reject(err);
 

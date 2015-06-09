@@ -69,7 +69,7 @@ module.exports = (core, config, store) => {
 					reject.classList.add("disabled");
 					accept.classList.add("working");
 
-					promisedAction("join-up", {
+					promisedAction("join", {
 						to: room.id,
 						role: room.transitionRole
 					})
@@ -81,7 +81,7 @@ module.exports = (core, config, store) => {
 					accept.classList.add("disabled");
 					reject.classList.add("working");
 
-					promisedAction("join-up", {
+					promisedAction("join", {
 						to: room.id,
 						role: room.role
 					})
