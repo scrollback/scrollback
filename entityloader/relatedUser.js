@@ -1,66 +1,75 @@
 "use strict";
-var core,
-	log = require("../lib/logger.js"),
-	uid = require('../lib/generate.js').uid;
+var core, userOps = require("../lib/user.js");
 
 
-function checkPresnse(room, user, callback) {
-	core.emit("getUsers", {occupantOf: room, ref:user, session: "internal-loader"}, function(occupantErr, response) {
+function checkPresense(room, user, callback) {
+	core.emit("getUsers", {
+		occupantOf: room,
+		ref: user,
+		session: "internal-loader"
+	}, function(occupantErr, response) {
 		var result = false;
 		if (occupantErr || !response || !response.results || !response.results.length) result = false;
-		else if(response.results[0] && response.results[0].id === user) result = true;
+		else if (response.results[0] && response.results[0].id === user) result = true;
 		return callback(result);
 	});
 }
 
-
-function loadRelation(room, user, callback) {
-	core.emit("getUsers", {
-		session: "internal-loader",
-		ref: user,
-		memberOf: room
-	}, function(memberErr, relations) {
-		if (memberErr || !relations || !relations.results || !relations.results.length) {
-			callback(null);
-		} else {
-			callback(relations.results[0]);
-		}
-	});
-}
-
 function loadRelatedUser(room, user, session, callback) {
+	var count = 0,
+		queriesCount = 2,
+		isErr = false, returnValue, presense = "offline";
+
+	function done(error) {
+		if (isErr) return;
+
+		if (error) {
+			isErr = true;
+			callback(error);
+			return;
+		}
+
+		count++;
+		if (count === queriesCount) {
+			returnValue.status = presense? "online" : "offline";
+			callback(null, returnValue);
+		}
+	}
+
 	core.emit("getUsers", {
-		id: uid(),
 		ref: user,
 		session: session
 	}, function(userErr, data) {
-		var userObj;
 		if (userErr || !data || !data.results || !data.results.length) {
-			return callback(new Error("USER_NOT_FOUND"));
+			return done(new Error("USER_NOT_FOUND"));
 		} else {
-			userObj = data.results[0];
-			if (!/guest-/.test(userObj.id)) {
-				var id = uid();	
+			returnValue = data.results[0];
+			if (userOps.isGuest(returnValue.id)) {
+				returnValue.role = "guest";
+				done();
+			} else {
 				core.emit("getUsers", {
-					id: id,
 					session: session,
 					ref: user,
 					memberOf: room
 				}, function(memberErr, relations) {
-					var resp;
-					if (memberErr || !relations || !relations.results || !relations.results.length) {
-						resp = userObj;
-						userObj.role = "registered";
-						callback(null, resp);
+					if(memberErr) return done(memberErr);
+					if (!relations || !relations.results || !relations.results.length) {
+						returnValue.role = "registered";
+						done();
 					} else {
-						callback(null, relations.results[0]);
+						returnValue = relations.results[0];
+						done();
 					}
 				});
-			} else {
-				userObj.role = "guest";
-				callback(null, userObj);
 			}
 		}
+	});
+	
+	
+	checkPresense(room, user, function(result) {
+		presense = result;
+		done();
 	});
 }
 

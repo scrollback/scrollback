@@ -15,8 +15,6 @@ function loadMembers(room, callback) {
 	});
 }
 
-/* copy -> paste -> rename event. can do better but why complicate things.
-it is not even a big function.*/
 function loadOccupants(room, callback) {
 	core.emit("getUsers", {
 		occupantOf: room,
@@ -75,6 +73,7 @@ var handlers = {
 			if(err) return done(err);
 			if(!response || !response.results || !response.results.length) return done(new Error("TEXT_NOT_FOUND"));
 			edit.old = response.results[0];
+			done();
 		});
 		loadThread(edit, done);
 	},
@@ -134,4 +133,6 @@ module.exports = function(c, conf) {
 	events.forEach(function(event) {
 		core.emit(event, basicLoad, "loader");
 	});
+	require("./useHandler.js")(core, config);
+	require("./initHandler.js")(core, config);
 };
