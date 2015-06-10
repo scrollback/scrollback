@@ -12,7 +12,7 @@ module.exports = (core, ...args) => {
 
 		_render(notification) {
 			let not = new NotificationItem(notification),
-				content, close, item;
+				content, close, actions, item;
 
 			content = document.createElement("span");
 
@@ -24,6 +24,7 @@ module.exports = (core, ...args) => {
 			close = document.createElement("span");
 
 			close.className = "notification-center-item-close close";
+
 			close.addEventListener("click", e => {
 				let parent = e.target.parentNode;
 
@@ -34,11 +35,33 @@ module.exports = (core, ...args) => {
 				not.dismiss();
 			}, false);
 
-			item = document.createElement("a");
+			actions = document.createElement("span");
+
+			actions.className = "notification-center-item-actions";
+
+			let handlers = not.handlers;
+
+			for (let handler of handlers) {
+				if (handler.label === "default") {
+					continue;
+				}
+
+				if (typeof handler.action === "function") {
+					let button = document.createElement("a");
+
+					button.textContent = handler.label;
+
+					actions.appendChild(button);
+				}
+			}
+
+			item = document.createElement("div");
 
 			item.className = "notification-center-item item";
-			item.appendChild(content);
+
 			item.appendChild(close);
+			item.appendChild(content);
+			item.appendChild(actions);
 
 			return item;
 		}

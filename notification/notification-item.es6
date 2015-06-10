@@ -41,8 +41,14 @@ module.exports = (core, config, store) => {
 		}
 
 		act() {
-			if (typeof this.handlers.default === "function") {
-				this.handlers.default();
+			let handlers = this.handlers;
+
+			for (let handler of handlers) {
+				if (handler.label === "default" && typeof handler.action === "function") {
+					handler.action();
+
+					break;
+				}
 			}
 
 			this.dismiss();
@@ -106,45 +112,54 @@ module.exports = (core, config, store) => {
 		}
 
 		get handlers() {
-			let handlers = {};
+			let handlers = [];
 
 			switch (this.note.notetype) {
 			case "mention":
 			case "reply":
-				handlers.default = () => {
-					core.emit("setstate", {
-						nav: {
-							room: this._getroom(),
-							thread: this._getthread(),
-							mode: "chat",
-							textRange: { time: this.note.time }
-						}
-					});
-				};
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								thread: this._getthread(),
+								mode: "chat",
+								textRange: { time: this.note.time }
+							}
+						});
+					}
+				});
 
 				break;
 			case "thread":
-				handlers.default = () => {
-					core.emit("setstate", {
-						nav: {
-							room: this._getroom(),
-							thread: this._getthread(),
-							mode: "chat",
-							threadRange: { time: this.note.time }
-						}
-					});
-				};
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								thread: this._getthread(),
+								mode: "chat",
+								threadRange: { time: this.note.time }
+							}
+						});
+					}
+				});
 
 				break;
 			default:
-				handlers.default = () => {
-					core.emit("setstate", {
-						nav: {
-							room: this._getroom(),
-							mode: "room"
-						}
-					});
-				};
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								mode: "room"
+							}
+						});
+					}
+				});
 			}
 
 			return handlers;
