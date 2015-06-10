@@ -36,7 +36,7 @@ function loadVictim(action, next) {
 }
 
 function loadThread(action, next) {
-	if (!action.thread) return next();
+	if (!action.thread || action.thread === action.id) return next();
 	core.emit("getThreads", {
 		ref: action.thread,
 		to: action.to,
