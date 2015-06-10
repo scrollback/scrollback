@@ -56,20 +56,48 @@ module.exports = (core, config, store) => {
 
 		get title() {
 			let data = this.note.notedata,
+				count = this.note.count,
 				title;
 
 			switch (this.note.notetype) {
 			case "mention":
-				title = `New mention in ${this._getroom()}`;
+				if (count > 1) {
+					title = `${count} new mentions`;
+				} else {
+					title = `New mention`;
+				}
+
+				title += ` in ${this._getroom()}`;
+
 				break;
 			case "reply":
-				title = `New ${data.title ? "reply" : "message"} in ${data.title || this._getroom()}`;
+				if (count > 1) {
+					title = `${count} new ${data.title ? "replies" : "messages"}`;
+				} else {
+					title = `New ${data.title ? "reply" : "message"}`;
+				}
+
+				title += ` in ${data.title || this._getroom()}`;
+
 				break;
 			case "thread":
-				title = `New discussion in ${this._getroom()}`;
+				if (count > 1) {
+					title = `${count} new discussions`;
+				} else {
+					title = `New discussion`;
+				}
+
+				title += ` in ${this._getroom()}`;
+
 				break;
 			default:
-				title = `New notification in ${data.title || this._getroom()}`;
+				if (count > 1) {
+					title = `${count} new notifications`;
+				} else {
+					title = `New notification`;
+				}
+
+				title += ` in ${data.title || this._getroom()}`;
 			}
 
 			return title;
@@ -92,20 +120,48 @@ module.exports = (core, config, store) => {
 
 		get html() {
 			let data = this.note.notedata,
+				count = this.note.count,
 				html;
 
 			switch (this.note.notetype) {
 			case "mention":
-				html = `<strong>${user.getNick(data.from)}</strong> mentioned you in <strong>${data.to}</strong>: <strong>${this._format(data.text)}</strong>`;
+				if (count > 1) {
+					html = `<strong>${count}</strong> new mentions`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
+				}
+
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>: <strong>${this._format(data.text)}</strong>`;
+
 				break;
 			case "reply":
-				html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong> in <strong>${this._format(data.title || this._getroom())}</strong>`;
+				if (count > 1) {
+					html = `<strong>${count}</strong> new ${data.title ? "replies" : "messages"}`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
+				}
+
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
+
 				break;
 			case "thread":
-				html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong> in <strong>${this._format(this._getroom())}</strong>`;
+				if (count > 1) {
+					html = `<strong>${count}</strong> new discussions`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
+				}
+
+				html += ` in <strong>${this._format(this._getroom())}</strong>`;
+
 				break;
 			default:
-				html = `New notification in <strong>${this._format(this._getroom())}</strong>`;
+				if (count > 1) {
+					html = `${count} new notifications`;
+				} else {
+					html = `New notification`;
+				}
+
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
 			}
 
 			return html;
