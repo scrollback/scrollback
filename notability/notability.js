@@ -34,7 +34,7 @@ module.exports = function(core) {
 
 		if (action.mentions.length) {
 			action.note.mentions = {
-				group: action.room.id + "/" + action.thread ? action.thread : "all",
+				group: action.room.id + "/" + (action.thread ? action.thread : "all"),
 				noteData: {
 					text: action.text,
 					from: action.from,
@@ -49,7 +49,7 @@ module.exports = function(core) {
 			title = action.title;
 		} else {
 			keyType = "reply";
-			group = action.room.id + "/" + action.thread ? action.thread : "all";
+			group = action.room.id + "/" + (action.thread ? action.thread : "all");
 			title = action.threadObject.title;
 		}
 
