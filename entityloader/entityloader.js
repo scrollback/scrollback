@@ -1,4 +1,6 @@
 "use strict";
+var log = require('../lib/logger.js');
+
 var generateMentions = require("./generateMentions.js");
 var loadRelatedUser, loadEntity;
 
@@ -11,7 +13,7 @@ function loadMembers(room, callback) {
 		session: "internal-loader"
 	}, function(err, response) {
 		if (err) return callback(err);
-		callback(response.results);
+		callback(null, response.results);
 	});
 }
 
@@ -21,7 +23,7 @@ function loadOccupants(room, callback) {
 		session: "internal-loader"
 	}, function(err, response) {
 		if (err) return callback(err);
-		callback(response.results);
+		callback(null, response.results);
 	});
 }
 
@@ -34,10 +36,14 @@ function loadVictim(action, next) {
 }
 
 function loadThread(action, next) {
-	if(!action.thread) return next(); 
-	core.emit("getThreads", {ref: action.thread}, function(err, response) {
-		if(err) return next(err);
-		if(!response || !response.results) return next(new Error("THREAD_NOT_FOUND"));
+	if (!action.thread) return next();
+	core.emit("getThreads", {
+		ref: action.thread,
+		to: action.to,
+		session: "internal-loader"
+	}, function(err, response) {
+		if (err) return next(err);
+		if (!response || !response.results) return next(new Error("THREAD_NOT_FOUND"));
 		action.threadObject = response.results[0];
 		return next();
 	});
@@ -45,17 +51,17 @@ function loadThread(action, next) {
 
 
 var handlers = {
-	text: function(text, next){
+	text: function(text, next) {
 		loadThread(text, function(err) {
-			if(err) return next(err);
+			if (err) return next(err);
 			generateMentions(text, next);
 		});
 	},
-	
+
 	edit: function(edit, next) {
 		var count = 0,
-		queriesCount = 2,
-		isErr = false;
+			queriesCount = 2,
+			isErr = false;
 
 		function done(error) {
 			if (isErr) return;
@@ -69,9 +75,13 @@ var handlers = {
 			count++;
 			if (count === queriesCount) generateMentions(edit, next);
 		}
-		core.emit("getText", {ref:edit.ref}, function(err, response) {
-			if(err) return done(err);
-			if(!response || !response.results || !response.results.length) return done(new Error("TEXT_NOT_FOUND"));
+		core.emit("getText", {
+			ref: edit.ref,
+			to: edit.to,
+			session: "internal-loader"
+		}, function(err, response) {
+			if (err) return done(err);
+			if (!response || !response.results || !response.results.length) return done(new Error("TEXT_NOT_FOUND"));
 			edit.old = response.results[0];
 			done();
 		});
@@ -85,43 +95,55 @@ function basicLoad(action, next) {
 	var count = 0,
 		queriesCount = 4,
 		isErr = false;
+	log.i("Got action: ", action);
 
 	function done(error) {
 		if (isErr) return;
 
 		if (error) {
 			isErr = true;
+			log.i("throwing error: ", error);
 			next(error);
 			return;
 		}
-
 		count++;
+		log.d(action.id + " incrementing count " + count);
+
 		if (count === queriesCount) {
-			if(handlers[action.type]) handlers[action.type](action, next);
+			log.d(action.id + " basic loading done: ", action);
+			if (handlers[action.type]) handlers[action.type](action, next);
 			else next();
 		}
 	}
 
+
 	loadRelatedUser(action.to, "me", action.session, function(err, result) {
+		log.d(action.id + " loading relatedUser", err, result);
 		if (err) return done(err);
 		action.user = result;
 		done();
 	});
 
 	loadEntity(action.to, "room", "internal-loader", function(err, result) {
+		log.d(action.id + " loading entity", err, result);
 		if (err) return done(err);
-		if(action.type === "room") action.old = result;
+		if (action.type === "room") action.old = result;
 		else action.room = result;
+		done();
 	});
 
 	loadMembers(action.to, function(err, result) {
+		log.d(action.id + " loading members", err, result);
 		if (err) return done(err);
 		action.members = result;
+		done();
 	});
 
 	loadOccupants(action.to, function(err, result) {
+		log.d(action.id + " loading occupants", err, result);
 		if (err) return done(err);
 		action.occupants = result;
+		done();
 	});
 }
 

@@ -100,6 +100,7 @@ sock.on('connection', function(socket) {
 			var e, action;
             log.i("response", err, data);
 			if (err) {
+				log.d("Error thrown: ",new Error().stack);
 				e = {
 					type: 'error',
 					id: d.id,
