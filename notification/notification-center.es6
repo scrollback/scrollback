@@ -49,6 +49,7 @@ module.exports = (core, ...args) => {
 				if (typeof handler.action === "function") {
 					let button = document.createElement("a");
 
+					button.className = handler.label.toLowerCase().replace(/\s+/, "-");
 					button.textContent = handler.label;
 
 					actions.appendChild(button);
@@ -71,15 +72,31 @@ module.exports = (core, ...args) => {
 		}
 
 		get dom() {
-			let div = document.createElement("div");
+			let wrapper = document.createElement("div"),
+				content = document.createElement("div"),
+				clear = document.createElement("a");
+
+			clear.textContent = "Clear all";
+			clear.className = "notification-center-clear";
+
+			clear.addEventListener("click", () => {
+				core.emit("note-up", { dismissTime: Date.now() });
+
+				content.innerHTML = "";
+			}, false);
 
 			for (let item of this._items) {
-				div.appendChild(this._render(item));
+				content.appendChild(this._render(item));
 			}
 
-			div.className = "notification-center menu-notifications";
+			content.className = "notification-center";
 
-			return div;
+			wrapper.className = "notification-center-wrapper menu-notifications";
+
+			wrapper.appendChild(content);
+			wrapper.appendChild(clear);
+
+			return wrapper;
 		}
 	}
 

@@ -36,6 +36,8 @@ module.exports = (core, config, store) => {
 		dismiss() {
 			core.emit("note-up", {
 				ref: this.note.ref,
+				action: this.note.action,
+				group: this.note.group,
 				dismissTime: Date.now()
 			});
 		}

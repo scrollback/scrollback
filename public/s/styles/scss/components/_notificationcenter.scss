@@ -1,7 +1,24 @@
 @include exports("notifications") {
+    %notification-button {
+        padding: .75em;
+        text-transform: uppercase;
+        text-align: center;
+        font-weight: bold;
+        font-size: .75em;
+        color: currentColor;
+
+        &:focus, &:hover {
+            color: currentColor;
+            background-color: rgba(0, 0, 0, .05);
+        }
+
+        &:active {
+            color: currentColor;
+            background-color: rgba(0, 0, 0, .075);
+        }
+    }
+
     .notification-center {
-        background-color: darken($light-color, 3%);
-        width: 20em;
         min-height: 5.57em;
         max-height: 80%;
         max-height: calc(100% - #{$bar-height * 1.5});
@@ -15,6 +32,21 @@
             text-align: center;
             padding: 2em 1em;
             color: fade-out($dark-color, .5);
+        }
+
+        &-wrapper {
+            background-color: darken($light-color, 5%);
+            width: 20em;
+            overflow: hidden;
+        }
+
+        &-clear {
+            @extend %notification-button;
+
+            display: block;
+            border: 0;
+
+            .notification-center:empty + & { display: none; }
         }
 
         &-item {
@@ -68,28 +100,14 @@
                 display: block;
 
                 > a {
+                    @extend %notification-button;
+
                     float: left;
                     display: block;
                     width: 50%;
-                    padding: .75em;
                     border-color: rgba(0, 0, 0, 0.1);
                     border-width: 1px 1px 0 0;
                     border-style: solid;
-                    text-transform: uppercase;
-                    text-align: center;
-                    font-weight: bold;
-                    font-size: .75em;
-                    color: currentColor;
-
-                    &:focus, &:hover {
-                        color: currentColor;
-                        background-color: rgba(0, 0, 0, .05);
-                    }
-
-                    &:active {
-                        color: currentColor;
-                        background-color: rgba(0, 0, 0, .075);
-                    }
 
                     &:last-of-type { border-right: 0; }
 
