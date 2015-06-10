@@ -5,17 +5,8 @@
         text-align: center;
         font-weight: bold;
         font-size: .75em;
-        color: currentColor;
 
-        &:focus, &:hover {
-            color: currentColor;
-            background-color: rgba(0, 0, 0, .05);
-        }
-
-        &:active {
-            color: currentColor;
-            background-color: rgba(0, 0, 0, .075);
-        }
+        &, &:focus, &:hover, &:active { color: currentColor; }
     }
 
     .notification-center {
@@ -45,6 +36,10 @@
 
             display: block;
             border: 0;
+
+            &:focus, &:hover { background-color: rgba(255, 255, 255, .5); }
+
+            &:active { background-color: rgba(255, 255, 255, .75); }
 
             .notification-center:empty + & { display: none; }
         }
@@ -108,6 +103,10 @@
                     border-color: rgba(0, 0, 0, 0.1);
                     border-width: 1px 1px 0 0;
                     border-style: solid;
+
+                    &:focus, &:hover { background-color: rgba(0, 0, 0, .05); }
+
+                    &:active { background-color: rgba(0, 0, 0, .075); }
 
                     &:last-of-type { border-right: 0; }
 
