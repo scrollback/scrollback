@@ -14,7 +14,7 @@ module.exports = (core, config, store) => {
 			let not = new Notification(item.title, {
 				icon: "/s/assets/preview@2x.png",
 				body: item.summary,
-				tag: note.group
+				tag: note.group + "_" + note.action
 			});
 
 			not.onclick = () => {
