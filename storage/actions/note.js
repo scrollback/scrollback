@@ -3,6 +3,8 @@
 var pg = require("../../lib/pg.js");
 
 module.exports = function (action) {
+	var noteType;
+	console.log("notes2: wooo2", action);
 	if(action.type === "note") {
 		var updateObject = {
 				user: action.user.id,
@@ -21,19 +23,25 @@ module.exports = function (action) {
 		if(!action.notify) { return []; }
 
 		var insertObjects = [], user;
+		console.log("notes2: wooo3");
+
 
 		for(user in action.notify) {
-			insertObjects.push({
-				user: user,
-				action: action.type,
-				ref: action.id,
-				notetype: action.notify[user].noteType,
-				group: action.note.group,
-				score: action.notify[user].score,
-				time: new Date(action.time),
-				notedata: action.note.data || {}
-			});
-		}
+			for(noteType in  action.notify[user]) {
+				insertObjects.push({
+					user: user,
+					action: action.type,
+					ref: action.id,
+					notetype: noteType,
+					group: action.note[noteType].group,
+					score: action.notify[user][noteType].score,
+					time: new Date(action.time),
+					notedata: action.note[noteType].noteData || {}
+				});	
+			}
+		}	
+		
+		console.log("Insert objects", insertObjects);
 
 		return [pg.insert("notes", insertObjects)];
 	}

@@ -24,16 +24,17 @@ var scores = {
 
 
 module.exports = function(core) {
-	core.on("text", function(action) {
+	core.on("text", function(action, next) {
 		var keyType = "",
 			group = "",
 			title;
 
+		console.log("notability app starting");
 		action.note = {};
 		action.notify = {};
 
 		if (action.mentions.length) {
-			action.note.mentions = {
+			action.note.mention = {
 				group: action.room.id + "/" + (action.thread ? action.thread : "all"),
 				noteData: {
 					text: action.text,
@@ -79,9 +80,10 @@ module.exports = function(core) {
 				action.notify[action.threadObject.from].reply = 80;
 			}
 		}
-
+		console.log("notability app node.");
 		log.d(action.note);
 		log.d(action.notify);
+		next();
 
-	}, "modifiers");
+	}, 500);
 };
