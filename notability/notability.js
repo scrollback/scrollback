@@ -29,7 +29,6 @@ module.exports = function(core) {
 			group = "",
 			title;
 
-		console.log("notability app starting");
 		action.note = {};
 		action.notify = {};
 
@@ -39,7 +38,8 @@ module.exports = function(core) {
 				noteData: {
 					text: action.text,
 					from: action.from,
-					title: action.threadObject ? action.threadObject.title : action.title
+					title: action.threadObject ? action.threadObject.title : action.title,
+					
 				}
 			};
 		}
@@ -80,7 +80,6 @@ module.exports = function(core) {
 				action.notify[action.threadObject.from].reply = 80;
 			}
 		}
-		console.log("notability app node.");
 		log.d(action.note);
 		log.d(action.notify);
 		next();
