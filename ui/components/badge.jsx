@@ -14,7 +14,7 @@ module.exports = function(core, config, store) {
 			}
 
 			if (this.props.type) {
-				all = all.filter(n => n.subtype === this.props.type);
+				all = all.filter(n => n.noteType === this.props.type);
 			}
 
 			if (typeof this.props.filter === "function") {
