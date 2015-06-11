@@ -5,23 +5,22 @@
 module.exports = (core, config, store) => {
 	const NotificationItem = require("./notification-item.es6")(core, config, store);
 
-	core.on("notification-dn", notification => {
-		let item = new NotificationItem(notification),
+	core.on("note-dn", note => {
+		let item = new NotificationItem(note),
 			user = store.getUser(),
 			show = (user.params && user.params.notifications && user.params.notifications.desktop === false) ? false : true;
 
 		if (show) {
 			let not = new Notification(item.title, {
-				body: item.summary,
 				icon: "/s/assets/preview@2x.png",
-				tag: notification.id
+				body: item.summary,
+				tag: note.group + "_" + note.action
 			});
 
 			not.onclick = () => {
 				window.focus();
 
-				item.handlers[0]();
-				item.dismiss();
+				item.act();
 			};
 		}
 	}, 1);

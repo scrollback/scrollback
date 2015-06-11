@@ -7,8 +7,8 @@ module.exports = (core, config, store) => {
 		  format = require("../lib/format.js");
 
 	class NotificationItem {
-		constructor(notification) {
-			this.notification = notification;
+		constructor(note) {
+			this.note = note;
 		}
 
 		_truncate(text, count = 42) {
@@ -21,122 +21,202 @@ module.exports = (core, config, store) => {
 			return this._truncate(format.mdToText(text));
 		}
 
+		_getcomponent(index) {
+			return typeof this.note.group === "string" ? this.note.group.split("/")[index] : null;
+		}
+
+		_getthread() {
+			return this._getcomponent(1) || "";
+		}
+
+		_getroom() {
+			return this._getcomponent(0) || "";
+		}
+
 		dismiss() {
-			core.emit("notification-up", {
-				id: this.notification.id,
-				status: "dismissed"
+			core.emit("note-up", {
+				ref: this.note.ref,
+				action: this.note.action,
+				group: this.note.group,
+				dismissTime: Date.now()
 			});
 		}
 
+		act() {
+			let handlers = this.handlers;
+
+			for (let handler of handlers) {
+				if (handler.label === "default" && typeof handler.action === "function") {
+					handler.action();
+
+					break;
+				}
+			}
+
+			this.dismiss();
+		}
+
 		get title() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
+				count = this.note.count,
 				title;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-				title = `New mention in ${action.to}`;
-				break;
-			case "text":
-				let thread;
-
-				if (action.thread) {
-					thread = store.get("indexes", "threadsById", action.thread);
+				if (count > 1) {
+					title = `${count} new mentions`;
+				} else {
+					title = `New mention`;
 				}
 
-				title = `New ${thread ? "reply" : "message"} in ${thread && thread.title ? thread.title : action.to}`;
+				title += ` in ${this._getroom()}`;
+
+				break;
+			case "reply":
+				if (count > 1) {
+					title = `${count} new ${data.title ? "replies" : "messages"}`;
+				} else {
+					title = `New ${data.title ? "reply" : "message"}`;
+				}
+
+				title += ` in ${data.title || this._getroom()}`;
+
 				break;
 			case "thread":
-				title = `New discussion in ${action.to}`;
+				if (count > 1) {
+					title = `${count} new discussions`;
+				} else {
+					title = `New discussion`;
+				}
+
+				title += ` in ${this._getroom()}`;
+
 				break;
 			default:
-				title = `New notification in ${action.to}`;
+				if (count > 1) {
+					title = `${count} new notifications`;
+				} else {
+					title = `New notification`;
+				}
+
+				title += ` in ${data.title || this._getroom()}`;
 			}
 
 			return title;
 		}
 
 		get summary() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
 				summary;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "thread":
-				summary = `${user.getNick(action.from)} : ${this._format(action.title)}`;
+				summary = `${user.getNick(data.from)} : ${this._format(data.title)}`;
 				break;
 			default:
-				summary = `${user.getNick(action.from)} : ${this._format(action.text)}`;
+				summary = `${user.getNick(data.from)} : ${this._format(data.text)}`;
 			}
 
 			return summary;
 		}
 
 		get html() {
-			let action = this.notification.action,
+			let data = this.note.notedata,
+				count = this.note.count,
 				html;
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-				html = `<strong>${user.getNick(action.from)}</strong> mentioned you in <strong>${action.to}</strong>: <strong>${this._format(action.text)}</strong>`;
-				break;
-			case "text":
-				let thread;
-
-				if (action.thread) {
-					thread = store.get("indexes", "threadsById", action.thread);
+				if (count > 1) {
+					html = `<strong>${count}</strong> new mentions`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
 				}
 
-				html = `<strong>${user.getNick(action.from)}</strong> ${thread ? "replied" : "said"} <strong>${this._format(action.text)}</strong> in <strong>${this._format(thread && thread.title ? thread.title : action.to)}</strong>`;
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>: <strong>${this._format(data.text)}</strong>`;
+
+				break;
+			case "reply":
+				if (count > 1) {
+					html = `<strong>${count}</strong> new ${data.title ? "replies" : "messages"}`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
+				}
+
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
+
 				break;
 			case "thread":
-				html = `<strong>${user.getNick(action.from)}</strong> started a discussion on <strong>${this._format(action.title)}</strong> in <strong>${action.to}</strong>`;
+				if (count > 1) {
+					html = `<strong>${count}</strong> new discussions`;
+				} else {
+					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
+				}
+
+				html += ` in <strong>${this._format(this._getroom())}</strong>`;
+
 				break;
 			default:
-				html = `New notification in <strong>${action.to}</strong>`;
+				if (count > 1) {
+					html = `${count} new notifications`;
+				} else {
+					html = `New notification`;
+				}
+
+				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
 			}
 
 			return html;
 		}
 
 		get handlers() {
-			let action = this.notification.action,
-				handlers = [];
+			let handlers = [];
 
-			switch (this.notification.subtype) {
+			switch (this.note.notetype) {
 			case "mention":
-			case "text":
-				handlers.push(() => {
-					core.emit("setstate", {
-						nav: {
-							room: action.to,
-							thread: action.thread,
-							mode: "chat",
-							textRange: { time: action.time }
-						}
-					});
+			case "reply":
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								thread: this._getthread(),
+								mode: "chat",
+								textRange: { time: this.note.time }
+							}
+						});
+					}
 				});
 
 				break;
 			case "thread":
-				handlers.push(() => {
-					core.emit("setstate", {
-						nav: {
-							room: action.to,
-							thread: action.id,
-							mode: "chat",
-							threadRange: { time: action.time }
-						}
-					});
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								thread: this._getthread(),
+								mode: "chat",
+								threadRange: { time: this.note.time }
+							}
+						});
+					}
 				});
 
 				break;
 			default:
-				handlers.push(() => {
-					core.emit("setstate", {
-						nav: {
-							room: action.to,
-							mode: "room"
-						}
-					});
+				handlers.push({
+					label: "default",
+					action: () => {
+						core.emit("setstate", {
+							nav: {
+								room: this._getroom(),
+								mode: "room"
+							}
+						});
+					}
 				});
 			}
 

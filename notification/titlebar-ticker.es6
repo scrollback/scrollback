@@ -89,7 +89,7 @@ module.exports = (core, config, store) => {
 		};
 	}());
 
-	core.on("notification-dn", notification => {
+	core.on("note-dn", notification => {
 		let item = new NotificationItem(notification),
 			user = store.getUser(),
 			sound = (user.params && user.params.notifications && user.params.notifications.sound === false) ? false : true;
