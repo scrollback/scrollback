@@ -9,6 +9,8 @@ module.exports = function(core, config, store) {
 		getCount: function() {
 			let all = store.get("notes");
 
+			all = all.filter(n => typeof n.readTime !== "number");
+
 			if (all.length === 0) {
 				return all.length;
 			}
