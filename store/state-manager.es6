@@ -54,28 +54,30 @@ function applyChanges(changes, base) {
 		base.entities = objUtils.merge(base.entities || {}, changes.entities);
 	}
 
-	if (changes.notifications)	{ updateNotifications	(base.notifications	= base.notifications	|| [], changes.notifications); }
-	if (changes.texts)			{ updateTexts			(base.texts			= base.texts			|| {}, changes.texts); }
-	if (changes.threads)		{ updateThreads			(base.threads		= base.threads			|| {}, changes.threads); }
+	if (changes.notes)			{ updateNotes			(base.notes		= base.notes	|| [], changes.notes); }
+	if (changes.texts)			{ updateTexts			(base.texts		= base.texts	|| {}, changes.texts); }
+	if (changes.threads)		{ updateThreads			(base.threads	= base.threads	|| {}, changes.threads); }
 
 	if (changes.session)		{ base.session = changes.session; }
 	if (changes.user)			{ base.user    = changes.user; }
 }
 
-function updateNotifications(baseNotifications, notifications) {
-	for (let notif of notifications) {
-		for (let i = 0, l = baseNotifications.length; i < l; i++) {
-			if (baseNotifications[i] && baseNotifications[i].ref === notif.ref) {
-				baseNotifications.splice(i, 1);
+function updateNotes(baseNotes, notes) {
+	baseNotes.splice(0, baseNotes.length);
+
+	for (let notif of notes) {
+		for (let i = 0, l = baseNotes.length; i < l; i++) {
+			if (baseNotes[i] && baseNotes[i].ref === notif.ref) {
+				baseNotes.splice(i, 1);
 			}
 		}
 
 		if (typeof notif.dismissTime !== "number") {
-			baseNotifications.push(objUtils.deepFreeze(notif));
+			baseNotes.push(objUtils.deepFreeze(notif));
 		}
 	}
 
-	baseNotifications.sort((a, b) => b.time - a.time);
+	baseNotes.sort((a, b) => b.time - a.time);
 }
 
 function updateThreads(baseThreads, threads) {

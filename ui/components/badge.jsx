@@ -7,7 +7,7 @@ module.exports = function(core, config, store) {
 
 	let Badge = React.createClass({
 		getCount: function() {
-			let all = store.get("notifications");
+			let all = store.get("notes");
 
 			if (all.length === 0) {
 				return all.length;
@@ -33,7 +33,7 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			if (changes.notifications) {
+			if ("notes" in changes) {
 				this.setState({ count: this.getCount() });
 			}
 		},

@@ -36,7 +36,7 @@ module.exports = (core, config, store) => {
 		dismiss() {
 			core.emit("note-up", {
 				ref: this.note.ref,
-				notetype: this.note.notetype,
+				noteType: this.note.noteType,
 				dismissTime: Date.now()
 			});
 		}
@@ -56,11 +56,11 @@ module.exports = (core, config, store) => {
 		}
 
 		get title() {
-			let data = this.note.notedata,
+			let data = this.note.noteData,
 				count = this.note.count,
 				title;
 
-			switch (this.note.notetype) {
+			switch (this.note.noteType) {
 			case "mention":
 				if (count > 1) {
 					title = `${count} new mentions`;
@@ -105,10 +105,10 @@ module.exports = (core, config, store) => {
 		}
 
 		get summary() {
-			let data = this.note.notedata,
+			let data = this.note.noteData,
 				summary;
 
-			switch (this.note.notetype) {
+			switch (this.note.noteType) {
 			case "thread":
 				summary = `${user.getNick(data.from)} : ${this._format(data.title)}`;
 				break;
@@ -120,11 +120,11 @@ module.exports = (core, config, store) => {
 		}
 
 		get html() {
-			let data = this.note.notedata,
+			let data = this.note.noteData,
 				count = this.note.count,
 				html;
 
-			switch (this.note.notetype) {
+			switch (this.note.noteType) {
 			case "mention":
 				if (count > 1) {
 					html = `<strong>${count}</strong> new mentions`;
@@ -171,7 +171,7 @@ module.exports = (core, config, store) => {
 		get handlers() {
 			let handlers = [];
 
-			switch (this.note.notetype) {
+			switch (this.note.noteType) {
 			case "mention":
 			case "reply":
 				handlers.push({

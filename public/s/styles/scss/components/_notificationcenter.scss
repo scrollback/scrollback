@@ -37,9 +37,9 @@
             display: block;
             border: 0;
 
-            &:focus, &:hover { background-color: rgba(255, 255, 255, .5); }
+            &:focus, &:hover { color: $error-color; }
 
-            &:active { background-color: rgba(255, 255, 255, .75); }
+            &:active { color: darken($error-color, 10%); }
 
             .notification-center:empty + & { display: none; }
         }

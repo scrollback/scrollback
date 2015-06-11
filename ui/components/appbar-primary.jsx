@@ -84,9 +84,9 @@ module.exports = function(core, config, store) {
 
 		showNotifications: function(event) {
 			let center = new NotificationCenter(),
-				notifications = store.get("notifications");
+				notes = store.get("notes");
 
-			for (let notif of notifications) {
+			for (let notif of notes) {
 				center.add(notif);
 			}
 

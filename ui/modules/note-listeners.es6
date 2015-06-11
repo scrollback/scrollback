@@ -16,14 +16,14 @@ module.exports = (core, config, store) => {
 					});
 				} else {
 					core.emit("note-up", {
-						notetype: "reply",
+						noteType: "reply",
 						group: roomId,
 						dismissTime: Date.now()
 					});
 				}
 			} else if (mode === "room") {
 				core.emit("note-up", {
-					notetype: "thread",
+					noteType: "thread",
 					group: roomId,
 					dismissTime: Date.now()
 				});
