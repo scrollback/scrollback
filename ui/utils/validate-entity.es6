@@ -2,15 +2,13 @@
 
 "use strict";
 
-var Validator = require("../../lib/validator.js");
+const Validator = require("../../lib/validator.js");
 
 module.exports = core => {
 	return function(type, name, callback) {
-		var validation;
-
 		name = (typeof name === "string") ? name.toLowerCase().trim() : "";
 
-		validation = new Validator(name);
+		let validation = new Validator(name);
 
 		if (!validation.isValid()) {
 			return callback("error", type + " " + validation.error);
