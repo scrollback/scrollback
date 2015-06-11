@@ -55,19 +55,27 @@ module.exports = function (action) {
 			}));
 
 		} else {
-			queries.push({
-				$: "UPDATE threads SET updatetime=${updatetime}, updater=${updater}, length=length+1, " +
-					"concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $(concerns)) AS a(n) " +
-					"WHERE NOT (threads.concerns @> ARRAY[a.n])) WHERE id=${id}",
-				updatetime: new Date(action.time),
-				updater: action.from,
-				concerns: [action.from].concat(action.mentions).filter(function(id) {
-					return !userOps.isGuest(id);
-				}).map(function(id) {
-					return [id];
-				}),
-				id: action.thread
+			var setParts = [
+				{ $: "updatetime=${updatetime}", updatetime: new Date(action.time) },
+				{ $: "updater=${updater}", updater: action.from },
+				"length=length+1"
+			], concerns = [action.from].concat(action.mentions).filter(function(id) {
+				return !userOps.isGuest(id) && action.threadObject.concerns.indexOf(id) === -1;
+			}).map(function(id) {
+				return [id];
 			});
+			
+			if(concerns.length) setParts.push({
+				$: "concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $(concerns)) AS a(n) " +
+					"WHERE NOT (threads.concerns @> ARRAY[a.n]))",
+				concerns: concerns
+			});
+			
+			queries.push(pg.cat([
+				"UPDATE threads SET",
+				pg.cat(setParts, ", "),
+				{ $: "WHERE id=${id}", id: action.thread }
+			]));
 
 		}
 	} else if(action.type === "edit" && (action.title || action.tags)) {

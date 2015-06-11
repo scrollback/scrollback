@@ -197,6 +197,14 @@ sock.on('connection', function(socket) {
 					});
 				}
 			}
+			
+			if(data.type === "note") {
+				if(sConns[data.session]) {
+					sConns[data.session].forEach(function(c) {
+						c.send(data);
+					});
+				}
+			}
 
 			if (data.type === 'upload/getPolicy') {
 				log.d("sending policy back", data);
