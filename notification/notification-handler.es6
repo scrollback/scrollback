@@ -8,7 +8,7 @@ module.exports = (core, config, store) => {
 	}, 100);
 
 	core.on("note-dn", note => {
-		let notes = store.get("notes");
+		let notes = store.get("notes").slice(0);
 
 		notes.push(note);
 
@@ -16,7 +16,7 @@ module.exports = (core, config, store) => {
 	}, 100);
 
 	core.on("note-up", note => {
-		let notes = store.get("notes");
+		let notes = store.get("notes").slice(0);
 
 		notes.push(note);
 

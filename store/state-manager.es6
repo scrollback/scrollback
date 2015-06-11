@@ -65,15 +65,21 @@ function applyChanges(changes, base) {
 function updateNotes(baseNotes, notes) {
 	baseNotes.splice(0, baseNotes.length);
 
-	for (let notif of notes) {
-		for (let i = 0, l = baseNotes.length; i < l; i++) {
-			if (baseNotes[i] && baseNotes[i].ref === notif.ref) {
-				baseNotes.splice(i, 1);
+	for (let note of notes) {
+		for (let i = baseNotes.length - 1; i >= 0; i--) {
+			if (baseNotes[i]) {
+				if (baseNotes[i].ref === note.ref) {
+					baseNotes.splice(i, 1);
+				}
+
+				if (note.count > 3 && baseNotes[i].group === note.group && baseNotes.noteType === note.noteType) {
+					baseNotes.splice(i, 1);
+				}
 			}
 		}
 
-		if (typeof notif.dismissTime !== "number") {
-			baseNotes.push(objUtils.deepFreeze(notif));
+		if (typeof note.dismissTime !== "number") {
+			baseNotes.push(objUtils.deepFreeze(note));
 		}
 	}
 
