@@ -173,7 +173,7 @@ sock.on('connection', function(socket) {
 				storeInit(conn, data);
 			}
 			if (data.type === 'user') processUser(conn, data);
-			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities'].indexOf(data.type) >= 0) {
+			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities','getNotes'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
                 log.d("sending response", data);

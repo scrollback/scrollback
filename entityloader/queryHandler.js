@@ -45,7 +45,7 @@ module.exports = function(c, conf) {
 		}
 
 	}
-	
+
 	core.on("getUsers", function(query, next) {
 		if (query.ref === "me") return next();
 		loadEntities(query, next);
@@ -54,4 +54,13 @@ module.exports = function(c, conf) {
 	core.on("getEntities", loadEntities, "loader");
 	core.on("getTexts", loadEntities, "loader");
 	core.on("getThreads", loadEntities, "loader");
+	core.on("getNotes", function(query, next) {
+		loadRelatedUser("", "me", query.session, function(err, user) {
+			if (err) return next(err);
+			query.user = user;
+			log.d("notes for user:", user.id);
+
+			next();
+		});
+	}, "loader");
 };

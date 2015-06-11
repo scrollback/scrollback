@@ -17,7 +17,7 @@ module.exports = [
 			$: 	"SELECT \"ref\", \"notetype\", \"user\", \"score\", \"notedata\", \"group\", \"time\", \"count\"" +
 				" FROM (" +
     			"SELECT *," +
-        		"COUNT(*) OVER (PARTITION BY \"user\", \"notetype\", \"group\" ORDER BY \"time\" DESC) \"count\"," +
+        		"COUNT(*) OVER (PARTITION BY \"user\", \"notetype\", \"group\" ) \"count\"," +
         		"RANK() OVER (PARTITION BY \"user\", \"notetype\", \"group\" ORDER BY \"time\" DESC) timeRank " +
     			"FROM notes " +
     			"WHERE \"user\" = ${user}"+
@@ -37,7 +37,7 @@ module.exports = [
 				score: row.group,
 				time: row.time.getTime(),
 				noteData: row.notedata,
-				count: 1
+				count: row.count
 			};
 		})).sort(function (a, b) {
 			return b.time - a.time;
