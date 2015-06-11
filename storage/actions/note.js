@@ -8,7 +8,7 @@ module.exports = function (action) {
 		var updateObject = {
 				user: action.user.id
 			},
-			whereFields = ["user", "action", "group", "notetype"];
+			whereFields = ["user", "group", "notetype"];
 		
 		if(action.ref) { updateObject.ref = action.ref; whereFields.push("ref"); }
 		if(action.group) { updateObject.group = action.group; whereFields.push("group"); }

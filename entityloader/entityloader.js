@@ -155,6 +155,16 @@ module.exports = function(c, conf) {
 	events.forEach(function(event) {
 		core.on(event, basicLoad, "loader");
 	});
+	
+	core.on("note", function(note, next) {
+		loadRelatedUser("", "me", note.session, function(err, user) {
+			if (err) return next(err);
+			note.user = user;
+			next();
+		});
+	}, "loader");
+	
+	
 	require("./userHandler.js")(core, config);
 	require("./initHandler.js")(core, config);
 	require("./queryHandler.js")(core, config);

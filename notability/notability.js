@@ -1,5 +1,6 @@
 "use strict";
-var log = require('../lib/logger.js');
+var log = require('../lib/logger.js'),
+	userOps = require("./../lib/app-utils.js");
 
 var scores = {
 	"mention": {
@@ -38,8 +39,7 @@ module.exports = function(core) {
 				noteData: {
 					text: action.text,
 					from: action.from,
-					title: action.threadObject ? action.threadObject.title : action.title,
-					
+					title: action.threadObject ? action.threadObject.title : action.title
 				}
 			};
 		}
@@ -65,6 +65,7 @@ module.exports = function(core) {
 
 		action.members.forEach(function(e) {
 			var x = action.notify[e.id] = {};
+			if (e.id === action.from) return;
 			if (action.mentions.indexOf(e.id) >= 0) x.mention = scores.mention[e.role];
 			if (action.note.thread) x.thread = scores.thread[e.role];
 			else if (action.note.reply) x.reply = scores.reply[e.role];
@@ -72,10 +73,12 @@ module.exports = function(core) {
 
 		if (action.note.reply && action.threadObject && action.threadObject.concerns) {
 			action.threadObject.concerns.forEach(function(concernedId) {
+				if (concernedId === action.from) return;
 				if (!action.notify[concernedId]) action.notify[concernedId] = {};
 				action.notify[concernedId].reply = 60;
 			});
-			if (action.threadObject.from) {
+
+			if (action.threadObject.from && !userOps.isGuest(action.threadObject.from) && action.threadObject.from !== action.from) {
 				if (!action.notify[action.threadObject.from]) action.notify[action.threadObject.from] = {};
 				action.notify[action.threadObject.from].reply = 80;
 			}
