@@ -1,33 +1,33 @@
+/* eslint-env es6 */
+
 "use strict";
 
-var ValidatorClient = require("../../lib/validator-client.es6");
+var Validator = require("../../lib/validator.js");
 
 module.exports = core => {
 	return function(type, name, callback) {
-		if (typeof callback !== "function") {
-			return;
-		}
+		var validation;
 
 		name = (typeof name === "string") ? name.toLowerCase().trim() : "";
 
+		validation = new Validator(name);
+
+		if (!validation.isValid()) {
+			return callback("error", type + " " + validation.error);
+		}
+
 		callback("wait");
 
-		let validator = new ValidatorClient(name, core);
-
-		if (!validator.isValid()) {
-			let message;
-
-			if (validator.error === "ERR_VALIDATE_REQUEST") {
-				message = "An error occured. May be try later?";
-			} else if (validator.error === "ERR_VALIDATE_EXISTS") {
-				message = name + " is not available. May be try another?";
-			} else {
-				message = type + " " + validator.getErrorString();
+		core.emit("getEntities", { ref: name }, function(err, res) {
+			if (err) {
+				return callback("error", "An error occured. May be try later?");
 			}
 
-			callback("error", message);
-		} else {
-			callback("ok", name);
-		}
+			if (res && res.results && res.results.length) {
+				return callback("error", name + " is not available. May be try another?");
+			} else {
+				return callback("ok", name);
+			}
+		});
 	};
 };
