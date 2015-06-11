@@ -58,7 +58,7 @@ module.exports = (core, ...args) => {
 
 			item = document.createElement("div");
 
-			item.className = "notification-center-item item";
+			item.className = "notification-center-item item" + (typeof not.readTime === "number" ? " read" : "");
 
 			item.appendChild(close);
 			item.appendChild(content);

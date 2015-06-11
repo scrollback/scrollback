@@ -63,6 +63,12 @@
 
             &.out { @extend %resizeout; }
 
+            &.read {
+                background-color: darken($light-color, 3%);
+
+                strong { color: fade-out($dark-color, .3); }
+            }
+
             &-content {
                 float: left;
                 padding: .5em .75em;
