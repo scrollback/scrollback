@@ -1,7 +1,8 @@
 "use strict";
 
 var pg = require("../../lib/pg.js"),
-	log = require("../../lib/logger.js");
+	log = require("../../lib/logger.js"),
+	userOps = require("../../lib/app-utils.js");
 
 module.exports = function (action) {
 	var queries = [], updateObject;
@@ -48,18 +49,26 @@ module.exports = function (action) {
 				tags: action.tags || [],
 				updatetime: new Date(action.time),
 				updater: action.from,
-				concerns: [action.from].concat(action.mentions)
+				concerns: [action.from].concat(action.mentions).filter(function(id) {
+					return !userOps.isGuest(id);
+				})
 			}));
+
 		} else {
 			queries.push({
 				$: "UPDATE threads SET updatetime=${updatetime}, updater=${updater}, length=length+1, " +
-					"concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $(concerns)) AS a(n) "+
-			 		"WHERE NOT (threads.concerns @> ARRAY[a.n])) WHERE id=${id}",
+					"concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $(concerns)) AS a(n) " +
+					"WHERE NOT (threads.concerns @> ARRAY[a.n])) WHERE id=${id}",
 				updatetime: new Date(action.time),
 				updater: action.from,
-				concerns: [action.from].concat(action.mentions).map(function (id) { return [id]; }),
+				concerns: [action.from].concat(action.mentions).filter(function(id) {
+					return !userOps.isGuest(id);
+				}).map(function(id) {
+					return [id];
+				}),
 				id: action.thread
 			});
+
 		}
 	} else if(action.type === "edit" && (action.title || action.tags)) {
 		updateObject = { updateTime: new Date(action.time) };

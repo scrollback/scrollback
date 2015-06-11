@@ -4,17 +4,15 @@ var pg = require("../../lib/pg.js");
 
 module.exports = function (action) {
 	var noteType;
-	console.log("notes2: wooo2", action);
 	if(action.type === "note") {
 		var updateObject = {
-				user: action.user.id,
-				action: action.action,
-				group: action.group,
-				notetype: action.noteType
+				user: action.user.id
 			},
 			whereFields = ["user", "action", "group", "notetype"];
 		
 		if(action.ref) { updateObject.ref = action.ref; whereFields.push("ref"); }
+		if(action.group) { updateObject.group = action.group; whereFields.push("group"); }
+		if(action.notetype) { updateObject.notetype = action.notetype; whereFields.push("notetype"); }
 		if(action.readTime) { updateObject.readTime = new Date(action.time); }
 		if(action.dismissTime) { updateObject.dismissTime = new Date(action.time); }
 		
@@ -23,7 +21,6 @@ module.exports = function (action) {
 		if(!action.notify) { return []; }
 
 		var insertObjects = [], user;
-		console.log("notes2: wooo3");
 
 
 		for(user in action.notify) {
@@ -34,15 +31,12 @@ module.exports = function (action) {
 					ref: action.id,
 					notetype: noteType,
 					group: action.note[noteType].group,
-					score: action.notify[user][noteType].score,
+					score: action.notify[user][noteType],
 					time: new Date(action.time),
 					notedata: action.note[noteType].noteData || {}
 				});	
 			}
 		}	
-		
-		console.log("Insert objects", insertObjects);
-
 		return [pg.insert("notes", insertObjects)];
 	}
 };
