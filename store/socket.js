@@ -22,7 +22,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(e) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -161,7 +161,7 @@ function receiveMessage(event) {
 		core.emit("error", err);
 	}
 
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy",  "error"].indexOf(data.type) !== -1) {
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error"].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
 			if (data.results) { pendingQueries[data.id].query.results = data.results; }
 			if (data.response) { pendingQueries[data.id].query.response = data.response; }

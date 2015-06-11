@@ -24,7 +24,7 @@ var scores = {
 
 
 module.exports = function(core) {
-	core.on("text", function(action) {
+	core.on("text", function(action, next) {
 		var keyType = "",
 			group = "",
 			title;
@@ -33,12 +33,13 @@ module.exports = function(core) {
 		action.notify = {};
 
 		if (action.mentions.length) {
-			action.note.mentions = {
+			action.note.mention = {
 				group: action.room.id + "/" + (action.thread ? action.thread : "all"),
 				noteData: {
 					text: action.text,
 					from: action.from,
-					title: action.threadObject ? action.threadObject.title : action.title
+					title: action.threadObject ? action.threadObject.title : action.title,
+					
 				}
 			};
 		}
@@ -79,9 +80,9 @@ module.exports = function(core) {
 				action.notify[action.threadObject.from].reply = 80;
 			}
 		}
-
 		log.d(action.note);
 		log.d(action.notify);
+		next();
 
-	}, "modifiers");
+	}, 500);
 };
