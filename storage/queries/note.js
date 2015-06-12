@@ -6,8 +6,8 @@
 /*
 	TODO: readTime and dismissTime should be aggregated (MAX) such
 	that NULLs remain NULL.
-	
-	
+
+
 	Use COALESCE
 */
 
@@ -34,7 +34,7 @@ module.exports = [
 				noteType: row.notetype,
 				group: row.group,
 				ref: row.ref,
-				score: row.group,
+				score: row.score,
 				time: row.time.getTime(),
 				noteData: row.notedata,
 				count: row.count
