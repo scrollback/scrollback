@@ -20,7 +20,7 @@ module.exports = [
         		"COUNT(*) OVER (PARTITION BY \"user\", \"notetype\", \"group\" ) \"count\"," +
         		"RANK() OVER (PARTITION BY \"user\", \"notetype\", \"group\" ORDER BY \"time\" DESC) timeRank " +
     			"FROM notes " +
-    			"WHERE \"user\" = ${user}"+
+    			"WHERE \"user\" = ${user} AND dismisstime IS NULL"+
 				") t"+
 				" WHERE \"count\" <= 3 OR timeRank = 1;",
 			user: query.user.id

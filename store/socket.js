@@ -38,7 +38,7 @@ module.exports = function(c, conf, s) {
 	[
 		"text-up", "edit-up", "back-up", "away-up",
 		"join-up", "part-up", "admit-up", "expel-up",
-		"room-up"
+		"room-up", "note-up"
 	].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
@@ -176,7 +176,7 @@ function receiveMessage(event) {
 		}
 	}
 
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "error"].indexOf(data.type) !== -1) {
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
 		//data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);

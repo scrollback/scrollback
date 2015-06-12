@@ -1,22 +1,28 @@
 "use strict";
-
+var log = require('../../lib/logger.js');
 var pg = require("../../lib/pg.js");
 
 module.exports = function (action) {
 	var noteType;
-	if(action.type === "note") {
-		var updateObject = {
-				user: action.user.id
-			},
-			whereFields = ["user", "group", "notetype"];
+	log.d("Note action: ", action);
+	if(action.type === "note") {		
+		var updateObject = {},
+			whereObject = { user: action.user.id };
 		
-		if(action.ref) { updateObject.ref = action.ref; whereFields.push("ref"); }
-		if(action.group) { updateObject.group = action.group; whereFields.push("group"); }
-		if(action.notetype) { updateObject.notetype = action.notetype; whereFields.push("notetype"); }
-		if(action.readTime) { updateObject.readTime = new Date(action.time); }
-		if(action.dismissTime) { updateObject.dismissTime = new Date(action.time); }
+		if(action.ref) { whereObject.ref = action.ref; }
+		if(action.group) { whereObject.group = action.group; }
+		if(action.notetype) { whereObject.notetype = action.notetype; }
 		
-		return [pg.update("notes", updateObject, whereFields)];
+		if(action.readTime) { updateObject.readtime = new Date(action.readTime); }
+		if(action.dismissTime) { updateObject.dismisstime = new Date(action.dismissTime); }
+		
+		if(!(Object.keys(updateObject).length)) return;
+		
+		return [pg.cat([
+			pg.update("notes", updateObject), // UPDATE notes SET readTime=${readTime}
+			"WHERE",
+			pg.nameValues(whereObject, " AND ") // user=${user} AND ref=${ref}
+		])];
 	} else {
 		if(!action.notify) { return []; }
 
