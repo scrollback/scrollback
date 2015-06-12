@@ -1,4 +1,7 @@
+"use strict";
+
 var log = require("../lib/logger.js"),
+	format = require("../lib/format.js"),
 	gcmNotify = require("./gcm-notify.js");
 
 /*
@@ -81,11 +84,13 @@ module.exports = function(core, config) {
 	}, "gateway");
 
 	function onMentions(text) {
-		var payload;
+		var payload, body;
+
+		body = format.mdToText(text.text);
 
 		payload = {
 			title: text.to + ": " + user.getNick(text.from) + " mentioned you",
-			text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
+			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
 			path: text.to + (text.thread ? "/" + text.thread : "")
 		};
 
@@ -95,11 +100,15 @@ module.exports = function(core, config) {
 	}
 
 	function onReply(text) {
-		var payload = {
-				title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
-				text: text.text.length > 400 ? text.text.substring(0, 400) + "…" : text.text,
-				path: text.to + (text.thread ? "/" + text.thread : "")
-			};
+		var payload, body;
+
+		body = format.mdToText(text.text);
+
+		payload = {
+			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
+			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
+			path: text.to + (text.thread ? "/" + text.thread : "")
+		};
 
 		core.emit("getUsers", {
 			memberOf: text.to,
@@ -111,8 +120,8 @@ module.exports = function(core, config) {
 				return;
 			}
 
-			usersList = d.results.filter(function(e) {
-				return (e.id !== text.from);
+			usersList = d.results.filter(function(err) {
+				return (err.id !== text.from);
 			});
 
 			notifyUsers(usersList, payload);
@@ -122,7 +131,7 @@ module.exports = function(core, config) {
 	function onNewDisscussion(text) {
 		var payload, body;
 
-		body = text.title ? text.title + " - " + text.text : text.text;
+		body = format.mdToText(text.title ? text.title + " - " + text.text : text.text);
 
 		if (typeof body !== "string" || !text) {
 			return;
@@ -144,8 +153,8 @@ module.exports = function(core, config) {
 				return;
 			}
 
-			usersList = d.results.filter(function(e) {
-				return (e.id !== text.from);
+			usersList = d.results.filter(function(err) {
+				return (err.id !== text.from);
 			});
 
 			notifyUsers(usersList, payload);

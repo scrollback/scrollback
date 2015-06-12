@@ -7,14 +7,16 @@ module.exports = function(core, config, store) {
 
 	let Badge = React.createClass({
 		getCount: function() {
-			let all = store.get("notifications");
+			let all = store.get("notes");
+
+			all = all.filter(n => typeof n.readTime !== "number");
 
 			if (all.length === 0) {
 				return all.length;
 			}
 
 			if (this.props.type) {
-				all = all.filter(n => n.subtype === this.props.type);
+				all = all.filter(n => n.noteType === this.props.type);
 			}
 
 			if (typeof this.props.filter === "function") {
@@ -33,7 +35,7 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			if (changes.notifications) {
+			if ("notes" in changes) {
 				this.setState({ count: this.getCount() });
 			}
 		},
