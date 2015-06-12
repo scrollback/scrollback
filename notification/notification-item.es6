@@ -4,7 +4,8 @@
 
 module.exports = (core, config, store) => {
 	const user = require("../lib/user.js")(core, config, store),
-		  format = require("../lib/format.js");
+		  format = require("../lib/format.js"),
+		  max = 3;
 
 	class NotificationItem {
 		constructor(note) {
@@ -62,7 +63,7 @@ module.exports = (core, config, store) => {
 
 			switch (this.note.noteType) {
 			case "mention":
-				if (count > 1) {
+				if (count > max) {
 					title = `${count} new mentions`;
 				} else {
 					title = `New mention`;
@@ -72,7 +73,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			case "reply":
-				if (count > 1) {
+				if (count > max) {
 					title = `${count} new ${data.title ? "replies" : "messages"}`;
 				} else {
 					title = `New ${data.title ? "reply" : "message"}`;
@@ -82,7 +83,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			case "thread":
-				if (count > 1) {
+				if (count > max) {
 					title = `${count} new discussions`;
 				} else {
 					title = `New discussion`;
@@ -92,7 +93,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			default:
-				if (count > 1) {
+				if (count > max) {
 					title = `${count} new notifications`;
 				} else {
 					title = `New notification`;
@@ -126,7 +127,7 @@ module.exports = (core, config, store) => {
 
 			switch (this.note.noteType) {
 			case "mention":
-				if (count > 1) {
+				if (count > max) {
 					html = `<strong>${count}</strong> new mentions`;
 				} else {
 					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
@@ -136,7 +137,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			case "reply":
-				if (count > 1) {
+				if (count > max) {
 					html = `<strong>${count}</strong> new ${data.title ? "replies" : "messages"}`;
 				} else {
 					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
@@ -146,7 +147,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			case "thread":
-				if (count > 1) {
+				if (count > max) {
 					html = `<strong>${count}</strong> new discussions`;
 				} else {
 					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
@@ -156,7 +157,7 @@ module.exports = (core, config, store) => {
 
 				break;
 			default:
-				if (count > 1) {
+				if (count > max) {
 					html = `${count} new notifications`;
 				} else {
 					html = `New notification`;
