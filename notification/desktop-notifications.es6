@@ -10,7 +10,7 @@ module.exports = (core, config, store) => {
 			user = store.getUser(),
 			show = (user.params && user.params.notifications && user.params.notifications.desktop === false) ? false : true;
 
-		if (show) {
+		if (show && note.score >= 30) {
 			let not = new Notification(item.title, {
 				icon: "/s/assets/preview@2x.png",
 				body: item.summary,

@@ -68,13 +68,11 @@ function updateNotes(baseNotes, notes) {
 	for (let note of notes) {
 		for (let i = baseNotes.length - 1; i >= 0; i--) {
 			if (baseNotes[i]) {
-				if (note.count > 3 && baseNotes[i].group === note.group && baseNotes.noteType === note.noteType) {
-					baseNotes.splice(i, 1);
-				}
-
 				if (typeof note.dismissTime === "number") {
 					if (baseNotes[i].ref === note.ref && baseNotes[i].noteType === note.noteType) {
 						baseNotes.splice(i, 1);
+
+						continue;
 					}
 
 					if (!note.ref) {
@@ -83,13 +81,19 @@ function updateNotes(baseNotes, notes) {
 								if (note.noteType) {
 									if (note.noteType === baseNotes[i].noteType) {
 										baseNotes.splice(i, 1);
+
+										continue;
 									}
 								} else {
 									baseNotes.splice(i, 1);
+
+									continue;
 								}
 							}
 						} else {
 							baseNotes.splice(i, 1);
+
+							continue;
 						}
 					}
 				}
