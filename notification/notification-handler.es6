@@ -5,30 +5,68 @@
 module.exports = (core, config, store) => {
 	const user = require("../lib/user.js")(core, config, store);
 
-	core.on("init-dn", () => {
+	// Load cached notifications if guest
+	function loadCache() {
+		let userId = store.get("user");
 
-		if (!user.isGuest(store.get("user"))) {
-			// Delete cached notifications if not guest
-			try {
-				window.localStorage.deleteItem("notes");
-			} catch (e) {
-				console.log("Failed to clear cached notes", e);
-			}
-		}
-
-		core.emit("getNotes", {}, (err, res) => {
+		if (user.isGuest(userId)) {
 			let notes;
 
-			if (err) {
-				notes = [];
-			} else {
-				notes = res.results;
+			try {
+				notes = JSON.parse(window.localStorage.getItem("notes"))[userId];
+			} catch (e) {
+				console.log("Failed to load cached notes", e);
 			}
 
 			if (Array.isArray(notes)) {
 				core.emit("setstate", { notes });
 			}
-		});
+		}
+	}
+
+	core.on("init-dn", () => {
+
+		loadCache();
+
+		if (!user.isGuest(store.get("user"))) {
+			// Delete cached notes if not guest
+			try {
+				window.localStorage.deleteItem("notes");
+			} catch (e) {
+				console.log("Failed to clear cached notes", e);
+			}
+
+			core.emit("getNotes", {}, (err, res) => {
+				let notes;
+
+				if (err) {
+					notes = [];
+				} else {
+					notes = res.results;
+				}
+
+				if (Array.isArray(notes)) {
+					core.emit("setstate", { notes });
+				}
+			});
+		}
+	}, 100);
+
+	window.addEventListener("storage", loadCache, false);
+
+	// Update notifications cache if guest
+	core.on("statechange", changes => {
+		let userId = store.get("user");
+
+		if (user.isGuest(userId) && changes.notes) {
+			let notes = { [userId]: store.get("notes") };
+
+			try {
+				localStorage.setItem("notes", JSON.stringify(notes));
+			} catch (e) {
+				console.log("Failed to cache notes", e);
+			}
+		}
 	}, 100);
 
 	let actions = [ "note-dn", "note-up" ];
@@ -90,42 +128,6 @@ module.exports = (core, config, store) => {
 					group: roomId,
 					dismissTime: Date.now()
 				});
-			}
-		}
-	}, 100);
-
-	// Load cached notifications if guest
-	[ "load", "storage" ].forEach(event => {
-		window.addEventListener(event, () => {
-			let userId = store.get("user");
-
-			if (user.isGuest(userId)) {
-				let notes;
-
-				try {
-					notes = JSON.parse(window.localStorage.getItem("notes"))[userId];
-				} catch (e) {
-					console.log("Failed to load cached notes", e);
-				}
-
-				if (Array.isArray(notes)) {
-					core.emit("setstate", { notes });
-				}
-			}
-		});
-	});
-
-	// Update notifications cache if guest
-	core.on("statechange", changes => {
-		let userId = store.get("user");
-
-		if (user.isGuest(userId) && changes.notes) {
-			let notes = { [userId]: store.get("notes") };
-
-			try {
-				localStorage.setItem("notes", JSON.stringify(notes));
-			} catch (e) {
-				console.log("Failed to cache notes", e);
 			}
 		}
 	}, 100);
