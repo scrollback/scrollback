@@ -3,7 +3,7 @@ var log = require('../../lib/logger.js');
 var pg = require("../../lib/pg.js");
 
 module.exports = function (action) {
-	var noteType;
+	var noteType, occupants = [];
 	log.d("Note action: ", action);
 	if(action.type === "note") {		
 		var updateObject = {},
@@ -28,9 +28,14 @@ module.exports = function (action) {
 
 		var insertObjects = [], user;
 
-
+		action.occupants.forEach(function(e) {
+			occupants[e.id] = true;
+		});
+		
 		for(user in action.notify) {
 			for(noteType in  action.notify[user]) {
+				if (occupants[user] && action.notify[user][noteType].score < 30) continue;
+				
 				insertObjects.push({
 					user: user,
 					action: action.type,
