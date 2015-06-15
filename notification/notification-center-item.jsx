@@ -19,9 +19,11 @@ module.exports = (core, ...args) => {
 
 			parent.className += " out";
 
-			setTimeout(() => parent.style.display = "none", 300);
+			setTimeout(() => {
+				parent.style.display = "none";
 
-			this.state.item.dismiss();
+				this.state.item.dismiss();
+			}, 300);
 		}
 
 		render() {
