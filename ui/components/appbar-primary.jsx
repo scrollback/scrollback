@@ -11,7 +11,7 @@ const showMenu = require("../utils/show-menu.js"),
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  Badge = require("./badge.jsx")(core, config, store),
-		  NotificationCenter = require("../../notification/notification-center.es6")(core, config, store);
+		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store);
 
 	let AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
@@ -87,16 +87,14 @@ module.exports = function(core, config, store) {
 		},
 
 		showNotifications: function(event) {
-			let center = new NotificationCenter(),
-				notes = store.get("notes");
+			let center = document.createElement("div"),
+				notes = store.get("notes").filter(n => n.score >= 30);
 
-			for (let note of notes) {
-				if (note.score >= 30) {
-					center.add(note);
-				}
-			}
+			center.className = "menu-notifications";
 
-			$(center.dom).popover({
+			React.render(<NotificationCenter notes={notes} />, center);
+
+			$(center).popover({
 				arrow: false,
 				origin: event.currentTarget
 			});

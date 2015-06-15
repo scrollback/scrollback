@@ -63,38 +63,42 @@ function applyChanges(changes, base) {
 }
 
 function updateNotes(baseNotes, notes) {
+	let map = {};
+
+	for (let n of notes) {
+		if (n.ref && typeof n.dismissTime === "number") {
+			continue;
+		}
+
+		map[n.ref + "_" + n.noteType] = n;
+	}
+
 	baseNotes.splice(0, baseNotes.length);
 
-	for (let note of notes) {
+	for (let item in map) {
+		let note = map[item];
+
 		for (let i = baseNotes.length - 1; i >= 0; i--) {
 			if (baseNotes[i]) {
-				if (typeof note.dismissTime === "number") {
-					if (baseNotes[i].ref === note.ref && baseNotes[i].noteType === note.noteType) {
-						baseNotes.splice(i, 1);
-
-						continue;
-					}
-
-					if (!note.ref) {
-						if (note.group) {
-							if (note.group === baseNotes[i].group) {
-								if (note.noteType) {
-									if (note.noteType === baseNotes[i].noteType) {
-										baseNotes.splice(i, 1);
-
-										continue;
-									}
-								} else {
+				if (typeof note.dismissTime === "number" && !note.ref) {
+					if (note.group) {
+						if (note.group === baseNotes[i].group) {
+							if (note.noteType) {
+								if (note.noteType === baseNotes[i].noteType) {
 									baseNotes.splice(i, 1);
 
 									continue;
 								}
-							}
-						} else {
-							baseNotes.splice(i, 1);
+							} else {
+								baseNotes.splice(i, 1);
 
-							continue;
+								continue;
+							}
 						}
+					} else {
+						baseNotes.splice(i, 1);
+
+						continue;
 					}
 				}
 			}
