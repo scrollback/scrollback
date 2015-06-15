@@ -35,7 +35,7 @@ module.exports = (core, ...args) => {
 
 				if (typeof handler.action === "function") {
 					actions.push(
-								 <a className={handler.label.toLowerCase().replace(/\s+/, "-")} onClick={handler.action}>
+								 <a className={handler.label.toLowerCase().replace(/\s+/, "-")} onClick={handler.action.bind(handler)}>
 									{handler.label}
 								 </a>
 								 );
@@ -48,7 +48,7 @@ module.exports = (core, ...args) => {
 					<span
 						className="notification-center-item-content content"
 						dangerouslySetInnerHTML={{__html: item.html}}
-						onClick={item.act}
+						onClick={item.act.bind(item)}
 						/>
 					<span className="notification-center-item-actions">{actions}</span>
 				   </div>
