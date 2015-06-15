@@ -4,9 +4,9 @@
 "use strict";
 var assert = require("assert");
 var core = new (require('ebus'))();
-var config = require("../server-config-defaults.js");
+var config = require("../../server-config-defaults.js");
 var validator;
-var generate = require("../lib/generate.js");
+var generate = require("../../lib/generate.js");
 
 var action = {
 	id: generate.uid(33),
