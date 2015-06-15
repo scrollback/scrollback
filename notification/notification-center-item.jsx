@@ -2,7 +2,8 @@
 
 "use strict";
 
-const React = require("react");
+const React = require("react"),
+	  format = require("../lib/format.js");
 
 module.exports = (core, ...args) => {
 	const NotificationItem = require("./notification-item.es6")(core, ...args);
@@ -52,6 +53,7 @@ module.exports = (core, ...args) => {
 						dangerouslySetInnerHTML={{__html: item.html}}
 						onClick={item.act.bind(item)}
 						/>
+					<span className="notification-center-item-timestamp">{format.friendlyTime(this.props.note.time, Date.now())}</span>
 					<span className="notification-center-item-actions">{actions}</span>
 				   </div>
 				   );
