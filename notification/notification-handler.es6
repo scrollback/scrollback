@@ -31,7 +31,7 @@ module.exports = (core, config, store) => {
 		if (!user.isGuest(store.get("user"))) {
 			// Delete cached notes if not guest
 			try {
-				window.localStorage.deleteItem("notes");
+				window.localStorage.removeItem("notes");
 			} catch (e) {
 				console.log("Failed to clear cached notes", e);
 			}
