@@ -54,15 +54,19 @@ function applyChanges(changes, base) {
 		base.entities = objUtils.merge(base.entities || {}, changes.entities);
 	}
 
-	if (changes.notes)			{ updateNotes			(base.notes		= base.notes	|| [], changes.notes); }
-	if (changes.texts)			{ updateTexts			(base.texts		= base.texts	|| {}, changes.texts); }
-	if (changes.threads)		{ updateThreads			(base.threads	= base.threads	|| {}, changes.threads); }
+	if (changes.notes)          { updateNotes           (base.notes     = base.notes    || [], changes.notes); }
+	if (changes.texts)          { updateTexts           (base.texts     = base.texts    || {}, changes.texts); }
+	if (changes.threads)        { updateThreads         (base.threads   = base.threads  || {}, changes.threads); }
 
-	if (changes.session)		{ base.session = changes.session; }
-	if (changes.user)			{ base.user    = changes.user; }
+	if (changes.session)        { base.session = changes.session; }
+	if (changes.user)           { base.user    = changes.user; }
 }
 
 function updateNotes(baseNotes, notes) {
+	// Empty all notes
+	baseNotes.splice(0, baseNotes.length);
+
+	// Filter unique notes
 	let map = {};
 
 	for (let n of notes) {
@@ -73,7 +77,9 @@ function updateNotes(baseNotes, notes) {
 		map[n.ref + "_" + n.noteType] = n;
 	}
 
-	baseNotes.splice(0, baseNotes.length);
+	// Handle groups and dismissing multiple notes
+	let grouped = {},
+		max = 3;
 
 	for (let item in map) {
 		let note = map[item];
@@ -105,10 +111,33 @@ function updateNotes(baseNotes, notes) {
 		}
 
 		if (typeof note.dismissTime !== "number") {
-			baseNotes.push(objUtils.deepFreeze(note));
+			let group = note.group + "_" + note.noteType;
+
+			if (grouped[group]) {
+				grouped[group].push(note);
+			} else {
+				grouped[group] = [ note ];
+			}
 		}
 	}
 
+	for (let g in grouped) {
+		let group = grouped[g];
+
+		if (group.length > max) {
+			let note = group[group.length - 1];
+
+			note.count = group.length;
+
+			baseNotes.push(note);
+		} else {
+			for (let n of group) {
+				baseNotes.push(n);
+			}
+		}
+	}
+
+	// Short notes based on time in descending order
 	baseNotes.sort((a, b) => b.time - a.time);
 }
 
