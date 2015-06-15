@@ -5,7 +5,7 @@
 
 module.exports = function(core, config, store) {
 	var appUtils = require("../../lib/app-utils.js"),
-		validateEntity = require("../utils/validate-entity.js")(core, config, store),
+		validateEntity = require("../utils/validate-entity.es6")(core, config, store),
 		createEntity = require("../utils/create-entity.js")(core, config, store),
 		showDialog = require("../utils/show-dialog.js")(core, config, store),
 		currentDialog, currentDialogState, userChangeCallback;

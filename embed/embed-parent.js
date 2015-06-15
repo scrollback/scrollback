@@ -1,8 +1,10 @@
-/* jslint browser: true, indent: 4, regexp: true  */
+/* eslint-env browser  */
+
+"use strict";
 
 (function() {
 	var config = require("../client-config-defaults.js"),
-		validate = require("../lib/validate.js");
+		Validator = require("../lib/validator.js");
 
 	function insertWidget() {
 		var sb, style, iframe, container,
@@ -25,7 +27,7 @@
 		embed.titlebarColor = sb.titlebarColor;
 		embed.titlebarImage = sb.titlebarImage;
 
-		sb.room = validate(sb.room).sanitized;
+		sb.room = new Validator(sb.room).sanitize({ defaultName: "scrollback" });
 
 		// Insert required styles
 		style = document.createElement("link");
@@ -55,7 +57,7 @@
 
 		window.addEventListener("message", function(e) {
 			var data;
-			
+
 			if (e.origin === host) {
 				try {
 					data = JSON.parse(e.data);

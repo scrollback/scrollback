@@ -1,8 +1,10 @@
+"use strict";
+
 //var crypto = require('crypto');
 var config = require("../server-config-defaults.js");
 var objectlevel = require("objectlevel");
 var log = require("../lib/logger.js");
-var validate = require("../lib/validate.js");
+var Validator = require("../lib/validator.js");
 var db = require('mysql').createConnection(config.mysql);
 var accountConnection = require('mysql').createConnection(config.mysql);
 var leveldb, types;
@@ -27,15 +29,9 @@ function createNow(cb) {
 	});
 }*/
 
-var config = require("../config.js");
-var objectlevel = require("objectlevel");
-var log = require("../lib/logger.js");
-var db;
-var leveldb, types;
-
 (function() {
 	var path = process.cwd();
-	if (path.split("/")[path.split("/").length - 1] != "scrollback") {
+	if (path.split("/")[path.split("/").length - 1] !== "scrollback") {
 		return console.log("execute from the root of scrollback");
 	}
 	leveldb = new objectlevel(process.cwd() + "/leveldb-storage/" + config.leveldb.path);
@@ -48,7 +44,7 @@ var leveldb, types;
 			types.rooms.get(row.to, function(err, data) {
 				var newRoom;
 				if (!data) {
-					row.to = validate(row.to).sanitized;
+					row.to = new Validator(row.to).sanitize();
 					newRoom = {
 						id: row.to,
 						description: "",
