@@ -4,14 +4,12 @@
 
 const React = require("react");
 
-module.exports = (core, ...args) => {
-	const NotificationCenterItem = require("./notification-center-item.jsx")(core, ...args);
+module.exports = (core, config, store) => {
+	const NotificationCenterItem = require("./notification-center-item.jsx")(core, config, store);
 
 	class NotificationCenter extends React.Component {
 		constructor(props) {
 			super(props);
-
-			this.state = { notes: props.notes };
 		}
 
 		clearAll() {
@@ -21,9 +19,10 @@ module.exports = (core, ...args) => {
 		}
 
 		render() {
-			let items = [];
+			let notes = store.get("notes").filter(n => n.score >= 30),
+				items = [];
 
-			for (let note of this.state.notes) {
+			for (let note of notes) {
 				items.push(<NotificationCenterItem note={note} key={note.ref + "_" + note.noteType} />);
 			}
 

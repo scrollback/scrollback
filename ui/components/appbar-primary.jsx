@@ -87,12 +87,11 @@ module.exports = function(core, config, store) {
 		},
 
 		showNotifications: function(event) {
-			let center = document.createElement("div"),
-				notes = store.get("notes").filter(n => n.score >= 30);
+			let center = document.createElement("div");
 
 			center.className = "menu-notifications";
 
-			React.render(<NotificationCenter notes={notes} />, center);
+			React.render(<NotificationCenter />, center);
 
 			$(center).popover({
 				arrow: false,

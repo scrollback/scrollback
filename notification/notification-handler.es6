@@ -73,6 +73,28 @@ module.exports = (core, config, store) => {
 
 	actions.forEach(action => {
 		core.on(action, note => {
+			let roomId = store.get("nav", "room"),
+				mode = store.get("nav", "mode");
+
+			// TODO: figure out a better way
+			if (mode === "chat") {
+				let threadId = store.get("nav", "thread");
+
+				if (threadId) {
+					if (note.group === roomId + "/" + threadId) {
+						return;
+					}
+				} else {
+					if (note.group === roomId) {
+						return;
+					}
+				}
+			} else if (mode === "room") {
+				if (note.group === roomId) {
+					return;
+				}
+			}
+
 			let notes = store.get("notes").slice(0);
 
 			notes.push(note);
