@@ -54,53 +54,98 @@ function applyChanges(changes, base) {
 		base.entities = objUtils.merge(base.entities || {}, changes.entities);
 	}
 
-	if (changes.notes)			{ updateNotes			(base.notes		= base.notes	|| [], changes.notes); }
-	if (changes.texts)			{ updateTexts			(base.texts		= base.texts	|| {}, changes.texts); }
-	if (changes.threads)		{ updateThreads			(base.threads	= base.threads	|| {}, changes.threads); }
+	if (changes.notes)          { updateNotes           (base.notes     = base.notes    || [], changes.notes); }
+	if (changes.texts)          { updateTexts           (base.texts     = base.texts    || {}, changes.texts); }
+	if (changes.threads)        { updateThreads         (base.threads   = base.threads  || {}, changes.threads); }
 
-	if (changes.session)		{ base.session = changes.session; }
-	if (changes.user)			{ base.user    = changes.user; }
+	if (changes.session)        { base.session = changes.session; }
+	if (changes.user)           { base.user    = changes.user; }
 }
 
 function updateNotes(baseNotes, notes) {
+	// Empty all notes
 	baseNotes.splice(0, baseNotes.length);
 
-	for (let note of notes) {
-		for (let i = baseNotes.length - 1; i >= 0; i--) {
-			if (baseNotes[i]) {
-				if (note.count > 3 && baseNotes[i].group === note.group && baseNotes.noteType === note.noteType) {
-					baseNotes.splice(i, 1);
+	// Filter unique notes
+	let dismissed = notes.filter(n => typeof n.dismissTime === "number"),
+		map = {};
+
+	for (let n of notes) {
+		let skip = false;
+
+		if (typeof n.dismissTime === "number") {
+			continue;
+		}
+
+		for (let d of dismissed) {
+			if (d.ref) {
+				if (d.ref === n.ref && d.noteType === n.noteType) {
+					skip = true;
+
+					break;
 				}
+			} else {
+				if (d.group) {
+					if (d.group === n.group) {
+						if (d.noteType) {
+							if (d.noteType === n.noteType) {
+								skip = true;
 
-				if (typeof note.dismissTime === "number") {
-					if (baseNotes[i].ref === note.ref && baseNotes[i].noteType === note.noteType) {
-						baseNotes.splice(i, 1);
-					}
-
-					if (!note.ref) {
-						if (note.group) {
-							if (note.group === baseNotes[i].group) {
-								if (note.noteType) {
-									if (note.noteType === baseNotes[i].noteType) {
-										baseNotes.splice(i, 1);
-									}
-								} else {
-									baseNotes.splice(i, 1);
-								}
+								break;
 							}
 						} else {
-							baseNotes.splice(i, 1);
+							skip = true;
+
+							break;
 						}
 					}
+				} else {
+					skip = true;
+
+					break;
 				}
 			}
 		}
 
-		if (typeof note.dismissTime !== "number") {
-			baseNotes.push(objUtils.deepFreeze(note));
+		if (skip) {
+			continue;
+		}
+
+		map[n.ref + "_" + n.noteType] = n;
+	}
+
+	// Handle groups
+	let grouped = {},
+		max = 3;
+
+	for (let item in map) {
+		let note = map[item],
+			group = note.group + "_" + note.noteType;
+
+		if (grouped[group]) {
+			grouped[group].push(note);
+		} else {
+			grouped[group] = [ note ];
 		}
 	}
 
+	for (let g in grouped) {
+		let group = grouped[g];
+
+		if (group.length > max) {
+			let note = group[group.length - 1];
+
+			note.count = group.length;
+
+			baseNotes.push(note);
+		} else {
+			for (let n of group) {
+				baseNotes.push(n);
+			}
+		}
+	}
+
+	// Short notes based on time in descending order
 	baseNotes.sort((a, b) => b.time - a.time);
 }
 

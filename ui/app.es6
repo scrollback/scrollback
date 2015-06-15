@@ -68,7 +68,6 @@
 
 	// Modules
 	require("./modules/menu-listeners.es6")(...args);
-	require("./modules/note-listeners.es6")(...args);
 	require("./modules/dialogs-listeners.js")(...args);
 	require("./modules/thread-dialog.js")(...args);
 	require("./modules/settings-room.js")(...args);

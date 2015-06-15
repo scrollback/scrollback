@@ -27,7 +27,7 @@
 
         &-wrapper {
             background-color: darken($light-color, 5%);
-            width: 20em;
+            border-radius: $roundness;
             overflow: hidden;
         }
 
@@ -74,7 +74,6 @@
                 padding: .5em .75em;
                 width: 85%;
                 width: calc(100% - 3em);
-                font-size: .9em;
                 color: fade-out($dark-color, .5);
 
                 strong {
@@ -83,11 +82,18 @@
                 }
             }
 
+            &-timestamp {
+                float: left;
+                font-size: .8em;
+                padding: 0 (.75em / .8) (.75em / .8);
+                opacity: .5;
+            }
+
             &-close {
                 @include icon(close);
 
                 float: right;
-                padding: .35em .75em;
+                padding: .5em .75em;
                 color: fade-out($dark-color, .5);
 
                 &:focus, &:hover { color: $error-color; }
@@ -121,4 +127,6 @@
             }
         }
     }
+
+    .menu-notifications { width: 20em; }
 }

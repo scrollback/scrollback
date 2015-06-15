@@ -154,7 +154,8 @@ function disconnected() {
 }
 
 function receiveMessage(event) {
-	var data;
+	var data, note;
+
 	try {
 		data = JSON.parse(event.data);
 	} catch (err) {
@@ -182,6 +183,26 @@ function receiveMessage(event) {
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
 		}
+
+		// Generate notifications from the action
+		if (data.note && data.from !== store.get("user")) {
+			for (var n in data.note) {
+				if (data.note[n]) {
+					note = data.note[n];
+
+					if (typeof note.score !== "number") {
+						note.score = 0;
+					}
+
+					note.ref = data.id;
+					note.time = data.time;
+					note.noteType = n;
+
+					core.emit("note-dn", note);
+				}
+			}
+		}
+
 //		console.log(data.type+ "-dn", data);
 		core.emit(data.type + "-dn", data);
 	}

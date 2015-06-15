@@ -197,7 +197,7 @@ sock.on('connection', function(socket) {
 					});
 				}
 			}
-			
+
 			if(data.type === "note") {
 				if(sConns[data.session]) {
 					sConns[data.session].forEach(function(c) {
@@ -241,7 +241,6 @@ function storeInit(conn, init) {
 	if (init.old && init.old.id) {
 		sConns[init.session].forEach(function(c) {
 			var index;
-			c.user = init.user.id;
 			if (init.old.id !== init.user.id && uConns[init.old.id]) {
 				index = uConns[init.old.id].indexOf(c);
 				uConns[init.old.id].splice(index, 1);
@@ -363,7 +362,7 @@ function emit(action, callback) {
 				};
 			}
 			sConns[action.session].forEach(function(conn) {
-				conn.user = action.user;
+				conn.user = action.user.id;
 				dispatch(conn, action);
 			});
 
@@ -385,15 +384,17 @@ function emit(action, callback) {
 	if (rConns[action.to]) {
 		rConns[action.to].forEach(function(e) {
 			var note = {};
+			log.d("++++++++++++++++++++++++++++++++++++++++++", e.user);
 			if (e.session === action.session) {
 				if (action.type === "room") dispatch(e, action);
 				else dispatch(e, myAction);
 			} else {
+				log.d(outAction.notify, e.user);
 				if(outAction.note && outAction.notify && outAction.notify[e.user]) {
 					for(var i in outAction.note) {
 						if(outAction.note.hasOwnProperty(i)) {
 							note[i] = {};
-							
+
 							for(var j in outAction.note[i]) {
 								if(outAction.note[i].hasOwnProperty(j)) {
 									note[i][j] = outAction.note[i][j];
@@ -401,13 +402,18 @@ function emit(action, callback) {
 							}
 						}
 					}
-					
+
+
+					log.d(outAction.notify[e.user]);
+
 					for(i in outAction.notify[e.user]) {
 						if(outAction.notify[e.user].hasOwnProperty(i)) {
 							note[i].score = outAction.notify[e.user][i];
 						}
-					}	
-					
+
+						log.d(i, note);
+					}
+
 					outAction.note = note;
 				}
 				delete outAction.notify;

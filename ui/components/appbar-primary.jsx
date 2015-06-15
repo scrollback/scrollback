@@ -11,7 +11,7 @@ const showMenu = require("../utils/show-menu.js"),
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  Badge = require("./badge.jsx")(core, config, store),
-		  NotificationCenter = require("../../notification/notification-center.es6")(core, config, store);
+		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store);
 
 	let AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
@@ -82,15 +82,18 @@ module.exports = function(core, config, store) {
 			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
 		},
 
+		badgeFilter: function(note) {
+			return note.score >= 30;
+		},
+
 		showNotifications: function(event) {
-			let center = new NotificationCenter(),
-				notes = store.get("notes");
+			let center = document.createElement("div");
 
-			for (let notif of notes) {
-				center.add(notif);
-			}
+			center.className = "menu-notifications";
 
-			$(center.dom).popover({
+			React.render(<NotificationCenter />, center);
+
+			$(center).popover({
 				arrow: false,
 				origin: event.currentTarget
 			});
@@ -144,7 +147,7 @@ module.exports = function(core, config, store) {
 						<div className="user-area-nick">{this.state.username}</div>
 					</div>
 					<a className="appbar-bell appbar-icon appbar-icon-alert" onClick={this.showNotifications}>
-						<Badge className="appbar-bell-badge" />
+						<Badge className="appbar-bell-badge" filter={this.badgeFilter} />
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>

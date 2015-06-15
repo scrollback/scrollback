@@ -44,16 +44,23 @@ function init() {
 	app.set('view options', { debug: true });
 
 	app.use(function(req, res, next) {
-		if (req.url.match(/.*\.appcache$/)) {
+		if (req.path.match(/.*\.appcache$/)) {
 			// We need to serve the correct mimetype for the manifest.appcache file.
 			// Even though latest browsers don't require this, older versions of browsers do.
 			// Firefox doesn't use appcache if we add Cache-Control: no-cache.
 			res.header('Content-Type', 'text/cache-manifest');
 			res.header('Expires', new Date(Date.now() + 86400000).toUTCString());
 			res.header('Pragma', 'no-cache');
-		} else if (appcached.indexOf(req.url) > -1) {
+		} else if (appcached.indexOf(req.path) > -1) {
 			// Firefox doesn't load latest resources if we don't do this.
 			res.header('Cache-Control', 'no-cache');
+		}
+
+		// Disable cache for sourcemap files
+		if (req.path.match(/.*\.map$/)) {
+			res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+			res.header('Expires', '0');
+			res.header('Pragma', 'no-cache');
 		}
 
 		next();
