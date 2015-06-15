@@ -12,7 +12,7 @@ var scores = {
 	"reply": {
 		"owner": 40,
 		"follower": 30,
-		"visitor": 20,
+		"visitor": 10,
 		"moderator": 40
 	},
 	"thread": {

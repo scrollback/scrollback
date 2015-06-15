@@ -5,7 +5,7 @@ var generateMentions = require("./generateMentions.js");
 var loadRelatedUser, loadEntity;
 
 /* list of event that the basic validation function is called for.*/
-var core, config, events = ["text", "edit", "join", "part", "away", "back", "admit", "expel", "room"];
+var core, config, events = ["text", "edit", "join", "part", "away", "back", "admit", "expel"];
 
 function loadMembers(room, callback) {
 	core.emit("getUsers", {
@@ -127,8 +127,7 @@ function basicLoad(action, next) {
 	loadEntity(action.to, "room", "internal-loader", function(err, result) {
 		log.d(action.id + " loading entity", err, result);
 		if (err) return done(err);
-		if (action.type === "room") action.old = result;
-		else action.room = result;
+		action.room = result;
 		done();
 	});
 
@@ -155,7 +154,7 @@ module.exports = function(c, conf) {
 	events.forEach(function(event) {
 		core.on(event, basicLoad, "loader");
 	});
-	
+
 	core.on("note", function(note, next) {
 		loadRelatedUser("", "me", note.session, function(err, user) {
 			if (err) return next(err);
@@ -163,10 +162,31 @@ module.exports = function(c, conf) {
 			next();
 		});
 	}, "loader");
-	
-	
+
+
 	require("./userHandler.js")(core, config);
 	require("./initHandler.js")(core, config);
 	require("./queryHandler.js")(core, config);
+	core.on("room", function(action, next) {
+		loadRelatedUser(action.to, "me", action.session, function(err, user) {
+			log.d(action.id + " loading relatedUser", err, user);
+			action.user = user;
 
+			loadEntity(action.to, "room", "internal-loader", function(error, room) {
+				if (error) {
+					if (error.message === "NO_ROOM_WITH_GIVEN_ID") {
+						action.old = {};
+						action.occupants = [];
+						action.members = [];
+						next();
+					} else {
+						next(err);
+					}
+					return;
+				}
+				action.old = room;
+				next();
+			});
+		});
+	}, "loader");
 };

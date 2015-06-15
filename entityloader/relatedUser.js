@@ -54,7 +54,14 @@ function loadRelatedUser(room, user, session, callback) {
 					ref: returnValue.id,
 					memberOf: room
 				}, function(memberErr, relations) {
-					if (memberErr) return done(memberErr);
+					if(memberErr) {
+						if(memberErr.message === "NO_ROOM_WITH_GIVEN_ID") {
+							returnValue.role = "registered";
+							return done();
+						} else {
+							return done(memberErr);
+						}
+					}
 					if (!relations || !relations.results || !relations.results.length) {
 						returnValue.role = "registered";
 						done();
