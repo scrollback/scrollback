@@ -18,7 +18,7 @@ require("../authorizer/tests/authorizer-test.js");
 require("../threader/threader-test.js");
 require("../storage/storage-test.js");
 require("../redis-storage/redis-test.js");
-require("../lib/validate-test.js");
+require("../lib/validator-test.js");
 require("../lib/obj-utils-test.js");
 require("../lib/generate-test.js");
 require("../validator/validator-test.js");

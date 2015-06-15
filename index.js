@@ -17,11 +17,13 @@ along with this program. If not, see http://www.gnu.org/licenses/agpl.txt
 or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
+
 "use strict";
+
 var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-				"push-notification", "google", "upload"];
+				"push-notification", "google", "upload" ];
 
 require("newrelic");
 
@@ -54,6 +56,5 @@ plugins.forEach(function(name) {
 if (process.env.NODE_ENV !== "production") {
 	start("testauth");
 }
-
 
 start("http"); // start http app at last

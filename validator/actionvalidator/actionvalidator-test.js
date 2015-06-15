@@ -27,7 +27,7 @@ function copy() {
 describe('Validator Test', function() {
 
 	before(function(done) {
-		validator= require("./validator.js")(core, config.validator);
+		validator= require("./actionvalidator.js")(core, config.validator);
 		done();//setTimeout(done, 2000);
 	});
 
@@ -169,7 +169,7 @@ describe('Validator Test', function() {
 		});
 	});
 
-	
+
 	it("valid user action", function(done) {
 		var t = copy(action);
 		t.type = "user";
@@ -186,7 +186,7 @@ describe('Validator Test', function() {
 			done();
 		});
 	});
-	
-	
+
+
 
 });

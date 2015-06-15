@@ -1,15 +1,12 @@
-/*eslint no-unused-vars: 0*/
-/*eslint consistent-return: 0*/
-/*eslint no-use-before-define: 0*/
 "use strict";
-var config;
-var generate = require("../../lib/generate.js");
-var validateRoom = require('../../lib/validate.js');
-var SbError = require("../../lib/SbError.js");
-var validator = new (require('valid'))();
-var log = require('../../lib/logger.js');
-module.exports = function (core, conf) {
-	config = conf;
+
+var Validator = require('../../lib/validator.js'),
+	SbError = require("../../lib/SbError.js"),
+	generate = require("../../lib/generate.js"),
+	valid = new (require('valid'))(),
+	log = require('../../lib/logger.js');
+
+module.exports = function(core) {
     /* list of event that the basic validation function is called for.*/
     var events = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user'];
     var queriesAndActions = ['init', 'text', 'edit', 'join', 'part', 'away', 'back', 'admit', 'expel', 'room', 'user', 'getTexts', 'getThreads', 'getRooms', 'getUsers'];
@@ -26,7 +23,7 @@ module.exports = function (core, conf) {
             cb();
         }, 'validation');
     });
-    validator.registerType('identities', function(is) {
+    valid.registerType('identities', function(is) {
         var r = is instanceof Array;
         if (r) {
             is.forEach(function(i)  {
@@ -36,8 +33,8 @@ module.exports = function (core, conf) {
         return r;
     });
 
-    validator.registerType('roomid', function(roomid) {
-        return validateRoom(roomid).isValid;
+    valid.registerType('roomid', function(roomid) {
+        return new Validator(roomid).isValid();
     });
 
     var actionValidator = {
@@ -88,10 +85,9 @@ module.exports = function (core, conf) {
         to: ['roomid']
     };
 
-
-    function validate(action, valid, callback) {
-        log.d("Action:", action, valid);
-        var result = validator.validate(action, valid);
+    function validate(action, validator, callback) {
+        log.d("Action:", action, validator);
+        var result = valid.validate(action, validator);
         log.d("validation results", result);
         if (!result.status) {
             log.e("Error: invalid action params", JSON.stringify(result), JSON.stringify(action));
@@ -102,15 +98,14 @@ module.exports = function (core, conf) {
         return true;
     }
 
-
     var handlers = {
-        init: function (action, callback) {
+        init: function(action, callback) {
             if (!validate(action, initValidator, callback)) return;
             action.to = "me";
-            if (action.suggestedNick) action.suggestedNick = validateRoom(action.suggestedNick).sanitized;
+            if (action.suggestedNick) action.suggestedNick = new Validator(action.suggestedNick).sanitized();
             callback();
         },
-        text: function (action, callback) {
+        text: function(action, callback) {
             if (!validate(action, textValidator, callback)) return;
             var mentionMap = {};
             if (!(action.text && action.text.trim())) return callback(new SbError("TEXT_MISSING"));
@@ -123,7 +118,7 @@ module.exports = function (core, conf) {
             if (!action.threads) action.threads = [];
             if (action.mentions && action.mentions.length > 0) {
                 //checking for multiple mentions for the same user
-                action.mentions.forEach(function (i) {
+                action.mentions.forEach(function(i) {
                     mentionMap[i] = true;
                 });
                 action.mentions = Object.keys(mentionMap);
@@ -133,30 +128,30 @@ module.exports = function (core, conf) {
             action.updateTime = action.time;
             callback();
         },
-        admit: function (action, callback) {
+        admit: function(action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
-            if (!validateRoom(action.ref).isValid) {
+            if (!new Validator(action.ref).isValid()) {
                 return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "follow_invited";
             callback();
         },
-        expel: function (action, callback) {
+        expel: function(action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
-            if (!validateRoom(action.ref).isValid) {
+            if (!new Validator(action.ref).isValid()) {
                 return callback(new SbError("INVALID_REF"));
             }
             if (!action.role) action.role = "banned";
             callback();
         },
-        edit: function (action, callback) {
+        edit: function(action, callback) {
             if (!action.ref) return callback(new SbError("REF_NOT_SPECIFIED"));
             if (!action.text && !action.tags) return callback(new SbError("NO_OPTION_TO_EDIT"));
             if (action.tags && typeof action.tags !== "object") return callback(new SbError("INVALID_EDIT_OPTION_LABEL"));
             if (action.text && typeof action.text !== "string") return callback(new SbError("INVALID_EDIT_OPTION_TEXT"));
             callback();
         },
-        user: function (action, callback) {
+        user: function(action, callback) {
            if (!validate(action, userValidator, callback)) return;
             action.user.type = "user";
             action.user.id = action.user.id.toLowerCase();
@@ -164,20 +159,20 @@ module.exports = function (core, conf) {
             action.user = cleanEntity(action);
             callback();
         },
-        room: function (action, callback) {
+        room: function(action, callback) {
             if (!validate(action, roomValidator, callback)) return;
             action.room.type = "room";
             action.room.id = action.room.id.toLowerCase();
-			if(action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
+			if (action.to !== action.room.id) return callback(new SbError("INVALID_ROOM"));
             if (!action.room.identities) action.room.identities = [];
             action.room = cleanEntity(action);
             callback();
         }
     };
 
-    events.forEach(function (event) {
-        core.on(event, function (action, callback) {
-            basicValidation(action, function (err) {
+    events.forEach(function(event) {
+        core.on(event, function(action, callback) {
+            basicValidation(action, function(err) {
                 if (err) return callback(err);
                 if (handlers[event]) {
                     handlers[event](action, callback);
@@ -189,15 +184,14 @@ module.exports = function (core, conf) {
         }, "validation");
     });
 
-
-    core.on("getThreads", function (action, callback) {
+    core.on("getThreads", function(action, callback) {
         if (!(action.to || action.q)) {
             return callback(new SbError("INVALID_ROOM"));
         }
         if (!action.time) action.time = new Date().getTime();
         return queryValidation(action, callback);
     }, "validation");
-    core.on("getTexts", function (action, callback) {
+    core.on("getTexts", function(action, callback) {
         if (!action.to) {
             return callback(new SbError("INVALID_ROOM"));
         }
@@ -208,13 +202,13 @@ module.exports = function (core, conf) {
 
         return queryValidation(action, callback);
     }, "validation");
-    core.on("getRooms", function (action, callback) {
+    core.on("getRooms", function(action, callback) {
         if (!(action.ref || action.hasOccupant || action.hasMember || action.identity || action.featured)) {
             return callback(new SbError("INVALID_QUERY"));
         }
         return queryValidation(action, callback);
     }, "validation");
-    core.on("getUsers", function (action, callback) {
+    core.on("getUsers", function(action, callback) {
         if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
             return callback(new SbError("INVALID_QUERY"));
         }
@@ -239,7 +233,7 @@ function basicValidation(action, callback) {
 		from and user is loaded by the entity loader using the session property.
 	*/
     log.d("Basic validation:", action);
-    if (!(action.type === "init" || action.type === "user") && (!validateRoom(action.to).isValid))  {
+    if (!(action.type === "init" || action.type === "user") && !(new Validator(action.to).isValid()))  {
         return callback(new SbError("INVALID_ROOM"));
     }
     if (action.from) action.from = action.from.toLowerCase();
@@ -253,7 +247,7 @@ function basicValidation(action, callback) {
     return callback();
 }
 
-function cleanEntity(action){
+function cleanEntity(action) {
 	var i, type = action.type,
 		data = action[type];
 
