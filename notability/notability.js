@@ -64,11 +64,12 @@ module.exports = function(core) {
 		};
 
 		action.members.forEach(function(e) {
-			var x = action.notify[e.id] = {};
+			var x = {};
 			if (e.id === action.from) return;
 			if (action.mentions.indexOf(e.id) >= 0) x.mention = scores.mention[e.role];
 			if (action.note.thread) x.thread = scores.thread[e.role];
 			else if (action.note.reply) x.reply = scores.reply[e.role];
+			action.notify[e.id] = x;
 		});
 
 		if (action.note.reply && action.threadObject && action.threadObject.concerns) {
