@@ -83,11 +83,12 @@ module.exports = (core, config, store) => {
 
 	core.on("setstate", changes => {
 		if (changes.nav.mode || changes.nav.room || "thread" in changes.nav) {
-			let roomId = store.get("nav", "room"),
-				mode = store.get("nav", "mode");
+			let future = store.with(changes),
+				roomId = future.get("nav", "room"),
+				mode = future.get("nav", "mode");
 
 			if (mode === "chat") {
-				let threadId = store.get("nav", "thread");
+				let threadId = future.get("nav", "thread");
 
 				if (threadId) {
 					core.emit("note-up", {

@@ -67,57 +67,65 @@ function updateNotes(baseNotes, notes) {
 	baseNotes.splice(0, baseNotes.length);
 
 	// Filter unique notes
-	let map = {};
+	let dismissed = notes.filter(n => typeof n.dismissTime === "number"),
+		map = {};
 
 	for (let n of notes) {
-		if (n.ref && typeof n.dismissTime === "number") {
+		let skip = false;
+
+		if (typeof n.dismissTime === "number") {
+			continue;
+		}
+
+		for (let d of dismissed) {
+			if (d.ref) {
+				if (d.ref === n.ref && d.noteType === n.noteType) {
+					skip = true;
+
+					break;
+				}
+			} else {
+				if (d.group) {
+					if (d.group === n.group) {
+						if (d.noteType) {
+							if (d.noteType === n.noteType) {
+								skip = true;
+
+								break;
+							}
+						} else {
+							skip = true;
+
+							break;
+						}
+					}
+				} else {
+					skip = true;
+
+					break;
+				}
+			}
+		}
+
+		if (skip) {
 			continue;
 		}
 
 		map[n.ref + "_" + n.noteType] = n;
 	}
 
-	// Handle groups and dismissing multiple notes
+	// Handle groups
 	let grouped = {},
 		max = 3;
 
 	for (let item in map) {
-		let note = map[item];
+		let note = map[item],
+			group = note.group + "_" + note.noteType;
 
-		for (let i = baseNotes.length - 1; i >= 0; i--) {
-			if (baseNotes[i]) {
-				if (typeof note.dismissTime === "number" && !note.ref) {
-					if (note.group) {
-						if (note.group === baseNotes[i].group) {
-							if (note.noteType) {
-								if (note.noteType === baseNotes[i].noteType) {
-									baseNotes.splice(i, 1);
-
-									continue;
-								}
-							} else {
-								baseNotes.splice(i, 1);
-
-								continue;
-							}
-						}
-					} else {
-						baseNotes.splice(i, 1);
-
-						continue;
-					}
-				}
-			}
-		}
-
-		if (typeof note.dismissTime !== "number") {
-			let group = note.group + "_" + note.noteType;
-
-			if (grouped[group]) {
-				grouped[group].push(note);
-			} else {
-				grouped[group] = [ note ];
-			}
+		if (grouped[group]) {
+			grouped[group].push(note);
+		} else {
+			grouped[group] = [ note ];
 		}
 	}
 
