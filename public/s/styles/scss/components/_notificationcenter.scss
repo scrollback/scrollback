@@ -27,7 +27,7 @@
 
         &-wrapper {
             background-color: darken($light-color, 5%);
-            width: 20em;
+            border-radius: $roundness;
             overflow: hidden;
         }
 
@@ -121,4 +121,6 @@
             }
         }
     }
+
+    .menu-notifications { width: 20em; }
 }
