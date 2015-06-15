@@ -197,7 +197,7 @@ module.exports = (core, config, store) => {
 						core.emit("setstate", {
 							nav: {
 								room: this._getroom(),
-								thread: this._getthread(),
+								thread: this.note.ref,
 								mode: "chat",
 								threadRange: { time: this.note.time }
 							}
