@@ -11,7 +11,7 @@ module.exports = core => {
 		let validation = new Validator(name);
 
 		if (!validation.isValid()) {
-			return callback("error", type + " " + validation.error);
+			return callback("error", type + " " + validation.getErrorString());
 		}
 
 		callback("wait");
