@@ -154,7 +154,7 @@ function disconnected() {
 }
 
 function receiveMessage(event) {
-	var data, note;
+	var data, note, userId;
 
 	try {
 		data = JSON.parse(event.data);
@@ -185,7 +185,9 @@ function receiveMessage(event) {
 		}
 
 		// Generate notifications from the action
-		if (data.note && data.from !== store.get("user")) {
+		userId = store.get("user");
+
+		if (data.note && data.from !== userId) {
 			for (var n in data.note) {
 				if (data.note[n]) {
 					note = data.note[n];
@@ -194,6 +196,7 @@ function receiveMessage(event) {
 						note.score = 0;
 					}
 
+					note.to = userId;
 					note.ref = data.id;
 					note.time = data.time;
 					note.noteType = n;
