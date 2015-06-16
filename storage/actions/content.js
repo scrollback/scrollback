@@ -26,7 +26,7 @@ module.exports = function (action) {
 			updater: action.from
 		}));
 	} else if(action.type === "edit" && (action.text || action.tags)) {
-		updateObject = { updateTime: new Date(action.time) };
+		updateObject = { updatetime: new Date(action.time) };
 		if(action.text) updateObject.text = action.text;
 		if(action.tags) updateObject.tags = action.tags;
 		
@@ -79,7 +79,7 @@ module.exports = function (action) {
 
 		}
 	} else if(action.type === "edit" && (action.title || action.tags)) {
-		updateObject = { updateTime: new Date(action.time) };
+		updateObject = { updatetime: new Date(action.time) };
 		if(action.title) updateObject.title = action.title;
 		if(action.tags) updateObject.tags = action.tags;
 		

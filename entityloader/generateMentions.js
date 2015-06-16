@@ -7,7 +7,7 @@ var log = require('../lib/logger.js');
 function generateMentions(action, next) {
 	var members = action.members, occupants = action.occupants;
 	var users = members.concat(occupants), candidates = {}, mentions;
-
+	if(!action.text) return next();
 	users.forEach(function(u) {
 		if(u.id === action.user.id) return;
 		if (userOps.isGuest(u.id)) candidates[u.id.replace(/^guest-/, '')] = true;
