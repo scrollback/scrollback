@@ -65,7 +65,8 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleMinimize: function(e) {
-			if (e.target.tagName === "A" || (e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
+			if (e.target.tagName === "A" || e.target.parentNode.tagName === "A" ||
+			    (e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
 				return;
 			}
 
