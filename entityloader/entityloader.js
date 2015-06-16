@@ -75,7 +75,7 @@ var handlers = {
 			count++;
 			if (count === queriesCount) generateMentions(edit, next);
 		}
-		core.emit("getText", {
+		core.emit("getTexts", {
 			ref: edit.ref,
 			to: edit.to,
 			session: "internal-loader"

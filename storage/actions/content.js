@@ -26,7 +26,7 @@ module.exports = function (action) {
 			updater: action.from
 		}));
 	} else if(action.type === "edit" && (action.text || action.tags)) {
-		updateObject = { updateTime: new Date(action.time) };
+		updateObject = { updatetime: new Date(action.time) };
 		if(action.text) updateObject.text = action.text;
 		if(action.tags) updateObject.tags = action.tags;
 		
@@ -60,7 +60,7 @@ module.exports = function (action) {
 				{ $: "updater=${updater}", updater: action.from },
 				"length=length+1"
 			], concerns = [action.from].concat(action.mentions).filter(function(id) {
-				return !userOps.isGuest(id) && action.threadObject.concerns.indexOf(id) === -1;
+				return !userOps.isGuest(id) && action.threadObject && action.threadObject.concerns && action.threadObject.concerns.indexOf(id) === -1;
 			}).map(function(id) {
 				return [id];
 			});
@@ -79,7 +79,7 @@ module.exports = function (action) {
 
 		}
 	} else if(action.type === "edit" && (action.title || action.tags)) {
-		updateObject = { updateTime: new Date(action.time) };
+		updateObject = { updatetime: new Date(action.time) };
 		if(action.title) updateObject.title = action.title;
 		if(action.tags) updateObject.tags = action.tags;
 		

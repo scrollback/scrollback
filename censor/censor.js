@@ -72,5 +72,13 @@ module.exports = function(core) {
 
 		next();
 	}, "watcher");
-
+	core.on("init", function(action, next) {
+		action.occupantOf.forEach(function(e) {
+			delete e.params;
+		});
+		action.memberOf.forEach(function(e) {
+			if (e.role !== "owner") delete e.params;
+		});
+		next();
+	}, "modifier");
 };
