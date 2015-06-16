@@ -132,5 +132,8 @@
         }
     }
 
-    .menu-notifications { width: 20em; }
+    .popover.menu.menu-notifications {
+        width: 20em;
+        min-height: 5.57em;
+    }
 }

@@ -46,7 +46,7 @@ module.exports = (core, ...args) => {
 			}
 
 			return (
-				   <div className={"notification-center-item item" + (typeof item.readTime === "number" ? " read" : "")}>
+				   <div className={"notification-center-item item " + this.props.note.noteType + (typeof item.readTime === "number" ? " read" : "")}>
 					<span className="notification-center-item-close close" onClick={this.closeItem.bind(this)} />
 					<span
 						className="notification-center-item-content content"

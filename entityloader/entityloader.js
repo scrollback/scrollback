@@ -189,4 +189,14 @@ module.exports = function(c, conf) {
 			});
 		});
 	}, "loader");
+	
+	core.on('upload/getPolicy', function(action, next) {
+		core.emit("getUsers", {ref:"me", session: action.session}, function(err, users) {
+			if(err) return next(err);
+			if(!users || !users.results || !users.results.length) return next(new Error("USER_NOT_INITED"));
+			action.user = users.results[0];
+			next();
+		});
+	}, "loader");
+	
 };

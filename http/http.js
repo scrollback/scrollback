@@ -1,3 +1,4 @@
+"use strict";
 /*
 	Scrollback: Beautiful text chat for your community.
 	Copyright (c) 2014 Askabt Pte. Ltd.
@@ -52,11 +53,11 @@ module.exports = function(core, conf) {
 
 	core.on("user", function(action, callback) {
 		if (!action.user.params.notifications) return callback();
-		if (typeof action.user.params.notifications.sound !== "boolean") {
+		if (["undefined", "boolean"].indexOf(typeof action.user.params.notifications.sound) === -1) {
 			return callback(new Error("ERR_INVAILD_PARAMS"));
 		}
 		
-		if (typeof action.user.params.notifications.desktop !== "boolean") {
+		if (["undefined", "boolean"].indexOf(typeof action.user.params.notifications.desktop) === -1) {
 			return callback(new Error("ERR_INVAILD_PARAMS"));
 		}
 		callback();

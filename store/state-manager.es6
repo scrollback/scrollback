@@ -137,10 +137,10 @@ function updateNotes(baseNotes, notes) {
 
 			note.count = group.length;
 
-			baseNotes.push(note);
+			baseNotes.push(objUtils.deepFreeze(note));
 		} else {
-			for (let n of group) {
-				baseNotes.push(n);
+			for (let note of group) {
+				baseNotes.push(objUtils.deepFreeze(note));
 			}
 		}
 	}
