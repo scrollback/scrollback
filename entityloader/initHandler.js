@@ -140,7 +140,7 @@ function loadProps(action, callback) {
 		userID = action.user.id;
 	core.emit("getRooms", {
 		hasOccupant: userID,
-		session: action.session
+		session: "internal-loader"
 	}, function(err, rooms) {
 		if (err || !rooms || !rooms.results || !rooms.results.length) {
 			action.occupantOf = [];
@@ -153,7 +153,7 @@ function loadProps(action, callback) {
 	if (!utils.isGuest(userID)) {
 		core.emit("getRooms", {
 			hasMember: userID,
-			session: action.session
+			session: "internal-loader"
 		}, function(err, rooms) {
 			if (err || !rooms || !rooms.results || !rooms.results.length) {
 				action.memberOf = [];
@@ -178,7 +178,11 @@ module.exports = function(c, conf) {
 	core.on("init", function(init, next) {
 		initHandler(init, function(err) {
 			if (err) return next(err);
-			loadProps(init, next);
+			next();
 		});
 	}, "loader");
+	
+	core.on("init", function(init, next) {
+		loadProps(init, next);
+	}, 600);
 };

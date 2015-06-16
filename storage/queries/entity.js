@@ -1,7 +1,7 @@
 "use strict";
 
 var pg = require("../../lib/pg.js");
-
+var appUtils = require("../../lib/app-utils.js");
 module.exports = [
 	function (query) {
 		var type,
@@ -54,8 +54,7 @@ module.exports = [
 				filters.push({ $: "relations.role=${role}'", role: query.role });
 			} else {
 				var roleFilters = ["relations.role > 'none'"];
-
-				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id) {
+				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id || query.hasMember &&  appUtils.isInternalSession(query.session)) {
 					// Show people who are transitioning to a visible role and
 					// rooms the current user is in the process of joining
 					roleFilters.push("relations.transitionrole > 'none'");

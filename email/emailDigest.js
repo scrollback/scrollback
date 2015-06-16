@@ -95,6 +95,7 @@ function trySendingToUsers() {
 					log.d("got the follower rooms preparing email.:", username, following.results);
 					var rooms = [];
 					following.results.forEach(function(r) {
+						if(r.role === 'none') return;
 						rooms.push(r.id);
 					});
 					prepareEmailObject(username, rooms, lastSent, function(errObj, email) {
