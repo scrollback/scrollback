@@ -301,8 +301,10 @@ function onEdit (edit, next) {
 	text = edit.old;
 
 	if(text) {
-		text.color = edit.color; // Extremely ugly hack to bring color info that's not part of the text object
-		thread = text.id === text.thread? threadFromText(text): null;
+		if (text.id === text.thread) {
+			text.color = (store.get("indexes", "threadsById", text.id) || {}).color;
+			thread = threadFromText(text);
+		}
 
 		if(edit.tags) text.tags = edit.tags;
 		if(edit.text) text.text = edit.text;
