@@ -14,7 +14,7 @@
         overflow: hidden;
         cursor: pointer;
 
-        &-tag-hidden, &-tag-thread-hidden {
+        &-tag-thread-hidden {
             font-style: italic;
             opacity: .5;
         }
