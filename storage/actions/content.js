@@ -60,7 +60,7 @@ module.exports = function (action) {
 				{ $: "updater=${updater}", updater: action.from },
 				"length=length+1"
 			], concerns = [action.from].concat(action.mentions).filter(function(id) {
-				return !userOps.isGuest(id) && action.threadObject.concerns.indexOf(id) === -1;
+				return !userOps.isGuest(id) && action.threadObject && action.threadObject.concerns && action.threadObject.concerns.indexOf(id) === -1;
 			}).map(function(id) {
 				return [id];
 			});
