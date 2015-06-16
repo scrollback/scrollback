@@ -39,7 +39,7 @@ module.exports = function(core) {
 				noteData: {
 					text: action.text,
 					from: action.from,
-					title: action.threadObject ? action.threadObject.title : action.title
+					title: action.threadObject ? action.threadObject.title : (action.title || action.text)
 				}
 			};
 		}
@@ -51,7 +51,7 @@ module.exports = function(core) {
 		} else {
 			keyType = "reply";
 			group = action.room.id + "/" + (action.thread ? action.thread : "all");
-			title = action.threadObject.title;
+			title = action.threadObject ? action.threadObject.title : action.text;
 		}
 
 		action.note[keyType] = {
