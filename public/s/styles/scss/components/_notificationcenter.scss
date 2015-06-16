@@ -4,7 +4,7 @@
         text-transform: uppercase;
         text-align: center;
         font-weight: bold;
-        font-size: .75em;
+        font-size: .8em;
 
         &, &:focus, &:hover, &:active { color: currentColor; }
     }
@@ -32,6 +32,7 @@
         }
 
         &-clear {
+            @extend %snappy;
             @extend %notification-button;
 
             display: block;
@@ -46,6 +47,7 @@
 
         &-item {
             @extend %clearfix;
+            @extend %snappy;
             @include dropshadow(1);
 
             display: block;
@@ -59,7 +61,9 @@
             cursor: pointer;
             border: 0;
 
-            &:focus, &:hover, &:active { color: currentColor; }
+            &:focus, &:hover { @include dropshadow(2); }
+
+            &:active { @include dropshadow(2); }
 
             &.out { @extend %resizeout; }
 
