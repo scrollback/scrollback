@@ -402,6 +402,9 @@ button {
 
 .menu {
     width: auto;
+    max-height: 80%;
+    max-height: calc(100% - #{$bar-height * 1.5});
+    overflow: auto;
 
     &-buttons {
         padding: 1em;
