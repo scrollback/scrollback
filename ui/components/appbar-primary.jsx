@@ -90,7 +90,7 @@ module.exports = function(core, config, store) {
 		showNotifications: function(event) {
 			let center = document.createElement("div");
 
-			center.className = "menu-notifications";
+			center.className = "menu menu-notifications";
 
 			React.render(<NotificationCenter />, center);
 
