@@ -1,4 +1,6 @@
-![alt tag](https://travis-ci.org/scrollback/scrollback.svg?branch=master)
+
+![travis status](https://travis-ci.org/scrollback/scrollback.svg?branch=master)
+
 ## Scrollback, where communities hang out
 
 Scrollback provides a free-to-use service at [scrollback.io](http://scrollback.io). If you’re planning run a community chat room, you should [try it](https://scrollback.io/me) out now!
