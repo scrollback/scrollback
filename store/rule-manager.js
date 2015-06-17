@@ -22,4 +22,5 @@ module.exports = function(core, config, store) {
 	require("./rules/removeRelations.js")(core, config, store);
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/embedNavigate.js")(core, config, store);
+	require("./rules/dissmissNoteOnNav.es6")(core, config, store);
 };
