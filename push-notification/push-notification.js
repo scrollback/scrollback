@@ -1,11 +1,26 @@
 "use strict";
 
+/*
+ * GCM messages have a maximum length of 4096 bytes.
+ *
+ * 1 UTF-8 character takes upto 4 bytes.
+ *
+ * No. of bytes for a message like the following,
+ *
+ * 		text.to + ": " + text.from + " replied in " + text.title.slice(0, 160)
+ *
+ *		(32 + 2 + 32 + 12 + 160) * 4 = 952
+ *
+ */
+
 var log = require("../lib/logger.js"),
+	url = require("../lib/url.js"),
 	format = require("../lib/format.js"),
-	gcmNotify = require("./gcm-notify.js");
+	gcmNotify = require("./gcm-notify.js"),
+	max = 400;
 
 /*
- * devices : [{deviceName: device.name, registrationId: registrationId, enabled: true}]
+ * devices : [{ deviceName: device.name, registrationId: registrationId, enabled: true }]
  */
 
 module.exports = function(core, config) {
@@ -90,8 +105,15 @@ module.exports = function(core, config) {
 
 		payload = {
 			title: text.to + ": " + user.getNick(text.from) + " mentioned you",
-			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
-			path: text.to + (text.thread ? "/" + text.thread : "")
+			text: body.length > max ? body.substring(0, max) + "…" : body,
+			path: url.build({
+				nav: {
+					mode: "chat",
+					room: text.to,
+					thread: text.thread,
+					textRange: { time: text.time }
+				}
+			})
 		};
 
 		mapUsersToIds(text.mentions, function(userList) {
@@ -105,9 +127,16 @@ module.exports = function(core, config) {
 		body = format.mdToText(text.text);
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in" + text.title : ""),
-			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
-			path: text.to + (text.thread ? "/" + text.thread : "")
+			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
+			text: body.length > max ? body.substring(0, max) + "…" : body,
+			path: url.build({
+				nav: {
+					mode: "chat",
+					room: text.to,
+					thread: text.thread,
+					textRange: { time: text.time }
+				}
+			})
 		};
 
 		core.emit("getUsers", {
@@ -139,8 +168,15 @@ module.exports = function(core, config) {
 
 		payload = {
 			title: text.to + ": " + user.getNick(text.from) + " started a discussion",
-			text: body.length > 400 ? body.substring(0, 400) + "…" : body,
-			path: text.to + (text.thread ? "/" + text.thread : "")
+			text: body.length > max ? body.substring(0, max) + "…" : body,
+			path: url.build({
+				nav: {
+					mode: "chat",
+					room: text.to,
+					thread: text.thread,
+					textRange: { time: text.time }
+				}
+			})
 		};
 
 		core.emit("getUsers", {
