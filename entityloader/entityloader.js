@@ -35,6 +35,14 @@ function loadVictim(action, next) {
 	});
 }
 
+function loadMe(action, next) {
+	loadRelatedUser("", "me", action.session, function(err, user) {
+		if (err) return next(err);
+		action.user = user;
+		next();
+	});
+}
+
 function loadThread(action, next) {
 	if (!action.thread || action.thread === action.id) return next();
 	core.emit("getThreads", {
@@ -155,13 +163,8 @@ module.exports = function(c, conf) {
 		core.on(event, basicLoad, "loader");
 	});
 
-	core.on("note", function(note, next) {
-		loadRelatedUser("", "me", note.session, function(err, user) {
-			if (err) return next(err);
-			note.user = user;
-			next();
-		});
-	}, "loader");
+	core.on("note", loadMe, "loader");
+	core.on('upload/getPolicy', loadMe, "loader");
 
 
 	require("./userHandler.js")(core, config);
@@ -180,7 +183,7 @@ module.exports = function(c, conf) {
 						action.members = [];
 						next();
 					} else {
-						next(err);
+						next(err);	
 					}
 					return;
 				}
@@ -189,14 +192,4 @@ module.exports = function(c, conf) {
 			});
 		});
 	}, "loader");
-	
-	core.on('upload/getPolicy', function(action, next) {
-		core.emit("getUsers", {ref:"me", session: action.session}, function(err, users) {
-			if(err) return next(err);
-			if(!users || !users.results || !users.results.length) return next(new Error("USER_NOT_INITED"));
-			action.user = users.results[0];
-			next();
-		});
-	}, "loader");
-	
 };
