@@ -13,7 +13,7 @@ it("note query test", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT "action", "notetype", "group", MAX("score") as "score", MAX("time") AS "time", COUNT(*) AS "count", CASE WHEN MAX(COALESCE(readtime, \'2050-01-01\')) = \'2050-01-01\'THEN NULL ELSE MAX(readtime) END AS readtime FROM notes WHERE "user"=${user} AND dismissTime IS NULL GROUP BY "action", "notetype", "group"',
+	assert.deepEqual(query, { '$': 'SELECT "ref", "notetype", "user", "score", "notedata", "group", "time", "count" FROM (SELECT *,COUNT(*) OVER (PARTITION BY "user", "notetype", "group" ) "count",RANK() OVER (PARTITION BY "user", "notetype", "group" ORDER BY "time" DESC) timeRank FROM notes WHERE "user" = ${user} AND dismisstime IS NULL) t WHERE "count" <= 3 OR timeRank = 1;',
   user: 'userid1' }, "wrong query");
 });
 

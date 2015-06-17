@@ -1,6 +1,7 @@
-require('./test/contentActions-test.js');
-require('./test/contentQueries-test.js');
-require('./test/entityActions-test.js');
-require('./test/entityQueries-test.js');
-require('./test/noteActions-test.js');
-require('./test/noteQueries-test.js');
+require('./test/content-actions-test.js');
+require('./test/content-queries-test.js');
+require('./test/entity-actions-test.js');
+require('./test/entity-queries-test.js');
+require('./test/note-actions-test.js');
+require('./test/note-queries-test.js');
+require('./test/relation-actions-test.js');
