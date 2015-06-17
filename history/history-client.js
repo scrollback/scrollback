@@ -2,7 +2,8 @@
 
 "use strict";
 
-var url = require("../lib/url.js");
+var url = require("../lib/url.js"),
+	oldPath;
 
 module.exports = function(core, config, store) {
 	core.on("boot", function(state) {
@@ -25,7 +26,7 @@ module.exports = function(core, config, store) {
 
 		path = url.build(store.get(), store);
 
-		if (path === location.pathname) {
+		if (path === oldPath) {
 			return;
 		}
 
@@ -34,6 +35,8 @@ module.exports = function(core, config, store) {
 		} else {
 			history.replaceState(store.get("nav"), null, path);
 		}
+
+		oldPath = path;
 
 	}, 100);
 
