@@ -384,7 +384,6 @@ function emit(action, callback) {
 	if (rConns[action.to]) {
 		rConns[action.to].forEach(function(e) {
 			var note = {};
-			log.d("++++++++++++++++++++++++++++++++++++++++++", e.user);
 			if (e.session === action.session) {
 				if (action.type === "room") dispatch(e, action);
 				else dispatch(e, myAction);

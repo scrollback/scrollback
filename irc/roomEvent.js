@@ -11,7 +11,10 @@ module.exports = function (core, conf, client, ircUtils, firstMessage) {
 		if (r.params.irc && Object.keys(r.params.irc).length > 0) {
 			var v = (typeof r.params.irc.server === 'string') && (typeof r.params.irc.channel === 'string');
 			if (!v) return callback(new Error("ERR_INVALID_IRC_PARAMS"));
-			if(r.params.irc.server && r.params.irc.channel) r.identities.push("irc://" + r.params.irc.server + "/" + r.params.irc.channel);
+			if(r.params.irc.server && r.params.irc.channel) {
+				r.identities = r.identities.filter(function(e){return !/^irc/.test(e);});
+				r.identities.push("irc://" + r.params.irc.server + "/" + r.params.irc.channel);
+			}
 			if (or && or.id && or.params.irc && or.params.irc.error === "ERR_IRC_NOT_CONNECTED" &&
 				client.connected()) { //if client is connected then remove not connected error
 				delete or.params.irc;
