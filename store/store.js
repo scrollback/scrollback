@@ -1,7 +1,6 @@
 "use strict";
 
 var objUtils = require("../lib/obj-utils.js"),
-	format = require("../lib/format.js"),
 	rangeOps = require("./range-ops.js"),
 	state = {
 		"nav": {
@@ -234,18 +233,25 @@ Store.prototype.getFeaturedRooms = function() {
 	});
 };
 
-Store.prototype.getPageTitle = function() {
+Store.prototype.getPageTitle = function(compact) {
 	var mode = this.get("nav", "mode"),
 		room = this.get("nav", "room"),
-		thread = this.get("nav", "thread"),
-		title;
+		threadId, threadObj, title;
 
 	switch (mode) {
 	case "room":
-		title = format.titleCase(room) + " on Scrollback";
+		title = room + (compact ? "" : " on Scrollback");
 		break;
 	case "chat":
-		title = thread ? (this.get("indexes", "threadsById", thread) || { title: room }).title : "All messages";
+		threadId = this.get("nav", "thread");
+		threadObj = threadId ? this.get("indexes", "threadsById", threadId) : null;
+
+		if (threadId) {
+			title = threadObj && threadObj.title ? threadObj.title + (compact ? "" : " - " + room) : room;
+		} else {
+			title = "All messages" + (compact ? "" : " - " + room);
+		}
+
 		break;
 	default:
 		title = "Scrollback";

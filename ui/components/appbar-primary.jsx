@@ -179,7 +179,7 @@ module.exports = function(core, config, store) {
 				userObj = store.getUser();
 
 				this.setState({
-					title: store.getPageTitle(),
+					title: store.getPageTitle(true),
 					username: appUtils.formatUserName(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
