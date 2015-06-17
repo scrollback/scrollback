@@ -61,6 +61,13 @@ function handleNoteQuery(query, next) {
 	runQuery(readNote, query, null, 0, next);
 }
 
+function handleNoteAction(action, next) {
+	var sql = writeNote(action);
+	
+	pg.write(connString, sql, function (err) {
+		next(err);
+	});
+}
 module.exports = function (core, config) {
 	connString = "pg://" + config.pg.username + ":" +
 		config.pg.password + "@" + config.pg.server + "/" + config.pg.db;
@@ -80,6 +87,8 @@ module.exports = function (core, config) {
 	core.on("part", handleRelationAction, "storage");
 	core.on("admit", handleRelationAction, "storage");
 	core.on("expel", handleRelationAction, "storage");
+	
+	core.on("note", handleNoteAction, "storage");
 	
 	core.on("getRooms", handleEntityQuery, "storage");
 	core.on("getUsers", handleEntityQuery, "storage");

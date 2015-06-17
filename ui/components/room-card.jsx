@@ -74,8 +74,8 @@ module.exports = function(core, config, store) {
 			});
 		},
 
-		badgeFilter: function(notification) {
-			return notification.action.to === this.props.roomId;
+		badgeFilter: function(note) {
+			return note.group.split("/")[0] === this.props.roomId;
 		},
 
 		render: function() {

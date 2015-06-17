@@ -11,6 +11,10 @@ module.exports = function(coreObject, config) {
 			log.d("Query:", q);
 			redis.smembers("featured:room", function(err, roomids) {
 				log.d("Rooms retured from redis: ", roomids);
+				if(err || !roomids || !roomids.length) {
+					q.results = [];
+					return callback();
+				}
 				q.ref = roomids;
 				callback();
 			});

@@ -22,7 +22,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(e) {
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			if (initDone) {
@@ -38,7 +38,7 @@ module.exports = function(c, conf, s) {
 	[
 		"text-up", "edit-up", "back-up", "away-up",
 		"join-up", "part-up", "admit-up", "expel-up",
-		"room-up"
+		"room-up", "note-up"
 	].forEach(function(event) {
 		core.on(event, function(action, next) {
 			action.type = event.replace(/-up$/, "");
@@ -154,14 +154,15 @@ function disconnected() {
 }
 
 function receiveMessage(event) {
-	var data;
+	var data, note, userId;
+
 	try {
 		data = JSON.parse(event.data);
 	} catch (err) {
 		core.emit("error", err);
 	}
 
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy",  "error"].indexOf(data.type) !== -1) {
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error"].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
 			if (data.results) { pendingQueries[data.id].query.results = data.results; }
 			if (data.response) { pendingQueries[data.id].query.response = data.response; }
@@ -176,12 +177,35 @@ function receiveMessage(event) {
 		}
 	}
 
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "error"].indexOf(data.type) !== -1) {
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
 		//data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
 		}
+
+		// Generate notifications from the action
+		userId = store.get("user");
+
+		if (data.note && data.from !== userId) {
+			for (var n in data.note) {
+				if (data.note[n]) {
+					note = data.note[n];
+
+					if (typeof note.score !== "number") {
+						note.score = 0;
+					}
+
+					note.to = userId;
+					note.ref = data.id;
+					note.time = data.time;
+					note.noteType = n;
+
+					core.emit("note-dn", note);
+				}
+			}
+		}
+
 //		console.log(data.type+ "-dn", data);
 		core.emit(data.type + "-dn", data);
 	}

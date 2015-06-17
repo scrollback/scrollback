@@ -22,7 +22,7 @@ module.exports = function (action) {
 				"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " + 
 				"VALUES (${id}, ${identities}, $(values), to_tsvector('english', ${terms}))",
 			values: [
-				entity.type, entity.description || "", 0, entity.picture, new Date(action.time),
+				entity.type, entity.description || "", 0, entity.picture || "", new Date(action.time),
 				entity.timezone || 0, entity.locale || "", entity.params, entity.guides				
 			],
 			terms: entity.id + " " + (entity.description || ""),
@@ -32,7 +32,7 @@ module.exports = function (action) {
 		
 		if(action.type === "room") {
 			inserts.push({
-				$: "INSERT INTO relations(room, user, role, roletime) VALUES ($(values))",
+				$: "INSERT INTO relations(room, \"user\", role, roletime) VALUES ($(values))",
 				values: [ action.room.id, action.user.id, "owner", new Date(action.time) ]
 			});
 		}

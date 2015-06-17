@@ -37,6 +37,9 @@ module.exports = core => {
 				if (err) {
 					reject(err);
 
+					core.off(down, onDone);
+					core.off("error-dn", onError);
+
 					return;
 				}
 

@@ -16,7 +16,7 @@ module.exports = function (action) {
 	object = {
 		room: action.room.id,
 		user: user,
-		role: action.role,
+		role: action.role === "registered"?"none":action.role,
 		transitionrole: action.transitionRole,
 		transitiontype: action.transitionType,
 		message: action.text,

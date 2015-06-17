@@ -65,7 +65,7 @@ module.exports = (core, config, store) => {
 				clearInterval(titleTimer);
 
 				titleTimer = setInterval(function() {
-					let count = store.get("notifications").length,
+					let count = store.get("notes").length,
 						regex = new RegExp("(\([0-9]+\) )?" + stringUtils.escapeRegExp(originalTitle));
 
 					document.title = (count ? "(" + count + ") " : "") + ((regex.test(document.title)) ? newTitle : originalTitle);
@@ -89,7 +89,7 @@ module.exports = (core, config, store) => {
 		};
 	}());
 
-	core.on("notification-dn", notification => {
+	core.on("note-dn", notification => {
 		let item = new NotificationItem(notification),
 			user = store.getUser(),
 			sound = (user.params && user.params.notifications && user.params.notifications.sound === false) ? false : true;

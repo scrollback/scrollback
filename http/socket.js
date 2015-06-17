@@ -100,6 +100,7 @@ sock.on('connection', function(socket) {
 			var e, action;
             log.i("response", err, data);
 			if (err) {
+				log.d("Error thrown: ",new Error().stack);
 				e = {
 					type: 'error',
 					id: d.id,
@@ -172,7 +173,7 @@ sock.on('connection', function(socket) {
 				storeInit(conn, data);
 			}
 			if (data.type === 'user') processUser(conn, data);
-			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities'].indexOf(data.type) >= 0) {
+			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities','getNotes'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
                 log.d("sending response", data);
@@ -193,6 +194,14 @@ sock.on('connection', function(socket) {
 					censoredAction = censorAction(data);
 					connections.forEach(function(c) {
 						c.send(censoredAction);
+					});
+				}
+			}
+
+			if(data.type === "note") {
+				if(sConns[data.session]) {
+					sConns[data.session].forEach(function(c) {
+						c.send(data);
 					});
 				}
 			}
@@ -228,11 +237,10 @@ function processUser(conn, user) {
 function storeInit(conn, init) {
 	if (!uConns[init.user.id]) uConns[init.user.id] = [];
 	if (uConns[init.user.id].indexOf(conn) < 0) uConns[init.user.id].push(conn);
-
+	conn.user = init.user.id;
 	if (init.old && init.old.id) {
 		sConns[init.session].forEach(function(c) {
 			var index;
-
 			if (init.old.id !== init.user.id && uConns[init.old.id]) {
 				index = uConns[init.old.id].indexOf(c);
 				uConns[init.old.id].splice(index, 1);
@@ -311,7 +319,7 @@ function censorAction(action, filter) {
 						outAction[i][j] = action[i][j];
 					}
 				}
-			} else {
+			} else if(i !== "occupants" && i !== "members"){
 				outAction[i] = action[i];
 			}
 		}
@@ -354,7 +362,7 @@ function emit(action, callback) {
 				};
 			}
 			sConns[action.session].forEach(function(conn) {
-				conn.user = action.user;
+				conn.user = action.user.id;
 				dispatch(conn, action);
 			});
 
@@ -375,10 +383,41 @@ function emit(action, callback) {
 
 	if (rConns[action.to]) {
 		rConns[action.to].forEach(function(e) {
+			var note = {};
+			log.d("++++++++++++++++++++++++++++++++++++++++++", e.user);
 			if (e.session === action.session) {
 				if (action.type === "room") dispatch(e, action);
 				else dispatch(e, myAction);
 			} else {
+				log.d(outAction.notify, e.user);
+				if(outAction.note && outAction.notify && outAction.notify[e.user]) {
+					for(var i in outAction.note) {
+						if(outAction.note.hasOwnProperty(i)) {
+							note[i] = {};
+
+							for(var j in outAction.note[i]) {
+								if(outAction.note[i].hasOwnProperty(j)) {
+									note[i][j] = outAction.note[i][j];
+								}
+							}
+						}
+					}
+
+
+					log.d(outAction.notify[e.user]);
+
+					for(i in outAction.notify[e.user]) {
+						if(outAction.notify[e.user].hasOwnProperty(i)) {
+							note[i].score = outAction.notify[e.user][i];
+						}
+
+						log.d(i, note);
+					}
+
+					outAction.note = note;
+				}
+				delete outAction.notify;
+				log.d("diapatching: ", e.user, outAction);
 				dispatch(e, outAction);
 			}
 		});

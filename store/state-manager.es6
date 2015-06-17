@@ -54,28 +54,99 @@ function applyChanges(changes, base) {
 		base.entities = objUtils.merge(base.entities || {}, changes.entities);
 	}
 
-	if (changes.notifications)	{ updateNotifications	(base.notifications	= base.notifications	|| [], changes.notifications); }
-	if (changes.texts)			{ updateTexts			(base.texts			= base.texts			|| {}, changes.texts); }
-	if (changes.threads)		{ updateThreads			(base.threads		= base.threads			|| {}, changes.threads); }
+	if (changes.notes)          { updateNotes           (base.notes     = base.notes    || [], changes.notes); }
+	if (changes.texts)          { updateTexts           (base.texts     = base.texts    || {}, changes.texts); }
+	if (changes.threads)        { updateThreads         (base.threads   = base.threads  || {}, changes.threads); }
 
-	if (changes.session)		{ base.session = changes.session; }
-	if (changes.user)			{ base.user    = changes.user; }
+	if (changes.session)        { base.session = changes.session; }
+	if (changes.user)           { base.user    = changes.user; }
 }
 
-function updateNotifications(baseNotifications, notifications) {
-	for (let notif of notifications) {
-		for (let i = 0, l = baseNotifications.length; i < l; i++) {
-			if (baseNotifications[i] && baseNotifications[i].id === notif.id) {
-				baseNotifications.splice(i, 1);
+function updateNotes(baseNotes, notes) {
+	// Empty all notes
+	baseNotes.splice(0, baseNotes.length);
+
+	// Filter unique notes
+	let dismissed = notes.filter(n => typeof n.dismissTime === "number"),
+		map = {};
+
+	for (let n of notes) {
+		let skip = false;
+
+		if (typeof n.dismissTime === "number") {
+			continue;
+		}
+
+		for (let d of dismissed) {
+			if (d.ref) {
+				if (d.ref === n.ref && d.noteType === n.noteType) {
+					skip = true;
+
+					break;
+				}
+			} else {
+				if (d.group) {
+					if (d.group === n.group) {
+						if (d.noteType) {
+							if (d.noteType === n.noteType) {
+								skip = true;
+
+								break;
+							}
+						} else {
+							skip = true;
+
+							break;
+						}
+					}
+				} else {
+					skip = true;
+
+					break;
+				}
 			}
 		}
 
-		if (notif.status !== "dismissed") {
-			baseNotifications.push(objUtils.deepFreeze(notif));
+		if (skip) {
+			continue;
+		}
+
+		map[n.ref + "_" + n.noteType] = n;
+	}
+
+	// Handle groups
+	let grouped = {},
+		max = 3;
+
+	for (let item in map) {
+		let note = map[item],
+			group = note.group + "_" + note.noteType;
+
+		if (grouped[group]) {
+			grouped[group].push(note);
+		} else {
+			grouped[group] = [ note ];
 		}
 	}
 
-	baseNotifications.sort((a, b) => b.time - a.time);
+	for (let g in grouped) {
+		let group = grouped[g];
+
+		if (group.length > max) {
+			let note = group[group.length - 1];
+
+			note.count = group.length;
+
+			baseNotes.push(objUtils.deepFreeze(note));
+		} else {
+			for (let note of group) {
+				baseNotes.push(objUtils.deepFreeze(note));
+			}
+		}
+	}
+
+	// Short notes based on time in descending order
+	baseNotes.sort((a, b) => b.time - a.time);
 }
 
 function updateThreads(baseThreads, threads) {

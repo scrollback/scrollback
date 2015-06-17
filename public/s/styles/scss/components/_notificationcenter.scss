@@ -1,7 +1,15 @@
 @include exports("notifications") {
+    %notification-button {
+        padding: .75em;
+        text-transform: uppercase;
+        text-align: center;
+        font-weight: bold;
+        font-size: .8em;
+
+        &, &:focus, &:hover, &:active { color: currentColor; }
+    }
+
     .notification-center {
-        background-color: darken($light-color, 3%);
-        width: 20em;
         min-height: 5.57em;
         max-height: 80%;
         max-height: calc(100% - #{$bar-height * 1.5});
@@ -17,8 +25,29 @@
             color: fade-out($dark-color, .5);
         }
 
+        &-wrapper {
+            background-color: darken($light-color, 5%);
+            border-radius: $roundness;
+            overflow: hidden;
+        }
+
+        &-clear {
+            @extend %snappy;
+            @extend %notification-button;
+
+            display: block;
+            border: 0;
+
+            &:focus, &:hover { color: $error-color; }
+
+            &:active { color: darken($error-color, 10%); }
+
+            .notification-center:empty + & { display: none; }
+        }
+
         &-item {
             @extend %clearfix;
+            @extend %snappy;
             @include dropshadow(1);
 
             display: block;
@@ -32,22 +61,36 @@
             cursor: pointer;
             border: 0;
 
-            &:focus, &:hover, &:active { color: currentColor; }
+            &:focus, &:hover { @include dropshadow(2); }
+
+            &:active { @include dropshadow(2); }
 
             &.out { @extend %resizeout; }
+
+            &.read {
+                background-color: darken($light-color, 3%);
+
+                strong { color: fade-out($dark-color, .3); }
+            }
 
             &-content {
                 float: left;
                 padding: .5em .75em;
                 width: 85%;
                 width: calc(100% - 3em);
-                font-size: .9em;
                 color: fade-out($dark-color, .5);
 
                 strong {
                     font-weight: 400;
                     color: $dark-color;
                 }
+            }
+
+            &-timestamp {
+                float: left;
+                font-size: .8em;
+                padding: 0 (.75em / .8) (.75em / .8);
+                opacity: .5;
             }
 
             &-close {
@@ -61,6 +104,36 @@
 
                 &:active { color: darken($error-color, 20%); }
             }
+
+            &-actions {
+                @extend %clearfix;
+
+                display: block;
+
+                > a {
+                    @extend %notification-button;
+
+                    float: left;
+                    display: block;
+                    width: 50%;
+                    border-color: rgba(0, 0, 0, 0.1);
+                    border-width: 1px 1px 0 0;
+                    border-style: solid;
+
+                    &:focus, &:hover { background-color: rgba(0, 0, 0, .05); }
+
+                    &:active { background-color: rgba(0, 0, 0, .075); }
+
+                    &:last-of-type { border-right: 0; }
+
+                    &:only-of-type { width: 100%; }
+                }
+            }
         }
+    }
+
+    .popover.menu.menu-notifications {
+        width: 20em;
+        min-height: 5.57em;
     }
 }

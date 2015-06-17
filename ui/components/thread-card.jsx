@@ -146,8 +146,8 @@ module.exports = function(core, config, store) {
 			});
 		},
 
-		badgeFilter: function(notification) {
-			return notification.action.thread === this.props.thread.id;
+		badgeFilter: function(note) {
+			return note.group.split("/")[1] === this.props.thread.id;
 		},
 
 		render: function() {
