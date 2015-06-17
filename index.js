@@ -23,13 +23,29 @@ Boston, MA 02111-1307 USA.
 var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
-				"push-notification", "google", "upload" ];
+				"push-notification", "google", "upload" ],
+	appPriorities = { // don't override
+		antiflood: 1000,
+		validation: 900,
+		loader: 850,
+		sudo: 825,
+		appLevelValidation: 812,
+		authentication: 800,
+		authorization: 700,
+		antiabuse: 600,
+		setters: 510,
+		modifier: 500,
+		gateway: 400,
+		cache: 300,
+		storage: 200,
+		watcher: 100
+	};
 
 require("newrelic");
 
 var log = require("./lib/logger.js"),
 	config = require("./server-config-defaults.js"),
-	core = new (require("ebus"))(config.appPriorities);
+	core = new (require("ebus"))(appPriorities);
 
 log.setEmailConfig(config.email);
 

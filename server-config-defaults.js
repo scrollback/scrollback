@@ -36,21 +36,6 @@ var defaults = {
 			name: 'Scrollback Local'
 		}
 	},
-	appPriorities: { // don't override
-		antiflood: 1000,
-		validation: 900,
-		loader: 850,
-		sudo: 825,
-		appLevelValidation: 812,
-		authentication: 800,
-		authorization: 700,
-		antiabuse: 600,
-		modifier: 500,
-		gateway: 400,
-		cache: 300,
-		storage: 200,
-		watcher: 100
-	},
 	analytics: {
 		pg: { //post gre config
 			server: "localhost", //server:port
