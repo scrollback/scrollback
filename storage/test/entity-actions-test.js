@@ -32,32 +32,26 @@ describe("Insert Query: ", function() {
 			depth: 4
 		}));
 
-		assert.deepEqual(query, [{
-				'$': 'INSERT INTO entities(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) VALUES (${id}, ${identities}, $(values), to_tsvector(\'english\', ${terms}))',
-				values: ['room',
+		assert.deepEqual(query, [ { '$': 'INSERT INTO entities(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) VALUES (${id}, ${identities}, $(values), to_tsvector(\'english\', ${terms}))',
+    values: 
+     [ 'room',
        'This is a room.',
        0,
        'http://pic.com/abc.gif',
        new Date(1403947387876),
        0,
        '',
-					{
-						ha: 43
-					},
-					{
-						hey: 4
-					}],
-				terms: 'roomid1 This is a room.',
-				id: 'roomid1',
-				identities: []
-			},
-			{
-				'$': 'INSERT INTO relations(room, user, role, roletime) VALUES ($(values))',
-				values: ['roomid1',
+       { ha: 43 },
+       { hey: 4 } ],
+    terms: 'roomid1 This is a room.',
+    id: 'roomid1',
+    identities: [] },
+  { '$': 'INSERT INTO relations(room, "user", role, roletime) VALUES ($(values))',
+    values: 
+     [ 'roomid1',
        'userid1',
        'owner',
-       new Date(1403947387876)]
-			}], "Wrong querry for room");
+       new Date(1403947387876) ] } ], "Wrong querry for room");
 	});
 
 	it("should make an insert query for user", function() {
