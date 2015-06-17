@@ -295,7 +295,7 @@ exports.initCore = function(c) {
 	// api(core);
 	["init", 'away', 'back', 'join', 'part', 'room', 'user', 'admit', 'expel', 'edit', 'text'].
 	forEach(function(e) {
-		core.on(e, emit, "webGateway");
+		core.on(e, emit, "gateway");
 	});
 };
 
