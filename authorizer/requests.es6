@@ -98,7 +98,7 @@ module.exports = (core, config, store) => {
 		} else {
 			container.classList.add("request-item-empty");
 
-			container.textContent = "There are no requetsts right now.";
+			container.textContent = "There are no requests right now.";
 		}
 
 		tabs.requests = {
