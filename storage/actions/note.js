@@ -38,7 +38,6 @@ module.exports = function (action) {
 
 				insertObjects.push({
 					user: user,
-					action: action.type,
 					ref: action.id,
 					notetype: noteType,
 					group: action.note[noteType].group,
