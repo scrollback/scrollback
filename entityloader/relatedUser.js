@@ -2,7 +2,7 @@
 
 var core, userOps;
 
-function checkPresense(room, user, callback) {
+function checkPresence(room, user, callback) {
 	if (!room) return callback(false);
 	core.emit("getUsers", {
 		occupantOf: room,
@@ -74,7 +74,7 @@ function loadRelatedUser(room, user, session, callback) {
 		}
 	});
 
-	checkPresense(room, user, function(result) {
+	checkPresence(room, user, function(result) {
 		presense = result;
 		done();
 	});
