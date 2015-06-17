@@ -1,5 +1,5 @@
 "use strict";
-var utils = require('../../lib/app-utils.js');
+var utils = require('../lib/app-utils.js');
 
 var core, userOps;
 
