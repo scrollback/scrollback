@@ -18,7 +18,7 @@ module.exports = function(core, config, store) {
 			path;
 
 		if (/^(chat|room)$/.test(mode) && ((room && room.indexOf(":") > -1) || !room)) {
-			// Not ready with the new room yet
+			// not ready with the new room yet
 			return;
 		}
 

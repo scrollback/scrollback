@@ -6,7 +6,8 @@ var objUtils = require("../lib/obj-utils.js"),
 		"nav": {
 			"mode": "loading",
 			"view": null,
-			"room": null
+			"room": null,
+			"dialog": null
 		},
 		session: "",
 		user: "",
