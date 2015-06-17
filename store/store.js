@@ -1,6 +1,7 @@
 "use strict";
 
 var objUtils = require("../lib/obj-utils.js"),
+	format = require("../lib/format.js"),
 	rangeOps = require("./range-ops.js"),
 	state = {
 		"nav": {
@@ -231,6 +232,26 @@ Store.prototype.getFeaturedRooms = function() {
 	return rooms.map(function(room) {
 		return self.getRoom(room);
 	});
+};
+
+Store.prototype.getPageTitle = function() {
+	var mode = this.get("nav", "mode"),
+		room = this.get("nav", "room"),
+		thread = this.get("nav", "thread"),
+		title;
+
+	switch (mode) {
+	case "room":
+		title = format.titleCase(room) + " on Scrollback";
+		break;
+	case "chat":
+		title = thread ? (this.get("indexes", "threadsById", thread) || { title: room }).title : "All messages";
+		break;
+	default:
+		title = "Scrollback";
+	}
+
+	return title;
 };
 
 module.exports = function(core, config) {

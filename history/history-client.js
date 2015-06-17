@@ -2,8 +2,7 @@
 
 "use strict";
 
-var format = require("../lib/format.js"),
-	url = require("../lib/url.js");
+var url = require("../lib/url.js");
 
 module.exports = function(core, config, store) {
 	core.on("boot", function(state) {
@@ -15,26 +14,14 @@ module.exports = function(core, config, store) {
 	core.on("statechange", function(changes) {
 		var mode = store.get("nav", "mode"),
 			room = store.get("nav", "room"),
-			thread = store.get("nav", "thread"),
-			title, path;
+			path;
 
 		if (/^(chat|room)$/.test(mode) && ((room && room.indexOf(":") > -1) || !room)) {
 			// Not ready with the new room yet
 			return;
 		}
 
-		switch (mode) {
-		case "room":
-			title = format.titleCase(room) + " on Scrollback";
-			break;
-		case "chat":
-			title = thread ? (store.get("indexes", "threadsById", thread) || { title: room }).title : "All messages";
-			break;
-		default:
-			title = "Scrollback";
-		}
-
-		document.title = title;
+		document.title = store.getPageTitle();
 
 		path = url.build(store.get(), store);
 

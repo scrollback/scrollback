@@ -170,39 +170,16 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				userObj, threadObj, nav, title;
+				userObj;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 
-				nav = store.get("nav");
-
-				switch (nav.mode) {
-				case "room":
-					title = nav.room;
-					break;
-				case "chat":
-					threadObj = store.get("indexes", "threadsById", nav.thread);
-
-					if (threadObj) {
-						title = threadObj.title;
-					} else if (nav.thread) {
-						title = "";
-					} else {
-						title = "All messages";
-					}
-
-					break;
-				case "home":
-					title = "My feed";
-					break;
-				}
-
 				userObj = store.getUser();
 
 				this.setState({
-					title: title,
+					title: store.getPageTitle(),
 					username: appUtils.formatUserName(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
