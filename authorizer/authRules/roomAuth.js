@@ -5,7 +5,7 @@ var domainCheck;
 module.exports = function (core, config) {
 	domainCheck = require("../rules/domainRules.js")(core, config);
 	core.on('room', function (action, callback) {
-		if(!utils.isInternalSession(action.session)) return callback();
+		if(utils.isInternalSession(action.session)) return callback();
 		if(!utils.isInternalSession(action.session) && action.old && action.old.id && domainCheck(action)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 
 		if (action.user.role === "none") {
