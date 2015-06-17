@@ -5,8 +5,8 @@
 
 const showMenu = require("../utils/show-menu.js"),
 	  appUtils = require("../../lib/app-utils.js"),
-	  stringUtils = require("../../lib/string-utils.js"),
-	  getAvatar = require("../../lib/get-avatar.js");
+	  getAvatar = require("../../lib/get-avatar.js"),
+	  url = require("../../lib/url.js");
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
@@ -80,7 +80,7 @@ module.exports = function(core, config, store) {
 		},
 
 		fullScreen: function() {
-			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+			window.open(url.build({ nav: store.get("nav") }), "_blank");
 		},
 
 		badgeFilter: function(note) {
