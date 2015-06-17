@@ -10,5 +10,5 @@ CREATE TABLE notes (
 	dismissTime timestamp
 );
 
-CREATE INDEX ON notes ("user", "action", "group", "notetype");
-CREATE INDEX ON notes ("user", "action", "group", "notetype", "ref");
+CREATE INDEX ON notes ("user", "group", "notetype");
+CREATE INDEX ON notes ("user", "group", "notetype", "ref");
