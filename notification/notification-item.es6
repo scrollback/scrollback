@@ -22,16 +22,18 @@ module.exports = (core, config, store) => {
 			return this._truncate(format.mdToText(text));
 		}
 
-		_getcomponent(index) {
+		_extract(index) {
 			return typeof this.note.group === "string" ? this.note.group.split("/")[index] : null;
 		}
 
-		_getthread() {
-			return this._getcomponent(1) || "";
+		get _thread() {
+			let thread = this._extract(1);
+
+			return (thread === "all" || !thread) ? null : thread;
 		}
 
-		_getroom() {
-			return this._getcomponent(0) || "";
+		get _room() {
+			return this._extract(0);
 		}
 
 		dismiss() {
@@ -69,7 +71,7 @@ module.exports = (core, config, store) => {
 					title = `New mention`;
 				}
 
-				title += ` in ${this._getroom()}`;
+				title += ` in ${this._room}`;
 
 				break;
 			case "reply":
@@ -79,7 +81,7 @@ module.exports = (core, config, store) => {
 					title = `New ${data.title ? "reply" : "message"}`;
 				}
 
-				title += ` in ${data.title || this._getroom()}`;
+				title += ` in ${data.title || this._room}`;
 
 				break;
 			case "thread":
@@ -89,7 +91,7 @@ module.exports = (core, config, store) => {
 					title = `New discussion`;
 				}
 
-				title += ` in ${this._getroom()}`;
+				title += ` in ${this._room}`;
 
 				break;
 			default:
@@ -99,7 +101,7 @@ module.exports = (core, config, store) => {
 					title = `New notification`;
 				}
 
-				title += ` in ${data.title || this._getroom()}`;
+				title += ` in ${data.title || this._room}`;
 			}
 
 			return title;
@@ -133,7 +135,7 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>: <strong>${this._format(data.text)}</strong>`;
+				html += ` in <strong>${this._format(data.title || this._room)}</strong>: <strong>${this._format(data.text)}</strong>`;
 
 				break;
 			case "reply":
@@ -143,7 +145,7 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
+				html += ` in <strong>${this._format(data.title || this._room)}</strong>`;
 
 				break;
 			case "thread":
@@ -153,7 +155,7 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
 				}
 
-				html += ` in <strong>${this._format(this._getroom())}</strong>`;
+				html += ` in <strong>${this._format(this._room)}</strong>`;
 
 				break;
 			default:
@@ -163,7 +165,7 @@ module.exports = (core, config, store) => {
 					html = `New notification`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._getroom())}</strong>`;
+				html += ` in <strong>${this._format(data.title || this._room)}</strong>`;
 			}
 
 			return html;
@@ -180,8 +182,8 @@ module.exports = (core, config, store) => {
 					action: () => {
 						core.emit("setstate", {
 							nav: {
-								room: this._getroom(),
-								thread: this._getthread(),
+								room: this._room,
+								thread: this._thread,
 								mode: "chat",
 								textRange: { time: this.note.time }
 							}
@@ -196,7 +198,7 @@ module.exports = (core, config, store) => {
 					action: () => {
 						core.emit("setstate", {
 							nav: {
-								room: this._getroom(),
+								room: this._room,
 								thread: this.note.count > 1 ? null : this.note.ref,
 								mode: this.note.count > 1 ? "room" : "chat",
 								threadRange: { time: this.note.time }
@@ -212,7 +214,7 @@ module.exports = (core, config, store) => {
 					action: () => {
 						core.emit("setstate", {
 							nav: {
-								room: this._getroom(),
+								room: this._room,
 								mode: "room"
 							}
 						});
