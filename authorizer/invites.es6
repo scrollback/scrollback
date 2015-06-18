@@ -2,6 +2,8 @@
 
 "use strict";
 
+const React = require("react");
+
 module.exports = (core, config, store) => {
 	const promisedAction = require("../lib/promised-action.es6")(core, config, store),
 		  getRoomPics = require("../ui/utils/room-pics.js")(core, config, store);
@@ -12,91 +14,60 @@ module.exports = (core, config, store) => {
 
 		rooms = store.getRelatedRooms().filter(user => user.transitionType === "invite");
 
-		if (rooms.length) {
-			container.classList.add("invite-item");
+		class Invites extends React.Component {
+			constructor(props) {
+				super(props);
+			}
 
-			rooms.forEach(room => {
-				let messagediv = document.createElement("div");
+			onAccept(room) {
+				return promisedAction("join", {
+					to: room.id,
+					role: room.transitionRole
+				}).then(res => {
+					if (res.role !== room.role) {
+						return Promise.resolve("You are now a " + res.role + " of " + room.id);
+					} else {
+						return Promise.reject();
+					}
+				});
+			}
 
-				messagediv.classList.add("invite-item-message");
+			onReject(room) {
+				return promisedAction("join", {
+					to: room.id,
+					role: room.role
+				}).then(res => {
+					if (res.role === room.role) {
+						return Promise.resolve("You declined to be a " + room.transitionRole + " of " + room.id);
+					} else {
+						return Promise.reject();
+					}
+				});
+			}
 
-				let avatar = document.createElement("img");
+			render() {
+				let items = rooms.map(room => {
+						return (
+							<RequestInviteItem
+								avatar={getRoomPics(room).picture}
+								text={room.officer + " invited you to be a " + room.transitionRole + " of " + room.id}
+								acceptLabel="approve"
+								rejectLabel="decline"
+								onAccept={() => this.onAccept(room)}
+								onReject={() => this.onReject(room)}
+							/>
+							);
+					});
 
-				avatar.src = getRoomPics(room).picture;
-
-				let message = document.createTextNode(room.officer + " invited you to be a " + room.transitionRole + " of " + room.id);
-
-				messagediv.appendChild(avatar);
-				messagediv.appendChild(message);
-
-				let accept = document.createElement("a");
-
-				accept.textContent = "Accept";
-				accept.classList.add("button");
-				accept.classList.add("accept");
-
-				let reject = document.createElement("a");
-
-				reject.textContent = "Reject";
-				reject.classList.add("button");
-				reject.classList.add("reject");
-
-				let actionsdiv = document.createElement("div");
-
-				actionsdiv.classList.add("invite-item-actions");
-				actionsdiv.appendChild(accept);
-				actionsdiv.appendChild(reject);
-
-				let requestdiv = document.createElement("div");
-
-				requestdiv.classList.add("invite-item");
-				requestdiv.appendChild(messagediv);
-				requestdiv.appendChild(actionsdiv);
-
-				container.appendChild(requestdiv);
-
-				function onDone(text) {
-					accept.classList.add("disabled");
-					accept.classList.remove("working");
-
-					reject.classList.add("disabled");
-					reject.classList.remove("working");
-
-					message.textContent = text === false ? "An error occured!" : text;
+				if (items.length) {
+					return <div>{items}</div>;
+				} else {
+					return <div className="invites-item-empty">"There are no invites right now."</div>;
 				}
-
-				function onApprove() {
-					reject.classList.add("disabled");
-					accept.classList.add("working");
-
-					promisedAction("join", {
-						to: room.id,
-						role: room.transitionRole
-					})
-					.catch(() => onDone(false))
-					.then(res => onDone(res.role !== room.role ? ("You are now a " + res.role + " of " + room.id) : false));
-				}
-
-				function onDecline() {
-					accept.classList.add("disabled");
-					reject.classList.add("working");
-
-					promisedAction("join", {
-						to: room.id,
-						role: room.role
-					})
-					.catch(() => onDone(false))
-					.then(res => onDone(res.role === room.role ? ("You rejected to be a " + room.transitionRole + " of " + room.id) : false));
-				}
-
-				accept.addEventListener("click", onApprove, false);
-				reject.addEventListener("click", onDecline, false);
-			});
-		} else {
-			container.classList.add("invite-item-empty");
-
-			container.textContent = "There are no invites right now.";
+			}
 		}
+
+		React.render(<Invites />, container);
 
 		tabs.invites = {
 			html: container,
