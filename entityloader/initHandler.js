@@ -6,7 +6,18 @@ var mathUtils = require('../lib/math-utils.js');
 
 var core, config;
 
-
+function checkRoomUser(list, done) {
+	core.emit("getEntities", {
+		ref: list,
+		session: "internal-loader"
+	}, function(err, data) {
+		if (!err && data && data.results && data.results.length > 0) {
+			done(false);
+		} else {
+			done(true);
+		}
+	});
+}
 
 function generateNick(sNick, next) {
 	var lowBound = 1,
@@ -16,8 +27,6 @@ function generateNick(sNick, next) {
 
 
 	function checkUser(suggestedNick, attemptC, callback) {
-		var ct = 0,
-			result = true;
 		var trying = suggestedNick;
 
 		if (attemptC) {
@@ -28,33 +37,15 @@ function generateNick(sNick, next) {
 
 		if (attemptC >= config.nickRetries) return callback(names(6));
 
-		function done(r) {
-			result &= r;
-			if (++ct >= 3) {
-				if (result) {
-					callback(trying);
-				} else {
-					checkUser(suggestedNick, attemptC + 1, callback);
-				}
+
+
+		checkRoomUser("getRooms", [trying, "guest-" + trying], function(result) {
+			if (result) {
+				callback(trying);
+			} else {
+				checkUser(suggestedNick, attemptC + 1, callback);
 			}
-		}
-
-		function checkRoomUser(type, name) {
-			core.emit(type, {
-				ref: name,
-				session: "internal-loader"
-			}, function(err, data) {
-				if (!err && data && data.results && data.results.length > 0) {
-					done(false);
-				} else {
-					done(true);
-				}
-			});
-		}
-		checkRoomUser("getRooms", trying);
-		checkRoomUser("getUsers", trying);
-		checkRoomUser("getUsers", "guest-" + trying);
-
+		});
 	}
 	checkUser(sNick, 0, next);
 }
@@ -115,19 +106,6 @@ function initHandler(action, callback) {
 				action.old = old;
 				return callback();
 			});
-		} else if (action.ref && utils.isGuest(data.results[0].id)) {
-			core.emit("getUsers", {
-				ref: action.ref,
-				session: action.session
-			}, function(userError, response) {
-				if (userError || !response || !response.resutls || !response.results.length) {
-					return callback(new Error("NICK_TAKEN"));
-				} else {
-					initializerUser(action, function() {
-						callback();
-					});
-				}
-			});
 		} else {
 			callback();
 		}
@@ -181,7 +159,7 @@ module.exports = function(c, conf) {
 			next();
 		});
 	}, "loader");
-	
+
 	core.on("init", function(init, next) {
 		loadProps(init, next);
 	}, 600);
