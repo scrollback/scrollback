@@ -77,6 +77,7 @@ function bundle(file, opts, cb) {
 
 				cb(
 				   watcher.bundle()
+					.on("error", onerror)
 					.pipe(source(base))
 					.pipe(buffer())
 				);
