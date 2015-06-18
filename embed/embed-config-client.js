@@ -1,5 +1,6 @@
 /* jshint browser: true */
 /* global $ */
+"use strict";
 
 var formField = require("../ui/utils/form-field.js"),
 	stringUtils = require("../lib/string-utils.js"),
@@ -164,11 +165,9 @@ module.exports = function(core, config, store) {
 		if (!room.guides) {
 			room.guides = {};
 		}
-
-	    if (!room.guides.allowedDomains) {
-			room.guides.allowedDomains = [];
-	    }
-
+		
+		room.guides.allowedDomains = [];
+		
 		domains = domains.split("\n");
 	    domains.forEach(function(e) {
 	        if (e.trim()) {
