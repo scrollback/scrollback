@@ -1,5 +1,6 @@
 /*eslint-env mocha*/
 /*eslint no-console: 0*/
+/*eslint no-undefined: 0*/
 "use strict";
 var note = require("../actions/note.js"),
 	util = require("util"),
@@ -59,9 +60,8 @@ it("notification query test(type text)", function() {
 	console.log(util.inspect(query, {
 		depth: 4
 	}));
-	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "user", "action", "ref", "notetype", "group", "score", "time", "notedata" ) VALUES ( ${user}, ${action}, ${ref}, ${notetype}, ${group}, ${score}, ${time}, ${notedata}), (${user}, ${action}, ${ref}, ${notetype_1}, ${group_1}, ${score_1}, ${time_1}, ${notedata_1} )',
+	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "user", "ref", "notetype", "group", "score", "time", "notedata" ) VALUES ( ${user}, ${ref}, ${notetype}, ${group}, ${score}, ${time}, ${notedata}), (${user}, ${ref}, ${notetype_1}, ${group_1}, ${score_1}, ${time_1}, ${notedata_1} )',
     user: 'testinguser',
-    action: 'text',
     ref: '4egwqyt326gewe23',
     notetype: 'mention',
     group: 'scrollback',

@@ -102,7 +102,7 @@ module.exports = function(core) {
         init: function(action, callback) {
             if (!validate(action, initValidator, callback)) return;
             action.to = "me";
-            if (action.suggestedNick) action.suggestedNick = new Validator(action.suggestedNick).sanitized();
+            if (action.suggestedNick) action.suggestedNick = new Validator(action.suggestedNick).sanitize();
             callback();
         },
         text: function(action, callback) {

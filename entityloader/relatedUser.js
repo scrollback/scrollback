@@ -1,4 +1,5 @@
 "use strict";
+var utils = require('../lib/app-utils.js');
 
 var core, userOps;
 
@@ -21,6 +22,14 @@ function loadRelatedUser(room, user, session, callback) {
 		queriesCount = 2,
 		isErr = false,
 		returnValue, presense = "offline";
+
+	if (utils.isInternalSession(session)) {
+		return callback(null, {
+			id: "system",
+			role: "owner" // should look for alternatives.
+		});
+	}
+
 	function done(error) {
 		if (isErr) return;
 		if (error) {
@@ -39,7 +48,7 @@ function loadRelatedUser(room, user, session, callback) {
 	core.emit("getUsers", {
 		ref: user,
 		session: session
-	}, function(userErr, data) {	
+	}, function(userErr, data) {
 		if (userErr || !data || !data.results || !data.results.length) {
 			return done(new Error("USER_NOT_FOUND"));
 		} else {
@@ -54,8 +63,8 @@ function loadRelatedUser(room, user, session, callback) {
 					ref: returnValue.id,
 					memberOf: room
 				}, function(memberErr, relations) {
-					if(memberErr) {
-						if(memberErr.message === "NO_ROOM_WITH_GIVEN_ID") {
+					if (memberErr) {
+						if (memberErr.message === "NO_ROOM_WITH_GIVEN_ID") {
 							returnValue.role = "registered";
 							return done();
 						} else {
@@ -84,7 +93,7 @@ function loadRelatedUser(room, user, session, callback) {
 
 function exp(c) {
 	core = c;
-	 userOps = require("../lib/user.js")(c);
+	userOps = require("../lib/user.js")(c);
 	return loadRelatedUser;
 }
 

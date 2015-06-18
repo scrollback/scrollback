@@ -22,7 +22,7 @@ Boston, MA 02111-1307 USA.
 
 var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
-				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "search", "sitemap",
+				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
 				"push-notification", "google", "upload" ],
 	appPriorities = { // don't override
 		antiflood: 1000,
