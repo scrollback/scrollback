@@ -39,7 +39,7 @@ function generateNick(sNick, next) {
 
 
 
-		checkRoomUser("getRooms", [trying, "guest-" + trying], function(result) {
+		checkRoomUser([trying, "guest-" + trying], function(result) {
 			if (result) {
 				callback(trying);
 			} else {
