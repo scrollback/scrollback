@@ -5,11 +5,11 @@ var gulp = require("gulp"),
 	del = require("del"),
 	bower = require("bower"),
 	browserify = require("browserify"),
+	watchify = require("watchify"),
 	optional = require("browserify-optional"),
 	babelify = require("babelify").configure({ extensions: [ ".es6", ".jsx" ] }),
 	source = require("vinyl-source-stream"),
 	buffer = require("vinyl-buffer"),
-	es = require("event-stream"),
 	lazypipe = require("lazypipe"),
 	plumber = require("gulp-plumber"),
 	notify = require("gulp-notify"),
@@ -48,34 +48,58 @@ var gulp = require("gulp"),
 	};
 
 // Make browserify bundle
-function bundle(scripts, opts) {
-	var streams = [],
-		bundler = function(file) {
-			opts.entries = "./" + file;
+function bundle(file, opts, cb) {
+	var base, bundler, watcher;
 
-			return browserify(opts).bundle()
+	opts = opts || {};
+
+	opts.entries = "./" + file;
+
+	if (bundle.watch) {
+		opts.cache = {};
+		opts.packageCache = {};
+		opts.fullPaths = true;
+	}
+
+	bundler = browserify(opts);
+
+	base = file.split(/[\\/]/).pop();
+
+	if (bundle.watch) {
+		watcher  = watchify(bundler);
+
+		cb(
+		   watcher
+			.on("update", function() {
+				var start = Date.now();
+
+				gutil.log("Starting '" + gutil.colors.yellow(file) + "'...");
+
+				cb(
+				   watcher.bundle()
+					.pipe(source(base))
+					.pipe(buffer())
+				);
+
+				gutil.log("Finished '" + gutil.colors.yellow(file) + "' after " + gutil.colors.magenta((Date.now() - start) + " ms"));
+			})
+			.bundle()
+			.pipe(source(base))
+			.pipe(buffer())
+		);
+	} else {
+		cb(
+		   bundler.bundle()
 			.on("error", function(error) {
 				onerror(error);
 
 				// End the stream to prevent gulp from crashing
 				this.end();
 			})
-			.pipe(source(file.split(/[\\/]/).pop()));
-		};
-
-	opts = opts || {};
-
-	if (scripts && scripts instanceof Array) {
-		for (var i = 0, l = scripts.length; i < l; i++) {
-			if (typeof scripts[i] === "string") {
-				streams.push(bundler(scripts[i]));
-			}
-		}
-	} else if (typeof scripts === "string") {
-		streams.push(bundler(scripts));
+			.pipe(source(base))
+			.pipe(buffer())
+		);
 	}
-
-	return es.merge.apply(null, streams).pipe(buffer());
 }
 
 // Add prefix in an array
@@ -159,18 +183,20 @@ gulp.task("polyfills", [ "bower" ], function() {
 
 // Build browserify bundles
 gulp.task("bundle", function() {
-	return bundle([ "ui/app.es6" ], {
+	return bundle("ui/app.es6", {
 		debug: true,
 		transform: [ babelify, optional ]
-	})
-	.pipe(sourcemaps.init({ loadMaps: true }))
-	.pipe(buildscripts())
-	.pipe(rename({
-		suffix: ".bundle.min",
-		extname: ".js"
-	}))
-	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest(dirs.scripts));
+	}, function(bundled) {
+		bundled
+		.pipe(sourcemaps.init({ loadMaps: true }))
+		.pipe(buildscripts())
+		.pipe(rename({
+			suffix: ".bundle.min",
+			extname: ".js"
+		}))
+		.pipe(sourcemaps.write("."))
+		.pipe(gulp.dest(dirs.scripts));
+	});
 });
 
 // Generate embed widget script
@@ -178,31 +204,41 @@ gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", {
 		debug: true,
 		transform: [ babelify, optional ]
-	})
-	.pipe(sourcemaps.init({ loadMaps: true }))
-	.pipe(buildscripts())
-	.pipe(rename("client.min.js"))
-	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public"));
+	}, function(bundled) {
+		bundled
+		.pipe(sourcemaps.init({ loadMaps: true }))
+		.pipe(buildscripts())
+		.pipe(rename("client.min.js"))
+		.pipe(sourcemaps.write("."))
+		.pipe(gulp.dest("public"));
+	});
 });
 
 gulp.task("embed-apis", function() {
 	return bundle("widget/index.js", {
 		debug: true,
 		transform: [ babelify, optional ]
-	})
-	.pipe(sourcemaps.init({ loadMaps: true }))
-	.pipe(buildscripts())
-	.pipe(rename("sb.js"))
-	.pipe(sourcemaps.write("."))
-	.pipe(gulp.dest("public/s"))
-	.on("error", gutil.log);
+	}, function(bundled) {
+		bundled
+		.pipe(sourcemaps.init({ loadMaps: true }))
+		.pipe(buildscripts())
+		.pipe(rename("sb.js"))
+		.pipe(sourcemaps.write("."))
+		.pipe(gulp.dest("public/s"));
+	});
 });
 
 gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
 
 // Generate scripts
 gulp.task("scripts", [ "bundle", "embed" ]);
+
+gulp.task("scripts:watch", function() {
+	bundle.watch = true;
+
+	gulp.start("scripts");
+	gulp.watch(files.js, [ "manifest" ]);
+});
 
 // Generate styles
 gulp.task("fonts", [ "bower" ], function() {
@@ -225,6 +261,10 @@ gulp.task("scss", [ "bower" ], function() {
 });
 
 gulp.task("styles", [ "fonts", "scss" ]);
+
+gulp.task("styles:watch", function() {
+	gulp.watch(files.scss, [ "styles", "manifest" ]);
+});
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
@@ -253,10 +293,7 @@ gulp.task("clean", function() {
 });
 
 // Watch for changes
-gulp.task("watch", function() {
-	gulp.watch(files.js, [ "scripts", "manifest" ]);
-	gulp.watch(files.scss, [ "styles", "manifest" ]);
-});
+gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 
 // Build all files
 gulp.task("build", [ "polyfills", "scripts", "styles" ], function() {
