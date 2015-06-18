@@ -23,7 +23,7 @@ function loadRelatedUser(room, user, session, callback) {
 		isErr = false,
 		returnValue, presense = "offline";
 
-	if (utils.isInternalSession(session)) {
+	if (utils.isInternalSession(session) && user === 'me') {
 		return callback(null, {
 			id: "system",
 			role: "owner" // should look for alternatives.
