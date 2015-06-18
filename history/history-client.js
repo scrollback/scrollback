@@ -9,6 +9,7 @@ module.exports = function(core, config, store) {
 	core.on("boot", function(state) {
 		url.parse(location.href, state);
 
+		state.context = (state.context && typeof state.context === "object") ? state.context : {};
 		state.context.env = state.context.env || "web";
 	}, 900);
 
