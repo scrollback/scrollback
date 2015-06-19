@@ -72,8 +72,6 @@ function bundle(file, opts, cb) {
 		cb(
 		   watcher
 			.on("update", function() {
-				var start = Date.now();
-
 				gutil.log("Starting '" + gutil.colors.yellow(file) + "'...");
 
 				cb(
@@ -82,8 +80,9 @@ function bundle(file, opts, cb) {
 					.pipe(source(base))
 					.pipe(buffer())
 				);
-
-				gutil.log("Finished '" + gutil.colors.yellow(file) + "' after " + gutil.colors.magenta((Date.now() - start) + " ms"));
+			})
+			.on("time", function(time) {
+				gutil.log("Finished '" + gutil.colors.yellow(file) + "' after " + gutil.colors.magenta(time + " ms"));
 			})
 			.bundle()
 			.pipe(source(base))
