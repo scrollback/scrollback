@@ -267,7 +267,11 @@ gulp.task("styles:watch", function() {
 
 // Generate appcache manifest file
 gulp.task("manifest", function() {
-	return gulp.src([ "public/s/dist/**/*", "!**/*.map" ])
+	return gulp.src([
+		"public/s/assets/logo/*",
+		"public/s/dist/**/*",
+		"!**/{*.map,config.json,LICENSE.txt}"
+	])
 	.pipe(plumber())
 	.pipe(manifest({
 		basePath: "public",
