@@ -91,31 +91,19 @@ function processReply(data){
 		var threadId = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 
-		if (message && threadId) {
-			message.thread = threadId;
+		if (message) {
+			if (!message.thread && threadId) {
+				message.thread = threadId;
 
-			if(message.id === threadId && !message.title) {
-				message.title = message.text;
-			}
-			
-			/*
-			// Code for adding spam, nonsense, normal etc. labels
-			if (data.spamIndex) {
-				for (var index in data.spamIndex) {
-					if (data.spamIndex.hasOwnProperty(index)) {
-						var a = data.spamIndex[index];
-						if (typeof a === 'string') {
-							a = parseFloat(a);
-						}
-						message.labels[index] = a;
-					}
+				if (message.id === threadId && !message.title && appUtils.isIRCSession(message.session)) {
+					message.title = message.text;
 				}
-			}*/
-
+			}
 			log("JSB called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			pendingCallbacks[data.id].fn();
 			delete pendingCallbacks[data.id];
 		}
+
 	} catch(err) {
 		log("error on parsing data=" + err);
 		return;
