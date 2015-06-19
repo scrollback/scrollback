@@ -233,7 +233,7 @@ module.exports = function(core, config, store) {
 							{
 								this.isFileUploadAvailable() ?
 								<div ref="filebutton"
-									 data-role="user follower owner moderator"
+									 data-role="registered follower owner moderator"
 									 className="chat-area-input-action chat-area-input-image"
 									 onClick={this.showChooser}>
 
