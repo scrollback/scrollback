@@ -54,6 +54,7 @@ function bundle(file, opts, cb) {
 	opts = opts || {};
 
 	opts.entries = "./" + file;
+	opts.debug = typeof opts.debug === "boolean" ? opts.debug : true;
 
 	if (bundle.watch) {
 		opts.cache = {};
@@ -185,7 +186,6 @@ gulp.task("polyfills", [ "bower" ], function() {
 // Build browserify bundles
 gulp.task("bundle", function() {
 	return bundle("ui/app.es6", {
-		debug: true,
 		transform: [ babelify, optional ]
 	}, function(bundled) {
 		bundled
@@ -203,7 +203,6 @@ gulp.task("bundle", function() {
 // Generate embed widget script
 gulp.task("embed-legacy", function() {
 	return bundle("embed/embed-parent.js", {
-		debug: true,
 		transform: [ babelify, optional ]
 	}, function(bundled) {
 		bundled
@@ -217,7 +216,6 @@ gulp.task("embed-legacy", function() {
 
 gulp.task("embed-apis", function() {
 	return bundle("widget/index.js", {
-		debug: true,
 		transform: [ babelify, optional ]
 	}, function(bundled) {
 		bundled
