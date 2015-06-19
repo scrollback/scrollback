@@ -2,7 +2,8 @@
 
 "use strict";
 
-const keys = [ "view", "mode" ],
+const Relation = require("../../lib/relation-client.es6"),
+	  keys = [ "view", "mode" ],
 	  types = [
 				"view", "mode", "role", "permission",
 				"embed", "toast", "canvas",
@@ -10,9 +11,6 @@ const keys = [ "view", "mode" ],
 			];
 
 module.exports = (core, config, store) => {
-	const user = require("../../lib/user.js")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
-
 	let oldClassName;
 
 	// Listen to navigate and add class names
@@ -38,11 +36,13 @@ module.exports = (core, config, store) => {
 			}
 		}
 
-		newClassList.push("role-" + user.getRole());
+		let rel = new Relation(store);
 
-		if (room.isWritable()) {
+		newClassList.push("role-" + rel.getRole());
+
+		if (rel.isWritable()) {
 			newClassList.push("permission-write");
-		} else if (room.isReadable()) {
+		} else if (rel.isReadable()) {
 			newClassList.push("permission-read");
 		}
 

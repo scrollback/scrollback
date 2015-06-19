@@ -4,7 +4,7 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var appUtils = require("../../lib/app-utils.js"),
+	var UserInfo = require("../../lib/user-info.js"),
 		validateEntity = require("../utils/validate-entity.es6")(core, config, store),
 		createEntity = require("../utils/create-entity.js")(core, config, store),
 		showDialog = require("../utils/show-dialog.js")(core, config, store),
@@ -78,7 +78,7 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(store.get("user"))) {
+		if (typeof userChangeCallback === "function" && changes.user && new UserInfo(store.get("user")).isGuest()) {
 				userChangeCallback();
 				userChangeCallback = null;
 		}
@@ -95,7 +95,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		if (appUtils.isGuest(user)) {
+		if (new UserInfo(user).isGuest()) {
 			if (signingup) {
 				dialog.title = "Create a new room";
 				dialog.content = [
@@ -220,7 +220,7 @@ module.exports = function(core, config, store) {
 			}
 		};
 
-		if (user && appUtils.isGuest(user)) {
+		if (user && new UserInfo(user).isGuest()) {
 			core.emit("auth", dialog, function() {
 				next();
 			});

@@ -4,7 +4,7 @@
 "use strict";
 
 const showMenu = require("../utils/show-menu.js"),
-	  appUtils = require("../../lib/app-utils.js"),
+	  UserInfo = require("../../lib/user-info.js"),
 	  stringUtils = require("../../lib/string-utils.js"),
 	  getAvatar = require("../../lib/get-avatar.js");
 
@@ -203,7 +203,7 @@ module.exports = function(core, config, store) {
 
 				this.setState({
 					title: title,
-					username: appUtils.formatUserName(user),
+					username: new UserInfo(user).getNick(),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
 			}

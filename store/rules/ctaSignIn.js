@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
@@ -11,7 +11,7 @@ module.exports = function(core, config, store) {
 
 		changes.app = changes.app || {};
 
-		if (user && appUtils.isGuest(user) && mode !== "home") {
+		if (user && new UserInfo(user).isGuest() && mode !== "home") {
 			changes.app.cta = "signin";
 		} else if (cta === "signin") {
 			changes.app.cta = null;

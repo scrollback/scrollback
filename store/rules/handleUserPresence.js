@@ -1,14 +1,14 @@
 "use strict";
 
-var core, config, store;
+var core, store;
 var queueBack = [];
 //var entityOps = require("./../entity-ops.js");
 
-var appUtils = require("./../../lib/app-utils.js");
+var UserInfo = require("./../../lib/user-info.js");
+
 module.exports = function(c, conf, s) {
 
 	core = c;
-	config = conf;
 	store = s;
 
 	core.on("setstate", function(changes, next) {
@@ -33,7 +33,7 @@ module.exports = function(c, conf, s) {
 		var entities = {};
 		init.occupantOf.forEach(function(roomObj) {
 			if(init.old && init.old.id){
-				if(appUtils.isGuest(init.old.id)) {
+				if(new UserInfo(init.old.id).isGuest()) {
 					entities[init.old.id] = null;
 					entities[roomObj.id + "_" + init.old.id] = null;
 				}else {

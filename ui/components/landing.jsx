@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 				env = store.get("context", "env");
 
 				this.setState({
-					showLanding: !!(mode === "home" && env !== "embed" && env !== "android" && user && appUtils.isGuest(user))
+					showLanding: !!(mode === "home" && env !== "embed" && env !== "android" && user && new UserInfo(user).isGuest())
 				});
 			}
 		},

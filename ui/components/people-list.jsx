@@ -1,7 +1,7 @@
 "use strict";
 
 var getAvatar = require("../../lib/get-avatar.js"),
-	appUtils = require("../../lib/app-utils.js");
+	UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -48,7 +48,7 @@ module.exports = function(core, config, store) {
 							elem: (
 								<div className="people-list-item">
 									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
-									<span className="people-list-item-nick">{appUtils.formatUserName(user.id)}</span>
+									<span className="people-list-item-nick">{new UserInfo(user.id).getNick()}</span>
 									{role ? <span className="people-list-item-role">{role}</span> : ""}
 								</div>
 							)

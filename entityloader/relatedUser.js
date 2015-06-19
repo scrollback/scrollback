@@ -1,7 +1,9 @@
 "use strict";
-var utils = require('../lib/app-utils.js');
 
-var core, userOps;
+var UserInfo = require('../lib/user-info.js'),
+	SessionInfo = require('../lib/session-info.js');
+
+var core;
 
 function checkPresence(room, user, callback) {
 	if (!room) return callback(false);
@@ -23,7 +25,7 @@ function loadRelatedUser(room, user, session, callback) {
 		isErr = false,
 		returnValue, presense = "offline";
 
-	if (utils.isInternalSession(session) && user === 'me') {
+	if (new SessionInfo(session).isInternal() && user === 'me') {
 		return callback(null, {
 			id: "system",
 			role: "owner" // should look for alternatives.
@@ -54,7 +56,7 @@ function loadRelatedUser(room, user, session, callback) {
 		} else {
 			returnValue = data.results[0];
 			if (!room) return done();
-			if (userOps.isGuest(returnValue.id)) {
+			if (new UserInfo(returnValue.id).isGuest()) {
 				returnValue.role = "guest";
 				done();
 			} else {
@@ -89,11 +91,9 @@ function loadRelatedUser(room, user, session, callback) {
 	});
 }
 
-
-
 function exp(c) {
 	core = c;
-	userOps = require("../lib/user.js")(c);
+
 	return loadRelatedUser;
 }
 

@@ -1,6 +1,6 @@
 "use strict";
 var log = require('../lib/logger.js'),
-	userOps = require("./../lib/app-utils.js");
+	UserInfo = require("./../lib/user-info.js");
 
 var scores = {
 	"mention": {
@@ -79,13 +79,15 @@ module.exports = function(core) {
 				action.notify[concernedId].reply = 60;
 			});
 
-			if (action.threadObject.from && !userOps.isGuest(action.threadObject.from) && action.threadObject.from !== action.from) {
+			if (action.threadObject.from && !new UserInfo(action.threadObject.from).isGuest() && action.threadObject.from !== action.from) {
 				if (!action.notify[action.threadObject.from]) action.notify[action.threadObject.from] = {};
 				action.notify[action.threadObject.from].reply = 80;
 			}
 		}
+
 		log.d(action.note);
 		log.d(action.notify);
+
 		next();
 
 	}, 500);

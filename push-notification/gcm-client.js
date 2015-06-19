@@ -1,14 +1,14 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
 var gcmTimeValidity = 12 * 60 * 60 * 1000,
 	updateDevice = false,
-	objUtils = require("../lib/obj-utils.js");
+	objUtils = require("../lib/obj-utils.js"),
+	UserInfo = require("../lib/user-info.js");
 
 module.exports = function(core, config, store) {
-	var user = require("../lib/user.js")(core, config, store),
-		LS = window.localStorage,
+	var LS = window.localStorage,
 		lastGCMTime, device;
 
 	lastGCMTime = LS.getItem("lastGCMTime");
@@ -36,7 +36,7 @@ module.exports = function(core, config, store) {
 	function saveUser() {
 		var userObj = store.getUser(), uuid;
 
-		if (!userObj.id || user.isGuest(userObj.id)) return;
+		if (!userObj.id || new UserInfo(userObj.id).isGuest()) return;
 
 		userObj = objUtils.clone(userObj);
 

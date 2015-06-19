@@ -1,7 +1,7 @@
 "use strict";
 
 var format = require("../../lib/format.js"),
-	appUtils = require("../../lib/app-utils.js"),
+	UserInfo = require("../../lib/user-info.js"),
 	getAvatar = require("../../lib/get-avatar.js");
 
 module.exports = function(core, config, store) {
@@ -120,7 +120,7 @@ module.exports = function(core, config, store) {
 							action: this.showRoomSettings
 						} : null
 					});
-				} else if (mode === "home" && env !== "embed" && user && !appUtils.isGuest(user)) {
+				} else if (mode === "home" && env !== "embed" && user && !new UserInfo(user).isGuest()) {
 					userObj = store.getUser() || {};
 
 					this.setState({

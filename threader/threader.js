@@ -4,7 +4,7 @@ var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,
 	validator = new (require('valid'))(),
-	appUtils = require("../lib/app-utils.js"),
+	SessionInfo = require("../lib/session-info.js"),
 	redis;
 
 var threaderValidator = {
@@ -36,7 +36,7 @@ module.exports = function(coreObj, conf) {
 		core.on('text', function(message, callback) {
 			var room = message.room;
 			if (client.writable && (!room.params || !room.params.threader || room.params.threader.enabled)) {//if client connected
-				
+
 				var threadId = message.thread,
 					msg = JSON.stringify({
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
@@ -44,7 +44,7 @@ module.exports = function(coreObj, conf) {
 					room: message.to,
 					threadId: threadId
 				});
-				
+
 				log.d("Sending msg to scrollback.jar: " + msg);
 				try {
 					client.write(msg + ",");
@@ -90,7 +90,7 @@ function processReply(data){
 		var id = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
 		if (message) {
-			if (!message.thread && appUtils.isIRCSession(message.session)) {
+			if (!message.thread && new SessionInfo(message.session).isIRC()) {
 				message.thread = id;
 				if(!message.title) {
 					message.title = message.text;
@@ -127,7 +127,7 @@ function init(){
 		log.i('Threader connected.');
 		client.write("[");//sending array of JSON objects
 	});
-	
+
 	var stub = ""; //incomplete line
 	client.on("data", function(data){
 		var i;

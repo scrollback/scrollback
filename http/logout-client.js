@@ -1,13 +1,15 @@
-/* jshint browser: true */
+/* eslint-env browser */
+
+"use strict";
 
 var stringUtils = require("../lib/string-utils.js"),
-	appUtils = require("../lib/app-utils.js");
+	UserInfo = require("../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	core.on("user-menu", function(menu, next) {
 		var user = store.get("user");
 
-		if (!user || appUtils.isGuest(store.get("user"))) {
+		if (!user || new UserInfo(store.get("user").isGuest())) {
 			return next();
 		}
 

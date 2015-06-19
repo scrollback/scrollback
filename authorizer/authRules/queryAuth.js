@@ -1,17 +1,21 @@
-var SbError = require('../../lib/SbError.js');
-var permissionLevels = require('../permissionWeights.js');
-var utils = require('../../lib/app-utils.js');
-var log = require('../../lib/logger.js');
+"use strict";
 
-module.exports = function(core, config) {
+var SbError = require('../../lib/SbError.js'),
+	SessionInfo = require('../../lib/session-info.js');
+
+module.exports = function(core) {
 	core.on('getRooms', function(query, next) {
-		if (utils.isInternalSession(query.session)) return next();
+		if (new SessionInfo(query.session).isInternal()) {
+			return next();
+		}
+
 		var isFull = true,
 			split;
 
 		if (query.identity) {
 			split = query.identity.split(":");
-			if (!split[1] || !split[1].length) isFull = false;
+
+			isFull = (split[1] && split[1].length);
 		}
 
 		if (query.identity && !isFull && query.user.role !== 'su' && !/^internal/.test(query.session)) {
@@ -22,10 +26,14 @@ module.exports = function(core, config) {
 	}, "authorization");
 
 	core.on('getUsers', function(query, next) {
-		if (utils.isInternalSession(query.session)) return next();
+		if (new SessionInfo(query.session).isInternal()) {
+			return next();
+		}
+
 		if (query.identity && query.user.role !== 'su' && !/^internal/.test(query.session)) {
 			next(new SbError('ERR_NOT_ALLOWED')); // prob not a good idea to send requiredRole as superuser to client :)
-		} else next();
+		} else {
+			next();
+		}
 	}, "authorization");
-
 };

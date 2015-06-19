@@ -4,15 +4,14 @@ var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	generate = require("../lib/generate.js"),
+	Relation = require("../lib/relation-client.es6"),
 	pendingActions = {},
-	user, timeAdjustment = 0;
+	timeAdjustment = 0;
 
 module.exports = function(c, conf, s) {
-	user = require("../lib/user.js")(c, conf, s);
-
 	store = s;
 	core = c;
-	
+
 	core.on("admit-dn", onAdmitDn, 950);
 	core.on("expel-dn", onAdmitDn, 950);
 	core.on("init-dn", onInit, 950);
@@ -30,7 +29,7 @@ module.exports = function(c, conf, s) {
 		var text = store.get("indexes", "textsById", error.id);
 		if(text) {
 			text = objUtils.clone(text);
-			(text.tags = text.tags?text.tags:[]).push("failed");
+			(text.tags = text.tags ? text.tags : []).push("failed");
 
 			newState.texts[text.to] = [{ // put the text in all messages
 				start: text.time,
@@ -296,7 +295,7 @@ function onTextDn(text, next) {
 
 function onEdit (edit, next) {
 	var text, thread, changes = {},
-		pleb = !user.isAdmin();
+		pleb = !new Relation(store).isAdmin();
 
 	text = edit.old;
 
@@ -373,13 +372,13 @@ function onAdmitDn(action) {
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
 	entities[roomObj.id + "_" + victim.id] = relation;
-	
+
 	newState = {
 		entities: entities
 	};
-	
+
 	roomId = store.get("nav", "room");
 	if(roomId === roomObj.id) newState.nav = {room: roomId};
-	
+
 	core.emit("setstate",newState);
 }

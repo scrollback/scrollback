@@ -4,10 +4,10 @@
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
+		  Relation = require("../../lib/relation-client.es6"),
 		  ChatAreaMessages = require("./chat-area-messages.jsx")(core, config, store),
 		  ScrollTo = require("./scroll-to.jsx")(core, config, store),
-		  Compose = require("./compose.jsx")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
+		  Compose = require("./compose.jsx")(core, config, store);
 
 	let ChatArea = React.createClass({
 		scrollToBottom: function() {
@@ -67,7 +67,7 @@ module.exports = function(core, config, store) {
 
 				this.setState({
 					show: (store.get("nav", "mode") === "chat"),
-					read: room.isReadable()
+					read: new Relation(store).isReadable()
 				});
 			}
 		},

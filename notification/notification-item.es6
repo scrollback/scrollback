@@ -2,8 +2,8 @@
 
 "use strict";
 
-module.exports = (core, config, store) => {
-	const user = require("../lib/user.js")(core, config, store),
+module.exports = core => {
+	const UserInfo = require("../lib/user-info.js"),
 		  format = require("../lib/format.js"),
 		  max = 3;
 
@@ -113,10 +113,10 @@ module.exports = (core, config, store) => {
 
 			switch (this.note.noteType) {
 			case "thread":
-				summary = `${user.getNick(data.from)} : ${this._format(data.title)}`;
+				summary = `${new UserInfo(data.from).getNick()} : ${this._format(data.title)}`;
 				break;
 			default:
-				summary = `${user.getNick(data.from)} : ${this._format(data.text)}`;
+				summary = `${new UserInfo(data.from).getNick()} : ${this._format(data.text)}`;
 			}
 
 			return summary;
@@ -132,7 +132,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new mentions`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
+					html = `<strong>${new UserInfo(data.from).getNick()}</strong> mentioned you`;
 				}
 
 				html += ` in <strong>${this._format(data.title || this._room)}</strong>: <strong>${this._format(data.text)}</strong>`;
@@ -142,7 +142,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new ${data.title ? "replies" : "messages"}`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
+					html = `<strong>${new UserInfo(data.from).getNick()}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
 				}
 
 				html += ` in <strong>${this._format(data.title || this._room)}</strong>`;
@@ -152,7 +152,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new discussions`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
+					html = `<strong>${new UserInfo(data.from).getNick()}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
 				}
 
 				html += ` in <strong>${this._format(this._room)}</strong>`;

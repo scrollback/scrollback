@@ -4,7 +4,7 @@
 "use strict";
 
 var objUtils = require("../../lib/obj-utils.js"),
-	appUtils = require("../../lib/app-utils.js");
+	UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
@@ -34,7 +34,7 @@ module.exports = function(core, config, store) {
 	core.on("pref-dialog", function(dialog, next) {
 		var user = store.getUser();
 
-		if (!(user && user.id) || appUtils.isGuest(user.id)) {
+		if (!(user && user.id) || new UserInfo(user.id).isGuest()) {
 			// Don't proceed
 			return;
 		}
@@ -55,7 +55,7 @@ module.exports = function(core, config, store) {
 		var userObj = store.getUser(),
 			sound = (userObj.params.notifications && typeof userObj.params.notifications.sound === "boolean") ? userObj.params.notifications.sound : true;
 
-		if (userObj && !appUtils.isGuest(userObj.id)) {
+		if (userObj && !new UserInfo(userObj.id).isGuest()) {
 			menu.items.userpref = {
 				text: "Account settings",
 				prio: 300,
@@ -83,7 +83,7 @@ module.exports = function(core, config, store) {
 			}
 		};
 
-		if (userObj && appUtils.isGuest(userObj.id)) {
+		if (userObj && new UserInfo(userObj.id).isGuest()) {
 			menu.title = "Sign in to Scrollback with";
 
 			core.emit("auth", menu, function() {

@@ -2,7 +2,7 @@
 
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -90,14 +90,14 @@ module.exports = function(core, config, store) {
 				return (
 					<div key={"room-card-thread-" + room + "-" + thread.id} className="card-thread">
 						<span className="card-thread-message">{thread.title}</span>
-						<span className="card-thread-by">{appUtils.formatUserName(thread.from)}</span>
+						<span className="card-thread-by">{new UserInfo(thread.from).getNick()}</span>
 					</div>
 				);
 			});
 
 			icons.push(<a className="card-header-icon card-header-icon-share card-cover-icon" key={"card-share-" + room} onClick={this.shareRoom}></a>);
 
-			if (user && !appUtils.isGuest(user)) {
+			if (user && !new UserInfo(user).isGuest()) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
 					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
 					           key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);

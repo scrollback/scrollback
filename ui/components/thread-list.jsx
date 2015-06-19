@@ -4,10 +4,10 @@
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
+		  Relation = require("../../lib/relation-client.es6"),
 		  ThreadCard = require("./thread-card.jsx")(core, config, store),
 		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
-		  GridView = require("./grid-view.jsx")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
+		  GridView = require("./grid-view.jsx")(core, config, store);
 
 	let ThreadList = React.createClass({
 		scrollToTop: function() {
@@ -196,7 +196,7 @@ module.exports = function(core, config, store) {
 		getInitialState: function() {
 			return {
 				show: (store.get("nav", "mode") === "room"),
-				read: room.isReadable()
+				read: new Relation(store).isReadable()
 			};
 		},
 

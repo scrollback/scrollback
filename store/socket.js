@@ -4,7 +4,7 @@
 "use strict";
 
 var generate = require("../lib/generate.js"),
-	appUtils = require("../lib/app-utils.js"),
+	UserInfo = require("../lib/user-info.js"),
 	config, core, client, store;
 
 var backOff = 1,
@@ -54,7 +54,7 @@ module.exports = function(c, conf, s) {
 	});
 
 	core.on("user-up", function(userUp, next) {
-		if (appUtils.isGuest(userUp.user.id)) {
+		if (new UserInfo(userUp.user.id).isGuest()) {
 			next();
 			core.emit("user-dn", userUp);
 		} else {

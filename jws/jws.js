@@ -1,7 +1,9 @@
+"use strict";
+
 var jwt = require('jsonwebtoken'),
 	crypto = require('crypto'),
 	core,
-	keys, utils = require('../lib/app-utils.js'),
+	keys, UserInfo = require('../lib/user-info.js'),
 	config;
 
 
@@ -37,7 +39,7 @@ function checkCurrentRooms(user, domain, callback) {
 function jwsHandler(action, callback) {
 	var domain;
 	if (!action.auth || !action.auth.jws) return callback();
-	if (!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
+	if (!new UserInfo(action.user.id).isGuest() && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
 		if (!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
 		if (payload.iss !== action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
@@ -54,8 +56,8 @@ function jwsHandler(action, callback) {
 			if (user) {
 				if (config.global.su[user.id]) return callback(new Error("Oops.."));
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, domain, function(err, shouldAllow) {
-						if (err) return callback(err);
+					checkCurrentRooms(action.user.id, domain, function(e, shouldAllow) {
+						if (e) return callback(e);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
 							callback();
@@ -81,8 +83,8 @@ function jwsHandler(action, callback) {
 			} else {
 				//			signup?
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, domain, function(err, shouldAllow) {
-						if (err) return callback(err);
+					checkCurrentRooms(action.user.id, domain, function(e, shouldAllow) {
+						if (e) return callback(e);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
 							callback();

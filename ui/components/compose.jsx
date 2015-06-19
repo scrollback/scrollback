@@ -4,7 +4,7 @@
 "use strict";
 
 const S3Upload = require("../../lib/s3-upload.es6"),
-	  appUtils = require("../../lib/app-utils.js"),
+	  UserInfo = require("../../lib/user-info.js"),
 	  gen = require("../../lib/generate.js");
 
 module.exports = function(core, config, store) {
@@ -21,8 +21,8 @@ module.exports = function(core, config, store) {
 			msg = msg || "";
 
 			if (textObj) {
-				nick = appUtils.formatUserName(textObj.from);
-				user = appUtils.formatUserName(store.get("user"));
+				nick = new UserInfo(textObj.from).getNick();
+				user = new UserInfo(store.get("user")).getNick();
 
 				mention = "@" + nick;
 
@@ -265,7 +265,7 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
+				return "Reply as " + new UserInfo(store.get("user")).getNick() + ", markdown supported";
 			} else {
 				return "You are offline";
 			}

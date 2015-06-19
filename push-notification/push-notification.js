@@ -16,6 +16,7 @@
 var log = require("../lib/logger.js"),
 	url = require("../lib/url.js"),
 	format = require("../lib/format.js"),
+	UserInfo = require("../lib/user-info.js"),
 	gcmNotify = require("./gcm-notify.js"),
 	max = 400;
 
@@ -24,8 +25,6 @@ var log = require("../lib/logger.js"),
  */
 
 module.exports = function(core, config) {
-	var user = require("../lib/user.js")(core, config);
-
 	function mapUsersToIds(idList, cb) {
 		core.emit("getUsers", {
 			session: "internal-push-notifications",
@@ -104,7 +103,7 @@ module.exports = function(core, config) {
 		body = format.mdToText(text.text);
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " mentioned you",
+			title: text.to + ": " + new UserInfo(text.from).getNick() + " mentioned you",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {
@@ -127,7 +126,7 @@ module.exports = function(core, config) {
 		body = format.mdToText(text.text);
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
+			title: text.to + ": " + new UserInfo(text.from).getNick() + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {
@@ -167,7 +166,7 @@ module.exports = function(core, config) {
 		}
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " started a discussion",
+			title: text.to + ": " + new UserInfo(text.from).getNick() + " started a discussion",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {

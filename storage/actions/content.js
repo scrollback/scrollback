@@ -2,16 +2,16 @@
 
 var pg = require("../../lib/pg.js"),
 	log = require("../../lib/logger.js"),
-	userOps = require("../../lib/app-utils.js");
+	UserInfo = require("../../lib/user-info.js");
 
 module.exports = function (action) {
 	var queries = [], updateObject;
-	
+
 	log.d("Text:", action);
 	// insert text
 	if (action.type === "text") {
 		queries.push(pg.insert ("texts", {
-			id: action.id, 
+			id: action.id,
 			from: action.from,
 			to: action.to,
 			time: new Date(action.time),
@@ -29,13 +29,13 @@ module.exports = function (action) {
 		updateObject = { updatetime: new Date(action.time) };
 		if(action.text) updateObject.text = action.text;
 		if(action.tags) updateObject.tags = action.tags;
-		
+
 		queries.push(pg.cat([
 			pg.update ("texts", updateObject),
 			{ $: "WHERE id=${id}", id: action.ref }
 		]));
 	}
-	
+
 	if(action.type === "text" && action.thread) {
 		if(action.id === action.thread) {
 			queries.push(pg.insert("threads", {
@@ -50,7 +50,7 @@ module.exports = function (action) {
 				updatetime: new Date(action.time),
 				updater: action.from,
 				concerns: [action.from].concat(action.mentions).filter(function(id) {
-					return !userOps.isGuest(id);
+					return !new UserInfo(id).isGuest();
 				})
 			}));
 
@@ -60,17 +60,17 @@ module.exports = function (action) {
 				{ $: "updater=${updater}", updater: action.from },
 				"length=length+1"
 			], concerns = [action.from].concat(action.mentions).filter(function(id) {
-				return !userOps.isGuest(id) && action.threadObject && action.threadObject.concerns && action.threadObject.concerns.indexOf(id) === -1;
+				return !new UserInfo(id).isGuest() && action.threadObject && action.threadObject.concerns && action.threadObject.concerns.indexOf(id) === -1;
 			}).map(function(id) {
 				return [id];
 			});
-			
+
 			if(concerns.length) setParts.push({
 				$: "concerns = concerns || (SELECT array_agg(a.n) FROM (VALUES $(concerns)) AS a(n) " +
 					"WHERE NOT (threads.concerns @> ARRAY[a.n]))",
 				concerns: concerns
 			});
-			
+
 			queries.push(pg.cat([
 				"UPDATE threads SET",
 				pg.cat(setParts, ", "),
@@ -82,7 +82,7 @@ module.exports = function (action) {
 		updateObject = { updatetime: new Date(action.time) };
 		if(action.title) updateObject.title = action.title;
 		if(action.tags) updateObject.tags = action.tags;
-		
+
 		queries.push(pg.cat([
 			pg.update ("threads", updateObject),
 			{ $: "WHERE id=${id}", id: action.ref }

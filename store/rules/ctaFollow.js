@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var UserInfo = require("../../lib/user-info.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
@@ -14,7 +14,7 @@ module.exports = function(core, config, store) {
 
 		changes.app = changes.app || {};
 
-		if (userId && !appUtils.isGuest(userId) && ((/(visitor|none)/).test(role) || !role) && (/(chat|room)/).test(mode) &&
+		if (userId && !new UserInfo(userId).isGuest() && ((/(visitor|none)/).test(role) || !role) && (/(chat|room)/).test(mode) &&
 		    !(roomObj && roomObj.guides && roomObj.guides.authorizer && roomObj.guides.authorizer.openRoom === false)) {
 			changes.app.cta = "follow";
 		} else if (cta === "follow") {

@@ -2,7 +2,8 @@
 
 var SbError = require("../lib/SbError.js"),
 	events = ["text", "edit", "away", "back", "join", "part", "admit", "expel", "getTexts", "getThreads"],
-	userOps = require("../lib/user.js")();
+	SessionInfo = require("../lib/session-info.js"),
+	UserInfo = require("../lib/user-info.js");
 
 module.exports = function(core, config) {
 	var domainAuth = require("./rules/domainRules.js")(core, config),
@@ -12,7 +13,7 @@ module.exports = function(core, config) {
 	events.forEach(function(event) {
 		core.on(event, function(action, next) {
 			var error;
-			if (!userOps.isWebSession(action.session)) return next();
+			if (!new SessionInfo(action.session).isWeb()) return next();
 			if (action.user.role === "none") {
 				if (/^guest-/.test(action.user.id)) {
 					action.user.role = "guest";
@@ -36,7 +37,7 @@ module.exports = function(core, config) {
 	require("./authRules/queryAuth.js")(core, config);
 
 	core.on("upload/getPolicy", function(action, next) {
-		if (userOps.isGuest(action.user.id)) {
+		if (new UserInfo(action.user.id).isGuest()) {
 			next(new SbError("ERR_NOT_ALLOWED", {
 				source: "authorizer",
 				action: action.type,

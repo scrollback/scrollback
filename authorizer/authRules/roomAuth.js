@@ -1,12 +1,12 @@
 "use strict";
 var SbError = require('../../lib/SbError.js');
-var utils = require('../../lib/app-utils.js');
+var SessionInfo = require('../../lib/session-info.js');
 var domainCheck;
 module.exports = function (core, config) {
 	domainCheck = require("../rules/domainRules.js")(core, config);
 	core.on('room', function (action, callback) {
-		if(utils.isInternalSession(action.session)) return callback();
-		if(!utils.isInternalSession(action.session) && action.old && action.old.id && domainCheck(action)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
+		if(new SessionInfo(action.session).isInternal()) return callback();
+		if(action.old && action.old.id && domainCheck(action)) return callback(new SbError("AUTH:DOMAIN_MISMATCH"));
 
 		if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {

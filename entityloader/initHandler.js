@@ -1,6 +1,6 @@
 "use strict";
-var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
-var utils = require('../lib/app-utils.js');
+var crypto = require('crypto'); /*, log = require("../lib/logger.js")*/
+var UserInfo = require('../lib/user-info.js');
 var names = require('../lib/generate.js').names;
 var mathUtils = require('../lib/math-utils.js');
 
@@ -107,7 +107,7 @@ function initHandler(action, callback) {
 			if (user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
 			else return true;
 		}
-		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
+		if (action.suggestedNick && new UserInfo(action.user.id).isGuest() && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
 				action.user.assignedBy = action.origin.domain;
@@ -115,7 +115,7 @@ function initHandler(action, callback) {
 				action.old = old;
 				return callback();
 			});
-		} else if (action.ref && utils.isGuest(data.results[0].id)) {
+		} else if (action.ref && new UserInfo(data.results[0].id).isGuest()) {
 			core.emit("getUsers", {
 				ref: action.ref,
 				session: action.session
@@ -150,7 +150,7 @@ function loadProps(action, callback) {
 		if (wait) wait = false;
 		else callback();
 	});
-	if (!utils.isGuest(userID)) {
+	if (!new UserInfo(userID).isGuest()) {
 		core.emit("getRooms", {
 			hasMember: userID,
 			session: "internal-loader"
@@ -181,7 +181,7 @@ module.exports = function(c, conf) {
 			next();
 		});
 	}, "loader");
-	
+
 	core.on("init", function(init, next) {
 		loadProps(init, next);
 	}, 600);

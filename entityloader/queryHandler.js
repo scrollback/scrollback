@@ -1,5 +1,6 @@
 "use strict";
-var utils = require('../lib/app-utils.js');
+
+var SessionInfo = require('../lib/session-info.js');
 var log = require("../lib/logger.js");
 
 var core, config, loadRelatedUser;
@@ -30,7 +31,7 @@ module.exports = function(c, conf) {
 				next();
 			}
 		}
-		if (utils.isInternalSession(query.session)) {
+		if (new SessionInfo(query.session).isInternal()) {
 			query.user = {
 				id: "system",
 				role: "owner"

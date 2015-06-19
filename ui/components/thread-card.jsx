@@ -2,7 +2,7 @@
 
 "use strict";
 
-const appUtils = require("../../lib/app-utils.js"),
+const UserInfo = require("../../lib/user-info.js"),
 	  format = require("../../lib/format.js"),
 	  showMenu = require("../utils/show-menu.js");
 
@@ -171,7 +171,7 @@ module.exports = function(core, config, store) {
 				if (typeof chat === "object" && typeof chat.text === "string") {
 					chats.push((
 						<div key={"thread-card-chat-" + store.get("nav", "room") + "-" + thread.id + "-" + chat.id} className="card-chat">
-							<span className="card-chat-nick">{appUtils.formatUserName(chat.from)}</span>
+							<span className="card-chat-nick">{new UserInfo(chat.from).getNick()}</span>
 							<span className="card-chat-message">{format.mdToText(chat.text)}</span>
 						</div>
 					));

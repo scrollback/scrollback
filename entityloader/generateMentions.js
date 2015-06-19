@@ -1,6 +1,6 @@
 "use strict";
 var _ = require('underscore');
-var userOps = require("../lib/app-utils.js");
+var UserInfo = require("../lib/user-info.js");
 var log = require('../lib/logger.js');
 
 
@@ -10,10 +10,10 @@ function generateMentions(action, next) {
 	if(!action.text) return next();
 	users.forEach(function(u) {
 		if(u.id === action.user.id) return;
-		if (userOps.isGuest(u.id)) candidates[u.id.replace(/^guest-/, '')] = true;
+		if (new UserInfo(u.id).isGuest()) candidates[u.id.replace(/^guest-/, '')] = true;
 		else candidates[u.id] = true;
 	});
-	
+
 	users = Object.keys(candidates);
 	mentions = action.text.split(" ").map(function(word) {
 		if (((/^@[a-z][a-z0-9\_\-\(\)]{2,32}[:,]?$/i).test(word) || (/^[a-z][a-z0-9\_\-\(\)]{2,32}:$/i).test(word)) && _.contains(users, word.replace(/[@:]/, ''))) {

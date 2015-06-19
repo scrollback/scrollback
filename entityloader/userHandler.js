@@ -1,5 +1,6 @@
 "use strict";
-var utils = require('../lib/app-utils.js');
+
+var UserInfo = require('../lib/user-info.js');
 var crypto = require('crypto');
 
 var core;
@@ -27,7 +28,7 @@ function userHandler(action, callback) {
 				session: "internal-loader"
 			}, function(err, data) {
 				if (err) return callback(err);
-				if (utils.isGuest(action.from)) { // signup
+				if (new UserInfo(action.from).isGuest()) { // signup
 					if (data && data.results && data.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
 					}
