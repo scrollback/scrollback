@@ -42,7 +42,7 @@ module.exports = function(coreObj, conf) {
 					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
 					text: message.text.replace(/\s+/g, " "),
 					room: message.to,
-					threadId: threadId
+					threadId: threadId || ""
 				});
 				
 				log.d("Sending msg to scrollback.jar: " + msg);
