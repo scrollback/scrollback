@@ -4,7 +4,6 @@ var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,
 	validator = new (require('valid'))(),
-	appUtils = require("../lib/app-utils.js"),
 	redis;
 
 var threaderValidator = {
@@ -39,10 +38,10 @@ module.exports = function(coreObj, conf) {
 				
 				var threadId = message.thread,
 					msg = JSON.stringify({
-					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
-					text: message.text.replace(/\s+/g, " "),
-					room: message.to
-				});
+						id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
+						text: message.text.replace(/\s+/g, " "),
+						room: message.to
+					});
 				
 				if(threadId) msg.threadId = threadId;
 				
@@ -95,7 +94,7 @@ function processReply(data){
 			if (!message.thread && threadId) {
 				message.thread = threadId;
 
-				if (message.id === threadId && !message.title && appUtils.isIRCSession(message.session)) {
+				if (message.id === threadId && !message.title) {
 					message.title = message.text;
 				}
 			}
