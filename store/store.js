@@ -7,7 +7,15 @@ var objUtils = require("../lib/obj-utils.js"),
 			"mode": "loading",
 			"view": null,
 			"room": null,
-			"dialog": null
+			"dialog": null,
+			"textRange": {
+				time: null,
+				after: 30
+			},
+			"threadRange": {
+				time: null,
+				after: 20
+			}
 		},
 		session: "",
 		user: "",
