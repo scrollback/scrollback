@@ -18,18 +18,15 @@
 
 	<body>
 		<div id="scrollback-container" class="scrollback-container"></div>
-		
-		
-		<script>document.write('<script src="http'+
-			(location.protocol=='https:'?'s':'')+
-			'://local.scrollback.io/s/sb.js"><\/script>');</script>
+
+		<script src="/s/sb.js"></script>
 
 		<script>
 			var widget = scrollback({
-				form: "canvas",
+				form: "toast",
 				minimize: false,
 				container: 'scrollback-container', // for form=canvas
-				room:"scrollback",
+				room:"scrollback"
 			});
 		</script>
 	</body>
