@@ -1,7 +1,9 @@
 /* eslint-env browser */
 
 "use strict";
-var config = require("../client-config-defaults.js");
+var config = require("../client-config-defaults.js"),
+	kramer = require("../lib/kramer.js")();
+
 var host = config.server.protocol + "//" + config.server.host;
 var iframeCount = 0,
 	widgets = {};
@@ -81,9 +83,9 @@ function constructEmbed(options) {
 	embed.form = options.form || "toast";
 	if (options.nick) embed.nick = options.nick;
 	embed.minimize = (typeof options.minimize === "boolean") ? options.minimize : false;
-	if(options.jws) embed.jws = options.jws;
-	if(typeof options.createRoom === "boolean")embed.createRoom = options.createRoom;
-	if(typeof options.createUser === "boolean")embed.createUser = options.createUser;
+	if (options.jws) embed.jws = options.jws;
+	if (typeof options.createRoom === "boolean")embed.createRoom = options.createRoom;
+	if (typeof options.createUser === "boolean")embed.createUser = options.createUser;
 	embed.origin = {
 		protocol: location.protocol,
 		host: location.host,
@@ -96,10 +98,10 @@ function addWidget(self) {
 	var iframe, options = self.options,
 		embed = self.embed, params = [];
 
-	params.push("embed=" + encodeURIComponent(JSON.stringify(embed)));
+	params.push("embed=" + kramer.encode(embed));
 
 	iframe = document.createElement("iframe");
-	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?"+params.join("&");
+	iframe.src = host + "/" + options.room + (options.thread ? "/" + options.thread : "") + "?" + params.join("&");
 	iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((embed.minimize && embed.form === "toast") ? " scrollback-minimized" : "");
 	iframe.dataset.id = ++iframeCount;
 
@@ -175,7 +177,7 @@ function scrollback(opts, callback) {
 
 				break;
 			case "ready":
-				if(callback) callback(widget);
+				if (callback) callback(widget);
 				callback = null;
 				return;
 		}
