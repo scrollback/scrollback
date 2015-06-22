@@ -27,7 +27,7 @@ var objUtils = require("../lib/obj-utils.js"),
 		}
 	};
 
-function Store(objs, core) {
+function Store(objs) {
 	// Handle situation where called without "new" keyword
 	if (false === (this instanceof Store)) {
 		throw new Error("Must be initialized before use");
@@ -39,7 +39,6 @@ function Store(objs, core) {
 	}
 
 	this._objs = objs;
-	this._core = core;
 }
 
 Store.prototype.get = function() {
@@ -226,35 +225,13 @@ Store.prototype.getFeaturedRooms = function() {
 	var rooms = this.get("app", "featuredRooms"),
 		self = this;
 
-	if (rooms && rooms.length) {
-		return rooms.map(function(room) {
-			return self.getRoom(room);
-		});
-	} else {
-		this._core.emit("getRooms", { featured: true }, function(err, res) {
-			var featuredRooms = [], roomObjs = {};
-
-			if (res && res.results) {
-				res.results.forEach(function(e) {
-					if (e) {
-						featuredRooms.push(e.id);
-						roomObjs[e.id] = e;
-					}
-				});
-			}
-
-			if (featuredRooms.length) {
-				this._core.emit("setstate", {
-					app:{
-						featuredRooms: featuredRooms
-					},
-					entities: roomObjs
-				});
-			}
-		}.bind(this));
-
+	if (!rooms) {
 		return [];
 	}
+
+	return rooms.map(function(room) {
+		return self.getRoom(room);
+	});
 };
 
 Store.prototype.getPageTitle = function(compact) {
@@ -285,7 +262,7 @@ Store.prototype.getPageTitle = function(compact) {
 };
 
 module.exports = function(core, config) {
-	var store = new Store([ state ], core);
+	var store = new Store([ state ]);
 
 	require("./state-manager.es6")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);

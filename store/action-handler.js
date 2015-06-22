@@ -12,7 +12,7 @@ module.exports = function(c, conf, s) {
 
 	store = s;
 	core = c;
-
+	
 	core.on("admit-dn", onAdmitDn, 950);
 	core.on("expel-dn", onAdmitDn, 950);
 	core.on("init-dn", onInit, 950);
@@ -141,6 +141,26 @@ function onInit(init, next) {
 	core.emit("setstate", {
 		entities: entities,
 		user: init.user.id
+	});
+	core.emit("getRooms", {featured: true}, function(err, rooms) {
+		var featuredRooms = [], roomObjs = {};
+
+		if(rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if(e) {
+					featuredRooms.push(e.id);
+					roomObjs[e.id] = e;
+				}
+
+
+			});
+		}
+		core.emit("setstate", {
+			app:{
+				featuredRooms: featuredRooms
+			},
+			entities: roomObjs
+		});
 	});
 	next();
 }
@@ -353,13 +373,13 @@ function onAdmitDn(action) {
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
 	entities[roomObj.id + "_" + victim.id] = relation;
-
+	
 	newState = {
 		entities: entities
 	};
-
+	
 	roomId = store.get("nav", "room");
 	if(roomId === roomObj.id) newState.nav = {room: roomId};
-
+	
 	core.emit("setstate",newState);
 }
