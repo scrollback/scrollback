@@ -15,7 +15,7 @@ module.exports = function(core, config, store) {
 
 		if ((changes.nav && ("room" in changes.nav || "threadRange" in changes.nav)) ||
 	        (changes.entities && changes.entities[rel])) {
-			handleThreadChange(changes);
+			handleThreadChange(future);
 		}
 	}, 850);
 
