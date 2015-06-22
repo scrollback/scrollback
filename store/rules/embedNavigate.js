@@ -19,7 +19,7 @@ module.exports = function(core, config, store) {
 				nextRoom = future.get("nav", "room");
 
 				if (prevRoom && prevRoom !== nextRoom) {
-					window.open(window.location.protocol + "//" + window.location.host + url.build({
+					window.open(url.build({
 						nav: objUtils.merge(objUtils.clone(store.get("nav")), changes.nav)
 					}), "_blank");
 
