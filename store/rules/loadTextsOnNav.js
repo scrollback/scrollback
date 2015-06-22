@@ -13,7 +13,7 @@ module.exports = function(core, config, store) {
 				userId = future.get("user"),
 				rel = roomId + "_" + userId;
 
-		if ((changes.nav && (changes.nav.room || changes.nav.thread || changes.nav.textRange)) ||
+		if ((changes.nav && ("room" in changes.nav || "thread" in changes.nav || "textRange" in changes.nav)) ||
 	        (changes.entities && changes.entities[rel])) {
 			handleTextChange(future);
 		}
