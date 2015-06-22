@@ -45,28 +45,29 @@ module.exports = function(core, config, store) {
 	}
 
 	function handleThreadChange(future) {
-		var threadRange = future.get("nav", "threadRange") || {},
-			roomId = future.get("nav", "room"),
-			time = threadRange.time || null,
+		var roomId = future.get("nav", "room"),
+			time = future.get("nav", "threadRange", "time") || null,
+			before = future.get("nav", "threadRange", "after"),
+			after = future.get("nav", "threadRange", "after"),
 			r;
 
-		r = store.getThreads(roomId, time, (threadRange.after || 0) + 5);
+		r = store.getThreads(roomId, time, (after || 0) + 5);
 
 		if (r[r.length - 1] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[r.length - 2].startTime : time),
-				after: Math.max(16, (threadRange.after || 0) - r.length + 1)
+				after: Math.max(16, (after || 0) - r.length + 1)
 			}, threadResponse);
 		}
 
-		r = store.getThreads(roomId, time, -(threadRange.before || 0) - 5);
+		r = store.getThreads(roomId, time, -(before || 0) - 5);
 
 		if (r[0] === "missing") {
 			core.emit("getThreads", {
 				to: roomId,
 				time: (r.length > 1 ? r[1].startTime : time),
-				before: Math.max(16, (threadRange.before || 0) - r.length + 1)
+				before: Math.max(16, (before || 0) - r.length + 1)
 			}, threadResponse);
 		}
 

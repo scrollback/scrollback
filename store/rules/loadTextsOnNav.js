@@ -44,35 +44,36 @@ module.exports = function(core, config, store) {
 	}
 
 	function handleTextChange(future) {
-		var textRange = future.get("nav", "textRange") || {},
-			thread = future.get("nav", "thread"),
+		var thread = future.get("nav", "thread"),
 			/* threads may be in the process of being reset using null; in this case, use null. */
 			roomId = future.get("nav", "room"),
-			time = textRange.time || null,
+			time = future.get("nav", "textRange", "time") || null,
+			before = future.get("nav", "textRange", "after"),
+			after = future.get("nav", "textRange", "after"),
 			r;
 
-		if (textRange.after) {
-			r = store.getTexts(roomId, thread, time, textRange.after);
+		if (after) {
+			r = store.getTexts(roomId, thread, time, after);
 
 			if (r[r.length - 1] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
 					time: (r.length > 1 ? r[r.length - 2].time : time),
-					after: Math.max(50, textRange.after - r.length + 1)
+					after: Math.max(50, after - r.length + 1)
 				}, textResponse);
 			}
 		}
 
-		if (textRange.before) {
-			r = store.getTexts(roomId, thread, time, -textRange.before);
+		if (before) {
+			r = store.getTexts(roomId, thread, time, -before);
 
 			if (r[0] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
 					thread: thread,
 					time: (r.length > 1 ? r[1].time : time),
-					before: Math.max(50, textRange.before - r.length + 1)
+					before: Math.max(50, before - r.length + 1)
 				}, textResponse);
 			}
 		}
