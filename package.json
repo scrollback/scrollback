@@ -85,7 +85,6 @@
     "del": "latest",
     "eslint-plugin-react": "latest",
     "esprima-fb": "latest",
-    "event-stream": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-combine-mq": "latest",
@@ -110,6 +109,7 @@
     "mocha-html-reporter": "git://github.com/kamalkishor1991/mocha-html-reporter.git",
     "selenium-webdriver": "latest",
     "vinyl-buffer": "latest",
-    "vinyl-source-stream": "latest"
+    "vinyl-source-stream": "latest",
+    "watchify": "latest"
   }
 }
