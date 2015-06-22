@@ -48,12 +48,10 @@ module.exports = (core, ...args) => {
 			return (
 				   <div className={"notification-center-item item " + this.props.note.noteType + (typeof item.readTime === "number" ? " read" : "")}>
 					<span className="notification-center-item-close close" onClick={this.closeItem.bind(this)} />
-					<span
-						className="notification-center-item-content content"
-						dangerouslySetInnerHTML={{__html: item.html}}
-						onClick={item.act.bind(item)}
-						/>
-					<span className="notification-center-item-timestamp">{format.friendlyTime(this.props.note.time, Date.now())}</span>
+					<span className="notification-center-item-content content" onClick={item.act.bind(item)}>
+						<span className="notification-center-item-text" dangerouslySetInnerHTML={{__html: item.html}}/>
+						<span className="notification-center-item-timestamp">{format.friendlyTime(this.props.note.time, Date.now())}</span>
+					</span>
 					<span className="notification-center-item-actions">{actions}</span>
 				   </div>
 				   );
