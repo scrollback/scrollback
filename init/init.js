@@ -1,7 +1,8 @@
-/* jshint browser: true */
+"use strict";
 
-var core, config, store, bootComplete = false;
-function init() {
+var bootComplete = false;
+
+function init(core) {
 	var newState = {}, initNext;
 
 	if (!newState.app) {
@@ -30,10 +31,4 @@ function init() {
 	}, 1000);
 }
 
-module.exports = function(c, conf, s) {
-	core = c;
-	config = conf;
-	store = s;
-//	require("./url-manager.js")(core, config, store);
-	init();
-};
+module.exports = init;

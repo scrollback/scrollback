@@ -5,8 +5,8 @@
 
 const showMenu = require("../utils/show-menu.js"),
 	  appUtils = require("../../lib/app-utils.js"),
-	  stringUtils = require("../../lib/string-utils.js"),
-	  getAvatar = require("../../lib/get-avatar.js");
+	  getAvatar = require("../../lib/get-avatar.js"),
+	  url = require("../../lib/url.js");
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
@@ -80,7 +80,7 @@ module.exports = function(core, config, store) {
 		},
 
 		fullScreen: function() {
-			window.open(stringUtils.stripQueryParam(window.location.href, "embed"), "_blank");
+			window.open(url.build({ nav: store.get("nav") }), "_blank");
 		},
 
 		badgeFilter: function(note) {
@@ -170,39 +170,16 @@ module.exports = function(core, config, store) {
 		onStateChange: function(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
-				userObj, threadObj, nav, title;
+				userObj;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
 			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 
-				nav = store.get("nav");
-
-				switch (nav.mode) {
-				case "room":
-					title = nav.room;
-					break;
-				case "chat":
-					threadObj = store.get("indexes", "threadsById", nav.thread);
-
-					if (threadObj) {
-						title = threadObj.title;
-					} else if (nav.thread) {
-						title = "";
-					} else {
-						title = "All messages";
-					}
-
-					break;
-				case "home":
-					title = "My feed";
-					break;
-				}
-
 				userObj = store.getUser();
 
 				this.setState({
-					title: title,
+					title: store.getPageTitle(true),
 					username: appUtils.formatUserName(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});

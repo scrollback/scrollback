@@ -4,6 +4,7 @@
 
 (function() {
 	var config = require("../client-config-defaults.js"),
+		kramer = require("../lib/kramer.js")(),
 		Validator = require("../lib/validator.js");
 
 	function insertWidget() {
@@ -51,9 +52,8 @@
 			container.appendChild(iframe);
 		}
 
-		// TODO: change "embed" to "context"
-		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + encodeURIComponent(JSON.stringify(embed));
-		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form == "toast") ? " scrollback-minimized" : "");
+		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + kramer.encode(embed);
+		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form === "toast") ? " scrollback-minimized" : "");
 
 		window.addEventListener("message", function(e) {
 			var data;
@@ -61,7 +61,7 @@
 			if (e.origin === host) {
 				try {
 					data = JSON.parse(e.data);
-				}catch (e) {
+				} catch (err) {
 					return;
 				}
 
