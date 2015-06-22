@@ -93,7 +93,8 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes) {
 			if ((changes.nav && changes.nav.mode) ||
-			    (changes.indexes && changes.indexes.userRooms)) {
+			    (changes.indexes && changes.indexes.userRooms) ||
+			    changes.app.featuredRooms) {
 				this.setState({ show: (store.get("nav", "mode") === "home") });
 			}
 		},
