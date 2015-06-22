@@ -47,7 +47,7 @@ module.exports = function(core, config, store) {
 	function handleThreadChange(future) {
 		var roomId = future.get("nav", "room"),
 			time = future.get("nav", "threadRange", "time") || null,
-			before = future.get("nav", "threadRange", "after"),
+			before = future.get("nav", "threadRange", "before"),
 			after = future.get("nav", "threadRange", "after"),
 			r;
 

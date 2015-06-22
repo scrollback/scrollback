@@ -48,7 +48,7 @@ module.exports = function(core, config, store) {
 			/* threads may be in the process of being reset using null; in this case, use null. */
 			roomId = future.get("nav", "room"),
 			time = future.get("nav", "textRange", "time") || null,
-			before = future.get("nav", "textRange", "after"),
+			before = future.get("nav", "textRange", "before"),
 			after = future.get("nav", "textRange", "after"),
 			r;
 
