@@ -8,8 +8,14 @@
 
 module.exports = function(core, config, store) {
 	core.on('setstate', function(changes) {
-		if (changes.nav && (changes.nav.room || changes.nav.threadRange)) {
-			handleThreadRangeChange(changes);
+		var future = store.with(changes),
+			roomId = future.get("nav", "room"),
+			userId = future.get("user"),
+			rel = roomId + "_" + userId;
+
+		if ((changes.nav && ("room" in changes.nav || "threadRange" in changes.nav)) ||
+	        (changes.entities && changes.entities[rel])) {
+			handleThreadChange(changes);
 		}
 	}, 850);
 
@@ -38,9 +44,9 @@ module.exports = function(core, config, store) {
 		}
 	}
 
-	function handleThreadRangeChange(newState) {
-		var threadRange = newState.nav.threadRange,
-			roomId = (newState.nav.room ? newState.nav.room : store.get("nav", "room")),
+	function handleThreadChange(future) {
+		var threadRange = future.get("nav", "threadRange") || {},
+			roomId = future.get("nav", "room"),
 			time = threadRange.time || null,
 			r;
 

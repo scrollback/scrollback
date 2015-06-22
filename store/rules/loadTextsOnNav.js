@@ -53,6 +53,7 @@ module.exports = function(core, config, store) {
 
 		if (textRange.after) {
 			r = store.getTexts(roomId, thread, time, textRange.after);
+
 			if (r[r.length - 1] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
@@ -65,6 +66,7 @@ module.exports = function(core, config, store) {
 
 		if (textRange.before) {
 			r = store.getTexts(roomId, thread, time, -textRange.before);
+
 			if (r[0] === "missing") {
 				core.emit("getTexts", {
 					to: roomId,
