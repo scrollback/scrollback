@@ -154,7 +154,7 @@ describe("Update Query: ", function() {
 			depth: 4
 		}));
 		assert.deepEqual(query, [{
-			'$': 'UPDATE entities SET description=${description}, picture=${picture}, params=${params}, guides=${guides}, terms: to_tsvector(\'english\', ${terms}) WHERE id=${id}',
+			'$': 'UPDATE entities SET description=${description}, picture=${picture}, params=${params}, guides=${guides}, terms=to_tsvector(\'english\', ${terms}) WHERE id=${id}',
 			description: 'new one',
 			picture: 'http://pic.com/ahc.gif',
 			params: {
