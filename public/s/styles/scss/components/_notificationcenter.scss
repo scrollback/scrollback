@@ -87,10 +87,9 @@
             }
 
             &-timestamp {
-                float: left;
+                display: block;
                 font-size: .8em;
-                padding: 0 (.75em / .8) (.75em / .8);
-                opacity: .5;
+                padding: (.5em / .8) 0;
             }
 
             &-close {
