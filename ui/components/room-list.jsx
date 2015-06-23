@@ -13,7 +13,7 @@ module.exports = function(core, config, store) {
 					owner: "My rooms",
 					moderator: "Moderated rooms",
 					follower: "Following",
-					featured: "Recommened by Scrollback"
+					featured: "Recommended by Scrollback"
 				},
 				secs = {}, sections = [],
 				relatedRooms;
