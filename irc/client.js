@@ -22,7 +22,7 @@ module.exports = function(c, conf) {
 	server = config.server;
 	return {
 		init: init,
-		connected: isConnected,
+		connected: isConnected
 	};
 };
 

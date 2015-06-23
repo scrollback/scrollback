@@ -121,6 +121,7 @@ function partBot(roomId, callback) {
 	log("****part bot for room ", roomId, room);
 	if (!room) return callback(); //should throw an error? not sure...
 	var client = clients[botNick][room.params.irc.server];
+	if (!client) return callback();
 	var channel = room.params.irc.channel;
 	var server = room.params.irc.server;
 	var pending = room.params.irc.pending;

@@ -25,16 +25,14 @@ it("getUsers query test(no identity)", function(){
 	var query = entity({
 		type: "getUsers",
 		ref: "ahh2h342k3",
-		createTime: 1434004539231,
-		after: 234
+		createTime: 1434004539231
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} ORDER BY entities.createtime',
   type: 'user',
   id: 'ahh2h342k3',
-  start: new Date(1434004539231),
-  limit: 234 }, "wrong query for getUsers");
+  limit: null }, "wrong query for getUsers");
 });
 
 it("getUsers query test(memberof)", function(){
