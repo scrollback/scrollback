@@ -12,7 +12,7 @@ module.exports = function(core, config, store) {
 				className += " visible";
 			}
 
-			return <div {...this.props} className={className}>{"Scroll to" + this.props.type}</div>;
+			return <div {...this.props} className={className}>{"Scroll to " + this.props.type}</div>;
 		},
 
 		getInitialState: function() {
