@@ -55,6 +55,7 @@
     "irc": "git://github.com/scrollback/node-irc.git",
     "jade": "0.x",
     "jsonwebtoken": "latest",
+    "juri": "latest",
     "markdown-it": "latest",
     "markdown-it-emoji": "latest",
     "mysql": "latest",
