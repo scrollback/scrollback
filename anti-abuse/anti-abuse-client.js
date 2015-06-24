@@ -1,6 +1,8 @@
 /* jshint browser: true */
 /* global $ */
 
+
+"use strict";
 var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
@@ -92,6 +94,19 @@ module.exports = function(core, config, store) {
 				}
 			};
 		}
+		
+		
+		menu.items.banuser = {
+			prio: 550,
+			text: "Ban user",
+			action: function() {
+				core.emit("expel-up", {
+					to: room,
+					ref: textObj.from,
+					role: "banned"
+				});
+			}
+		};
 
 		next();
 	}, 500);
