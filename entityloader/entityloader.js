@@ -139,8 +139,8 @@ function basicLoad(action, next) {
 		action.room = result;
 		done();
 	});
-	
-	if(action.type === "text") {
+
+	if(action.type === "text" || action.type === "edit") {
 		queriesCount++;
 		loadMembers(action.to, function(err, result) {
 			log.d(action.id + " loading members", err, result);
@@ -188,7 +188,7 @@ module.exports = function(c, conf) {
 						action.members = [];
 						next();
 					} else {
-						next(err);	
+						next(err);
 					}
 					return;
 				}
