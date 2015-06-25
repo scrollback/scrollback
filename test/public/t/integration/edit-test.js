@@ -62,8 +62,7 @@ describe('Testing ACTION edit: ', function() {
 					return;
 				}
 
-				if (msg.message === 'TEXT_NOT_FOUND')
-					assert(msg.type !== 'error', "edit action failed " + msg.message);
+				if (msg.message === 'TEXT_NOT_FOUND') assert(msg.type !== 'error', "edit action failed " + msg.message);
 				else assert(msg.type !== 'error', "edit action failed ");
 				done();
 			};
@@ -191,12 +190,12 @@ describe('Testing ACTION edit: ', function() {
 			socket.onmessage = function(msg) {
 				var id = uid(),
 					back = {
-						from: "testinguser",
+						//from: "guest",
 						type: 'back',
 						to: "test-room"
 					},
 					text = {
-						from: "testinguser",
+						//from: "guest",
 						text: "I am guest-user",
 						id: id,
 						type: "text",
@@ -211,6 +210,7 @@ describe('Testing ACTION edit: ', function() {
 				console.log(msg);
 				if (msg.type === 'init') {
 					//text.session = msg.session;
+					back.from = msg.from;
 					socket.send(JSON.stringify(back));
 					return;
 				}
@@ -231,7 +231,7 @@ describe('Testing ACTION edit: ', function() {
 
 				}
 				assert(msg.type === 'error', "guest user can edit text");
-				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message");
+				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message "+ msg.message);
 				socket.close();
 				done();
 			};
@@ -288,7 +288,7 @@ describe('Testing ACTION edit: ', function() {
 
 				}
 				assert(msg.type === 'error', "unauthorized user can edit text");
-				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message");
+				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message "+ msg.message);
 				socket.close();
 				done();
 			};
