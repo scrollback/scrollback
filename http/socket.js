@@ -132,6 +132,11 @@ sock.on('connection', function(socket) {
 				// return;
 			}
 			if (data.type === 'away') storeAway(conn, data);
+			if (data.type === 'expel') {
+				if(data.role === 'banned') {
+					
+				}
+			}
 			if (data.type === 'init') {
 				if (data.old) {
 					log.i("Occupant of: ", data.occupantOf);
