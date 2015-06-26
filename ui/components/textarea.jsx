@@ -27,6 +27,10 @@ module.exports = function() {
 			}
 		},
 
+		area: function() {
+			return React.findDOMNode(this.refs.textBox);
+		},
+
 		onInput: function(e) {
 			var contentBox = React.findDOMNode(this.refs.contentBox);
 
@@ -40,10 +44,20 @@ module.exports = function() {
 		render: function() {
 			return (
 			        <div className="textarea-container">
-						<pre className={this.props.className}><span ref="contentBox"></span><br /></pre>
-						<textarea ref="textBox" {...this.props} onInput={this.onInput}></textarea>
+						<pre className={this.props.className}><span ref="contentBox" /><br /></pre>
+						<textarea ref="textBox" {...this.props} onInput={this.onInput} />
 			        </div>
 			        );
+		},
+
+		shouldComponentUpdate: function(nextProps) {
+			for (let prop in nextProps) {
+				if (nextProps[prop] && nextProps[prop] !== this.props[prop]) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	});
 

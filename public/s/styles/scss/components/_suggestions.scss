@@ -1,0 +1,31 @@
+@include exports("suggestions") {
+    .suggestions-list {
+        @include dropshadow(3);
+
+        margin: 0;
+        list-style: none;
+
+        &-item {
+            @extend %clearfix;
+
+            padding: .5em;
+
+            &-avatar {
+                float: left;
+                height: 36px;
+                width: 36px;
+                border-radius: 50%;
+            }
+
+            &-nick {
+                float: left;
+                padding: .5em 1em;
+            }
+
+            &.focus {
+                background-color: rgba(0, 0, 0, 0.05);
+                color: $info-color;
+            }
+        }
+    }
+}

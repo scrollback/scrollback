@@ -10,6 +10,7 @@ const S3Upload = require("../../lib/s3-upload.es6"),
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		TextArea = require("./textarea.jsx")(core, config, store),
+		Suggestions = require("./suggestions.jsx")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
@@ -164,17 +165,44 @@ module.exports = function(core, config, store) {
 
 		setEmpty: function() {
 			let el = React.findDOMNode(this),
-				composeBox = this.refs.composeBox;
+				value = this.refs.composeBox.val();
 
-			if (composeBox.val()) {
+			if (value) {
 				el.classList.remove("empty");
 			} else {
 				el.classList.add("empty");
 			}
 		},
 
+		onInput: function() {
+			this.setEmpty();
+
+			let value = this.refs.composeBox.val();
+
+			if (value) {
+				let area = this.refs.composeBox.area();
+
+				if (area.selectionStart) {
+					let typed = value.slice(0, area.selectionStart);
+
+					// If @ pressed
+					if (/(^@|\s+@)[a-z0-9\-]*$/.test(typed)) {
+						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1);
+
+						this.setState({ query });
+
+						return;
+					}
+				}
+			}
+
+			if (this.state.query !== null) {
+				this.setState({ query: null });
+			}
+		},
+
 		onKeyDown: function(e) {
-			if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
+			if (this.state.query === null && e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				e.preventDefault();
 
 				this.sendMessage();
@@ -193,6 +221,10 @@ module.exports = function(core, config, store) {
 			core.emit("setstate", {
 				app: { focusedInput: "compose" }
 			});
+		},
+
+		onDismissSuggestions: function() {
+			this.setState({ query: null });
 		},
 
 		componentDidUpdate: function() {
@@ -225,9 +257,12 @@ module.exports = function(core, config, store) {
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
+					{typeof this.state.query === "string" ?
+						<Suggestions query={this.state.query} onDismiss={this.onDismissSuggestions} onSelect={this.onSelectSuggestions} /> :
+						null}
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
-								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.onInput}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 						<div className="chat-area-input-actions">
 							{
@@ -277,7 +312,8 @@ module.exports = function(core, config, store) {
 			return {
 				placeholder: this.getPlaceholder(connection),
 				disabled: this.getDisabledStatus(connection),
-				autofocus: document.hasFocus()
+				autofocus: document.hasFocus(),
+				query: null
 			};
 		},
 
