@@ -67,7 +67,7 @@ module.exports = function (action) {
 		
 		if(entity.description) {
 			updates.push({
-				$: "terms: to_tsvector('english', ${terms})",
+				$: "terms=to_tsvector('english', ${terms})",
 				terms: entity.id + " " + (entity.description || "")
 			});
 		}
