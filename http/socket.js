@@ -97,7 +97,8 @@ sock.on('connection', function(socket) {
 
 		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
-			var e, action;
+			var e, action, victimId, victimSession, victimConns, awayAction;
+			
             log.i("response", err, data);
 			if (err) {
 				log.d("Error thrown: ",new Error().stack);
@@ -134,7 +135,19 @@ sock.on('connection', function(socket) {
 			if (data.type === 'away') storeAway(conn, data);
 			if (data.type === 'expel') {
 				if(data.role === 'banned') {
+					victimId = data.victim.id;
+					victimConns = uConns[victimId];
 					
+					if(victimConns && victimConns.length) {
+						victimSession = victimConns[0].session;
+						awayAction = {
+							type: "away",
+							to: data.room.id,
+							from: victimId,
+							session: victimSession
+						};
+						core.emit("away", awayAction);
+					}
 				}
 			}
 			if (data.type === 'init') {

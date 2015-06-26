@@ -13,7 +13,7 @@ function unban(config) {
 			"transitionrole = 'none'," +
 			"transitiontime = null," +
 			"transitiontype = null " +
-			"where transitiontime<CURRENT_TIMESTAMP and transitiontype='timeout';";
+			"where transitiontime < CURRENT_TIMESTAMP and transitiontype = 'timeout';";
 		if (error) {
 			log.e("Unable to connect to " + connString, error);
 			done();
@@ -32,10 +32,7 @@ function unban(config) {
 	});
 }
 
-/*
-	query:	update relations set role = transitionrole, transitionrole = 'none',transitiontime=null where transitiontime<'2015-06-26 12:13:00.231';
-	
-*/
+
 module.exports = function(core, config) {
 	setTimeout(unban, 60000, config);
 };
