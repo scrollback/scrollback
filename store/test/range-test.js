@@ -1,6 +1,6 @@
 /* global describe, it */
 
-var rangeOps = require("../range-ops.js"),
+var rangeOps = require("../../lib/range-ops.js"),
 	assert = require('assert');
 
 

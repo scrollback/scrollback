@@ -3,7 +3,7 @@
 "use strict";
 
 const objUtils = require("./../lib/obj-utils.js"),
-	  rangeOps = require("./range-ops.js");
+	  rangeOps = require("../lib/range-ops.js");
 
 let allChanges = {},
 	gapTimer = null,
