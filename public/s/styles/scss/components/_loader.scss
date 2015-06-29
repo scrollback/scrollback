@@ -1,0 +1,55 @@
+@include exports("loader") {
+    @keyframes loader {
+        0% {
+            transform: rotate(0);
+            stroke-dashoffset: 0;
+        }
+
+        50% { transform: rotate(180deg); }
+
+        75% { stroke-dashoffset: -100; }
+
+        100% {
+            transform: rotate(360deg);
+            stroke-dashoffset: -200;
+        }
+    }
+
+    .loader {
+        @extend %transition;
+
+        fill: transparent;
+        stroke: currentColor;
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        transform: rotateZ(180deg);
+        color: transparent;
+
+        circle {
+            stroke-dashoffset: 0;
+            transform-origin: 50%;
+        }
+
+        .check, .warn { fill: transparent; }
+
+        &.active {
+            color: $info-color;
+
+            circle { animation: loader 2s infinite linear; }
+        }
+
+        &.complete {
+            color: $success-color;
+            fill: currentColor;
+
+            .check { fill: #fff; }
+        }
+
+        &.error {
+            color: $error-color;
+            fill: currentColor;
+
+            .warn { fill: #fff; }
+        }
+    }
+}
