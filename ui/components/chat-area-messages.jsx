@@ -22,6 +22,8 @@ module.exports = function(core, config, store) {
 					time = null;
 				}
 			}
+			
+			this.currentTime = time;
 
 			core.emit("setstate", {
 				nav: {
@@ -163,8 +165,8 @@ module.exports = function(core, config, store) {
 					let position = rangeOps.findIndex(items, "time", textRange.time || null),
 						top = position - textRange.before,
 						bottom = position + textRange.after;
-						
-					if((top > 5 || items.atTop) && (bottom < items.length - 6 || items.atBottom)) {
+					
+					if((top > 5 || items.atTop) && (bottom < items.length - 6 || items.atBottom) && textRange.time === this.currentTime) {
 /*						console.log(items.atTop, 0, top, position, bottom, items.length, items.atBottom);*/
 						return;
 					}

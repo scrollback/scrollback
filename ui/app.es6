@@ -33,8 +33,7 @@
 
 	// Core
 	window.core = core = new (require("ebus"))(config.appPriorities);
-	core.setDebug(3); 
-
+//	core.setDebug(3);
 	window.store = store = require("./../store/store.js")(core, config);
 	
 
