@@ -101,7 +101,7 @@ var handlers = {
 
 function basicLoad(action, next) {
 	var count = 0,
-		queriesCount = 4,
+		queriesCount = 0,
 		isErr = false;
 	log.i("Got action: ", action);
 
@@ -124,7 +124,7 @@ function basicLoad(action, next) {
 		}
 	}
 
-
+	queriesCount++;
 	loadRelatedUser(action.to, "me", action.session, function(err, result) {
 		log.d(action.id + " loading relatedUser", err, result);
 		if (err) return done(err);
@@ -132,6 +132,7 @@ function basicLoad(action, next) {
 		done();
 	});
 
+	queriesCount++;
 	loadEntity(action.to, "room", "internal-loader", function(err, result) {
 		log.d(action.id + " loading entity", err, result);
 		if (err) return done(err);
@@ -139,19 +140,23 @@ function basicLoad(action, next) {
 		done();
 	});
 
-	loadMembers(action.to, function(err, result) {
-		log.d(action.id + " loading members", err, result);
-		if (err) return done(err);
-		action.members = result;
-		done();
-	});
+	if(action.type === "text" || action.type === "edit") {
+		queriesCount++;
+		loadMembers(action.to, function(err, result) {
+			log.d(action.id + " loading members", err, result);
+			if (err) return done(err);
+			action.members = result;
+			done();
+		});
 
-	loadOccupants(action.to, function(err, result) {
-		log.d(action.id + " loading occupants", err, result);
-		if (err) return done(err);
-		action.occupants = result;
-		done();
-	});
+		queriesCount++;
+		loadOccupants(action.to, function(err, result) {
+			log.d(action.id + " loading occupants", err, result);
+			if (err) return done(err);
+			action.occupants = result;
+			done();
+		});
+	}
 }
 
 module.exports = function(c, conf) {
@@ -183,7 +188,7 @@ module.exports = function(c, conf) {
 						action.members = [];
 						next();
 					} else {
-						next(err);	
+						next(err);
 					}
 					return;
 				}
