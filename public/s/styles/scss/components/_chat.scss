@@ -137,18 +137,22 @@
                 display: none;
                 height: 100%;
                 width: 2.5em;
-                overflow: hidden;
                 opacity: .7;
 
                 &:focus, &:hover, &:active { opacity: 1; }
 
-                [type="file"] { opacity: 0; }
-
-                .loader {
+                [type="file"] {
                     position: absolute;
                     top: 0;
                     left: 0;
-                    margin: 0.41em 0.5em;
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                .loader {
+                    position: absolute;
+                    top: .41em;
+                    left: .5em;
                 }
 
                 .chat-area-input.empty & { display: block; }
