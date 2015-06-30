@@ -142,7 +142,7 @@ module.exports = function(core, config, store) {
 						return 0;
 					}
 				}
-			}).slice(-10);
+			}).slice(-5);
 
 			this.setState({
 				suggestions: suggestions,
