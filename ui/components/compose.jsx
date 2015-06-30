@@ -133,6 +133,19 @@ module.exports = function(core, config, store) {
 			this.setState({ query: null });
 		},
 
+		onSelectSuggestions: function(user) {
+			let composeBox = this.refs.composeBox,
+				value = composeBox.val();
+
+			if (value) {
+				let selectionStart = this.refs.composeBox.area().selectionStart;
+
+				composeBox.val(value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, "") + "@" + user.id + " " + value.slice(selectionStart));
+			}
+
+			this.setState({ query: null });
+		},
+
 		onUploadStart: function() {
 			this.setState({ uploadStatus: "active" });
 		},
@@ -262,24 +275,27 @@ module.exports = function(core, config, store) {
 			}
 
 			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
-				this.replaceState(this.getInitialState());
+				let composeBox = this.refs.composeBox,
+					value, text, newText;
+
+				text = composeBox.val();
+
+				newText = this.getMessageText(text);
+
+				composeBox.val((newText.trim() !== text.trim()) ? newText : text);
+
+				let state = this.getInitialState();
+
+				state.uploadStatus = this.state && this.state.uploadStatus ? this.state.uploadStatus : "";
+				state.value = value;
+
+				this.replaceState(state);
 			}
 		},
 
 		componentDidUpdate: function() {
-			var composeBox = this.refs.composeBox,
-				text, newText;
-
-			text = composeBox.val();
-
-			newText = this.getMessageText(text);
-
-			if (newText.trim() !== text.trim()) {
-				composeBox.val(newText);
-			}
-
 			if (document.hasFocus()) {
-				composeBox.focus();
+				this.refs.composeBox.focus();
 			}
 
 			this.setEmpty();

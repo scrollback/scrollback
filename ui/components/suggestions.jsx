@@ -114,7 +114,9 @@ module.exports = function(core, config, store) {
 		}
 
 		componentDidMount() {
-			document.addEventListener("keydown", this.onKeyDown.bind(this), false);
+			this.keyDownListener = this.onKeyDown.bind(this);
+
+			document.addEventListener("keydown", this.keyDownListener, false);
 
 			this.setSuggestions(this.props.query);
 		}
@@ -124,7 +126,9 @@ module.exports = function(core, config, store) {
 		}
 
 		componentWillUnmount() {
-			document.removeEventListener("keydown", this.onKeyDown.bind(this), false);
+			if (this.keyDownListener) {
+				document.removeEventListener("keydown", this.keyDownListener);
+			}
 		}
 	}
 
