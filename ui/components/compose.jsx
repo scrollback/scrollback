@@ -15,37 +15,6 @@ module.exports = function(core, config, store) {
 		Compose;
 
 	Compose = React.createClass({
-		getMessageText: function(msg) {
-			var currentText = store.get("app", "currentText"),
-				textObj = store.get("indexes", "textsById", currentText),
-				nick, user, mention;
-
-			msg = msg || "";
-
-			if (textObj) {
-				nick = appUtils.formatUserName(textObj.from);
-				user = appUtils.formatUserName(store.get("user"));
-
-				mention = "@" + nick;
-
-				if (msg.indexOf(mention) === -1 && nick !== user) {
-					msg = msg.replace(/(?:^@[a-z0-9\-]+\s?)|(?:\s*(?:\s@[a-z0-9\-]+)?\s*$)/, function(match, index) {
-						if (index === 0) {
-							return mention;
-						} else {
-							return " " + mention;
-						}
-					});
-				}
-
-				msg += " ";
-			} else {
-				msg = msg.replace(/(^@[a-z0-9\-]+\s?)|(@[a-z0-9\-]+\s?$)/, "").trim();
-			}
-
-			return msg;
-		},
-
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
@@ -270,30 +239,13 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			if (!this.isMounted()) {
-				return;
-			}
-
-			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
-				let composeBox = this.refs.composeBox,
-					text, newText;
-
-				text = composeBox.val();
-
-				newText = this.getMessageText(text);
-
-				composeBox.val((newText.trim() !== text.trim()) ? newText : text);
-
-				let state = this.getInitialState();
-
-				state.uploadStatus = this.state && this.state.uploadStatus ? this.state.uploadStatus : "";
-
-				this.replaceState(state);
+			if ((changes.app && changes.app.connectionStatus) || changes.user) {
+				this.replaceState(this.getInitialState());
 			}
 		},
 
 		componentDidUpdate: function() {
-			if (document.hasFocus()) {
+			if (this.state.autofocus) {
 				this.refs.composeBox.focus();
 			}
 
