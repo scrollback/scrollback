@@ -1,11 +1,9 @@
 "use strict";
 
-var getAvatar = require("../../lib/get-avatar.js"),
-	appUtils = require("../../lib/app-utils.js");
-
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.jsx")(core, config, store),
+		PeopleListItem = require("./people-list-item.jsx")(core, config, store),
 		PeopleList;
 
 	PeopleList = React.createClass({
@@ -15,43 +13,26 @@ module.exports = function(core, config, store) {
 
 		render: function() {
 			var people = this.state.people,
-				room = store.get("nav", "room"),
 				headers = {
 					online: [],
 					offline: []
 				},
 				sections = [],
-				user, rel, role, items;
+				user, items;
 
 			for (var i = 0, l = people.length; i < l; i++) {
 				if (!people[i]) {
-					continue;
+					continue;	
 				}
 
 				people[i].status = people[i].status || "offline";
-
+				user = store.get("entities", people[i].user);
+				
 				if (headers[people[i].status]) {
-					user = store.get("entities", people[i].user);
-					rel = store.getRelation(room, user.id);
-
-					if (rel.role === "owner") {
-						role = "owner";
-					} else if (rel.role === "moderator") {
-						role = "mod";
-					} else {
-						role = null;
-					}
-
-					if (user.id && user.id.indexOf(this.state.query) > -1) {
+					if (user && user.id && user.id.indexOf(this.state.query) > -1) {
 						headers[people[i].status].push({
 							key: "people-list-" + user.id,
-							elem: (
-								<div className="people-list-item">
-									<img className="people-list-item-avatar" src={getAvatar(user.picture, 48)} />
-									<span className="people-list-item-nick">{appUtils.formatUserName(user.id)}</span>
-									{role ? <span className="people-list-item-role">{role}</span> : ""}
-								</div>
-							)
+							elem: <PeopleListItem user={user} />
 						});
 					}
 				}

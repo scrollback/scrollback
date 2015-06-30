@@ -6,6 +6,60 @@
 var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
+
+
+	function addBanMenu(from, menu, next) {
+		var room = store.get("nav", "room"),
+			rel = store.getRelation(),
+			senderRelation = store.getRelation(room, from),
+			senderRole, senderTransitionRole;
+
+		senderRelation = senderRelation ? senderRelation : {};
+		senderRole = senderRelation.role ? senderRelation.role : "none";
+		senderTransitionRole = senderRelation.transitionRole ? senderRelation.transitionRole : "none";
+
+		if (/^guest-/.test(from)) senderRole = "guest";
+
+		switch (senderRole) {
+			case "follower":
+			case "none":
+			case "moderator":
+				if (senderRole === "moderator" && rel.role !== "owner") break;
+				menu.items.banuser = {
+					prio: 550,
+					text: "Ban user",
+					action: function() {
+						core.emit("expel-up", {
+							to: room,
+							ref: from,
+							role: "banned",
+							transitionRole: senderRole,
+							transitionType: null
+						});
+					}
+				};
+				break;
+			case "banned":
+				menu.items.unbanuser = {
+					prio: 550,
+					text: "unban user",
+					action: function() {
+						core.emit("admit-up", {
+							to: room,
+							ref: from,
+							role: senderTransitionRole || "follower"
+						});
+					}
+				};
+				break;
+			case "owner":
+			case "guest":
+				break;
+		}
+
+		next();
+	}
+
 	core.on("conf-show", function(tabs, next) {
 		var room = tabs.room,
 			antiAbuse,
@@ -57,13 +111,7 @@ module.exports = function(core, config, store) {
 	core.on("text-menu", function(menu, next) {
 		var textObj = menu.textObj,
 			room = store.get("nav", "room"),
-			rel = store.getRelation(),
-			senderRelation = store.getRelation(room, textObj.from),
-			senderRole, senderTransitionRole;
-
-		senderRelation = senderRelation ? senderRelation : {};
-		senderRole = senderRelation.role ? senderRelation.role : "none";
-		senderTransitionRole = senderRelation.transitionRole ? senderRelation.transitionRole : "none";
+			rel = store.getRelation();
 
 		if (!(rel && (/(owner|moderator|su)/).test(rel.role) && textObj)) {
 			return next();
@@ -102,47 +150,18 @@ module.exports = function(core, config, store) {
 				}
 			};
 		}
+		addBanMenu(textObj.from, menu, next);
+	}, 500);
 
 
-		if (/^guest-/.test(textObj.from)) senderRole = "guest";
 
-		switch (senderRole) {
-			case "follower":
-			case "none":
-			case "moderator":
-				if (senderRole === "moderator" && rel.role !== "owner") break;
-				menu.items.banuser = {
-					prio: 550,
-					text: "Ban user",
-					action: function() {
-						core.emit("expel-up", {
-							to: room,
-							ref: textObj.from,
-							role: "banned",
-							transitionRole: senderRole,
-							transitionType: null
-						});
-					}
-				};
-				break;
-			case "banned":
-				menu.items.unbanuser = {
-					prio: 550,
-					text: "unban user",
-					action: function() {
-						core.emit("admit-up", {
-							to: room,
-							ref: textObj.from,
-							role: senderTransitionRole || "follower"
-						});
-					}
-				};
-				break;
-			case "owner":
-			case "guest":
-				break;
+	core.on("people-menu", function(menu, next) {
+		var rel = store.getRelation();
+
+		if (!(rel && (/(owner|moderator|su)/).test(rel.role))) {
+			return next();
 		}
-		next();
+		addBanMenu(menu.user.id, menu, next);
 	}, 500);
 
 	core.on("thread-menu", function(menu, next) {
