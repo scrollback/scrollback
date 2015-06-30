@@ -107,11 +107,19 @@ module.exports = function(core, config, store) {
 				value = composeBox.val();
 
 			if (value) {
-				let selectionStart = this.refs.composeBox.area().selectionStart,
+				let area = this.refs.composeBox.area(),
+					selectionStart = area.selectionStart,
 					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
 					after = value.slice(selectionStart);
 
-				composeBox.val(before + "@" + user.id + (/^\s/.test(after) ? "" : " ") + after + ((after === "" || /\s$/.test(after)) ? "" : " "));
+				composeBox.val(before + "@" + user.id + " " + after);
+
+				// Reset caret position
+				if (after.length) {
+					let pos = before.length + user.id.length + 2;
+
+					area.setSelectionRange(pos, pos);
+				}
 			}
 
 			this.setState({ query: null });
