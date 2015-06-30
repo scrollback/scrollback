@@ -41,16 +41,6 @@ module.exports = function() {
 						<textarea ref="textBox" {...this.props} onInput={this.onInput} />
 			        </div>
 			        );
-		},
-
-		shouldComponentUpdate: function(nextProps) {
-			for (let prop in nextProps) {
-				if (nextProps[prop] && nextProps[prop] !== this.props[prop]) {
-					return true;
-				}
-			}
-
-			return false;
 		}
 	});
 
