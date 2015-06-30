@@ -272,8 +272,8 @@ button {
         height: $bar-height - 1em;
         width: $bar-height - 1em;
         border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.1);
     }
-
 
     &-nick {
         line-height: $bar-height;

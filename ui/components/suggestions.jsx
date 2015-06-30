@@ -86,9 +86,39 @@ module.exports = function(core, config, store) {
 			);
 		}
 
+		getMatchingUsers() {
+			let related = store.getRelatedUsers(),
+				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), null, -20),
+				users = {};
+
+			for (let text of texts) {
+				if (text) {
+					let user = store.get("entities", text.from);
+
+					if (user) {
+						users[user.id] = user;
+					} else {
+						users[text.from] = { id: text.from };
+					}
+				}
+			}
+
+			for (let user of related) {
+				users[user.id] = user;
+			}
+
+			return users;
+		}
+
 		setSuggestions(query) {
-			let users = store.getRelatedUsers() || [],
-				suggestions = users.filter(user => user.id.indexOf(query) === 0);
+			let users = this.getMatchingUsers(),
+				all = [];
+
+			for (let user in users) {
+				all.push(users[user]);
+			}
+
+			let suggestions = all.filter(user => userInfo.getNick(user.id).indexOf(query) === 0).reverse();
 
 			this.setState({
 				suggestions: suggestions,
