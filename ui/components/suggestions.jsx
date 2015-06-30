@@ -148,6 +148,33 @@ module.exports = function(core, config, store) {
 				suggestions: suggestions,
 				focus: suggestions.length - 1
 			});
+
+			// If we don't have data for some users, query the server
+			if (suggestions.length) {
+				let ids = suggestions.filter(user => typeof user.picture === "undefined").map(user => user.id);
+
+				core.emit("getUsers", { ref: ids }, (err, res) => {
+					if (err) {
+						return;
+					}
+
+					let results = res.results;
+
+					if (!(suggestions && suggestions.length && results && results.length)) {
+						return;
+					}
+
+					for (let user of results) {
+						for (let s of suggestions) {
+							if (user.id === s.id && typeof s.picture === "undefined") {
+								s.picture === user.picture;
+							}
+						}
+					}
+
+					this.setState({ suggestions });
+				});
+			}
 		}
 
 		componentDidUpdate() {
@@ -165,34 +192,6 @@ module.exports = function(core, config, store) {
 					current.classList.add("focus");
 					current.scrollIntoView(true);
 				}
-			}
-
-			// If we don't have data for some users, query the server
-			if (this.state.suggestions.length) {
-				let ids = this.state.suggestions.filter(user => typeof user.picture === "undefined").map(user => user.id);
-
-				core.emit("getUsers", { ref: ids }, (err, res) => {
-					if (err) {
-						return;
-					}
-
-					let suggestions = this.state.suggestions,
-						results = res.results;
-
-					if (!(suggestions && suggestions.length && results && results.length)) {
-						return;
-					}
-
-					for (let user of results) {
-						for (let s of suggestions) {
-							if (user.id === s.id && typeof s.picture === "undefined") {
-								s.picture === user.picture;
-							}
-						}
-					}
-
-					this.setState({ suggestions });
-				});
 			}
 		}
 
