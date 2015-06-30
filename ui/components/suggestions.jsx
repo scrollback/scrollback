@@ -88,37 +88,65 @@ module.exports = function(core, config, store) {
 
 		getMatchingUsers() {
 			let related = store.getRelatedUsers(),
-				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), null, -20),
-				users = {};
+				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), null, -50),
+				all = {};
 
 			for (let text of texts) {
 				if (text) {
 					let user = store.get("entities", text.from);
 
 					if (user) {
-						users[user.id] = user;
+						all[user.id] = {
+							id: user.id,
+							picture: user.picture,
+							time: text.time
+						};
 					} else {
-						users[text.from] = { id: text.from };
+						all[text.from] = {
+							id: text.from,
+							time: text.time
+						};
 					}
 				}
 			}
 
 			for (let user of related) {
-				users[user.id] = user;
+				if (all[user.id]) {
+					continue;
+				}
+
+				all[user.id] = user;
+			}
+
+			let users = [];
+
+			for (let user in all) {
+				users.push(all[user]);
 			}
 
 			return users;
 		}
 
 		setSuggestions(query) {
-			let users = this.getMatchingUsers(),
-				all = [];
-
-			for (let user in users) {
-				all.push(users[user]);
-			}
-
-			let suggestions = all.filter(user => userInfo.getNick(user.id).indexOf(query) === 0).reverse();
+			let suggestions = this.getMatchingUsers().filter(user => userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
+				if (typeof a.time === "number" && typeof b.time === "number") {
+					if (a.time < b.time) {
+						return -1;
+					} else if (a.time > b.time) {
+						return 1;
+					} else {
+						return 0;
+					}
+				} else {
+					if (typeof a.time !== "number" && typeof b.time === "number") {
+						return -1;
+					} else if (typeof a.time === "number" && typeof b.time !== "number") {
+						return 1;
+					} else {
+						return 0;
+					}
+				}
+			}).slice(-10);
 
 			this.setState({
 				suggestions: suggestions,
