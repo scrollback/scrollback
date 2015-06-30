@@ -163,6 +163,7 @@ module.exports = function(core, config, store) {
 
 				if (current) {
 					current.classList.add("focus");
+					current.scrollIntoView(true);
 				}
 			}
 		}
