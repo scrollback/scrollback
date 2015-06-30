@@ -15,6 +15,7 @@
             @extend %clearfix;
 
             padding: .5em;
+            cursor: pointer;
 
             &-avatar {
                 float: left;

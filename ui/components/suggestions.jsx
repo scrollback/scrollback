@@ -20,12 +20,8 @@ module.exports = function(core, config, store) {
 		onClick(e) {
 			let i = e.currentTarget.getAttribute("data-index");
 
-			if (this.state.focus === i) {
-				if (typeof this.props.onSelect === "function") {
-					this.props.onSelect(this.state.suggestions[i]);
-				}
-			} else {
-				this.setState({ focus: i });
+			if (typeof this.props.onSelect === "function") {
+				this.props.onSelect(this.state.suggestions[i]);
 			}
 		}
 
@@ -128,7 +124,7 @@ module.exports = function(core, config, store) {
 		}
 
 		setSuggestions(query) {
-			let suggestions = this.getMatchingUsers().filter(user => userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
+			let suggestions = this.getMatchingUsers().filter(user => user.id && userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
 				if (typeof a.time === "number" && typeof b.time === "number") {
 					if (a.time < b.time) {
 						return -1;
