@@ -14,9 +14,9 @@ module.exports = [
 		} else if(query.type === 'getRooms') {
 			type = 'room';
 		} else if(query.memberOf || query.occupantOf) {
-			type = 'user';
+			type = null; // 'user'; // Postgres query planner picks a slower join strategy if off-index where conditions are specified on both tables.
 		} else if(query.hasMember || query.hasOccupant) {
-			type = 'room';
+			type = null; // 'room';
 		}
 
 		if (type) {
@@ -94,12 +94,12 @@ module.exports = [
 				start: startPosition
 			});
 		} else {
-			limit = 256;
+			limit = null; // 256;
 		}
 		return pg.cat([
 			"SELECT * FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
-			{ $: (orderBy? "ORDER BY " + orderBy : "") + " LIMIT ${limit}", limit: limit }
+			{ $: (orderBy? "ORDER BY " + orderBy : "") + (limit? " LIMIT ${limit}": ""), limit : limit }
 		]);
 	},
 	

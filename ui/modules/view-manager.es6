@@ -38,13 +38,7 @@ module.exports = (core, config, store) => {
 			}
 		}
 
-		const rel = store.getRelation();
-
-		if (rel && rel.role) {
-			newClassList.push("role-" + rel.role);
-		} else {
-			newClassList.push("role-" + (user.isGuest(store.get("user")) ? "guest" : "user"));
-		}
+		newClassList.push("role-" + user.getRole());
 
 		if (room.isWritable()) {
 			newClassList.push("permission-write");
