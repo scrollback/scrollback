@@ -276,7 +276,7 @@ module.exports = function(core, config, store) {
 
 			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
 				let composeBox = this.refs.composeBox,
-					value, text, newText;
+					text, newText;
 
 				text = composeBox.val();
 
@@ -287,7 +287,6 @@ module.exports = function(core, config, store) {
 				let state = this.getInitialState();
 
 				state.uploadStatus = this.state && this.state.uploadStatus ? this.state.uploadStatus : "";
-				state.value = value;
 
 				this.replaceState(state);
 			}
