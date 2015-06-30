@@ -84,7 +84,7 @@ module.exports = function(core, config, store) {
 
 		getMatchingUsers() {
 			let related = store.getRelatedUsers(),
-				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), null, -50),
+				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -50),
 				all = {};
 
 			for (let text of texts) {

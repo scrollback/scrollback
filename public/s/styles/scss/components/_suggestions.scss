@@ -7,7 +7,7 @@
         bottom: 100%;
         margin: 0;
         width: 100%;
-        max-height: 50vh;
+        max-height: calc(100vh - 12em);
         overflow: auto;
         list-style: none;
         background-color: $light-color;
