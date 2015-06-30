@@ -172,7 +172,7 @@ module.exports = function(core, config, store) {
 						}
 					}
 
-					this.setState({ suggestions });
+					this.setState({ suggestions: suggestions.slice(0) });
 				});
 			}
 		}
