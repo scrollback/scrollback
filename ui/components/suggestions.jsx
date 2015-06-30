@@ -64,7 +64,7 @@ module.exports = function(core, config, store) {
 
 		render() {
 			return (
-				<ul className="suggestions-list" onKeyDown={this.onKeyDown.bind(this)}>
+				<ul className="suggestions-list">
 						{this.state.suggestions.map((user, i) => {
 							return (
 								<li
