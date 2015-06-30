@@ -167,21 +167,24 @@ module.exports = function(core, config, store) {
 						return;
 					}
 
-					let results = res.results;
+					let results = res.results,
+						users = this.state.suggestions;
 
-					if (!(suggestions && suggestions.length && results && results.length)) {
+					if (!(users && users.length && results && results.length)) {
 						return;
 					}
 
-					for (let user of results) {
-						for (let s of suggestions) {
-							if (user.id === s.id && typeof s.picture === "undefined") {
-								s.picture === user.picture;
+					users = users.slice(0);
+
+					for (let u of results) {
+						for (let user of users) {
+							if (user.id === u.id && typeof user.picture === "undefined") {
+								user.picture === u.picture;
 							}
 						}
 					}
 
-					this.setState({ suggestions: suggestions.slice(0) });
+					this.setState({ suggestions: users });
 				});
 			}
 		}
