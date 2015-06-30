@@ -107,9 +107,11 @@ module.exports = function(core, config, store) {
 				value = composeBox.val();
 
 			if (value) {
-				let selectionStart = this.refs.composeBox.area().selectionStart;
+				let selectionStart = this.refs.composeBox.area().selectionStart,
+					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
+					after = value.slice(selectionStart);
 
-				composeBox.val(value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, "") + "@" + user.id + value.slice(selectionStart) + " ");
+				composeBox.val(before + "@" + user.id + (/^\s/.test(after) ? "" : " ") + after + ((after === "" || /\s$/.test(after)) ? "" : " "));
 			}
 
 			this.setState({ query: null });
