@@ -114,9 +114,14 @@ module.exports = function(core, config, store) {
 				all[user.id] = user;
 			}
 
-			let users = [];
+			let current = store.get("user"),
+				users = [];
 
 			for (let user in all) {
+				if (user === current) {
+					continue;
+				}
+
 				users.push(all[user]);
 			}
 
