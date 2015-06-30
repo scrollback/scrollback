@@ -45,7 +45,7 @@ module.exports = function(core, config, store) {
 				e.preventDefault();
 
 				this.setState({ focus: Math.min(focus + 1, total) });
-			} else if (e.keyCode === 13) {
+			} else if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				// Return key pressed
 				if (focus > -1 && typeof this.props.onSelect === "function") {
 					e.preventDefault();

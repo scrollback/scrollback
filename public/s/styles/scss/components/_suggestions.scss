@@ -1,6 +1,6 @@
 @include exports("suggestions") {
     .suggestions-list {
-        @include dropshadow(3);
+        @include dropshadow(1);
 
         position: absolute;
         left: 0;
@@ -11,7 +11,7 @@
         overflow: auto;
         list-style: none;
         background-color: $light-color;
-        border-top: 1px solid rgba(0, 0, 0, .1);
+        border-top: 1px solid rgba(0, 0, 0, .2);
         z-index: 600;
 
         &-item {
