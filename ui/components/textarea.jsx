@@ -6,14 +6,7 @@ module.exports = function() {
 
 	TextArea = React.createClass({
 		focus: function() {
-			var textBox = React.findDOMNode(this.refs.textBox),
-				value;
-
-			value  = textBox.value;
-
-			textBox.focus();
-			textBox.value = "";
-			textBox.value = value;
+			return React.findDOMNode(this.refs.textBox).focus();
 		},
 
 		val: function(value) {
