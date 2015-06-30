@@ -26,6 +26,8 @@ module.exports = [
 		if (query.ref) {
 			if (Array.isArray(query.ref)) {
 				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
+			} else if(/\*$/.test(query.ref)) {
+				filters.push({ $: "entities.id like ${id}", id: query.ref.replace(/\**$/,"%") });
 			} else {
 				filters.push({ $: "entities.id=${id}", id: query.ref });
 			}
