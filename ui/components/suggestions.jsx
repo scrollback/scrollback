@@ -88,6 +88,10 @@ module.exports = function(core, config, store) {
 				all = {};
 
 			for (let text of texts) {
+				if (all[text.from]) {
+					continue;
+				}
+
 				if (text) {
 					let user = store.get("entities", text.from);
 
