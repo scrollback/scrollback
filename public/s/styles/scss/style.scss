@@ -75,9 +75,6 @@ body {
 }
 
 button {
-    // FIXME: prevent leaking of background color in Android < 4.4
-    background-clip: padding-box;
-
     &:focus { outline: 0; }
 }
 
