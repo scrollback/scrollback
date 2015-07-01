@@ -78,32 +78,36 @@ module.exports = function(core, config, store) {
 		}
 
 		getMatchingUsers() {
-			let related = store.getRelatedUsers(),
-				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -30),
-				all = {};
+			let all = {};
 
-			for (let text of texts) {
-				if (text) {
-					if (all[text.from]) {
-						continue;
-					}
+			if (this.props.smart) {
+				let texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -30);
 
-					let user = store.get("entities", text.from);
+				for (let text of texts) {
+					if (text) {
+						if (all[text.from]) {
+							continue;
+						}
 
-					if (user) {
-						all[user.id] = {
-							id: user.id,
-							picture: user.picture,
-							time: text.time
-						};
-					} else {
-						all[text.from] = {
-							id: text.from,
-							time: text.time
-						};
+						let user = store.get("entities", text.from);
+
+						if (user) {
+							all[user.id] = {
+								id: user.id,
+								picture: user.picture,
+								time: text.time
+							};
+						} else {
+							all[text.from] = {
+								id: text.from,
+								time: text.time
+							};
+						}
 					}
 				}
 			}
+
+			let related = store.getRelatedUsers();
 
 			for (let user of related) {
 				if (all[user.id]) {
@@ -146,7 +150,7 @@ module.exports = function(core, config, store) {
 						return 0;
 					}
 				}
-			}).slice(-5);
+			}).slice(this.props.max * -1);
 
 			this.setState({
 				suggestions: suggestions,
@@ -180,6 +184,58 @@ module.exports = function(core, config, store) {
 					}
 
 					this.setState({ suggestions: users });
+				});
+			}
+
+			// If suggestions are less than the max, query the server
+			if (suggestions.length < this.props.max && query.length > 0) {
+				core.emit("getUsers", { ref: query + "*" }, (err, res) => {
+					if (err) {
+						return;
+					}
+
+					// Check if the query is still the same
+					if (query !== this.props.query) {
+						return;
+					}
+
+					let results = res.results,
+						users = this.state.suggestions;
+
+					if (!(users && results && results.length)) {
+						return;
+					}
+
+					let has = { [store.get("user")]: true }; // Ignore current user
+
+					for (let u of results) {
+						for (let user of users) {
+							if (user.id === u.id && !has[u.id]) {
+								has[u.id] = true;
+
+								break;
+							}
+						}
+					}
+
+					users = users.slice(0);
+
+					for (let u of results) {
+						if (has[u.id]) {
+							continue;
+						}
+
+						users.unshift(u);
+
+						if (users.length >= this.props.max) {
+							break;
+						}
+					}
+
+					this.setState({
+						suggestions: users,
+						focus: users.length - 1
+					});
 				});
 			}
 		}
@@ -220,6 +276,11 @@ module.exports = function(core, config, store) {
 			}
 		}
 	}
+
+	Suggestions.defaultProps = {
+		max: 5,
+		smart: false
+	};
 
 	return Suggestions;
 };

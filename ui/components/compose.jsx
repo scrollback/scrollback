@@ -188,7 +188,11 @@ module.exports = function(core, config, store) {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					{typeof this.state.query === "string" ?
-						<Suggestions query={this.state.query} onDismiss={this.onDismissSuggestions} onSelect={this.onSelectSuggestions} /> :
+						<Suggestions
+							max={5} smart={true}
+							query={this.state.query}
+							onDismiss={this.onDismissSuggestions}
+							onSelect={this.onSelectSuggestions} /> :
 						null}
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
