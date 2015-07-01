@@ -26,25 +26,18 @@ module.exports = function(core, config, store) {
 		}
 
 		onKeyDown(e) {
-			let focus = this.state.focus,
-				total = this.state.suggestions.length;
-
-			if (focus < -1) {
-				focus = -1;
-			} else if (focus > this.state.suggestions.length) {
-				focus = this.state.focus;
-			}
+			let focus = this.state.focus;
 
 			if (e.keyCode === 38 || (e.keyCode === 9 && e.shiftKey)) {
 				// Up arrow / Shift + Tab pressed
 				e.preventDefault();
 
-				this.setState({ focus: Math.max(focus - 1, -1) });
+				this.setState({ focus: focus - 1 });
 			} else if (e.keyCode === 40 || e.keyCode === 9) {
 				// Down arrow / Tab pressed
 				e.preventDefault();
 
-				this.setState({ focus: Math.min(focus + 1, total) });
+				this.setState({ focus: focus + 1 });
 			} else if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				// Return key pressed
 				if (focus > -1 && typeof this.props.onSelect === "function") {
@@ -68,11 +61,10 @@ module.exports = function(core, config, store) {
 						{this.state.suggestions.map((user, i) => {
 							return (
 								<li
-									ref={"suggestion-list-" + i}
-									className="suggestions-list-item"
+									ref={"suggestion-list-" + i} data-index={i}
+									className={"suggestions-list-item" + (this.state.focus === i ? " focus" : "")}
 									key={"suggestions-list-" + user.id}
-									onClick={this.onClick.bind(this)}
-									data-index={i}>
+									onClick={this.onClick.bind(this)}>
 									<img className="suggestions-list-item-avatar" src={getAvatar(user.picture, 48)} />
 									<span className="suggestions-list-item-nick">{userInfo.getNick(user.id)}</span>
 								</li>
@@ -84,7 +76,7 @@ module.exports = function(core, config, store) {
 
 		getMatchingUsers() {
 			let related = store.getRelatedUsers(),
-				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -50),
+				texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -30),
 				all = {};
 
 			for (let text of texts) {
@@ -189,24 +181,6 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		componentDidUpdate() {
-			let node = React.findDOMNode(this),
-				active = node.querySelector(".focus");
-
-			if (active) {
-				active.classList.remove("focus");
-			}
-
-			if (this.state.focus > -1) {
-				let current = React.findDOMNode(this.refs["suggestion-list-" + this.state.focus]);
-
-				if (current) {
-					current.classList.add("focus");
-					current.scrollIntoView(true);
-				}
-			}
-		}
-
 		componentDidMount() {
 			this.keyDownListener = this.onKeyDown.bind(this);
 
@@ -217,6 +191,24 @@ module.exports = function(core, config, store) {
 
 		componentWillReceiveProps(nextProps) {
 			this.setSuggestions(nextProps.query);
+		}
+
+		componentWillUpdate(nextProps, nextState) {
+			let total = nextState.suggestions.length;
+
+			if (nextState.focus < -1) {
+				this.setState({ focus: -1 });
+			} else if (nextState.focus > total) {
+				this.setState({ focus: total });
+			}
+		}
+
+		componentDidUpdate() {
+			let active = React.findDOMNode(this).querySelector(".focus");
+
+			if (active) {
+				active.scrollIntoView(true);
+			}
 		}
 
 		componentWillUnmount() {
