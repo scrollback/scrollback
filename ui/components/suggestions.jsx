@@ -67,6 +67,9 @@ module.exports = function(core, config, store) {
 									onClick={this.onClick.bind(this)}>
 									<img className="suggestions-list-item-avatar" src={getAvatar(user.picture, 48)} />
 									<span className="suggestions-list-item-nick">{userInfo.getNick(user.id)}</span>
+									{userInfo.isGuest(user.id) ?
+										<span className="suggestions-list-item-info">{user.id}</span>
+									: null}
 								</li>
 								);
 						})}

@@ -25,17 +25,29 @@
                 height: 36px;
                 width: 36px;
                 border-radius: 50%;
-                background-color: rgba(0, 0, 0, 0.1);
-                background-image: url(/s/assets/avatar-fallback.png);
-                background-size: 100%;
-                background-size: contain;
 
-                &:not([src]) { content: ""; }
+                &:not([src]) {
+                    content: "";
+                    background-color: rgba(0, 0, 0, 0.1);
+                    background-image: url(/s/assets/avatar-fallback.png);
+                    background-size: 100%;
+                    background-size: contain;
+                }
             }
 
             &-nick {
                 float: left;
-                padding: .5em 1em;
+                padding: .5em;
+                margin-left: .5em;
+            }
+
+            &-info {
+                float: left;
+                padding: .5em 0;
+                color: fade-out($dark-color, .5);
+
+                &:before { content: "("; }
+                &:after { content: ")"; }
             }
 
             &:focus, &:hover { color: $info-color; }
