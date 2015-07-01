@@ -4,7 +4,7 @@
 
 (function() {
 	var config = require("../client-config-defaults.js"),
-		kramer = require("../lib/kramer.js")(),
+		juri = require("juri")(),
 		Validator = require("../lib/validator.js");
 
 	function insertWidget() {
@@ -52,7 +52,7 @@
 			container.appendChild(iframe);
 		}
 
-		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + kramer.encode(embed);
+		iframe.src = host + "/" + sb.room + (sb.thread ? "/" + sb.thread : "/all") + "?embed=" + juri.encode(embed);
 		iframe.className = "scrollback-stream scrollback-" + embed.form + " " + ((sb.minimize && embed.form === "toast") ? " scrollback-minimized" : "");
 
 		window.addEventListener("message", function(e) {
