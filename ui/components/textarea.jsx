@@ -6,14 +6,7 @@ module.exports = function() {
 
 	TextArea = React.createClass({
 		focus: function() {
-			var textBox = React.findDOMNode(this.refs.textBox),
-				value;
-
-			value  = textBox.value;
-
-			textBox.focus();
-			textBox.value = "";
-			textBox.value = value;
+			return React.findDOMNode(this.refs.textBox).focus();
 		},
 
 		val: function(value) {
@@ -25,6 +18,10 @@ module.exports = function() {
 			} else {
 				return textBox.value;
 			}
+		},
+
+		area: function() {
+			return React.findDOMNode(this.refs.textBox);
 		},
 
 		onInput: function(e) {
@@ -40,8 +37,8 @@ module.exports = function() {
 		render: function() {
 			return (
 			        <div className="textarea-container">
-						<pre className={this.props.className}><span ref="contentBox"></span><br /></pre>
-						<textarea ref="textBox" {...this.props} onInput={this.onInput}></textarea>
+						<pre className={this.props.className}><span ref="contentBox" /><br /></pre>
+						<textarea ref="textBox" {...this.props} onInput={this.onInput} />
 			        </div>
 			        );
 		}

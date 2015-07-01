@@ -49,6 +49,7 @@
 @import "components/footer";
 @import "components/notificationcenter";
 @import "components/requests";
+@import "components/suggestions";
 @import "components/loader";
 
 
@@ -74,9 +75,6 @@ body {
 }
 
 button {
-    // FIXME: prevent leaking of background color in Android < 4.4
-    background-clip: padding-box;
-
     &:focus { outline: 0; }
 }
 
@@ -271,8 +269,8 @@ button {
         height: $bar-height - 1em;
         width: $bar-height - 1em;
         border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.1);
     }
-
 
     &-nick {
         line-height: $bar-height;

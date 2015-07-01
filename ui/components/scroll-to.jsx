@@ -6,7 +6,7 @@ module.exports = function(core, config, store) {
 
 	ScrollTo = React.createClass({
 		render: function() {
-			var className = "scroll-to scroll-to-" + this.props.type + " " + this.props.className;
+			var className = "scroll-to scroll-to-" + this.props.type + " " + (this.props.className || "");
 
 			if (this.state.show) {
 				className += " visible";

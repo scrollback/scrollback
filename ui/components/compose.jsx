@@ -3,48 +3,18 @@
 
 "use strict";
 
-const appUtils = require("../../lib/app-utils.js"),
-	  gen = require("../../lib/generate.js");
+const gen = require("../../lib/generate.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		TextArea = require("./textarea.jsx")(core, config, store),
+		Suggestions = require("./suggestions.jsx")(core, config, store),
 		FileUpload = require("./file-upload.jsx")(core, config, store),
 		Loader = require("./loader.jsx")(core, config, store),
+		userInfo = require("../../lib/user.js")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
-		getMessageText: function(msg) {
-			var currentText = store.get("app", "currentText"),
-				textObj = store.get("indexes", "textsById", currentText),
-				nick, user, mention;
-
-			msg = msg || "";
-
-			if (textObj) {
-				nick = appUtils.formatUserName(textObj.from);
-				user = appUtils.formatUserName(store.get("user"));
-
-				mention = "@" + nick;
-
-				if (msg.indexOf(mention) === -1 && nick !== user) {
-					msg = msg.replace(/(?:^@[a-z0-9\-]+\s?)|(?:\s*(?:\s@[a-z0-9\-]+)?\s*$)/, function(match, index) {
-						if (index === 0) {
-							return mention;
-						} else {
-							return " " + mention;
-						}
-					});
-				}
-
-				msg += " ";
-			} else {
-				msg = msg.replace(/(^@[a-z0-9\-]+\s?)|(@[a-z0-9\-]+\s?$)/, "").trim();
-			}
-
-			return msg;
-		},
-
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
@@ -70,17 +40,44 @@ module.exports = function(core, config, store) {
 
 		setEmpty: function() {
 			let el = React.findDOMNode(this),
-				composeBox = this.refs.composeBox;
+				value = this.refs.composeBox.val();
 
-			if (composeBox.val()) {
+			if (value) {
 				el.classList.remove("empty");
 			} else {
 				el.classList.add("empty");
 			}
 		},
 
+		onInput: function() {
+			this.setEmpty();
+
+			let value = this.refs.composeBox.val();
+
+			if (value) {
+				let area = this.refs.composeBox.area();
+
+				if (area.selectionStart) {
+					let typed = value.slice(0, area.selectionStart);
+
+					// If @ pressed
+					if (/(^@|\s+@)[a-z0-9\-]*$/.test(typed)) {
+						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1);
+
+						this.setState({ query });
+
+						return;
+					}
+				}
+			}
+
+			if (this.state.query !== null) {
+				this.setState({ query: null });
+			}
+		},
+
 		onKeyDown: function(e) {
-			if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
+			if (this.state.query === null && e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				e.preventDefault();
 
 				this.sendMessage();
@@ -99,6 +96,34 @@ module.exports = function(core, config, store) {
 			core.emit("setstate", {
 				app: { focusedInput: "compose" }
 			});
+		},
+
+		onDismissSuggestions: function() {
+			this.setState({ query: null });
+		},
+
+		onSelectSuggestions: function(user) {
+			let composeBox = this.refs.composeBox,
+				value = composeBox.val();
+
+			if (value) {
+				let area = this.refs.composeBox.area(),
+					selectionStart = area.selectionStart,
+					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
+					after = value.slice(selectionStart),
+					id = userInfo.getNick(user.id);
+
+				composeBox.val(before + "@" + id + " " + after);
+
+				// Reset caret position
+				if (after.length) {
+					let pos = before.length + id.length + 2;
+
+					area.setSelectionRange(pos, pos);
+				}
+			}
+
+			this.setState({ query: null });
 		},
 
 		onUploadStart: function() {
@@ -163,9 +188,16 @@ module.exports = function(core, config, store) {
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
+					{typeof this.state.query === "string" ?
+						<Suggestions
+							max={5} smart={true}
+							query={this.state.query}
+							onDismiss={this.onDismissSuggestions}
+							onSelect={this.onSelectSuggestions} /> :
+						null}
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
-								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.onInput}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
 
 						<div className="chat-area-input-actions">
@@ -203,7 +235,7 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
+				return "Reply as " + userInfo.getNick(store.get("user")) + ", markdown supported";
 			} else {
 				return "You are offline";
 			}
@@ -216,34 +248,20 @@ module.exports = function(core, config, store) {
 				placeholder: this.getPlaceholder(connection),
 				disabled: this.getDisabledStatus(connection),
 				autofocus: document.hasFocus(),
-				uploadStatus: this.state && this.state.uploadStatus ? this.state.uploadStatus : ""
+				uploadStatus: this.state && this.state.uploadStatus ? this.state.uploadStatus : "",
+				query: null
 			};
 		},
 
 		onStateChange: function(changes) {
-			if (!this.isMounted()) {
-				return;
-			}
-
-			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
+			if ((changes.app && changes.app.connectionStatus) || changes.user) {
 				this.replaceState(this.getInitialState());
 			}
 		},
 
 		componentDidUpdate: function() {
-			var composeBox = this.refs.composeBox,
-				text, newText;
-
-			text = composeBox.val();
-
-			newText = this.getMessageText(text);
-
-			if (newText.trim() !== text.trim()) {
-				composeBox.val(newText);
-			}
-
-			if (document.hasFocus()) {
-				composeBox.focus();
+			if (this.state.autofocus) {
+				this.refs.composeBox.focus();
 			}
 
 			this.setEmpty();

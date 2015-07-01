@@ -26,6 +26,10 @@ module.exports = [
 		if (query.ref) {
 			if (Array.isArray(query.ref)) {
 				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
+			} else if(/\*$/.test(query.ref)) {
+				orderBy = "id";
+				if(!query.limit || query.limit>10) query.limit = 10;
+				filters.push({ $: "entities.id like ${id}", id: query.ref.replace(/\**$/,"%") });
 			} else {
 				filters.push({ $: "entities.id=${id}", id: query.ref });
 			}
@@ -93,6 +97,8 @@ module.exports = [
 				$: "\"" + orderBy + "\" <= ${start}",
 				start: startPosition
 			});
+		} else if(query.limit) {
+			limit = query.limit;
 		} else {
 			limit = null; // 256;
 		}
