@@ -7,7 +7,8 @@ module.exports = function(core, config, store) {
 		  ThreadCard = require("./thread-card.jsx")(core, config, store),
 		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
 		  GridView = require("./grid-view.jsx")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
+		  room = require("../../lib/room.js")(core, config, store),
+		  rangeOps = require("../../lib/range-ops.js");
 
 	let ThreadList = React.createClass({
 		scrollToTop: function() {
@@ -28,57 +29,15 @@ module.exports = function(core, config, store) {
 
 			return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
 		},
+		
+		getItems: function() {
+			let nav = store.get("nav"),
+				before, after, beforeItems, afterItems, beforeCount, afterCount,
+				atTop = false, atBottom = false, loading = false,
+				cols = this.getCols(), ret;
 
-		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
-			var time;
-
-			if (key === "top") {
-				time = null;
-			} else if (key === "bottom") {
-				time = 1;
-			} else {
-				time = parseInt(key.split("-").pop());
-				if (isNaN(time)) {
-					time = null;
-				}
-			}
-
-			core.emit("setstate", {
-				nav: {
-					threadRange: {
-						time: time,
-						before: before,
-						after: after
-					}
-				}
-			});
-		},
-
-		render: function() {
-			var nav = store.get("nav"),
-				key = "thread-" + nav.room,
-				items = [], atTop = false, atBottom = true,
-				before, after, beforeCount, afterCount,
-				allItems, beforeItems, afterItems, positionKey,
-				scrollToClassNames, cols, sections, empty, loading = false;
-
-			// Don't show
-			if (!this.state.show) {
-				return <div data-mode="none" />;
-			}
-
-			if (!this.state.read) {
-				return (
-					<div className="blankslate-area">
-						<img src="/s/assets/blankslate/private-room.png" />
-					</div>
-					);
-			}
-
-			cols = this.getCols();
-
-			before = cols * Math.ceil(((nav.threadRange.before || 0) + Math.max(10, 3 * cols)) / cols) + 1;
-			after = cols * Math.ceil(((nav.threadRange.after || 0) + Math.max(10, 3 * cols)) / cols);
+			before = cols * Math.ceil(((nav.threadRange.before || 0) + Math.max(50, 15 * cols)) / cols) + 1;
+			after = cols * Math.ceil(((nav.threadRange.after || 0) + Math.max(50, 15 * cols)) / cols);
 
 			beforeItems = store.getThreads(nav.room, nav.threadRange.time || null, -before);
 			afterItems = store.getThreads(nav.room, nav.threadRange.time || null, after);
@@ -122,22 +81,80 @@ module.exports = function(core, config, store) {
 				beforeItems = beforeItems.slice(-beforeCount);
 			}
 
-			allItems = beforeItems.concat(afterItems);
+			ret = beforeItems.concat(afterItems);
+			ret.loading = loading;
+			ret.atTop = atTop;
+			ret.atBottom = atBottom;
+			
+			var closest = Math.min(ret.length - 1, rangeOps.findIndex(ret, "startTime", nav.threadRange.time || null));
+			ret.key = ret.length ? ret[closest].startTime : null;
+			return ret;
+		},
 
-			allItems.reverse().forEach(function(thread) {
+		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
+			var time;
+
+			if (key === "top") {
+				time = null;
+			} else if (key === "bottom") {
+				time = 1;
+			} else {
+				time = parseInt(key.split("-").pop());
+				if (isNaN(time)) {
+					time = null;
+				}
+			}
+
+			core.emit("setstate", {
+				nav: {
+					threadRange: {
+						time: time,
+						before: before,
+						after: after
+					}
+				}
+			});
+		},
+
+		render: function() {
+			var nav = store.get("nav"),
+				key = "thread-" + nav.room,
+				threadItems,
+				items = [], atTop = false, atBottom = true,
+				positionKey,
+				scrollToClassNames, sections, empty, loading = false;
+
+			// Don't show
+			if (!this.state.show) {
+				return <div data-mode="none" />;
+			}
+
+			if (!this.state.read) {
+				return (
+					<div className="blankslate-area">
+						<img src="/s/assets/blankslate/private-room.png" />
+					</div>
+					);
+			}
+
+			threadItems = this.state.items;
+			loading = threadItems.loading;
+			atTop = threadItems.atTop;
+			atBottom = threadItems.atBottom;
+			positionKey = "thread-" + threadItems.key;
+
+			threadItems.forEach(function(thread) {
 				var threadKey = "thread-" + thread.startTime;
 
 				if (typeof thread === "object") {
-					if (nav.threadRange.time && thread.startTime >= nav.threadRange.time) {
-						positionKey = threadKey;
-					}
-
 					items.push({
 						key: threadKey,
 						elem: <ThreadCard roomId={nav.room} thread={thread} />
 					});
 				}
 			});
+						
+			items.reverse();
 
 			if (nav.threadRange.time === 1) {
 				positionKey = 'bottom';
@@ -145,7 +162,7 @@ module.exports = function(core, config, store) {
 				positionKey = 'top';
 			}
 
-			var allThread = {
+			let allThread = {
 				title: "All messages",
 				id: null,
 				startTime: null
@@ -196,20 +213,38 @@ module.exports = function(core, config, store) {
 		getInitialState: function() {
 			return {
 				show: (store.get("nav", "mode") === "room"),
-				read: room.isReadable()
+				read: room.isReadable(),
+				items: this.getItems()
 			};
 		},
 
 		onStateChange: function(changes) {
 			const roomId = store.get("nav", "room"),
-				  userId = store.get("user"),
-				  rel = roomId + "_" + userId;
-
+				userId = store.get("user"),
+				rel = roomId + "_" + userId;
+				
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
 			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
 				(changes.threads && changes.threads[roomId]) ||
-				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)) {
-
+				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)
+			) {
+				let items = this.state.items,
+					threadRange = store.get("nav", "threadRange");
+										
+				if (items && items.length) {
+					let position = rangeOps.findIndex(items, "startTime", threadRange.time || null),
+						top = position - threadRange.after,
+						bottom = position + threadRange.before;
+					
+					
+					/* top and bottom are screwed up because rendering is 
+					   reverse chronological while store APIs are chronological. */
+					if((top > 15 || items.atBottom) && (bottom < items.length - 16 || items.atTop)) {
+						return;
+					}
+					
+				}
+				
 				this.setState(this.getInitialState());
 			}
 		},

@@ -1,7 +1,7 @@
 /* jshint mocha: true*/
 /* global modules */
 
-var rangeOps = require("../range-ops.js");
+var rangeOps = require("../../lib/range-ops.js");
 var assert = require('assert');
 //var core, config, store;
 //module.exports = function(c, conf, s) {

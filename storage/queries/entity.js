@@ -61,7 +61,7 @@ module.exports = [
 				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id || query.hasMember &&  appUtils.isInternalSession(query.session)) {
 					// Show people who are transitioning to a visible role and
 					// rooms the current user is in the process of joining
-					roleFilters.push("relations.transitionrole > 'none'");
+					roleFilters.push("relations.transitionrole > 'none' OR relations.role = 'banned'");
 				} else if (query.memberOf) {
 					// Add the current user if in the process of joining
 					roleFilters.push({ $: "(relations.user = ${me} AND relations.transitionrole > 'none')", me: query.user.id });
