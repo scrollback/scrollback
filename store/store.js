@@ -1,7 +1,7 @@
 "use strict";
 
 var objUtils = require("../lib/obj-utils.js"),
-	rangeOps = require("./range-ops.js"),
+	rangeOps = require("../lib/range-ops.js"),
 	state = {
 		"nav": {
 			"mode": "loading",
