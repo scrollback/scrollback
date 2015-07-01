@@ -57,7 +57,7 @@ module.exports = function(core, config, store) {
 
 		render() {
 			return (
-				<ul className="suggestions-list" onKeyDown={this.onKeyDown.bind(this)}>
+				<ul className="suggestions-list">
 						{this.state.suggestions.map((user, i) => {
 							return (
 								<li
@@ -80,11 +80,11 @@ module.exports = function(core, config, store) {
 				all = {};
 
 			for (let text of texts) {
-				if (all[text.from]) {
-					continue;
-				}
-
 				if (text) {
+					if (all[text.from]) {
+						continue;
+					}
+				
 					let user = store.get("entities", text.from);
 
 					if (user) {
