@@ -133,62 +133,26 @@
                 @extend %transition;
                 @include icon(image);
 
+                position: relative;
                 display: none;
                 height: 100%;
                 width: 2.5em;
-                overflow: hidden;
                 opacity: .7;
 
                 &:focus, &:hover, &:active { opacity: 1; }
 
-                [type="file"] { opacity: 0; }
-
-                .progress-indicator {
-                    @extend %transition;
-
-                    fill: transparent;
-                    stroke: transparent;
-                    stroke-dasharray: 100;
-                    stroke-dashoffset: 100;
-                    transform: rotateZ(180deg);
+                [type="file"] {
                     position: absolute;
-                    top: .35em;
-                    left: .45em;
-
-                    .check, .warn { @extend %transition; }
+                    top: 0;
+                    left: 0;
+                    opacity: 0;
+                    pointer-events: none;
                 }
 
-                &.progress {
-                    color: $info-color;
-                    pointer-events: none;
-                    opacity: 1;
-
-                    &:before { opacity: .3; }
-
-                    &.unknown {
-                        circle {
-                            transform-origin: 50%;
-                            animation: uploadprogress 1.5s infinite linear;
-                        }
-                    }
-
-                    &.complete {
-                        color: $success-color;
-
-                        circle { stroke-dashoffset: 0; }
-
-                        .check { fill: currentColor; }
-                    }
-
-                    &.error {
-                        color: $error-color;
-
-                        .progress-indicator { stroke: transparent; }
-
-                        .warn { fill: currentColor; }
-                    }
-
-                    .progress-indicator { stroke: currentColor; }
+                .loader {
+                    position: absolute;
+                    top: .41em;
+                    left: .5em;
                 }
 
                 .chat-area-input.empty & { display: block; }
