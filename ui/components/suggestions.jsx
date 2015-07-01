@@ -189,7 +189,7 @@ module.exports = function(core, config, store) {
 
 			// If suggestions are less than the max, query the server
 			if (suggestions.length < this.props.max && query.length > 0) {
-				core.emit("getUsers", { ref: query + "*" }, (err, res) => {
+				core.emit("getUsers", { ref: query + "*", limit: this.props.max - suggestions.length }, (err, res) => {
 					if (err) {
 						return;
 					}
@@ -226,10 +226,6 @@ module.exports = function(core, config, store) {
 						}
 
 						users.unshift(u);
-
-						if (users.length >= this.props.max) {
-							break;
-						}
 					}
 
 					this.setState({
