@@ -44,7 +44,15 @@ function admitExpel (action	) {
 			}));
 		}
 		action.role = action.role?action.role : "follower";
-		if (permissionWeights[action.role] >= permissionWeights.follower) {
+		if(action.role === "banned" && action.transitionDuration) {
+			if(action.transitionDuration) {
+			 	action.transitionType = "timeout";
+				action.transitionTime  = new Date().getTime() + action.transitionDuration * 1000;
+			} else {
+				 	action.transitionType = null;
+			}
+		}
+		if (permissionWeights[action.role] >= permissionWeights.follower && action.victim.role!=="banned") {
 			action.transitionRole = action.role;
 			action.transitionType = "invite";
 			action.role = action.victim.role;
