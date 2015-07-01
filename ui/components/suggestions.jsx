@@ -84,7 +84,7 @@ module.exports = function(core, config, store) {
 					if (all[text.from]) {
 						continue;
 					}
-				
+
 					let user = store.get("entities", text.from);
 
 					if (user) {
