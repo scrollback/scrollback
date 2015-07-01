@@ -116,11 +116,9 @@ module.exports = function(core, config, store) {
 				composeBox.val(before + "@" + id + " " + after);
 
 				// Reset caret position
-				if (after.length) {
-					let pos = before.length + id.length + 2;
+				let pos = before.length + id.length + 2;
 
-					area.setSelectionRange(pos, pos);
-				}
+				area.setSelectionRange(pos, pos);
 			}
 
 			this.setState({ query: null });
