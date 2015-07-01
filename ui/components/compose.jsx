@@ -3,8 +3,7 @@
 
 "use strict";
 
-const appUtils = require("../../lib/app-utils.js"),
-	  gen = require("../../lib/generate.js");
+const gen = require("../../lib/generate.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -12,6 +11,7 @@ module.exports = function(core, config, store) {
 		Suggestions = require("./suggestions.jsx")(core, config, store),
 		FileUpload = require("./file-upload.jsx")(core, config, store),
 		Loader = require("./loader.jsx")(core, config, store),
+		userInfo = require("../../lib/user.js")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
@@ -110,13 +110,14 @@ module.exports = function(core, config, store) {
 				let area = this.refs.composeBox.area(),
 					selectionStart = area.selectionStart,
 					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
-					after = value.slice(selectionStart);
+					after = value.slice(selectionStart),
+					id = userInfo.getNick(user.id);
 
-				composeBox.val(before + "@" + user.id + " " + after);
+				composeBox.val(before + "@" + id + " " + after);
 
 				// Reset caret position
 				if (after.length) {
-					let pos = before.length + user.id.length + 2;
+					let pos = before.length + id.length + 2;
 
 					area.setSelectionRange(pos, pos);
 				}
@@ -234,7 +235,7 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
+				return "Reply as " + userInfo.getNick(store.get("user")) + ", markdown supported";
 			} else {
 				return "You are offline";
 			}
