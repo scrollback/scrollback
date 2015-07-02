@@ -19,8 +19,7 @@ module.exports = (core, config, store) => {
 					});
 				} else {
 					core.emit("note-up", {
-						noteType: "reply",
-						group: roomId,
+						group: roomId + "/all",
 						dismissTime: Date.now()
 					});
 				}
