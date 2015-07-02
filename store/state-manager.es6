@@ -135,6 +135,10 @@ function updateNotes(baseNotes, notes) {
 		if (group.length > max) {
 			let note = group[group.length - 1];
 
+			if (Object.isFrozen(note)) {
+				note = objUtils.clone(note);
+			}
+
 			note.count = group.length;
 
 			baseNotes.push(objUtils.deepFreeze(note));
