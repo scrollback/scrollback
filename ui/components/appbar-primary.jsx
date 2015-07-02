@@ -105,7 +105,13 @@ module.exports = function(core, config, store) {
 				origin: e.currentTarget,
 				buttons: {},
 				items: {}
-			}, (err, menu) => showMenu("user-menu", menu));
+			}, (err, menu) => {
+				if (err) {
+					return;
+				}
+
+				showMenu("user-menu", menu);
+			});
 		},
 
 		goBack: function() {
@@ -152,7 +158,7 @@ module.exports = function(core, config, store) {
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="guest user follower" data-mode="room chat" data-state="online"
+					<a data-embed="none" data-role="guest registered follower" data-mode="room chat" data-state="online"
 						ref="followButton" className={classNames} onClick={this.toggleFollowRoom}></a>
 				</div>
 			);

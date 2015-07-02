@@ -1,7 +1,8 @@
-/* jshint mocha: true*/
-/* global modules */
+/* eslint-env mocha */
 
-var rangeOps = require("../range-ops.js");
+"use strict";
+
+var rangeOps = require("../../lib/range-ops.js");
 var assert = require('assert');
 //var core, config, store;
 //module.exports = function(c, conf, s) {
@@ -204,6 +205,3 @@ function createRange(start, count, log){
 	if (log) console.log("Range:",start, range.end);
 	return range;
 }
-
-
-

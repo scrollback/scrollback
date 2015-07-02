@@ -3,47 +3,18 @@
 
 "use strict";
 
-const S3Upload = require("../../lib/s3-upload.es6"),
-	  appUtils = require("../../lib/app-utils.js"),
-	  gen = require("../../lib/generate.js");
+const gen = require("../../lib/generate.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		TextArea = require("./textarea.jsx")(core, config, store),
+		Suggestions = require("./suggestions.jsx")(core, config, store),
+		FileUpload = require("./file-upload.jsx")(core, config, store),
+		Loader = require("./loader.jsx")(core, config, store),
+		userInfo = require("../../lib/user.js")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
-		getMessageText: function(msg) {
-			var currentText = store.get("app", "currentText"),
-				textObj = store.get("indexes", "textsById", currentText),
-				nick, user, mention;
-
-			msg = msg || "";
-
-			if (textObj) {
-				nick = appUtils.formatUserName(textObj.from);
-				user = appUtils.formatUserName(store.get("user"));
-
-				mention = "@" + nick;
-
-				if (msg.indexOf(mention) === -1 && nick !== user) {
-					msg = msg.replace(/(?:^@[a-z0-9\-]+\s?)|(?:\s*(?:\s@[a-z0-9\-]+)?\s*$)/, function(match, index) {
-						if (index === 0) {
-							return mention;
-						} else {
-							return " " + mention;
-						}
-					});
-				}
-
-				msg += " ";
-			} else {
-				msg = msg.replace(/(^@[a-z0-9\-]+\s?)|(@[a-z0-9\-]+\s?$)/, "").trim();
-			}
-
-			return msg;
-		},
-
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
@@ -67,114 +38,46 @@ module.exports = function(core, config, store) {
 			composeBox.val("");
 		},
 
-		showChooser: function() {
-			React.findDOMNode(this.refs.filechooser).click();
-		},
-
-		showFileError: function(text) {
-			let button = React.findDOMNode(this.refs.filebutton),
-				popover = document.createElement("div"),
-				message = document.createElement("div");
-
-			button.classList.add("error");
-
-			message.textContent = text;
-
-			message.classList.add("popover-content");
-			popover.classList.add("error");
-
-			popover.appendChild(message);
-
-			$(popover).popover({ origin: button });
-
-			$(document).on("popoverDismissed.fileerr", () => {
-				button.classList.remove("progress");
-				button.classList.remove("unknown");
-				button.classList.remove("error");
-
-				$(document).off("popoverDismissed.fileerr");
-			});
-		},
-
-		uploadFiles: function(e) {
-			let button = React.findDOMNode(this.refs.filebutton),
-				file = e.target.files[0];
-
-			if (file.size > 5242880) {
-				let size = Math.round(file.size * 100 / 1048576) / 100;
-
-				this.showFileError("File is too big (" + size + "MB). Only files upto 5MB can be uploaded.");
-
-				return;
-			}
-
-			if (!/^image\//.test(file.type)) {
-				this.showFileError("Only images can be uploaded.");
-
-				return;
-			}
-
-			button.classList.add("progress");
-			button.classList.add("unknown");
-
-			let textId = gen.uid(),
-				userId = store.get("user"),
-				upload = new S3Upload({
-					uploadType: "content",
-					generateThumb: true,
-					userId,
-					textId
-				}, core);
-
-			upload.onfinish = () => {
-				core.emit("text-up", {
-					thread: store.get("nav", "thread"),
-					tags: [ "image" ],
-					to: store.get("nav", "room"),
-					id: textId,
-					from: userId,
-					text: "[![" + file.name + "](" + upload.thumb + ")](" + upload.url + ")"
-				});
-
-				button.classList.remove("unknown");
-				button.classList.add("complete");
-
-				setTimeout(() => {
-					button.classList.remove("progress");
-					button.classList.remove("complete");
-				}, 3000);
-			};
-
-			upload.onerror = () => this.showFileError("Failed to upload the image. May be try again?");
-
-			upload.start(file);
-
-			// Hacky way to clear file input
-			try {
-				e.target.value = "";
-
-				if (e.target.value) {
-					e.target.type = "text";
-					e.target.type = "file";
-				}
-			} catch (err) {
-				console.log("Error clearing file input", err);
-			}
-		},
-
 		setEmpty: function() {
 			let el = React.findDOMNode(this),
-				composeBox = this.refs.composeBox;
+				value = this.refs.composeBox.val();
 
-			if (composeBox.val()) {
+			if (value) {
 				el.classList.remove("empty");
 			} else {
 				el.classList.add("empty");
 			}
 		},
 
+		onInput: function() {
+			this.setEmpty();
+
+			let value = this.refs.composeBox.val();
+
+			if (value) {
+				let area = this.refs.composeBox.area();
+
+				if (area.selectionStart) {
+					let typed = value.slice(0, area.selectionStart);
+
+					// If @ pressed
+					if (/(^@|\s+@)[a-z0-9\-]*$/.test(typed)) {
+						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1);
+
+						this.setState({ query });
+
+						return;
+					}
+				}
+			}
+
+			if (this.state.query !== null) {
+				this.setState({ query: null });
+			}
+		},
+
 		onKeyDown: function(e) {
-			if (e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
+			if (this.state.query === null && e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				e.preventDefault();
 
 				this.sendMessage();
@@ -195,23 +98,81 @@ module.exports = function(core, config, store) {
 			});
 		},
 
-		componentDidUpdate: function() {
-			var composeBox = this.refs.composeBox,
-				text, newText;
+		onDismissSuggestions: function() {
+			this.setState({ query: null });
+		},
 
-			text = composeBox.val();
+		onSelectSuggestions: function(user) {
+			let composeBox = this.refs.composeBox,
+				value = composeBox.val();
 
-			newText = this.getMessageText(text);
+			if (value) {
+				let area = this.refs.composeBox.area(),
+					selectionStart = area.selectionStart,
+					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
+					after = value.slice(selectionStart),
+					id = userInfo.getNick(user.id);
 
-			if (newText.trim() !== text.trim()) {
-				composeBox.val(newText);
+				composeBox.val(before + "@" + id + " " + after);
+
+				// Reset caret position
+				let pos = before.length + id.length + 2;
+
+				area.setSelectionRange(pos, pos);
 			}
 
-			if (document.hasFocus()) {
-				composeBox.focus();
-			}
+			this.setState({ query: null });
+		},
 
-			this.setEmpty();
+		onUploadStart: function() {
+			this.setState({ uploadStatus: "active" });
+		},
+
+		onUploadError: function(err) {
+			let button = React.findDOMNode(this.refs.filebutton),
+				popover = document.createElement("div"),
+				message = document.createElement("div");
+
+			message.textContent = err;
+
+			message.classList.add("popover-content");
+			popover.classList.add("error");
+
+			popover.appendChild(message);
+
+			$(popover).popover({ origin: button });
+
+			$(document).on("popoverDismissed.fileerr", () => {
+				this.setState({ uploadStatus: "" });
+
+				$(document).off("popoverDismissed.fileerr");
+			});
+
+			this.setState({ uploadStatus: "error" });
+		},
+
+		onUploadFinish: function(payload, upload) {
+			this.setState({ uploadStatus: "complete" });
+
+			core.emit("text-up", {
+				thread: store.get("nav", "thread"),
+				tags: [ "image" ],
+				to: store.get("nav", "room"),
+				id: payload.textId,
+				from: payload.userId,
+				text: "[![" + upload.file.name + "](" + upload.thumb + ")](" + upload.url + ")"
+			});
+
+			setTimeout(() => this.setState({ uploadStatus: "" }), 3000);
+		},
+
+		getUploadPayload: function() {
+			return {
+				uploadType: "content",
+				generateThumb: true,
+				userId: store.get("user"),
+				textId: gen.uid()
+			};
 		},
 
 		isFileUploadAvailable: function() {
@@ -225,25 +186,32 @@ module.exports = function(core, config, store) {
 		render: function() {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
+					{typeof this.state.query === "string" ?
+						<Suggestions
+							max={5} smart={true}
+							query={this.state.query}
+							onDismiss={this.onDismissSuggestions}
+							onSelect={this.onSelectSuggestions} /> :
+						null}
 					<div className="chat-area-input-inner">
 						<TextArea autoFocus={this.state.autofocus} placeholder={this.state.placeholder} disabled={this.state.disabled}
-								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.setEmpty}
+								  onKeyDown={this.onKeyDown} onFocus={this.onFocus} onBlur={this.onBlur} onInput={this.onInput}
 								  ref="composeBox" tabIndex="1" className="chat-area-input-entry" />
+
 						<div className="chat-area-input-actions">
 							{
 								this.isFileUploadAvailable() ?
-								<div ref="filebutton"
-									 data-role="user follower owner moderator"
-									 className="chat-area-input-action chat-area-input-image"
-									 onClick={this.showChooser}>
+								<FileUpload
+									ref="filebutton"
+									className="chat-area-input-action chat-area-input-image"
+									data-role="registered follower owner moderator"
+									accept="image/*" maxsize="5242880"
+									onstart={this.onUploadStart} onerror={this.onUploadError} onfinish={this.onUploadFinish}
+									getPayload={this.getUploadPayload}>
 
-									<input ref="filechooser" type="file" onChange={this.uploadFiles} accept="image/*" />
-									<svg className="progress-indicator" width="35" height="35">
-										<circle ref="progresscircle" cx="18" cy="18" r="16" fill="none" strokeWidth="2" />
-										<path className="check" d="M6,11.2 L1.8,7 L0.4,8.4 L6,14 L18,2 L16.6,0.6 L6,11.2 Z" transform="translate(27, 25) rotate(180)"/>
-										<path className="warn" d="M0,19 L22,19 L11,0 L0,19 L0,19 Z M12,16 L10,16 L10,14 L12,14 L12,16 L12,16 Z M12,12 L10,12 L10,8 L12,8 L12,12 L12,12 Z" transform="translate(29, 28) rotate(180)" />
-									</svg>
-								</div>
+									<Loader status={this.state.uploadStatus} />
+
+								</FileUpload>
 								: null
 							}
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
@@ -265,7 +233,7 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + appUtils.formatUserName(store.get("user")) + ", markdown supported";
+				return "Reply as " + userInfo.getNick(store.get("user")) + ", markdown supported";
 			} else {
 				return "You are offline";
 			}
@@ -277,19 +245,26 @@ module.exports = function(core, config, store) {
 			return {
 				placeholder: this.getPlaceholder(connection),
 				disabled: this.getDisabledStatus(connection),
-				autofocus: document.hasFocus()
+				autofocus: document.hasFocus(),
+				uploadStatus: this.state && this.state.uploadStatus ? this.state.uploadStatus : "",
+				query: null
 			};
 		},
 
 		onStateChange: function(changes) {
-			if (!this.isMounted()) {
-				return;
-			}
-
-			if ((changes.app && (changes.app.connectionStatus || "currentText" in changes.app)) || changes.user) {
+			if ((changes.app && changes.app.connectionStatus) || changes.user) {
 				this.replaceState(this.getInitialState());
 			}
 		},
+
+		componentDidUpdate: function() {
+			if (this.state.autofocus) {
+				this.refs.composeBox.focus();
+			}
+
+			this.setEmpty();
+		},
+
 		componentDidMount: function() {
 			core.on("statechange", this.onStateChange, 400);
 

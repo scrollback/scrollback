@@ -96,6 +96,8 @@ class S3Upload {
 		this._request.onabort = this.onabort;
 		this._request.onerror = this.onaerror;
 
+		this.file = file;
+
 		return this._policy.then(policy => {
 			let formData = new FormData(),
 				fields = [

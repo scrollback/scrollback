@@ -1,3 +1,4 @@
+"use strict";
 var log = require("../lib/logger.js"),
 	redis = require('redis');
 
@@ -7,7 +8,7 @@ module.exports = function (core, config) {
 	
 	core.on('text', function (text, next) {
 		var key = 'threader:' + text.to + ':color';
-		if(text.thread != text.id || typeof text.color != 'undefined') return next();
+		if(text.thread !== text.id || typeof text.color !== 'undefined') return next();
 		db.incr(key, function(err, num) {
 			num = parseInt(num);
 			text.color = num % config.numColors;
@@ -18,6 +19,6 @@ module.exports = function (core, config) {
 			}
 			next();
 		});
-	}, "modifier");
+	}, 499);
 };
 

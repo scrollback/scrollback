@@ -1,9 +1,65 @@
 /* jshint browser: true */
 /* global $ */
 
+
+"use strict";
 var formField = require("../ui/utils/form-field.js");
 
 module.exports = function(core, config, store) {
+
+
+	function addBanMenu(from, menu, next) {
+		var room = store.get("nav", "room"),
+			rel = store.getRelation(),
+			senderRelation = store.getRelation(room, from),
+			senderRole, senderTransitionRole;
+
+		senderRelation = senderRelation ? senderRelation : {};
+		senderRole = senderRelation.role ? senderRelation.role : "none";
+		senderTransitionRole = senderRelation.transitionRole ? senderRelation.transitionRole : "none";
+
+		if (/^guest-/.test(from)) senderRole = "guest";
+
+		switch (senderRole) {
+			case "follower":
+			case "none":
+			case "moderator":
+				if (senderRole === "moderator" && rel.role !== "owner") break;
+				menu.items.banuser = {
+					prio: 550,
+					text: "Ban user",
+					action: function() {
+						core.emit("expel-up", {
+							to: room,
+							ref: from,
+							role: "banned",
+							transitionRole: senderRole,
+							transitionType: null
+						});
+					}
+				};
+				break;
+			case "banned":
+				menu.items.unbanuser = {
+					prio: 550,
+					text: "unban user",
+					action: function() {
+						core.emit("admit-up", {
+							to: room,
+							ref: from,
+							role: senderTransitionRole || "follower"
+						});
+					}
+				};
+				break;
+			case "owner":
+			case "guest":
+				break;
+		}
+
+		next();
+	}
+
 	core.on("conf-show", function(tabs, next) {
 		var room = tabs.room,
 			antiAbuse,
@@ -13,7 +69,9 @@ module.exports = function(core, config, store) {
 
 		antiAbuse = room.params.antiAbuse = room.params.antiAbuse || {};
 
-		antiAbuse.block = antiAbuse.block || { english: false };
+		antiAbuse.block = antiAbuse.block || {
+			english: false
+		};
 		antiAbuse.customPhrases = antiAbuse.customPhrases || [];
 
 		if (typeof antiAbuse.spam !== "boolean") {
@@ -23,7 +81,7 @@ module.exports = function(core, config, store) {
 		$div = $("<div>").append(
 			formField("Spam control", "toggle", "spam-control", antiAbuse.spam),
 			formField("Blocked words list", "check", "blocklists", [
-				["list-en-strict", "English abusive words", antiAbuse.block.english ]
+				["list-en-strict", "English abusive words", antiAbuse.block.english]
 			]),
 			formField("Custom blocked phrases/word", "area", "block-custom", antiAbuse.customPhrases.join("\n")),
 			formField("", "info", "spam-control-helper-text", "One phrase/word each line")
@@ -40,7 +98,7 @@ module.exports = function(core, config, store) {
 	core.on("conf-save", function(room, next) {
 		room.params.antiAbuse = {
 			spam: $("#spam-control").is(":checked"),
-			block:{
+			block: {
 				english: $("#list-en-strict").is(":checked")
 			},
 			customPhrases: $("#block-custom").val().split("\n").map(function(item) {
@@ -92,8 +150,18 @@ module.exports = function(core, config, store) {
 				}
 			};
 		}
+		addBanMenu(textObj.from, menu, next);
+	}, 500);
 
-		next();
+
+
+	core.on("people-menu", function(menu, next) {
+		var rel = store.getRelation();
+
+		if (!(rel && (/(owner|moderator|su)/).test(rel.role))) {
+			return next();
+		}
+		addBanMenu(menu.user.id, menu, next);
 	}, 500);
 
 	core.on("thread-menu", function(menu, next) {

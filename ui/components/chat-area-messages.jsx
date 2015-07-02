@@ -5,7 +5,8 @@
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  ChatItem = require("./chat-item.jsx")(core, config, store),
-		  Endless = require("../../bower_components/endless/endless.js");
+		  Endless = require("../../bower_components/endless/endless.js"),
+		  rangeOps = require("../../lib/range-ops.js");
 
 	let ChatAreaMessages = React.createClass({
 		onScroll: function(key, before, after) {
@@ -21,6 +22,8 @@ module.exports = function(core, config, store) {
 					time = null;
 				}
 			}
+			
+			this.currentTime = time;
 
 			core.emit("setstate", {
 				nav: {
@@ -32,30 +35,25 @@ module.exports = function(core, config, store) {
 				}
 			});
 		},
-
-		render: function() {
-			var chatitems = [], atTop = false, atBottom = true,
+		
+		getItems: function (textRange) {
+			var before, after, beforeItems, afterItems,
+				atTop = false, atBottom = false, loading = false,
 				roomId = store.get("nav", "room"),
 				threadId = store.get("nav", "thread"),
-				chatAreaClassNames = "main-content-chat chat-area",
-				before, after, beforeItems, afterItems, positionKey,
-				textRange = this.state.textRange,
-				loading = false;
-
-			// Enhance chat area layout in modern browsers
-			if (window.CSS.supports("display", "flex")) {
-				chatAreaClassNames += " chat-area-enhanced";
-			}
-
-			before = (textRange && textRange.before ? textRange.before : 0) + 11; /* one item will get removed */
-			after = (textRange && textRange.after ? textRange.after : 0) + 10;
+				ret;
+			
+			
+			before = (textRange && textRange.before ? textRange.before : 0) + 51; /* one item will get removed */
+			after = (textRange && textRange.after ? textRange.after : 0) + 50;
 
 			beforeItems = store.getTexts(roomId, threadId, textRange.time || null, -before);
 			afterItems = store.getTexts(roomId, threadId, textRange.time || null, after);
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
-
+			
+			
 			if (beforeItems[0] === "missing") {
 				loading = true;
 				beforeItems.shift();
@@ -72,8 +70,34 @@ module.exports = function(core, config, store) {
 			} else if (beforeItems.length > before) {
 				beforeItems.shift();
 			}
+			
+			ret = beforeItems.concat(afterItems);
+			ret.loading = loading;
+			ret.atTop = atTop;
+			ret.atBottom = atBottom;
+					
+			return ret;
+		},
 
-			(beforeItems.concat(afterItems)).forEach(function(text, i, items) {
+		render: function() {
+			var chatitems = [], atTop = false, atBottom = true,
+				textRange = store.get("nav", "textRange"),
+				roomId = store.get("nav", "room"),
+				threadId = store.get("nav", "thread"),
+				chatAreaClassNames = "main-content-chat chat-area",
+				positionKey, textItems, loading;
+
+			// Enhance chat area layout in modern browsers
+			if (window.CSS.supports("display", "flex")) {
+				chatAreaClassNames += " chat-area-enhanced";
+			}
+			
+			textItems = this.state.items;
+			loading = textItems.loading;
+			atTop = textItems.atTop;
+			atBottom = textItems.atBottom;
+			
+			textItems.forEach(function(text, i, items) {
 				var key, showtime, continues, continuation;
 
 				if (typeof text === "object") {
@@ -122,7 +146,7 @@ module.exports = function(core, config, store) {
 		},
 
 		getInitialState: function() {
-			return { textRange: store.get("nav", "textRange") };
+			return { items: this.getItems(store.get("nav", "textRange")) };
 		},
 
 		onStateChange: function(changes) {
@@ -130,8 +154,27 @@ module.exports = function(core, config, store) {
 				  roomId = store.get("nav", "room"),
 				  key = thread ? roomId + "_" + thread : roomId;
 
-			if (changes.nav && changes.nav.textRange || (changes.texts && changes.texts[key] && changes.texts[key].length)) {
-				this.setState({ textRange: store.get("nav", "textRange") });
+			if (changes.nav && changes.nav.textRange || (
+				changes.texts && changes.texts[key] &&
+				changes.texts[key].length
+			)) {
+				let items = this.state.items,
+					textRange = store.get("nav", "textRange");
+					
+				if (items && items.length) {
+					let position = rangeOps.findIndex(items, "time", textRange.time || null),
+						top = position - textRange.before,
+						bottom = position + textRange.after;
+					
+					if((top > 5 || items.atTop) && (bottom < items.length - 6 || items.atBottom) && textRange.time === this.currentTime) {
+/*						console.log(items.atTop, 0, top, position, bottom, items.length, items.atBottom);*/
+						return;
+					}
+					
+				}
+					
+					
+				this.setState(this.getInitialState());
 			}
 		},
 

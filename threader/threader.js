@@ -4,7 +4,6 @@ var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,
 	validator = new (require('valid'))(),
-	appUtils = require("../lib/app-utils.js"),
 	redis;
 
 var threaderValidator = {
@@ -39,13 +38,14 @@ module.exports = function(coreObj, conf) {
 				
 				var threadId = message.thread,
 					msg = JSON.stringify({
-					id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
-					text: message.text.replace(/\s+/g, " "),
-					room: message.to,
-					threadId: threadId
-				});
+						id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
+						text: message.text.replace(/\s+/g, " "),
+						room: message.to
+					});
 				
-				log.d("Sending msg to scrollback.jar: " + msg);
+				if(threadId) msg.threadId = threadId;
+				
+				log.d("JSB Sending msg to scrollback.jar: " + msg);
 				try {
 					client.write(msg + ",");
 				} catch(err) {
@@ -87,33 +87,22 @@ function processReply(data){
 	try {
 		log("JSB Response" + data);
 		data = JSON.parse(data);
-		var id = data.threadId.substr(0,data.threadId.length - 1);
+		var threadId = data.threadId.substr(0,data.threadId.length - 1);
 		var message = pendingCallbacks[data.id] && pendingCallbacks[data.id].message;
+
 		if (message) {
-			if (!message.thread && appUtils.isIRCSession(message.session)) {
-				message.thread = id;
-				if(!message.title) {
+			if (!message.thread && threadId) {
+				message.thread = threadId;
+
+				if (message.id === threadId && !message.title) {
 					message.title = message.text;
 				}
 			}
-			/*
-			// Code for adding spam, nonsense, normal etc. labels
-			if (data.spamIndex) {
-				for (var index in data.spamIndex) {
-					if (data.spamIndex.hasOwnProperty(index)) {
-						var a = data.spamIndex[index];
-						if (typeof a === 'string') {
-							a = parseFloat(a);
-						}
-						message.labels[index] = a;
-					}
-				}
-			}*/
-
+			log("JSB called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			pendingCallbacks[data.id].fn();
-			log("called back in ", new Date().getTime() - pendingCallbacks[data.id].time);
 			delete pendingCallbacks[data.id];
 		}
+
 	} catch(err) {
 		log("error on parsing data=" + err);
 		return;

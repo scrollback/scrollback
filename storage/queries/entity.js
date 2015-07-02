@@ -14,9 +14,9 @@ module.exports = [
 		} else if(query.type === 'getRooms') {
 			type = 'room';
 		} else if(query.memberOf || query.occupantOf) {
-			type = 'user';
+			type = null; // 'user'; // Postgres query planner picks a slower join strategy if off-index where conditions are specified on both tables.
 		} else if(query.hasMember || query.hasOccupant) {
-			type = 'room';
+			type = null; // 'room';
 		}
 
 		if (type) {
@@ -26,6 +26,10 @@ module.exports = [
 		if (query.ref) {
 			if (Array.isArray(query.ref)) {
 				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
+			} else if(/\*$/.test(query.ref)) {
+				orderBy = "id";
+				if(!query.limit || query.limit>10) query.limit = 10;
+				filters.push({ $: "entities.id like ${id}", id: query.ref.replace(/\**$/,"%") });
 			} else {
 				filters.push({ $: "entities.id=${id}", id: query.ref });
 			}
@@ -57,7 +61,7 @@ module.exports = [
 				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id || query.hasMember &&  appUtils.isInternalSession(query.session)) {
 					// Show people who are transitioning to a visible role and
 					// rooms the current user is in the process of joining
-					roleFilters.push("relations.transitionrole > 'none'");
+					roleFilters.push("relations.transitionrole > 'none' OR relations.role = 'banned'");
 				} else if (query.memberOf) {
 					// Add the current user if in the process of joining
 					roleFilters.push({ $: "(relations.user = ${me} AND relations.transitionrole > 'none')", me: query.user.id });
@@ -93,13 +97,15 @@ module.exports = [
 				$: "\"" + orderBy + "\" <= ${start}",
 				start: startPosition
 			});
+		} else if(query.limit) {
+			limit = query.limit;
 		} else {
-			limit = 256;
+			limit = null; // 256;
 		}
 		return pg.cat([
 			"SELECT * FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
-			{ $: (orderBy? "ORDER BY " + orderBy : "") + " LIMIT ${limit}", limit: limit }
+			{ $: (orderBy? "ORDER BY " + orderBy : "") + (limit? " LIMIT ${limit}": ""), limit : limit }
 		]);
 	},
 	

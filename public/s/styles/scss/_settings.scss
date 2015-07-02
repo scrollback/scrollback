@@ -24,7 +24,7 @@ $bar-height: 3.5em !default;
 
 $settings: (general, irc, twitter, threader, authorizer, requests, spam, seo, customization, embed, profile, email, notification) !default;
 $modes: (home, room, chat, search) !default;
-$roles: (guest, user, follower, owner) !default;
+$roles: (guest, registered, follower, owner) !default;
 $permissions: (write, read) !default;
 $embeds: (toast, canvas) !default;
 $contexts: (normal, android, ios) !default;
