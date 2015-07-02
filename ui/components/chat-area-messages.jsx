@@ -22,7 +22,7 @@ module.exports = function(core, config, store) {
 					time = null;
 				}
 			}
-			
+
 			this.currentTime = time;
 
 			core.emit("setstate", {
@@ -35,15 +35,14 @@ module.exports = function(core, config, store) {
 				}
 			});
 		},
-		
-		getItems: function (textRange) {
+
+		getItems: function(textRange) {
 			var before, after, beforeItems, afterItems,
 				atTop = false, atBottom = false, loading = false,
 				roomId = store.get("nav", "room"),
 				threadId = store.get("nav", "thread"),
 				ret;
-			
-			
+
 			before = (textRange && textRange.before ? textRange.before : 0) + 51; /* one item will get removed */
 			after = (textRange && textRange.after ? textRange.after : 0) + 50;
 
@@ -52,8 +51,7 @@ module.exports = function(core, config, store) {
 
 			atTop = (beforeItems.length < before && beforeItems[0] !== "missing");
 			atBottom = (afterItems.length < after && afterItems[afterItems.length - 1] !== "missing");
-			
-			
+
 			if (beforeItems[0] === "missing") {
 				loading = true;
 				beforeItems.shift();
@@ -70,12 +68,12 @@ module.exports = function(core, config, store) {
 			} else if (beforeItems.length > before) {
 				beforeItems.shift();
 			}
-			
+
 			ret = beforeItems.concat(afterItems);
 			ret.loading = loading;
 			ret.atTop = atTop;
 			ret.atBottom = atBottom;
-					
+
 			return ret;
 		},
 
@@ -91,12 +89,12 @@ module.exports = function(core, config, store) {
 			if (window.CSS.supports("display", "flex")) {
 				chatAreaClassNames += " chat-area-enhanced";
 			}
-			
+
 			textItems = this.state.items;
 			loading = textItems.loading;
 			atTop = textItems.atTop;
 			atBottom = textItems.atBottom;
-			
+
 			textItems.forEach(function(text, i, items) {
 				var key, showtime, continues, continuation;
 
@@ -154,26 +152,24 @@ module.exports = function(core, config, store) {
 				  roomId = store.get("nav", "room"),
 				  key = thread ? roomId + "_" + thread : roomId;
 
-			if (changes.nav && changes.nav.textRange || (
-				changes.texts && changes.texts[key] &&
-				changes.texts[key].length
-			)) {
+			if (changes.texts && changes.texts[key] && changes.texts[key].length) {
+				this.setState(this.getInitialState());
+			} else if (changes.nav && changes.nav.textRange) {
 				let items = this.state.items,
 					textRange = store.get("nav", "textRange");
-					
+
 				if (items && items.length) {
 					let position = rangeOps.findIndex(items, "time", textRange.time || null),
 						top = position - textRange.before,
 						bottom = position + textRange.after;
-					
-					if((top > 5 || items.atTop) && (bottom < items.length - 6 || items.atBottom) && textRange.time === this.currentTime) {
+
+					if ((top > 5 || items.atTop) && (bottom < items.length - 6 || items.atBottom) && textRange.time === this.currentTime) {
 /*						console.log(items.atTop, 0, top, position, bottom, items.length, items.atBottom);*/
 						return;
 					}
-					
+
 				}
-					
-					
+
 				this.setState(this.getInitialState());
 			}
 		},
