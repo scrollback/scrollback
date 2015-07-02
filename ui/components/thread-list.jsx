@@ -223,11 +223,13 @@ module.exports = function(core, config, store) {
 				userId = store.get("user"),
 				rel = roomId + "_" + userId;
 
-			if ((changes.nav && (changes.nav.mode || changes.nav.room || "thread" in changes.nav || changes.nav.threadRange)) ||
+			if ((changes.nav && (changes.nav.room || "thread" in changes.nav)) ||
 			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)
 			) {
+				this.setState(this.getInitialState());
+			} else if (changes.nav && changes.nav.threadRange) {
 				let items = this.state.items,
 					threadRange = store.get("nav", "threadRange");
 
@@ -236,18 +238,17 @@ module.exports = function(core, config, store) {
 						top = position - threadRange.after,
 						bottom = position + threadRange.before;
 
-
 					/* top and bottom are screwed up because rendering is
 					   reverse chronological while store APIs are chronological. */
 					if ((top > 15 || items.atBottom) && (bottom < items.length - 16 || items.atTop)) {
-						this.setState({ show: (store.get("nav", "mode") === "room") });
-
 						return;
 					}
 
 				}
 
 				this.setState(this.getInitialState());
+			} else if (changes.nav && changes.nav.mode) {
+				this.setState({ show: (store.get("nav", "mode") === "room") });
 			}
 		},
 
