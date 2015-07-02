@@ -29,7 +29,7 @@ module.exports = function(core, config, store) {
 
 			return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
 		},
-		
+
 		getItems: function() {
 			let nav = store.get("nav"),
 				before, after, beforeItems, afterItems, beforeCount, afterCount,
@@ -85,7 +85,7 @@ module.exports = function(core, config, store) {
 			ret.loading = loading;
 			ret.atTop = atTop;
 			ret.atBottom = atBottom;
-			
+
 			var closest = Math.min(ret.length - 1, rangeOps.findIndex(ret, "startTime", nav.threadRange.time || null));
 			ret.key = ret.length ? ret[closest].startTime : null;
 			return ret;
@@ -153,7 +153,7 @@ module.exports = function(core, config, store) {
 					});
 				}
 			});
-						
+
 			items.reverse();
 
 			if (nav.threadRange.time === 1) {
@@ -222,29 +222,31 @@ module.exports = function(core, config, store) {
 			const roomId = store.get("nav", "room"),
 				userId = store.get("user"),
 				rel = roomId + "_" + userId;
-				
-			if ((changes.nav && (changes.nav.mode || changes.nav.room || changes.nav.thread || changes.nav.threadRange)) ||
+
+			if ((changes.nav && (changes.nav.mode || changes.nav.room || "thread" in changes.nav || changes.nav.threadRange)) ||
 			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)
 			) {
 				let items = this.state.items,
 					threadRange = store.get("nav", "threadRange");
-										
+
 				if (items && items.length) {
 					let position = rangeOps.findIndex(items, "startTime", threadRange.time || null),
 						top = position - threadRange.after,
 						bottom = position + threadRange.before;
-					
-					
-					/* top and bottom are screwed up because rendering is 
+
+
+					/* top and bottom are screwed up because rendering is
 					   reverse chronological while store APIs are chronological. */
-					if((top > 15 || items.atBottom) && (bottom < items.length - 16 || items.atTop)) {
+					if ((top > 15 || items.atBottom) && (bottom < items.length - 16 || items.atTop)) {
+						this.setState({ show: (store.get("nav", "mode") === "room") });
+
 						return;
 					}
-					
+
 				}
-				
+
 				this.setState(this.getInitialState());
 			}
 		},
