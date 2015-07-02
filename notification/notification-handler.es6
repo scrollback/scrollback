@@ -81,7 +81,7 @@ module.exports = (core, config, store) => {
 				let threadId = store.get("nav", "thread");
 
 				if (threadId) {
-					if (note.group === roomId + "/" + threadId) {
+					if (note.group === roomId + "/" + (threadId || "all")) {
 						return;
 					}
 				} else {
