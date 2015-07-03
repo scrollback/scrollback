@@ -203,18 +203,23 @@ module.exports = function(core) {
         return queryValidation(action, callback);
     }, "validation");
     core.on("getRooms", function(action, callback) {
-        if (!(action.ref || action.hasOccupant || action.hasMember || action.identity || action.featured)) {
+        if (!((action.ref && action.ref.length) || action.hasOccupant || action.hasMember || action.identity || action.featured)) {
             return callback(new SbError("INVALID_QUERY"));
         }
         return queryValidation(action, callback);
     }, "validation");
     core.on("getUsers", function(action, callback) {
-        if (!(action.ref || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
+        if (!((action.ref && action.ref.length) || action.occupantOf || action.memberOf || action.identity || action.timezone)) {
             return callback(new SbError("INVALID_QUERY"));
         }
         return queryValidation(action, callback);
     }, "validation");
-
+	 core.on("getEntities", function(action, callback) {
+        if (!((action.ref && action.ref.length) || action.identity)) {
+            return callback(new SbError("INVALID_QUERY"));
+        }
+        return queryValidation(action, callback);
+    }, "validation");
 };
 
 function queryValidation(query, callback) {
