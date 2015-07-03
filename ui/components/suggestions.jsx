@@ -161,30 +161,32 @@ module.exports = function(core, config, store) {
 			if (suggestions.length) {
 				let ids = suggestions.filter(user => typeof user.picture === "undefined").map(user => user.id);
 
-				core.emit("getUsers", { ref: ids }, (err, res) => {
-					if (err) {
-						return;
-					}
+				if (ids.length) {
+					core.emit("getUsers", { ref: ids }, (err, res) => {
+						if (err) {
+							return;
+						}
 
-					let results = res.results,
-						users = this.state.suggestions;
+						let results = res.results,
+							users = this.state.suggestions;
 
-					if (!(users && users.length && results && results.length)) {
-						return;
-					}
+						if (!(users && users.length && results && results.length)) {
+							return;
+						}
 
-					users = users.slice(0);
+						users = users.slice(0);
 
-					for (let u of results) {
-						for (let user of users) {
-							if (user.id === u.id && typeof user.picture === "undefined") {
-								user.picture === u.picture;
+						for (let u of results) {
+							for (let user of users) {
+								if (user.id === u.id && typeof user.picture === "undefined") {
+									user.picture === u.picture;
+								}
 							}
 						}
-					}
 
-					this.setState({ suggestions: users });
-				});
+						this.setState({ suggestions: users });
+					});
+				}
 			}
 
 			// If suggestions are less than the max, query the server
