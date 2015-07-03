@@ -96,7 +96,7 @@
         display: block;
         height: 80px;
         width: 80px;
-        margin: 0 .5em;
+        margin: 0 .5em .5em 0;
         border-radius: $roundness;
         cursor: pointer;
 
@@ -124,10 +124,6 @@
         &.current {
             &:before { opacity: 1; }
         }
-
-        &:first-child { margin-left: 0; }
-
-        &:last-child { margin-right: 0; }
 
         img {
             border-radius: $roundness;
