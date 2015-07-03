@@ -80,14 +80,8 @@ module.exports = (core, config, store) => {
 			if (mode === "chat") {
 				let threadId = store.get("nav", "thread");
 
-				if (threadId) {
-					if (note.group === roomId + "/" + threadId) {
-						return;
-					}
-				} else {
-					if (note.group === roomId) {
-						return;
-					}
+				if (note.group === roomId + "/" + (threadId || "all")) {
+					return;
 				}
 			} else if (mode === "room") {
 				if (note.group === roomId) {
