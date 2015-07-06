@@ -3,12 +3,13 @@
 "use strict";
 
 const TempMap = require("../lib/temp-map.js"),
-	  objUtils = require("../lib/obj-utils.js");
+	  objUtils = require("../lib/obj-utils.js"),
+	  permissionWeights = require("../authorizer/permissionWeights.js");
 
 let actions = [ "text", "join" ];
 
 module.exports = (core, config, store) => {
-	const userInfo = require("../lib/user.js")();
+	const userInfo = require("../lib/user.js")(core, config, store);
 
 	let sent = new TempMap(300000); // Expire sent actions after 5 minutes
 
@@ -49,6 +50,11 @@ module.exports = (core, config, store) => {
 
 			if (queuedActions && queuedActions.signup) {
 				for (let a in queuedActions.signup) {
+					if (a === "join" && permissionWeights[userInfo.getRole()] >= permissionWeights.follower) {
+						// Avoid downgrading user role
+						continue;
+					}
+
 					let action = objUtils.clone(queuedActions.signup[a]);
 
 					if (action.from) {
