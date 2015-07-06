@@ -10,9 +10,15 @@ module.exports = (core, config, store) => {
 		constructor(props) {
 			super(props);
 
-			this.state = {
+			this.state = this.buildState();
+		}
+
+		buildState() {
+			let rel = store.getRelation(this.props.room);
+
+			return {
 				role: userInfo.getRole(this.props.user, this.props.room),
-				requested: false
+				requested: (rel && rel.transitionRole === "follower" && rel.transitionType === "request")
 			};
 		}
 
@@ -52,12 +58,7 @@ module.exports = (core, config, store) => {
 					(changes.indexes.userRooms && changes.indexes.userRooms[user]) ||
 					(changes.indexes.roomUsers && changes.indexes.roomUsers[room])
 				))) {
-				let rel = store.getRelation(room);
-
-				this.setState({
-					role: userInfo.getRole(this.props.user, room),
-					requested: (rel && rel.transitionRole === "follower" && rel.transitionType === "request")
-				});
+				this.setState(this.buildState);
 			}
 		}
 
