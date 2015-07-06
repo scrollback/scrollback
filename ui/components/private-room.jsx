@@ -13,18 +13,24 @@ module.exports = (core, config, store) => {
 
 		render() {
 			return (
-				<div {...this.props} className={this.props.className + " blankslate-area"}>
-					<p className="blankslate-area-message">
-						{store.get("nav", "room")} is private. Follow the room to access it's content
-					</p>
+				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
+					<div className="blankslate-area-inner">
+						<h2 className="blankslate-area-title">
+							Y u no follow the room?
+						</h2>
 
-					<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
+						<p className="blankslate-area-message">
+							This room is private. Follow the room to access it's content
+						</p>
 
-					<p className="blankslate-area-actions">
-						<FollowButton className="button">
-							Follow {store.get("nav", "room")}
-						</FollowButton>
-					</p>
+						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
+
+						<p className="blankslate-area-actions">
+							<FollowButton className="button">
+								Follow {store.get("nav", "room")}
+							</FollowButton>
+						</p>
+					</div>
 				</div>
 			);
 		}

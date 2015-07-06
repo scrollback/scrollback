@@ -19,7 +19,7 @@ module.exports = function(core, config, store) {
 			core.emit("setstate", { nav: { view: "sidebar-right" }});
 		},
 
-		showRequestStatus: function() {
+		showJoinStatus: function() {
 			let popover = document.createElement("div"),
 				message = document.createElement("div"),
 				content = document.createElement("div"),
@@ -44,14 +44,6 @@ module.exports = function(core, config, store) {
 			popover.appendChild(action);
 
 			$popover.popover({ origin: React.findDOMNode(this.refs.followButton) });
-		},
-
-		toggleFollowRoom: function() {
-			const rel = store.getRelation();
-
-			if (rel && rel.transitionRole === "follower" && rel.transitionType === "request") {
-				this.showRequestStatus();
-			}
 		},
 
 		toggleMinimize: function(e) {
@@ -138,7 +130,7 @@ module.exports = function(core, config, store) {
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
 
 					<FollowButton data-embed="none" data-role="guest registered follower" data-mode="room chat" data-state="online"
-						ref="followButton" className="appbar-icon appbar-icon-follow" onClick={this.onClickFollow} />
+						ref="followButton" className="appbar-icon appbar-icon-follow" />
 				</div>
 			);
 		},
@@ -169,12 +161,21 @@ module.exports = function(core, config, store) {
 			}
 		},
 
+		onJoin: function(action) {
+			if (/^(room|chat)$/.test(store.get("nav", "mode")) && store.get("nav", "room") === action.to &&
+				action.transitionType === "request" && action.transitionRole === "follower") {
+				this.showJoinStatus();
+			}
+		},
+
 		componentDidMount: function() {
 			core.on("statechange", this.onStateChange, 500);
+			core.on("join-dn", this.onJoin, 100);
 		},
 
 		componentWillUnmount: function() {
 			core.off("statechange", this.onStateChange);
+			core.off("join-dn", this.onJoin);
 		}
 	});
 

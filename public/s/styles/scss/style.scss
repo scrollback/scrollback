@@ -366,15 +366,20 @@ button {
 .blankslate-area {
     width: 100%;
     height: 100%;
-    padding: 1.5em 1em;
-    text-align: center;
+    display: table;
+    table-layout: fixed;
 
-    &-message {
-        font-size: 1.5em;
+    &-gray { background-color: darken($light-color, 5%); }
+
+    &-inner {
+        display: table-cell;
+        vertical-align: middle;
+        padding: 1.5em 1em;
+        text-align: center;
         color: fade-out($dark-color, .2);
     }
 
-    img {
+    &-image {
         display: block;
         margin: auto;
         max-height: 100%;
@@ -444,6 +449,7 @@ button {
     text-transform: uppercase;
     text-align: right;
     color: currentColor;
+    opacity: .7;
 
     &:focus, &:hover {
         background-color: rgba(0, 0, 0, .1);
