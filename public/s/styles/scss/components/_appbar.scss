@@ -140,7 +140,7 @@
             &-follow {
                 @include icon(star-empty);
 
-                &.role-follower { @include icon(star); }
+                &.is-follower { @include icon(star); }
 
                 &.requested {
                     position: relative;

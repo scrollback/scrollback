@@ -7,6 +7,7 @@ var appUtils = require("../../lib/app-utils.js");
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		Badge = require("./badge.jsx")(core, config, store),
+		FollowButton = require("./follow-button.jsx")(core, config, store),
 		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		RoomCard;
 
@@ -18,23 +19,6 @@ module.exports = function(core, config, store) {
 					dialog: "conf"
 				}
 			});
-		},
-
-		toggleFollowRoom: function() {
-			var room = this.props.roomId,
-				rel = store.getRelation(room);
-
-			if (rel && rel.role === "follower") {
-				core.emit("part-up",  {
-					to: room,
-					room: room
-				});
-			} else {
-				core.emit("join-up",  {
-					to: room,
-					room: room
-				});
-			}
 		},
 
 		goToRoom: function(e) {
@@ -102,9 +86,13 @@ module.exports = function(core, config, store) {
 					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
 					           key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);
 				} else {
-					icons.push(<a data-state="online" className={"card-header-icon card-header-icon-follow card-cover-icon" +
-					           ((rel && rel.role === "follower") ? " following" : "")}
-					           key={"card-follow-" + room} onClick={this.toggleFollowRoom}></a>);
+					icons.push(
+						<FollowButton
+							room={room}
+							data-state="online"
+							className="card-header-icon card-header-icon-follow card-cover-icon"
+							key={"card-follow-" + room}
+						/>);
 				}
 			}
 

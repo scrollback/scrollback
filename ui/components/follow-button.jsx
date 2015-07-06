@@ -35,7 +35,7 @@ module.exports = (core, config, store) => {
 		}
 
 		render() {
-			let className = (this.props.className || "") + " role-" + this.state.role + (this.state.requested ? " requested" : "");
+			let className = (this.props.className || "") + " is-" + this.state.role + (this.state.requested ? " requested" : "");
 
 			return (
 				<a {...this.props} onClick={this.onClick.bind(this)} className={className}>
