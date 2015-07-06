@@ -8,6 +8,7 @@ module.exports = function(core, config, store) {
 		  ScrollTo = require("./scroll-to.jsx")(core, config, store),
 		  Compose = require("./compose.jsx")(core, config, store),
 		  PrivateRoom = require("./private-room.jsx")(core, config, store),
+		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store),
 		  room = require("../../lib/room.js")(core, config, store);
 
 	let ChatArea = React.createClass({
@@ -27,6 +28,10 @@ module.exports = function(core, config, store) {
 
 			if (!this.state.read) {
 				return <PrivateRoom data-mode="chat" />;
+			}
+
+			if (store.getRoom() === "missing") {
+				return <NoSuchRoom data-mode="chat" />;
 			}
 
 			let chatAreaClassNames = "main-content-chat chat-area";

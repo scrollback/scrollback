@@ -4,31 +4,41 @@
 
 module.exports = (core, config, store) => {
 	const React = require("react"),
-		  FollowButton = require("./follow-button.jsx")(core, config, store);
+		  CreateRoomButton = require("./create-room-button.jsx")(core, config, store);
 
-	class PrivateRoom extends React.Component {
+	class NoSuchRoom extends React.Component {
 		constructor(props) {
 			super(props);
 		}
 
 		render() {
+			let room = store.get("nav", "room"),
+				identity, prefill;
+
+			if (room && room.indexOf(":") > -1) {
+				identity = room;
+				prefill = room.split(":")[1];
+			} else {
+				prefill = room;
+			}
+
 			return (
 				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
 					<div className="blankslate-area-inner">
 						<h2 className="blankslate-area-title">
-							Y u no follow the room?
+							This room does not exist!
 						</h2>
 
 						<p className="blankslate-area-message">
-							This room is private. Follow the room to access it's content.
+							There is no room named {store.get("nav", "room")} on Scrollback.
 						</p>
 
 						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
 
 						<p className="blankslate-area-actions">
-							<FollowButton className="button">
-								Follow {store.get("nav", "room")}
-							</FollowButton>
+							<CreateRoomButton className="button" prefill={prefill} identity={identity}>
+								Create room
+							</CreateRoomButton>
 						</p>
 					</div>
 				</div>
@@ -36,5 +46,5 @@ module.exports = (core, config, store) => {
 		}
 	}
 
-	return PrivateRoom;
+	return NoSuchRoom;
 };
