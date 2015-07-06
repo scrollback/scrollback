@@ -30,7 +30,7 @@ module.exports = (core, config, store) => {
 						</h2>
 
 						<p className="blankslate-area-message">
-							There is no room named {store.get("nav", "room")} on Scrollback.
+							May be create it?
 						</p>
 
 						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
