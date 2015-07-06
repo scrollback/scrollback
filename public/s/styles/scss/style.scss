@@ -366,10 +366,13 @@ button {
 .blankslate-area {
     width: 100%;
     height: 100%;
-    padding: 2em 1.4em;
-    font-size: 1.2em;
+    padding: 1.5em 1em;
     text-align: center;
-    opacity: .5;
+
+    &-message {
+        font-size: 1.5em;
+        color: fade-out($dark-color, .2);
+    }
 
     img {
         display: block;

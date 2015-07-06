@@ -7,6 +7,7 @@ module.exports = function(core, config, store) {
 		  ChatAreaMessages = require("./chat-area-messages.jsx")(core, config, store),
 		  ScrollTo = require("./scroll-to.jsx")(core, config, store),
 		  Compose = require("./compose.jsx")(core, config, store),
+		  PrivateRoom = require("./private-room.jsx")(core, config, store),
 		  room = require("../../lib/room.js")(core, config, store);
 
 	let ChatArea = React.createClass({
@@ -25,11 +26,7 @@ module.exports = function(core, config, store) {
 			}
 
 			if (!this.state.read) {
-				return (
-					<div className="chat-area-empty blankslate-area" data-mode="chat">
-						<img src="/s/assets/blankslate/private-room.png" />
-					</div>
-					);
+				return <PrivateRoom data-mode="chat" />;
 			}
 
 			let chatAreaClassNames = "main-content-chat chat-area";

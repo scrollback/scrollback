@@ -11,7 +11,8 @@ const showMenu = require("../utils/show-menu.js"),
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  Badge = require("./badge.jsx")(core, config, store),
-		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store);
+		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store),
+		  FollowButton = require("./follow-button.jsx")(core, config, store);
 
 	let AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
@@ -46,21 +47,10 @@ module.exports = function(core, config, store) {
 		},
 
 		toggleFollowRoom: function() {
-			const room = store.get("nav", "room"),
-				  rel = store.getRelation(room);
+			const rel = store.getRelation();
 
 			if (rel && rel.transitionRole === "follower" && rel.transitionType === "request") {
 				this.showRequestStatus();
-			} else if (rel && rel.role === "follower") {
-				core.emit("part-up",  { to: room });
-			} else {
-				core.emit("join-up",  { to: room }, () => {
-					const roomObj = store.getRoom(room);
-
-					if (roomObj && roomObj.guides && roomObj.guides.authorizer && roomObj.guides.authorizer.openRoom === false) {
-						this.showRequestStatus();
-					}
-				});
 			}
 		},
 
@@ -129,18 +119,6 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			const rel = store.getRelation();
-
-			let classNames = "appbar-icon appbar-icon-follow";
-
-			if (rel) {
-				if (rel.transitionRole === "follower" && rel.transitionType === "request") {
-					classNames += " requested";
-				} else if (rel.role === "follower") {
-					classNames += " following";
-				}
-			}
-
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar-bg custom-titlebar-fg" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
@@ -158,8 +136,9 @@ module.exports = function(core, config, store) {
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="guest registered follower" data-mode="room chat" data-state="online"
-						ref="followButton" className={classNames} onClick={this.toggleFollowRoom}></a>
+
+					<FollowButton data-embed="none" data-role="guest registered follower" data-mode="room chat" data-state="online"
+						ref="followButton" className="appbar-icon appbar-icon-follow" onClick={this.onClickFollow} />
 				</div>
 			);
 		},
@@ -175,11 +154,9 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes) {
 			var user = store.get("user"),
-				room = store.get("nav", "room"),
 				userObj;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
-			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 
 				userObj = store.getUser();
