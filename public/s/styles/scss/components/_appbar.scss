@@ -131,7 +131,11 @@
 
             &-search { @include icon(search); }
 
-            &-people { @include icon(people); }
+            &-people {
+                @include icon(people);
+
+                .invalid-room & { display: none; }
+            }
 
             &-alert { @include icon(alert); }
 
@@ -158,6 +162,8 @@
                         background-color: rgba(0, 0, 0, 0.6);
                     }
                 }
+
+                .invalid-room & { display: none; }
             }
         }
     }

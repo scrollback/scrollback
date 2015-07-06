@@ -128,6 +128,8 @@
             min-height: 12em;
             overflow: hidden;
 
+            .invalid-room.mode-room & { display: none; }
+
             &-image {
                 position: absolute;
                 top: 0;
