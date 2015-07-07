@@ -33,7 +33,7 @@ module.exports = (core, config, store) => {
 							May be create it?
 						</p>
 
-						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
+						<img className="blankslate-area-image" src="/s/assets/blankslate/still.png" />
 
 						<p className="blankslate-area-actions">
 							<CreateRoomButton className="button" prefill={prefill} identity={identity}>

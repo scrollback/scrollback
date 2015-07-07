@@ -33,7 +33,7 @@ module.exports = (core, config, store) => {
 							Follow the room to access it's content.
 						</p>
 
-						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
+						<img className="blankslate-area-image" src="/s/assets/blankslate/stop.png" />
 
 						<p className="blankslate-area-actions">
 							<FollowButton className={"button" + (this.state.requested ? " disabled" : "")}>
