@@ -31,6 +31,8 @@ module.exports = (core, config, store) => {
 				let pending = store.get("app", "queuedActions", "signup", e.action);
 
 				if (Array.isArray(pending)) {
+					pending = pending.slice(0);
+
 					pending.push(sent[key]);
 				} else {
 					pending = [ sent[key] ];
