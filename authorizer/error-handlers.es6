@@ -27,11 +27,20 @@ module.exports = (core, config, store) => {
 		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
 			// Action failed because user was not signed in
 			if (e.requiredRole === "registered" && (e.currentRole === "guest" || e.currentRole === "none")) {
+				// Get previous pending actions
+				let pending = store.get("app", "queuedActions", "signup", e.action);
+
+				if (Array.isArray(pending)) {
+					pending.push(sent[key]);
+				} else {
+					pending = [ sent[key] ];
+				}
+
 				core.emit("setstate", {
 					nav: { dialog: "signup" },
 					app: {
 						queuedActions: {
-							signup: { [e.action]: sent[key] }
+							signup: { [e.action]: pending }
 						}
 					}
 				});
@@ -49,18 +58,24 @@ module.exports = (core, config, store) => {
 
 			if (queuedActions && queuedActions.signup) {
 				for (let a in queuedActions.signup) {
+					if (!queuedActions.signup[a]) {
+						continue;
+					}
+
 					if (a === "join" && permissionWeights[userInfo.getRole()] >= permissionWeights.follower) {
 						// Avoid downgrading user role
 						continue;
 					}
 
-					let action = objUtils.clone(queuedActions.signup[a]);
+					for (let action of queuedActions.signup[a]) {
+						action = objUtils.clone(action);
 
-					if (action.from) {
-						action.from = store.get("user");
+						if (action.from) {
+							action.from = store.get("user");
+						}
+
+						core.emit(a + "-up", action);
 					}
-
-					core.emit(a + "-up", action);
 				}
 
 				core.emit("setstate", {
