@@ -9,6 +9,16 @@ module.exports = (core, config, store) => {
 	class PrivateRoom extends React.Component {
 		constructor(props) {
 			super(props);
+
+			this.state = this.buildState();
+		}
+
+		buildState() {
+			let rel = store.getRelation(this.props.room);
+
+			return {
+				requested: (rel && rel.transitionRole === "follower" && rel.transitionType === "request")
+			};
 		}
 
 		render() {
@@ -16,23 +26,41 @@ module.exports = (core, config, store) => {
 				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
 					<div className="blankslate-area-inner">
 						<h2 className="blankslate-area-title">
-							Y u no follow the room?
+							This room is private!
 						</h2>
 
 						<p className="blankslate-area-message">
-							This room is private. Follow the room to access it's content.
+							Follow the room to access it's content.
 						</p>
 
 						<img className="blankslate-area-image" src="/s/assets/blankslate/private-room.png" />
 
 						<p className="blankslate-area-actions">
-							<FollowButton className="button">
-								Follow {store.get("nav", "room")}
+							<FollowButton className={"button" + (this.state.requested ? " disabled" : "")}>
+								{this.state.requested ? "Request sent" : "Follow " + store.get("nav", "room")}
 							</FollowButton>
 						</p>
 					</div>
 				</div>
 			);
+		}
+
+		onStateChange(changes) {
+			let user = this.props.user || store.get("user");
+
+			if (changes.user || (changes.indexes && (changes.indexes.userRooms && changes.indexes.userRooms[user]))) {
+				this.setState(this.buildState);
+			}
+		}
+
+		componentDidMount() {
+			this.changeListener = this.onStateChange.bind(this);
+
+			core.on("statechange", this.changeListener, 500);
+		}
+
+		componentWillUnmount() {
+			core.off("statechange", this.changeListener);
 		}
 	}
 
