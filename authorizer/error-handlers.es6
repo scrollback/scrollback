@@ -2,8 +2,7 @@
 
 "use strict";
 
-const TempMap = require("../lib/temp-map.js"),
-	  objUtils = require("../lib/obj-utils.js"),
+const objUtils = require("../lib/obj-utils.js"),
 	  permissionWeights = require("../authorizer/permissionWeights.js");
 
 let actions = [ "text", "join" ];
@@ -11,41 +10,41 @@ let actions = [ "text", "join" ];
 module.exports = (core, config, store) => {
 	const userInfo = require("../lib/user.js")(core, config, store);
 
-	let sent = new TempMap(300000); // Expire sent actions after 5 minutes
+	let sent = {};
 
 	// Listen to actions
 	actions.forEach(action => {
-		core.on(action + "-up", o => sent.set(action + ":" + o.id, o), 100);
+		core.on(action + "-up", o => sent[action + ":" + o.id] = o, 100);
 
 		// Action completed successfully
-		core.on(action + "-dn", o => sent.delete(action + ":" + o.id), 100);
+		core.on(action + "-dn", o => delete sent[action + ":" + o.id], 100);
 	});
 
 	// Check if any error-dn happens for the actions
 	core.on("error-dn", e => {
 		let key = e.action + ":" + e.id;
 
-		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent.has(key)) {
+		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
 			// Action failed because user was not signed in
 			if (e.requiredRole === "registered" && (e.currentRole === "guest" || e.currentRole === "none")) {
 				core.emit("setstate", {
 					nav: { dialog: "signup" },
 					app: {
 						queuedActions: {
-							signup: { [e.action]: sent.get(key) }
+							signup: { [e.action]: sent[key] }
 						}
 					}
 				});
 			}
 		}
 
-		sent.delete(key);
+		delete sent[key];
 	}, 100);
 
 	// Handle queuedActions
-	core.on("init-dn", action => {
+	core.on("init-dn", init => {
 		// User signed in or signed up
-		if (!userInfo.isGuest(action.user.id)) {
+		if (init.user && !userInfo.isGuest(init.user.id)) {
 			let queuedActions = store.get("app", "queuedActions");
 
 			if (queuedActions && queuedActions.signup) {

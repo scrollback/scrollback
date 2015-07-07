@@ -22,7 +22,6 @@ require("../redis-storage/redis-test.js");
 require("../lib/url-test.js");
 require("../lib/validator-test.js");
 require("../lib/obj-utils-test.js");
-require("../lib/temp-map-test.js");
 require("../lib/generate-test.js");
 require("../validator/actionvalidator/actionvalidator-test.js");
 require("../featured/featured-test.js");
