@@ -16,8 +16,8 @@ This is a Bash 4.x only script that installs missing system and application depe
 The install script requires __root__ priviledges for these cases:
 
 1. If you are missing system depdencies (nodejs, npm, git, redis and postgres)
-1. If you have a Debian system, you are almost most certainly would be missing Postgres 9.4 and so we would need to add Postgres' source to your `/etc/apt/sources.list.d/` dir because Postgres 9.4 is a strict dependency, without which Scrollback won't be able to run.
-2. If your `/usr/local/bin/` and `/usr/local/lib/` dirs are not writable, we won't able to install nodejs modules that require to be on system paths (gulp and bower).
+2. If you have a Debian system, you are almost most certainly would be missing Postgres 9.4 and so we would need to add Postgres' source to your `/etc/apt/sources.list.d/` dir because Postgres 9.4 is a strict dependency, without which Scrollback won't be able to run.
+3. If your `/usr/local/bin/` and `/usr/local/lib/` dirs are not writable, we won't able to install nodejs modules that require to be on system paths (gulp and bower).
 
 ### Configure
 
