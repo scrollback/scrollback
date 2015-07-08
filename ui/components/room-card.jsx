@@ -104,7 +104,7 @@ module.exports = function(core, config, store) {
 						<h3 className="card-cover-title">{room}</h3>
 					</div>
 					<div className="card-content card-content-big">
-						<h4 className="card-content-title">Recent discussions</h4>
+						<h4 className="card-content-title">Recent</h4>
 						{threads}
 					</div>
 				</div>
