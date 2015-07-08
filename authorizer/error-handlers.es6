@@ -26,7 +26,7 @@ module.exports = (core, config, store) => {
 
 		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
 			// Action failed because user was not signed in
-			if (e.requiredRole === "registered" && (e.currentRole === "guest" || e.currentRole === "none")) {
+			if (e.requiredRole === "registered" && (e.currentRole === "guest")) {
 				// Get previous pending actions
 				let pending = store.get("app", "queuedActions", "signup", e.action);
 
