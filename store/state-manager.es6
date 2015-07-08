@@ -116,7 +116,10 @@ function updateNotes(baseNotes, notes) {
 	}
 
 	// Handle groups
-	groupObjs(map, 3, baseNotes);
+	groupObjs(map, {
+		max: 3,
+		base: baseNotes
+	});
 
 	// Short notes based on time in descending order
 	baseNotes.sort((a, b) => b.time - a.time);
