@@ -4,7 +4,6 @@
 
         position: absolute;
         left: 0;
-        bottom: 100%;
         margin: 0;
         width: 100%;
         max-height: calc(100vh - 12em);
@@ -13,6 +12,10 @@
         background-color: $light-color;
         border-top: 1px solid rgba(0, 0, 0, .2);
         z-index: 600;
+
+        &.position-top { bottom: 100%; }
+
+        &.position-bottom { top: 100%; }
 
         &-item {
             @extend %clearfix;

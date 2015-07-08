@@ -188,6 +188,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					{typeof this.state.query === "string" ?
 						<Suggestions
+							type="user" position="top"
 							max={5} smart={true}
 							query={this.state.query}
 							onDismiss={this.onDismissSuggestions}
