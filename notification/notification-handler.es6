@@ -3,23 +3,23 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const user = require("../lib/user.js")(core, config, store);
+	const userInfo = require("../lib/user.js")(core, config, store);
 
 	// Load cached notifications if guest
 	function loadCache() {
 		let userId = store.get("user");
 
-		if (user.isGuest(userId)) {
-			let notes;
+		if (userInfo.isGuest(userId)) {
+			let stored;
 
 			try {
-				notes = JSON.parse(window.localStorage.getItem("notes"))[userId];
+				stored = JSON.parse(window.localStorage.getItem("notes"));
 			} catch (e) {
-				console.log("Failed to load cached notes", e);
+				console.log("Failed to parse cached notes", e);
 			}
 
-			if (Array.isArray(notes)) {
-				core.emit("setstate", { notes });
+			if (stored && Array.isArray(stored.notes)) {
+				core.emit("setstate", { notes: stored.notes });
 			}
 		}
 	}
@@ -28,7 +28,7 @@ module.exports = (core, config, store) => {
 
 		loadCache();
 
-		if (!user.isGuest(store.get("user"))) {
+		if (!userInfo.isGuest(store.get("user"))) {
 			// Delete cached notes if not guest
 			try {
 				window.localStorage.removeItem("notes");
@@ -58,7 +58,7 @@ module.exports = (core, config, store) => {
 	core.on("statechange", changes => {
 		let userId = store.get("user");
 
-		if (user.isGuest(userId) && changes.notes) {
+		if (userInfo.isGuest(userId) && changes.notes) {
 			let notes = { [userId]: store.get("notes") };
 
 			try {

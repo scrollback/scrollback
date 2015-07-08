@@ -28,7 +28,7 @@ module.exports = (core, config, store) => {
 							   className="button wide block twitter">Twitter</a>
 						</p>
 						<h4>Link to share</h4>
-						<input className="wide block" type="text" value={this.state.url} onClick={this.selectLink} readonly="true" />
+						<input className="wide block" type="text" value={this.state.url} onClick={this.selectLink} readOnly />
 					</div>
 				</Dialog>
 			);
