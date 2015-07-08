@@ -135,7 +135,11 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._room)}</strong>: <strong>${this._format(data.text)}</strong>`;
+				if (data.title) {
+					html += ` in <strong>${this._format(data.title)}</strong>`;
+				}
+
+				html += ` : <strong>${this._format(data.text)}</strong> - <strong>${this._format(this._room)}</strong>`;
 
 				break;
 			case "reply":
@@ -145,7 +149,11 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._room)}</strong>`;
+				if (data.title) {
+					html += ` in <strong>${this._format(data.title)}</strong>`;
+				}
+
+				html += ` - <strong>${this._format(this._room)}</strong>`;
 
 				break;
 			case "thread":
@@ -155,7 +163,7 @@ module.exports = (core, config, store) => {
 					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
 				}
 
-				html += ` in <strong>${this._format(this._room)}</strong>`;
+				html += ` - <strong>${this._format(this._room)}</strong>`;
 
 				break;
 			default:
@@ -165,7 +173,7 @@ module.exports = (core, config, store) => {
 					html = `New notification`;
 				}
 
-				html += ` in <strong>${this._format(data.title || this._room)}</strong>`;
+				html += ` - <strong>${this._format(this._room)}</strong>`;
 			}
 
 			return html;
