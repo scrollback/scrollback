@@ -7,6 +7,8 @@ module.exports = function(core, config, store) {
 		  ThreadCard = require("./thread-card.jsx")(core, config, store),
 		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
 		  GridView = require("./grid-view.jsx")(core, config, store),
+		  PrivateRoom = require("./private-room.jsx")(core, config, store),
+		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store),
 		  room = require("../../lib/room.js")(core, config, store),
 		  rangeOps = require("../../lib/range-ops.js");
 
@@ -130,11 +132,11 @@ module.exports = function(core, config, store) {
 			}
 
 			if (!this.state.read) {
-				return (
-					<div className="blankslate-area">
-						<img src="/s/assets/blankslate/private-room.png" />
-					</div>
-					);
+				return <PrivateRoom data-mode="room" />;
+			}
+
+			if (store.getRoom() === "missing") {
+				return <NoSuchRoom data-mode="room" />;
 			}
 
 			threadItems = this.state.items;

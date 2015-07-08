@@ -60,6 +60,10 @@ module.exports = (core, config, store) => {
 			}
 		}
 
+		if (store.getRoom() === "missing") {
+			newClassList.push("invalid-room");
+		}
+
 		if (store.get("app", "focusedInput")) {
 			newClassList.push("input-focused");
 		}

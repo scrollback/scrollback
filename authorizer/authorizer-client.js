@@ -83,7 +83,7 @@ module.exports = function(core) {
 	}, 500);
 
 	core.on('error-dn', function(error) {
-		var errorActions = [ "admit", "expel", "edit", "join", "part", "room", "user", "text" ];
+		var errorActions = [ "admit", "expel", "edit", "part", "room", "user" ];
 
 		if (error.message === "ERR_NOT_ALLOWED" && errorActions.indexOf(error.action) > -1) {
 			handleAuthErrors(error);

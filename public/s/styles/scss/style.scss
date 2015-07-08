@@ -318,6 +318,12 @@ button {
         padding: .5em 0;
         margin-bottom: $bar-height * 2.5;
 
+        .invalid-room & {
+            width: 100%;
+            height: 100%;
+            margin-bottom: 0;
+        }
+
         @media #{$screenxxx} { padding: 2em; }
     }
 
@@ -366,12 +372,20 @@ button {
 .blankslate-area {
     width: 100%;
     height: 100%;
-    padding: 2em 1.4em;
-    font-size: 1.2em;
-    text-align: center;
-    opacity: .5;
+    display: table;
+    table-layout: fixed;
+    padding: 1.5em;
 
-    img {
+    &-gray { background-color: darken($light-color, 5%); }
+
+    &-inner {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        color: fade-out($dark-color, .2);
+    }
+
+    &-image {
         display: block;
         margin: auto;
         max-height: 100%;
@@ -441,6 +455,7 @@ button {
     text-transform: uppercase;
     text-align: right;
     color: currentColor;
+    opacity: .7;
 
     &:focus, &:hover {
         background-color: rgba(0, 0, 0, .1);
@@ -467,4 +482,8 @@ button {
             .color-#{$i - 1} & { background-color: darken(nth($palette, $i), 16%); }
         }
     }
+}
+
+.invalid-room {
+    .fab-thread { display: none; }
 }

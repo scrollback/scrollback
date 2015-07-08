@@ -11,14 +11,15 @@ const showMenu = require("../utils/show-menu.js"),
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  Badge = require("./badge.jsx")(core, config, store),
-		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store);
+		  NotificationCenter = require("../../notification/notification-center.jsx")(core, config, store),
+		  FollowButton = require("./follow-button.jsx")(core, config, store);
 
 	let AppbarPrimary = React.createClass({
 		toggleSidebarRight: function() {
 			core.emit("setstate", { nav: { view: "sidebar-right" }});
 		},
 
-		showRequestStatus: function() {
+		showJoinStatus: function() {
 			let popover = document.createElement("div"),
 				message = document.createElement("div"),
 				content = document.createElement("div"),
@@ -43,25 +44,6 @@ module.exports = function(core, config, store) {
 			popover.appendChild(action);
 
 			$popover.popover({ origin: React.findDOMNode(this.refs.followButton) });
-		},
-
-		toggleFollowRoom: function() {
-			const room = store.get("nav", "room"),
-				  rel = store.getRelation(room);
-
-			if (rel && rel.transitionRole === "follower" && rel.transitionType === "request") {
-				this.showRequestStatus();
-			} else if (rel && rel.role === "follower") {
-				core.emit("part-up",  { to: room });
-			} else {
-				core.emit("join-up",  { to: room }, () => {
-					const roomObj = store.getRoom(room);
-
-					if (roomObj && roomObj.guides && roomObj.guides.authorizer && roomObj.guides.authorizer.openRoom === false) {
-						this.showRequestStatus();
-					}
-				});
-			}
 		},
 
 		toggleMinimize: function(e) {
@@ -105,7 +87,13 @@ module.exports = function(core, config, store) {
 				origin: e.currentTarget,
 				buttons: {},
 				items: {}
-			}, (err, menu) => showMenu("user-menu", menu));
+			}, (err, menu) => {
+				if (err) {
+					return;
+				}
+
+				showMenu("user-menu", menu);
+			});
 		},
 
 		goBack: function() {
@@ -123,18 +111,6 @@ module.exports = function(core, config, store) {
 		},
 
 		render: function() {
-			const rel = store.getRelation();
-
-			let classNames = "appbar-icon appbar-icon-follow";
-
-			if (rel) {
-				if (rel.transitionRole === "follower" && rel.transitionType === "request") {
-					classNames += " requested";
-				} else if (rel.role === "follower") {
-					classNames += " following";
-				}
-			}
-
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar-bg custom-titlebar-fg" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
@@ -152,8 +128,9 @@ module.exports = function(core, config, store) {
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
-					<a data-embed="none" data-role="registered follower" data-mode="room chat" data-state="online"
-						ref="followButton" className={classNames} onClick={this.toggleFollowRoom}></a>
+
+					<FollowButton data-embed="none" data-role="guest registered follower" data-mode="room chat" data-state="online"
+						ref="followButton" className="appbar-icon appbar-icon-follow" />
 				</div>
 			);
 		},
@@ -169,11 +146,9 @@ module.exports = function(core, config, store) {
 
 		onStateChange: function(changes) {
 			var user = store.get("user"),
-				room = store.get("nav", "room"),
 				userObj;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
-			    (changes.indexes && changes.indexes.userRooms && changes.indexes.userRooms[room]) ||
 			    (changes.entities && changes.entities[user])) {
 
 				userObj = store.getUser();
@@ -186,12 +161,21 @@ module.exports = function(core, config, store) {
 			}
 		},
 
+		onJoin: function(action) {
+			if (/^(room|chat)$/.test(store.get("nav", "mode")) && store.get("nav", "room") === action.to &&
+				action.transitionType === "request" && action.transitionRole === "follower") {
+				this.showJoinStatus();
+			}
+		},
+
 		componentDidMount: function() {
 			core.on("statechange", this.onStateChange, 500);
+			core.on("join-dn", this.onJoin, 100);
 		},
 
 		componentWillUnmount: function() {
 			core.off("statechange", this.onStateChange);
+			core.off("join-dn", this.onJoin);
 		}
 	});
 
