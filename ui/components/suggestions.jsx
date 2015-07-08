@@ -67,7 +67,7 @@ module.exports = function(core, config, store) {
 								avatar = getAvatar(entity.picture, 48);
 							} else {
 								name = entity.id;
-								avatar = getRoomPics(name).picture;
+								avatar = entity.picture || getRoomPics(name).picture;
 							}
 
 							return (
