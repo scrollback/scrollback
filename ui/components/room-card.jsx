@@ -6,7 +6,7 @@ var appUtils = require("../../lib/app-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		Badge = require("./badge.jsx")(core, config, store),
+/*		Badge = require("./badge.jsx")(core, config, store),*/
 		FollowButton = require("./follow-button.jsx")(core, config, store),
 		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		RoomCard;
@@ -99,10 +99,7 @@ module.exports = function(core, config, store) {
 			return (
 				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
-						<div className="card-cover-header card-header">
-							<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
-							{icons}
-						</div>
+
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.picture  + ")" }}></div>
 						<h3 className="card-cover-title">{room}</h3>
 					</div>
