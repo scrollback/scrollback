@@ -181,7 +181,7 @@ module.exports = function(core, config, store) {
 
 			this.setState({
 				suggestions: suggestions,
-				focus: suggestions.length - 1
+				focus: this.props.position === "top" ? suggestions.length - 1 : 0
 			});
 
 			// If we don't have data for some entities, query the server
@@ -275,7 +275,7 @@ module.exports = function(core, config, store) {
 
 					this.setState({
 						suggestions: entities,
-						focus: entities.length - 1
+						focus: this.props.position === "top" ? entities.length - 1 : 0
 					});
 				});
 			}
@@ -300,14 +300,6 @@ module.exports = function(core, config, store) {
 				this.setState({ focus: -1 });
 			} else if (nextState.focus > total) {
 				this.setState({ focus: total });
-			}
-		}
-
-		componentDidUpdate() {
-			let active = React.findDOMNode(this).querySelector(".focus");
-
-			if (active) {
-				active.scrollIntoView(true);
 			}
 		}
 

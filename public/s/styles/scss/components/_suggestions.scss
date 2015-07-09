@@ -10,8 +10,11 @@
         overflow: auto;
         list-style: none;
         background-color: $light-color;
-        border-top: 1px solid rgba(0, 0, 0, .2);
+        color: $dark-color;
+        border-radius: $roundness;
         z-index: 600;
+
+        &:empty { display: none; }
 
         &.position-top { bottom: 100%; }
 
