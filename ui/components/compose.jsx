@@ -18,17 +18,25 @@ module.exports = function(core, config, store) {
 		sendMessage: function() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
-				text = composeBox.val();
+				text = composeBox.val().trim(),
+				tags;
 
 			if (!text) {
 				return;
+			}
+
+			// Check if text is a /me action
+			if (/^\/me\s+.*/.test(text)) {
+				tags = [ "action" ];
+				text = text.substr(3).trim();
 			}
 
 			core.emit("text-up", {
 				to: nav.room,
 				from: store.get("user"),
 				text: text,
-				thread: nav.thread
+				thread: nav.thread,
+				tags: tags
 			});
 
 			core.emit("setstate", {
