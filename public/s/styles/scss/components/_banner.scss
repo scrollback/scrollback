@@ -199,9 +199,10 @@
             margin: 1em auto;
             max-width: 100%;
 
-            [type=text] { width: 80%; }
-
-            [type=submit] { width: 20%; }
+            [type=text] {
+                width: 100%;
+                padding: .75em 1em;
+            }
         }
     }
 }

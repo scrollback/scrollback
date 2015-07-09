@@ -13,6 +13,19 @@ module.exports = (core, config, store) => {
 			this.state = { query: null };
 		}
 
+		goToRoom(room) {
+			if (room) {
+				core.emit("setstate", {
+					nav: {
+						room: room,
+						mode: "room",
+						view: null,
+						thread: null
+					}
+				});
+			}
+		}
+
 		onSubmit(e) {
 			var entry = React.findDOMNode(this.refs.entry),
 				room;
@@ -25,16 +38,7 @@ module.exports = (core, config, store) => {
 				return;
 			}
 
-			if (room) {
-				core.emit("setstate", {
-					nav: {
-						room: room,
-						mode: "room",
-						view: null,
-						thread: null
-					}
-				});
-			}
+			this.goToRoom(room);
 
 		}
 
@@ -43,11 +47,9 @@ module.exports = (core, config, store) => {
 		}
 
 		onSelectSuggestions(room) {
-			var entry = React.findDOMNode(this.refs.entry);
-
-			entry.value = room.id;
-
 			this.setState({ query: null });
+
+			this.goToRoom(room.id);
 		}
 
 		onInput(e) {
@@ -69,7 +71,6 @@ module.exports = (core, config, store) => {
 						<input
 							className="linked" type="text" placeholder="Type a room name" ref="entry"
 							autofocus onInput={this.onInput.bind(this)} />
-						<input className="linked" type="submit" value="Go" />
 					</form>
 				</div>
 			);
