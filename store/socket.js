@@ -154,6 +154,7 @@ module.exports = function(c, conf, s) {
 
 	connect();
 	function sendQuery(query, next) {
+		console.log("sending query", query);
 		query.session = session;
 		client.send(JSON.stringify(query));
 		pendingQueries[query.id] = next;
@@ -163,7 +164,11 @@ module.exports = function(c, conf, s) {
 
 	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
-			var key = pending.generateKey(e);
+			console.log("Making query:", q);
+			q.type = e;
+			var key = pending.generateKey(q);
+			console.log("checking key: ", key, currentQueries);
+			
 			if(currentQueries[key]) {
 				currentQueries[key].push({
 					query:q,
@@ -174,6 +179,7 @@ module.exports = function(c, conf, s) {
 			}
 			
 			function finishQuery(err) {
+				console.log("Callback fired");
 				currentQueries[key].forEach(function(item){
 					item.query.results = q.results;
 					item.next(err);
