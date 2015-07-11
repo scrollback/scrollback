@@ -5,6 +5,7 @@ module.exports = function(self) {
 		
 		if(!arguments[0] && arguments.length!== 1) throw new Error("INVALID ARGUMENTS: invalid argument count");
 		if(typeof arguments[0] !== "string") throw new Error("INVALID ARGUMENTS: room name must be string. instead found it to be" + typeof arguments[0]);
+		
 		/*if (arguments.length >= 3) {
 			throw new Error("INVALID ARGUMENTS: Too many arguments");
 		} else if (arguments.length == 2) {

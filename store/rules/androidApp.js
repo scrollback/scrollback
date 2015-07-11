@@ -27,10 +27,10 @@ module.exports = function(core) {
 		}
 	}
 
-	core.on("boot", function(state) {
+	core.on("boot", function() {
 		if (window.Android) {
-			state.context.env = "android";
-
+			
+			// Deprecation notice: This is replaced with postMessage(ready).
 			if (typeof window.Android.onFinishedLoading === "function") {
 				window.Android.onFinishedLoading();
 			}

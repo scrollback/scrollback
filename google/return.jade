@@ -3,21 +3,13 @@ html
 		title facebook callback
 	body
 		script
-			var params = location.search.substring(1).split("&"), l,i, split, code;
-			for(i=0,l=params.length;i<l;i++) {
-				split = params[i].split("=");
-				if(split[0]=="code") {
-					code = split[1];
-					break;
-				}
-			}
-			var auth = {
-				command:"signin",
-				auth: {
-					google: {
-						code: code
-					}
-				}
-			};
-			window.opener.postMessage(auth,"*");
+			var code = (location.search.substring(1).split("&").filter(function (seg) {
+				return seg.indexOf("code=") === 0;
+			})[0] || "").substr(5);
+			
+			window.opener.postMessage({
+				type: "auth",
+				provider: "google",
+				code: code
+			},"*");
 			window.close();

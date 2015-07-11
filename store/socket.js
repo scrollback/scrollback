@@ -120,7 +120,12 @@ function sendQuery(query, next) {
 	pendingQueries[query.id].query = query;
 }
 
+window.addEventListener("offline", disconnected);
+window.addEventListener("online", connect);
+
 function connect() {
+	if(!navigator.onLine) return disconnected();
+	
 	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
 	client.onclose = disconnected;
 

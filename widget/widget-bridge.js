@@ -1,52 +1,65 @@
-/* jslint browser: true, indent: 4, regexp: true  */
+var core, store, origin, bootNext, domain, jws, path, token, isEmbed = false, suggestedNick;
 
-var core, config, store, parentHost, parentWindow,
-	embedPath, embedProtocol, verificationStatus,
-	verificationTimeout, verified, bootNext, domain, jws, path, token, isEmbed = false, suggestedNick;
+
+function postMessage(data) {
+	var origin = store.get("context", "origin");
+	
+	if(!origin.verified || window.parent === window) return;
+	
+	if(window.Android) {
+		window.Android.postMessage(JSON.stringify(data));
+	else {
+		window.parent.postMessage(data, orign.protocol + origin.host);
+	}
+}
 
 module.exports = function(c, conf, s) {
 	core = c;
-	config = conf;
 	store = s;
-
-	if (window.parent !== window) {
-		parentWindow = window.parent;
-		isEmbed = true;
-	} else {
-		domain = location.hostname;
-		path = location.path;
-		verified = true;
-		verificationStatus = true;
-	}
-	window.onmessage = onMessage;
+	
+	window.addEventListener("message", onMessage);
+	
 	core.on("boot", function(changes, next) {
-		var embed;
-		if (changes.context && changes.context.env === "embed") {
-			embed = changes.context.embed;
-			domain = parentHost = embed.origin.host;
-			embedPath = embed.origin.path;
-			jws = embed.jws;
-			embedProtocol = embed.origin.protocol;
-			suggestedNick = embed.nick;
-			sendDomainChallenge();
-			bootNext = next;
+		if (changes.context && changes.context.env === "embed" && changes.context.origin) {
+			verifyDomain(origin, function () {
+				changes.context.origin.verified = true;
+				next();
+			});
 		} else {
+			changes.context = changes.context || {};
+			if (window.parent === window) {
+				changes.context.origin = {
+					host: location.hostname,
+					path: location.path,
+					protocol: location.protocol,
+					verified: true
+				};
+			} else if(window.Android) {
+				changes.context.env = "android";
+				changes.context.origin = {
+					host: window.Android.getPackageName(),
+					path: "",
+					protocol: "app:",
+					verified: true
+				};
+			} else {
+				// Iframe without embed?
+				changes.context.env = "embed";
+				changes.context.origin = {
+					verified: false
+				};
+			}
 			next();
 		}
 	}, 800);
 
 
 	core.on("statechange", function(changes, next) {
-		if(changes.app && changes.app.bootComplete && store.get("context", "embed")) {
-			parentWindow.postMessage(JSON.stringify({
-				type: "ready"
-			}), parentHost);
+		if(changes.app && changes.app.bootComplete) {
+			postMessage({ type: "ready" });
 		}
 		if(changes.context && changes.context.embed && typeof changes.context.embed.minimize === "boolean") {
-			parentWindow.postMessage(JSON.stringify({
-				type: "activity",
-				minimize: changes.context.embed.minimize
-			}), parentHost);
+			postMessage({ type: "minimize", value: changes.context.embed.minimize });
 		}
 		next();
 	}, 500);
@@ -124,21 +137,86 @@ function parseResponse(data) {
 	return data;
 }
 
+function verifyMessage(event) {
+	
+}
+
 function onMessage(e) {
-	var data = e.data, action;
+	var data = e.data, room;
+	
+	if(!verifyMessage(e)) { return; }
 	data = parseResponse(data);
-	action = data.data;
 
 	switch (data.type) {
-	case "domain-response":
-		verifyDomainResponse(data);
-		break;
-	case "following":
-			if (action.follow) {
-				core.emit("join-up", {to: action.room, role: "follower"});
-			} else {
-				core.emit("part-up", {to: action.room});
+		case "domain-response":
+			verifyDomainResponse(data);
+			break;
+		case "auth":
+			sendInit(data);
+		case "follow":
+			if (!(room = data.room || store.getRoom)) return;
+			if (data.value === true) {
+				core.emit("join-up", { to: room, role: "follower"});
+			} else if(data.value === false) {
+				core.emit("part-up", { to: room });
 			}
 		break;
 	}
 }
+
+
+
+	window.addEventListener("message", function(event) {
+		var data = event.data,
+			action;
+
+		if (event.origin !== "https://" + location.host) {
+			return;
+		}
+
+		if (typeof data === 'string') {
+			try {
+				action = JSON.parse(data);
+			} catch (e) {
+				return;
+			}
+		} else {
+			action = data;
+		}
+
+		if (!data.command || data.command !== "signin") {
+			return;
+		}
+
+		sendInit(action);
+	});
+
+	function sendInit(action) {
+		if (initSent) {
+			return;
+		}
+
+		delete action.command;
+
+		initSent = true;
+
+		if (initSent) {
+			core.emit('init-up', action, function() {
+				initSent = false;
+			});
+		} else {
+			initSent = false;
+		}
+	}
+
+	window.addEventListener("login", function(e) {
+		var auth = {}, data = e.detail;
+
+		auth[data.provider] = {
+			token: data.token
+		};
+
+		core.emit("init-up", {
+			auth: auth
+		});
+	});

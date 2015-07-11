@@ -179,16 +179,10 @@ function scrollback(opts, callback) {
 	self.embed = constructEmbed(opts);
 	self.membership = [];
 
-	self.emit = function(type, data, cb) {
-		var post = {};
-
-		post.id = guid();
-		post.type = type;
-		post.data = data;
-
-		this.iframe.contentWindow.postMessage(JSON.stringify(post), host);
-
-		self.pendingCallbacks[post.id] = cb;
+	self.emit = function(data, cb) {
+		data.id = guid();
+		this.iframe.contentWindow.postMessage(data, host);
+		self.pendingCallbacks[data.id] = cb;
 	};
 
 	/*widget.setState = require("./set-state.js")(self);
