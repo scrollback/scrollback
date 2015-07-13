@@ -15,7 +15,6 @@ module.exports = function(core, config, store) {
 	require("./rules/dismissCta.js")(core, config, store);
 	require("./rules/dialogSignup.js")(core, config, store);
 	require("./rules/dialogAndroid.js")(core, config, store);
-	require("./rules/dialogNonExistentRoom.js")(core, config, store);
 	require("./rules/resetDialogState.js")(core, config, store);
 	require("./rules/resetFocus.js")(core, config, store);
 	require("./rules/selectedTexts.js")(core, config, store);
@@ -23,4 +22,5 @@ module.exports = function(core, config, store) {
 	require("./rules/androidApp.js")(core, config, store);
 	require("./rules/embedNavigate.js")(core, config, store);
 	require("./rules/dissmissNoteOnNav.es6")(core, config, store);
+	require("./rules/clearQueuedActions.es6")(core, config, store);
 };

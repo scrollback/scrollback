@@ -3,6 +3,7 @@
 "use strict";
 
 const objUtils = require("./../lib/obj-utils.js"),
+	  groupObjs = require("./../lib/group-objects.js"),
 	  rangeOps = require("../lib/range-ops.js");
 
 let allChanges = {},
@@ -115,39 +116,10 @@ function updateNotes(baseNotes, notes) {
 	}
 
 	// Handle groups
-	let grouped = {},
-		max = 3;
-
-	for (let item in map) {
-		let note = map[item],
-			group = note.group + "_" + note.noteType;
-
-		if (grouped[group]) {
-			grouped[group].push(note);
-		} else {
-			grouped[group] = [ note ];
-		}
-	}
-
-	for (let g in grouped) {
-		let group = grouped[g];
-
-		if (group.length > max) {
-			let note = group[group.length - 1];
-
-			if (Object.isFrozen(note)) {
-				note = objUtils.clone(note);
-			}
-
-			note.count = group.length;
-
-			baseNotes.push(objUtils.deepFreeze(note));
-		} else {
-			for (let note of group) {
-				baseNotes.push(objUtils.deepFreeze(note));
-			}
-		}
-	}
+	groupObjs(map, {
+		max: 3,
+		base: baseNotes
+	}, o => o.group + ":" + o.noteType);
 
 	// Short notes based on time in descending order
 	baseNotes.sort((a, b) => b.time - a.time);
@@ -220,20 +192,20 @@ function buildIndex(obj, changes) {
 		objUtils.deepFreeze(obj.indexes.roomUsers);
 	}
 
-	function buildRangeIndex(obj, prop) {
-		var index = obj.indexes[prop + "ById"] = {};
+	function buildRangeIndex(o, prop) {
+		var index = o.indexes[prop + "ById"] = {};
 
-		for (var room in obj[prop]) {
-			if (obj[prop][room].forEach) {
-				obj[prop][room].forEach(function(range) {
-					range.items.forEach(function(item) {
-						index[item.id] = item;
-					});
-				});
+		function addToIndex(range) {
+			range.items.forEach(item => index[item.id] = item);
+		}
+
+		for (var room in o[prop]) {
+			if (o[prop][room].forEach) {
+				o[prop][room].forEach(addToIndex);
 			}
 		}
 
-		objUtils.deepFreeze(obj.indexes[prop + "ById"]);
+		objUtils.deepFreeze(o.indexes[prop + "ById"]);
 	}
 
 	if (obj.threads && changes.threads) { buildRangeIndex(obj, 'threads'); }

@@ -3,7 +3,7 @@
 (function() {
 	"use strict";
 
-	let config = require(".././client-config-defaults.js"),
+	let config = require("../client-config-defaults.js"),
 		core, store;
 
 	// ES6 polyfills
@@ -59,6 +59,7 @@
 	require("../threader/threader-client.js")(...args);
 	require("../twitter/twitter-client.js")(...args);
 	require("../customization/customization-client.es6")(...args);
+	require("../authorizer/error-handlers.es6")(...args);
 
 	// User menu providers
 	require("../browserid-auth/browserid-auth-client.js")(...args);

@@ -95,7 +95,7 @@
                 }
             }
 
-            &-form {
+            &-entry {
                 input { border: 0; }
             }
 
@@ -127,6 +127,8 @@
             color: $light-color;
             min-height: 12em;
             overflow: hidden;
+
+            .invalid-room.mode-room & { display: none; }
 
             &-image {
                 position: absolute;
@@ -184,18 +186,23 @@
             }
         }
 
-        &-form-container {
+        &-entry-container {
             width: 100%;
-            background-color: $light-color;
+            background-color: darken($light-color, 1%);
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1em;
         }
 
-        &-form {
-            width: 36em;
+        &-entry {
+            position: relative;
+            width: 18em;
+            margin: 1em auto;
             max-width: 100%;
-            margin: auto;
-            padding: 1em;
-            text-align: center;
+
+            [type=text] {
+                width: 100%;
+                padding: .75em 1em;
+            }
         }
     }
 }

@@ -75,7 +75,7 @@
                 &-follow {
                     @include icon(star-empty);
 
-                    &.following { @include icon(star); }
+                    &.is-follower { @include icon(star); }
                 }
             }
 

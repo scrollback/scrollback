@@ -23,7 +23,17 @@ module.exports = function(core, config, store) {
 				all = all.filter(this.props.filter);
 			}
 
-			return all.length;
+			let count = 0;
+
+			for (let n of all) {
+				if (n.count) {
+					count += n.count;
+				} else {
+					count++;
+				}
+			}
+
+			return count;
 		},
 
 		render: function() {

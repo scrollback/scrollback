@@ -14,19 +14,11 @@ module.exports = function(core, config, store) {
 		RoomList = require("./room-list.jsx")(core, config, store),
 		ThreadList = require("./thread-list.jsx")(core, config, store),
 		Footer = require("./footer.jsx")(core, config, store),
+		CreateRoomButton = require("./create-room-button.jsx")(core, config, store),
 		Dialogs = require("../dialogs/all.jsx")(core, config, store),
 		Client;
 
 	Client = React.createClass({
-		createRoom: function() {
-			core.emit("setstate", {
-				nav: {
-					dialog: "createroom",
-					dialogState: null
-				}
-			});
-		},
-
 		createThread: function() {
 			core.emit("setstate", {
 				nav: { dialog: "createthread" }
@@ -69,10 +61,11 @@ module.exports = function(core, config, store) {
 
 							<ChatArea />
 
-							<button className="fab" data-state="online" data-mode="home" onClick={this.createRoom}>
+							<CreateRoomButton className="fab fab-room" data-state="online" data-mode="home">
 								<span className="fab-label">Create room</span>
-							</button>
-							<button className="fab" data-state="online" data-mode="room" data-permission="write" onClick={this.createThread}>
+							</CreateRoomButton>
+
+							<button className="fab fab-thread" data-state="online" data-mode="room" data-permission="write" onClick={this.createThread}>
 								<span className="fab-label">Start discussion</span>
 							</button>
 						</main>

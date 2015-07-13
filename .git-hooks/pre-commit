@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Check if any .js file changed
-git diff --cached --name-only --diff-filter=ACM | grep '.js$' >/dev/null 2>&1
+git diff --cached --name-only --diff-filter=ACM | grep '.\(js\|jsx\|es6\)$' >/dev/null 2>&1
 
 if [[ $? == 0 ]]; then
 	[[ `command -v gulp` ]] && gulp lint
