@@ -1,4 +1,4 @@
-/* jshint browser:true */
+/* eslint-env browser */
 /* global SockJS*/
 
 "use strict";
@@ -14,6 +14,119 @@ var backOff = 1,
 	queue = [],
 	initDone = false,
 	actionQueue = [];
+
+function sendAction(action) {
+	action.session = session;
+	action.from = store.get("user");
+	client.send(JSON.stringify(action));
+}
+
+function sendQuery(query, next) {
+	query.session = session;
+	client.send(JSON.stringify(query));
+	pendingQueries[query.id] = next;
+	pendingQueries[query.id].query = query;
+}
+
+function disconnected() {
+	console.log("Disconnected:", backOff);
+
+	if (backOff === 1) {
+		core.emit("setstate", {
+			app: {
+				connectionStatus: "offline"
+			}
+		}, function(err) {
+			if (err) console.log(err.message);
+		});
+	}
+	if (backOff < 180) {
+		backOff *= 2;
+	} else {
+		backOff = 180;
+	}
+
+	setTimeout(connect, backOff * 1000);
+}
+
+function connect() {
+	if(!navigator.onLine) return disconnected();
+	
+	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
+	client.onclose = disconnected;
+
+	client.onopen = function() {
+		backOff = 1;
+		sendInit();
+	};
+
+	client.onmessage = receiveMessage;
+}
+
+window.addEventListener("offline", disconnected);
+window.addEventListener("online", connect);
+
+function receiveMessage(event) {
+	var data, note, userId;
+
+	try {
+		data = JSON.parse(event.data);
+	} catch (err) {
+		core.emit("error", err);
+	}
+
+	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error"].indexOf(data.type) !== -1) {
+		if (pendingQueries[data.id]) {
+			if (data.results) { pendingQueries[data.id].query.results = data.results; }
+			if (data.response) { pendingQueries[data.id].query.response = data.response; }
+
+			if (data.type === "error") {
+				pendingQueries[data.id](data);
+			} else {
+				pendingQueries[data.id]();
+			}
+
+			delete pendingQueries[data.id];
+		}
+	}
+
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
+		//data is an action
+		if (pendingActions[data.id]) {
+			pendingActions[data.id](data);
+			delete pendingActions[data.id];
+		}
+
+		// Generate notifications from the action
+		userId = store.get("user");
+
+		if (data.note && data.from !== userId) {
+			for (var n in data.note) {
+				if (data.note[n]) {
+					note = data.note[n];
+
+					if (typeof note.score !== "number") {
+						note.score = 0;
+					}
+
+					note.to = userId;
+					note.ref = data.id;
+					note.time = data.time;
+					note.noteType = n;
+
+					core.emit("note-dn", note);
+				}
+			}
+		}
+
+//		console.log(data.type+ "-dn", data);
+		core.emit(data.type + "-dn", data);
+	}
+}
+
+function sendInit() {
+	core.emit("init-up", { id: generate.uid(), resource: generate.uid() });
+}
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -106,122 +219,3 @@ module.exports = function(c, conf, s) {
 		next();
 	}, 1000);
 };
-
-function sendAction(action) {
-	action.session = session;
-	action.from = store.get("user");
-	client.send(JSON.stringify(action));
-}
-
-function sendQuery(query, next) {
-	query.session = session;
-	client.send(JSON.stringify(query));
-	pendingQueries[query.id] = next;
-	pendingQueries[query.id].query = query;
-}
-
-window.addEventListener("offline", disconnected);
-window.addEventListener("online", connect);
-
-function connect() {
-	if(!navigator.onLine) return disconnected();
-	
-	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
-	client.onclose = disconnected;
-
-	client.onopen = function() {
-		backOff = 1;
-		sendInit();
-	};
-
-	client.onmessage = receiveMessage;
-}
-
-function disconnected() {
-	console.log("Disconnected:", backOff);
-
-	if (backOff === 1) {
-		core.emit("setstate", {
-			app: {
-				connectionStatus: "offline"
-			}
-		}, function(err) {
-			if (err) console.log(err.message);
-		});
-	}
-	if (backOff < 180) {
-		backOff *= 2;
-	} else {
-		backOff = 180;
-	}
-
-	setTimeout(connect, backOff * 1000);
-}
-
-function receiveMessage(event) {
-	var data, note, userId;
-
-	try {
-		data = JSON.parse(event.data);
-	} catch (err) {
-		core.emit("error", err);
-	}
-
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error"].indexOf(data.type) !== -1) {
-		if (pendingQueries[data.id]) {
-			if (data.results) { pendingQueries[data.id].query.results = data.results; }
-			if (data.response) { pendingQueries[data.id].query.response = data.response; }
-
-			if (data.type === "error") {
-				pendingQueries[data.id](data);
-			} else {
-				pendingQueries[data.id]();
-			}
-
-			delete pendingQueries[data.id];
-		}
-	}
-
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
-		//data is an action
-		if (pendingActions[data.id]) {
-			pendingActions[data.id](data);
-			delete pendingActions[data.id];
-		}
-
-		// Generate notifications from the action
-		userId = store.get("user");
-
-		if (data.note && data.from !== userId) {
-			for (var n in data.note) {
-				if (data.note[n]) {
-					note = data.note[n];
-
-					if (typeof note.score !== "number") {
-						note.score = 0;
-					}
-
-					note.to = userId;
-					note.ref = data.id;
-					note.time = data.time;
-					note.noteType = n;
-
-					core.emit("note-dn", note);
-				}
-			}
-		}
-
-//		console.log(data.type+ "-dn", data);
-		core.emit(data.type + "-dn", data);
-	}
-}
-
-function sendInit() {
-	var init = {};
-	init.id = generate.uid();
-	init.resource = generate.uid();
-	init.type = "init";
-	init.to = "me";
-	init.origin = {};
-	core.emit("init-up", init, function() {});
-}
