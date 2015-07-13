@@ -5,7 +5,7 @@
 
 var generate = require("../lib/generate.js"),
 	appUtils = require("../lib/app-utils.js"),
-	pending = require("../lib/pending.js"),
+	pending = require("../lib/pendingQueries.js"),
 	config, core, client, store;
 
 var backOff = 1,
