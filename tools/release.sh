@@ -9,5 +9,6 @@ fi
 read -p "Release branch $branch created. Deploy to master (y/N)? " confirm
 if [[ $confirm = "y" ]]; then
    ./deploy.sh $branch
+else echo 'canceled'
 fi
 #echo new branch is: $branch
