@@ -65,7 +65,7 @@ module.exports = function(core, config, store) {
 								<span className="fab-label">Create room</span>
 							</CreateRoomButton>
 
-							<button className="fab fab-thread" data-state="online" data-mode="room" data-permission="write" onClick={this.createThread}>
+							<button className="fab fab-thread" data-state="online" data-mode="room" onClick={this.createThread}>
 								<span className="fab-label">Start discussion</span>
 							</button>
 						</main>
