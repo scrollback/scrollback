@@ -34,7 +34,7 @@ module.exports = function (action) {
 
 		for(user in action.notify) {
 			for(noteType in  action.notify[user]) {
-				if (occupants[user] && action.notify[user][noteType].score < 30) continue;
+				if (occupants[user] && action.notify[user][noteType] < 30) continue;
 
 				insertObjects.push({
 					user: user,
