@@ -33,7 +33,7 @@
 */
 
 var core, store, enabled = false,
-	user = require("../lib/user.js"),
+	user = require("../lib/user.js")(),
 	generate = require("../lib/generate.js"),
 	objUtils = require("../lib/obj-utils.js");
 
