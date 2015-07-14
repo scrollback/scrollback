@@ -85,7 +85,7 @@ function sendInit(message) {
 
 	if (message.nick) init.suggestedNick = message.nick;
 
-	core.emit('init-up', auth);
+	core.emit('init-up', init);
 }
 
 function verifyParentOrigin(origin, callback) {
