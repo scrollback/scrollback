@@ -39,24 +39,22 @@ var core, store, enabled = false,
 
 function postMessage(data) {
 	var origin = store.get("context", "origin");
-	
-	if(!origin.verified || window.parent === window) return;
-	
-	if(window.Android) {
+
+	if (window.Android && typeof window.Android.postMessage === "function") {
 		window.Android.postMessage(JSON.stringify(data));
-	} else {
+	} else if (origin.verified && window.parent !== window) {
 		window.parent.postMessage(data, origin.protocol + origin.host);
 	}
 }
 
 function parseMessage(data) {
-	if(typeof data === "string") {
+	if (typeof data === "string") {
 		try {
 			data = JSON.parse(data);
 		} catch (e) {
 			data = {};
 		}
-	} else if(typeof data !== "object" || data === null) {
+	} else if (typeof data !== "object" || data === null) {
 		data = {};
 	}
 
@@ -65,7 +63,7 @@ function parseMessage(data) {
 
 function verifyMessageOrigin(event) {
 	var origin = store.get("context", "origin");
-	
+
 	return (
 		event.origin === location.origin ||
 		origin.verified && event.origin === origin.protocol + "//" + origin.host
@@ -77,8 +75,10 @@ function sendInit(message) {
 
 	if (message.provider) {
 		auth = {};
+
 		if (message.token) auth.token = message.token;
 		if (message.code) auth.code = message.code;
+
 		init.auth = {};
 		init.auth[message.provider] = auth;
 	}
@@ -90,12 +90,12 @@ function sendInit(message) {
 
 function verifyParentOrigin(origin, callback) {
 	var token = generate.uid();
-	
+
 	window.parent.postMessage({
 		type: "domain-challenge",
 		token: token
 	}, origin.protocol + "//" + origin.host);
-	
+
 	function handleResponse(event) {
 		if (parseMessage(event.data).token === token) {
 			done(true);
@@ -103,8 +103,10 @@ function verifyParentOrigin(origin, callback) {
 	}
 
 	function done(verified) {
-		if(callback) callback(!!verified);
+		if (callback) callback(!!verified);
+
 		callback = null; // prevents callback being invoked a second time.
+
 		window.removeEventListener("message", handleResponse);
 	}
 
@@ -114,8 +116,8 @@ function verifyParentOrigin(origin, callback) {
 
 function onMessage(e) {
 	var data, room;
-	
-	if(!verifyMessageOrigin(e)) { return; }
+
+	if (!verifyMessageOrigin(e)) { return; }
 	data = parseMessage(e.data);
 
 	switch (data.type) {
@@ -124,9 +126,10 @@ function onMessage(e) {
 			break;
 		case "follow":
 			if (!(room = data.room || store.get("nav", "room"))) return;
+
 			if (data.role === "follower") {
 				core.emit("join-up", { to: room, role: "follower"});
-			} else if(data.role === "none") {
+			} else if (data.role === "none") {
 				core.emit("part-up", { to: room });
 			}
 			break;
@@ -139,29 +142,33 @@ function onMessage(e) {
 
 function onBoot(changes, next) {
 	if (changes.context && changes.context.env === "embed" && changes.context.origin) {
-		verifyParentOrigin(changes.context.origin, function (verified) {
+		verifyParentOrigin(changes.context.origin, function(verified) {
 			changes.context.origin.verified = verified;
-			if(verified) enabled = true;
+
+			if (verified) enabled = true;
+
 			next();
 		});
 	} else {
 		changes.context = changes.context || {};
-		if (window.parent === window) {
+
+		if (window.Android) {
+			changes.context.env = "android";
+			changes.context.origin = {
+				host: typeof window.Android.getPackageName === "function" ? window.Android.getPackageName() : "",
+				path: typeof window.Android.getWidgetName === "function" ? window.Android.getWidgetName() : "",
+				protocol: "android:",
+				verified: true
+			};
+
+			enabled = true;
+		} else if (window.parent === window) {
 			changes.context.origin = {
 				host: location.hostname,
 				path: location.path,
 				protocol: location.protocol,
 				verified: true
 			};
-		} else if(window.Android) {
-			changes.context.env = "android";
-			changes.context.origin = {
-				host: window.Android.getPackageName(),
-				path: window.Android.getWidgetContext(),
-				protocol: "android:",
-				verified: true
-			};
-			enabled = true;
 		} else {
 			// Iframe without embed?
 			changes.context.env = "embed";
@@ -169,28 +176,32 @@ function onBoot(changes, next) {
 				verified: false
 			};
 		}
+
 		next();
 	}
 }
 
 function onStateChange(changes, next) {
 	var message;
-	
-	if(!enabled) return next();
+
+	if (!enabled) return next();
 
 	if (changes.app && changes.app.bootComplete) {
 		postMessage({ type: "ready" });
 	}
+
 	if (changes.context && changes.context.embed && typeof changes.context.embed.minimize === "boolean") {
 		postMessage({ type: "minimize", minimize: changes.context.embed.minimize });
 	}
+
 	if (changes.user) {
 		postMessage({ type: "auth", status: user.isGuest(changes.user) ? "guest" : "registered" });
 	}
+
 	if (changes.nav) {
 		message = objUtils.clone(store.get("nav"));
 		message.type = "nav";
-		postMessage(message); 
+		postMessage(message);
 	}
 	next();
 }
@@ -200,16 +211,17 @@ function onInitUp(init) {
 		origin = store.get("context", "origin"),
 		nick = store.get("context", "nick");
 
-	if(!init.origin && origin) { init.origin = origin; }
-	if(!init.auth && jws) { init.auth = { jws: jws }; }
-	if(!init.suggestedNick && nick) { init.suggestedNick = nick; }
+	if (!init.origin && origin) { init.origin = origin; }
+	if (!init.auth && jws) { init.auth = { jws: jws }; }
+	if (!init.suggestedNick && nick) { init.suggestedNick = nick; }
 }
 
 module.exports = function(c, conf, s) {
 	core = c;
 	store = s;
-	
+
 	window.addEventListener("message", onMessage);
+
 	core.on("boot", onBoot, 800);
 	core.on("statechange", onStateChange, 500);
 	core.on("init-up", onInitUp, 999);
