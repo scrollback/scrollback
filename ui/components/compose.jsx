@@ -36,6 +36,8 @@ module.exports = function(core, config, store) {
 			});
 
 			composeBox.val("");
+
+			this.setEmpty();
 		},
 
 		setEmpty: function() {
