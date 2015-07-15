@@ -1,7 +1,6 @@
 "use strict";
 
-var pg = require("../../lib/pg.js"),
-user = require("../../lib/user.js");
+var pg = require("../../lib/pg.js");
 
 /*
 	Warning: This does not lock the table or do proper upserts.
@@ -13,7 +12,7 @@ module.exports = function (action) {
 	var entity = action[action.type],
 		updates, inserts;
 	
-	if (!action.old || user.isGuest(action.old.id)) {
+	if (!action.old || /^guest-/.test(action.old.id)) {
 		// Create a new entity;
 		
 		inserts = [];
