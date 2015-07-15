@@ -18,9 +18,10 @@ function userHandler(action, callback) {
 			action.user.description = action.user.description || "";
 			callback();
 		}
-		if (meErr || !response || !response.results || !response.results.length) {
+		if (meErr || !response || !response.results || !response.results.length || !response.results[0]) {
 			return callback(new Error("USER_NOT_INITED"));
 		} else {
+			action.old = response.results[0];
 			action.from = response.results[0].id;
 			core.emit("getUsers", {
 				ref: action.user.id,
@@ -44,10 +45,8 @@ function userHandler(action, callback) {
 					if (rooms && rooms.results && rooms.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
 					}
-					action.old = {};
 					done();
 				});
-
 			});
 		}
 	});

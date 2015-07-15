@@ -41,7 +41,7 @@ function loginUser(token, action, callback) {
 				if (err || !data) return callback(err);
 
 				if (!data.results.length) {
-					action.old = {};
+					action.old = action.user;
 					action.user = {};
 					action.user.id = action.old.id;
 					action.user.identities = ["mailto:" + user.email];
