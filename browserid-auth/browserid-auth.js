@@ -44,7 +44,7 @@ function browserAuth(action, callback) {
 			session: "internal-browserid-auth"
 		}, function(err, user) {
 			if (!user.results || user.results.length === 0) {
-				action.old = {};
+				action.old = action.user;
 				action.user = {};
 				action.user.id = action.old.id;
 				action.user.identities = [identity];
