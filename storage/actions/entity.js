@@ -12,7 +12,7 @@ module.exports = function (action) {
 	var entity = action[action.type],
 		updates, inserts;
 	
-	if (!action.old || /^guest-/.test(action.old.id)) {
+	if (!action.old || !action.old.id || /^guest-/.test(action.old.id)) {
 		// Create a new entity;
 		
 		inserts = [];
