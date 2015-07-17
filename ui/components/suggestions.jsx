@@ -5,6 +5,7 @@
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  userInfo = require("../../lib/user.js")(core, config, store),
+		  getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		  getAvatar = require("../../lib/get-avatar.js");
 
 	class Suggestions extends React.Component {
@@ -57,18 +58,29 @@ module.exports = function(core, config, store) {
 
 		render() {
 			return (
-				<ul className="suggestions-list">
-						{this.state.suggestions.map((user, i) => {
+				<ul className={"suggestions-list position-" + this.props.position}>
+						{this.state.suggestions.map((entity, i) => {
+							let name, avatar;
+
+							if (this.props.type === "user") {
+								name = userInfo.getNick(entity.id);
+								avatar = getAvatar(entity.picture, 48);
+							} else {
+								name = entity.id;
+								avatar = entity.picture || getRoomPics(name).picture;
+							}
+
 							return (
 								<li
 									ref={"suggestion-list-" + i} data-index={i}
 									className={"suggestions-list-item" + (this.state.focus === i ? " focus" : "")}
-									key={"suggestions-list-" + user.id}
+									key={"suggestions-list-" + name}
 									onClick={this.onClick.bind(this)}>
-									<img className="suggestions-list-item-avatar" src={getAvatar(user.picture, 48)} />
-									<span className="suggestions-list-item-nick">{userInfo.getNick(user.id)}</span>
-									{userInfo.isGuest(user.id) ?
-										<span className="suggestions-list-item-info">{user.id}</span>
+									<img className="suggestions-list-item-avatar" src={avatar} />
+									<span className="suggestions-list-item-nick">{name}</span>
+
+									{this.props.type === "user" && userInfo.isGuest(entity.id) ?
+										<span className="suggestions-list-item-info">guest</span>
 									: null}
 								</li>
 								);
@@ -77,10 +89,10 @@ module.exports = function(core, config, store) {
 			);
 		}
 
-		getMatchingUsers() {
+		getMatchingUsers(query) {
 			let all = {};
 
-			if (this.props.smart) {
+			if (this.props.smart && /^(chat|room)$/.test(store.get("nav", "mode"))) {
 				let texts = store.getTexts(store.get("nav", "room"), store.get("nav", "thread"), store.get("nav", "textRange", "time"), -30);
 
 				for (let text of texts) {
@@ -128,11 +140,7 @@ module.exports = function(core, config, store) {
 				users.push(all[user]);
 			}
 
-			return users;
-		}
-
-		setSuggestions(query) {
-			let suggestions = this.getMatchingUsers().filter(user => user.id && userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
+			return users.filter(user => user.id && userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
 				if (typeof a.time === "number" && typeof b.time === "number") {
 					if (a.time < b.time) {
 						return -1;
@@ -150,48 +158,83 @@ module.exports = function(core, config, store) {
 						return 0;
 					}
 				}
-			}).slice(this.props.max * -1);
+			});
+		}
+
+		getMatchingRooms(query) {
+			return store.getRelatedRooms().filter(room => room.id && room.id.indexOf(query) === 0);
+		}
+
+		getMatchingEntities(query) {
+			switch (this.props.type) {
+			case "user":
+				return this.getMatchingUsers(query);
+			case "room":
+				return this.getMatchingRooms(query);
+			default:
+				return [];
+			}
+		}
+
+		setSuggestions(query) {
+			let suggestions = this.getMatchingEntities(query).slice(this.props.max * -1);
 
 			this.setState({
 				suggestions: suggestions,
-				focus: suggestions.length - 1
+				focus: this.props.position === "top" ? suggestions.length - 1 : 0
 			});
 
-			// If we don't have data for some users, query the server
+			// If we don't have data for some entities, query the server
 			if (suggestions.length) {
-				let ids = suggestions.filter(user => typeof user.picture === "undefined").map(user => user.id);
+				let ids = suggestions.filter(entity => !!entity.picture).map(entity => entity.id);
 
 				if (ids.length) {
-					core.emit("getUsers", { ref: ids }, (err, res) => {
+					core.emit("getEntities", { ref: ids }, (err, res) => {
 						if (err) {
 							return;
 						}
 
 						let results = res.results,
-							users = this.state.suggestions;
+							entities = this.state.suggestions;
 
-						if (!(users && users.length && results && results.length)) {
+						if (!(entities && entities.length && results && results.length)) {
 							return;
 						}
 
-						users = users.slice(0);
+						entities = entities.slice(0);
 
-						for (let u of results) {
-							for (let user of users) {
-								if (user.id === u.id && typeof user.picture === "undefined") {
-									user.picture === u.picture;
+						for (let e of results) {
+							for (let entity of entities) {
+								if (entity.id === e.id && typeof entity.picture === "undefined") {
+									entity.picture === e.picture;
 								}
 							}
 						}
 
-						this.setState({ suggestions: users });
+						this.setState({ suggestions: entities });
 					});
 				}
 			}
 
 			// If suggestions are less than the max, query the server
+			let queryName;
+
+			switch (this.props.type) {
+			case "user":
+				queryName = "getUsers";
+				break;
+			case "room":
+				queryName = "getRooms";
+				break;
+			default:
+				queryName = "getEntities";
+			}
+
 			if (suggestions.length < this.props.max && query.length > 0) {
-				core.emit("getUsers", { ref: query + "*", limit: this.props.max - suggestions.length }, (err, res) => {
+				core.emit(queryName, {
+					ref: query + "*",
+					limit: this.props.max - suggestions.length
+				}, (err, res) => {
 					if (err) {
 						return;
 					}
@@ -202,37 +245,37 @@ module.exports = function(core, config, store) {
 					}
 
 					let results = res.results,
-						users = this.state.suggestions;
+						entities = this.state.suggestions;
 
-					if (!(users && results && results.length)) {
+					if (!(entities && results && results.length)) {
 						return;
 					}
 
-					let has = { [store.get("user")]: true }; // Ignore current user
+					let has = this.props.type === "room" ? {} : { [store.get("user")]: true }; // Ignore current user
 
-					for (let u of results) {
-						for (let user of users) {
-							if (user.id === u.id && !has[u.id]) {
-								has[u.id] = true;
+					for (let e of results) {
+						for (let entity of entities) {
+							if (entity.id === e.id && !has[e.id]) {
+								has[e.id] = true;
 
 								break;
 							}
 						}
 					}
 
-					users = users.slice(0);
+					entities = entities.slice(0);
 
-					for (let u of results) {
-						if (has[u.id]) {
+					for (let e of results) {
+						if (has[e.id]) {
 							continue;
 						}
 
-						users.unshift(u);
+						entities.unshift(e);
 					}
 
 					this.setState({
-						suggestions: users,
-						focus: users.length - 1
+						suggestions: entities,
+						focus: this.props.position === "top" ? entities.length - 1 : 0
 					});
 				});
 			}
@@ -260,14 +303,6 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		componentDidUpdate() {
-			let active = React.findDOMNode(this).querySelector(".focus");
-
-			if (active) {
-				active.scrollIntoView(true);
-			}
-		}
-
 		componentWillUnmount() {
 			if (this.keyDownListener) {
 				document.removeEventListener("keydown", this.keyDownListener);
@@ -277,7 +312,8 @@ module.exports = function(core, config, store) {
 
 	Suggestions.defaultProps = {
 		max: 5,
-		smart: false
+		smart: false,
+		position: "bottom"
 	};
 
 	return Suggestions;

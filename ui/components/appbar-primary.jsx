@@ -163,7 +163,7 @@ module.exports = function(core, config, store) {
 
 		onJoin: function(action) {
 			if (/^(room|chat)$/.test(store.get("nav", "mode")) && store.get("nav", "room") === action.to &&
-				action.transitionType === "request" && action.transitionRole === "follower") {
+				action.transitionType === "request" && action.transitionRole === "follower" && action.user && action.user.id === store.get("user")) {
 				this.showJoinStatus();
 			}
 		},

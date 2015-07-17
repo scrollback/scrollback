@@ -73,6 +73,11 @@
             width: 100%;
             box-shadow: 0 -3px 6px rgba(0,0,0,0.16);
 
+            .suggestions-list {
+                border-top: 1px solid rgba(0, 0, 0, .2);
+                border-radius: 0;
+            }
+
             .textarea-container { border: 0; }
 
             &-inner {

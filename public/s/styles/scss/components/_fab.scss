@@ -16,13 +16,10 @@
         display: block;
         height: $fab-size / 1.5;
         width: $fab-size / 1.5;
-        padding: .25em .75em;
+        padding: 0.5em 0.8em;
         border: 0;
         border-radius: 50%;
         color: rgba(0,0,0,0.5);
-
-        // FIXME: background is leaked outside in Android < 4.4
-        background: none;
 
         &:after {
             @extend %transition;

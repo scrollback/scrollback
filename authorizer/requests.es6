@@ -11,7 +11,7 @@ module.exports = (core, config, store) => {
 		let container = document.createElement("div"),
 			users;
 
-		users = store.getRelatedUsers(tabs.room.id).filter(user => user.transitionType === "request");
+		users = store.getRelatedUsers(tabs.room.id).filter(user => user && user.transitionType === "request");
 
 		if (users.length) {
 			container.classList.add("request-item");

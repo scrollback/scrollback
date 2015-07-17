@@ -1,18 +1,19 @@
 "use strict";
-var cd = __dirname;
+//var cd = __dirname;
+//
+//cd = cd.substring(0, cd.length - 4);
+//
+//require("blanket")({
+//	pattern: cd,
+//	"data-cover-never": function(str) {
+//		if (str.indexOf("node_modules") !== -1 || str.indexOf("client-config") !== -1 || str.indexOf("server-config") !== -1) {
+//			return true;
+//		}
+//
+//		return (str.lastIndexOf("test") === str.length - 4);
+//	}
+//});
 
-cd = cd.substring(0, cd.length - 4);
-
-require("blanket")({
-	pattern: cd,
-	"data-cover-never": function(str) {
-		if (str.indexOf("node_modules") !== -1 || str.indexOf("client-config") !== -1 || str.indexOf("server-config") !== -1) {
-			return true;
-		}
-
-		return (str.lastIndexOf("test") === str.length - 4);
-	}
-});
 
 //require("../irc/irc-test.js");
 require("../authorizer/tests/authorizer-test.js");
