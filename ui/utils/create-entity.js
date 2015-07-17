@@ -54,8 +54,8 @@ module.exports = function(core, config, store) {
 					if (identities) {
 						context = store.get("context");
 
-						if (context.embed) {
-							newRoom.guides.allowedDomains = [context.embed.origin.host];
+						if (context.embed && context.origin && context.origin.verified) {
+							newRoom.guides.allowedDomains = [context.origin.host];
 						}
 					}
 

@@ -11,7 +11,7 @@
 	domain_response   : token (same as challenge)
 	signin (obsolete) : auth: { facebook/google : { code/token } }
 	auth              : provider, code/token, nick
-	follow            : room, role
+	follow            : role
 	nav               : mode, view, room, thread, dialog, dialogState, textRange, threadRange
 
 
@@ -32,7 +32,7 @@
 
 */
 
-var core, store, enabled = false,
+var core, store,
 	user = require("../lib/user.js"),
 	generate = require("../lib/generate.js"),
 	objUtils = require("../lib/obj-utils.js");
@@ -103,9 +103,9 @@ function verifyParentOrigin(origin, callback) {
 	}
 
 	function done(verified) {
+		window.removeEventListener("message", handleResponse);
 		if(callback) callback(!!verified);
 		callback = null; // prevents callback being invoked a second time.
-		window.removeEventListener("message", handleResponse);
 	}
 
 	window.addEventListener("message", handleResponse);
@@ -113,7 +113,7 @@ function verifyParentOrigin(origin, callback) {
 }
 
 function onMessage(e) {
-	var data, room;
+	var data;
 	
 	if(!verifyMessageOrigin(e)) { return; }
 	data = parseMessage(e.data);
@@ -123,11 +123,10 @@ function onMessage(e) {
 			sendInit(data);
 			break;
 		case "follow":
-			if (!(room = data.room || store.get("nav", "room"))) return;
-			if (data.role === "follower") {
-				core.emit("join-up", { to: room, role: "follower"});
-			} else if(data.role === "none") {
-				core.emit("part-up", { to: room });
+			if(data.role === "none") {
+				core.emit("part-up", { to: store.get("nav", "room") });
+			} else {
+				core.emit("join-up", { to: store.get("nav", "room"), role: data.role });
 			}
 			break;
 		case "nav":
@@ -141,7 +140,6 @@ function onBoot(changes, next) {
 	if (changes.context && changes.context.env === "embed" && changes.context.origin) {
 		verifyParentOrigin(changes.context.origin, function (verified) {
 			changes.context.origin.verified = verified;
-			if(verified) enabled = true;
 			next();
 		});
 	} else {
@@ -161,7 +159,6 @@ function onBoot(changes, next) {
 				protocol: "android:",
 				verified: true
 			};
-			enabled = true;
 		} else {
 			// Iframe without embed?
 			changes.context.env = "embed";
@@ -173,11 +170,9 @@ function onBoot(changes, next) {
 	}
 }
 
-function onStateChange(changes, next) {
+function onStateChange(changes) {
 	var message;
 	
-	if(!enabled) return next();
-
 	if (changes.app && changes.app.bootComplete) {
 		postMessage({ type: "ready" });
 	}
@@ -192,13 +187,19 @@ function onStateChange(changes, next) {
 		message.type = "nav";
 		postMessage(message); 
 	}
-	next();
+	if ( store.get("nav", "mode") !== "room" && store.get("nav", "mode") !== "chat" && (
+		changes.nav && changes.nav.room ||
+		changes.user ||
+		changes.entities && changes.entities[store.get("nav", "room") + "_" + store.get("user")]
+	) ) {
+		postMessage({ type: "follow", role: store.getRelation().role || "none" });
+	}
 }
 
 function onInitUp(init) {
-	var jws = store.get("context", "jws"),
+	var jws = store.get("context", "init", "jws"),
 		origin = store.get("context", "origin"),
-		nick = store.get("context", "nick");
+		nick = store.get("context", "init", "nick");
 
 	if(!init.origin && origin) { init.origin = origin; }
 	if(!init.auth && jws) { init.auth = { jws: jws }; }

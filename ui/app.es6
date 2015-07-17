@@ -73,7 +73,7 @@ require("./modules/dialogs-listeners.js")(...args);
 require("./modules/thread-dialog.js")(...args);
 require("./modules/settings-room.js")(...args);
 require("./modules/settings-user.js")(...args);
-require("./modules/signin-handler.js")(...args);
+//require("./modules/signin-handler.js")(...args);
 require("./modules/view-manager.es6")(...args);
 require("./modules/swipes.js")(...args);
 
