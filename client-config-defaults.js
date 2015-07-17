@@ -6,6 +6,7 @@ var defaults = {
 		host: "localhost:7528",
 		apiHost: "localhost:7528"
 	},
+	pushNotification:{},
 	localStorage: {
 		version: 1.0
 	},
