@@ -13,27 +13,20 @@ var request = require('request');
 	}
 */
 
-module.exports = function(userRegMapping, payload, core, config) {
-	var registrationIds = _.pluck(userRegMapping, 'registrationId'), notifyArr, index,result;
-
-	var headers = {
-		'Content-Type': 'application/json',
-		'Authorization': config.key
-	};
-
-	function removeDevice(userRegMap) {
+module.exports = function(notesForApps, payload, core, config) {
+	
+	function removeDevice(userObj, packageName) {
 		var uuidToRemove, devices, uuid;
 		log.i("REMOVE device called with", userRegMap);
 		if (!(
-			'registrationId ' in userRegMap &&
-			'user' in userRegMap &&
-			'params' in userRegMap.user &&
-			'pushNotifications' in userRegMap.user.params &&
-			'devices' in userRegMap.user.params.pushNotifications
+			'params' in userObj &&
+			'pushNotifications' in userObj.params &&
+			'devices' in userObj.params.pushNotifications
 		)) return;
-
+		
+		devices = userObj.params.pushNotifications.devices;
 		for(uuid in devices) {
-			if(devices[uuid].redId === userRegMap.registrationId) {
+			if(devices[uuid].packageName === packageName) {
 				uuidToRemove = uuid;
 				break;
 			}
@@ -54,43 +47,43 @@ module.exports = function(userRegMapping, payload, core, config) {
 		}
 	}
 
-	function postData(notifArr) {
-		/* make a HTTP Post request to the GCM servers */
-		var pushData = {
-			data: payload,
-			registration_ids: notifArr
+	Object.keys(config.keys).forEach(function(packageName) {
+		var headers = {
+			'Content-Type': 'application/json',
+			'Authorization': keys[packageName]
 		};
-		console.log(JSON.stringify(pushData));
-		console.log("headers",headers);
-		request.post({
-			uri: 'https://android.googleapis.com/gcm/send',
-			headers: headers,
-			body: JSON.stringify(pushData)
-		}, function(err, res, body) {
-			try {
-				log.i("GCM request made, body", body);
-				body = JSON.parse(body);
-				if (body.failure) {
-					for (index = 0; index < body.results.length; index++) {
-						result = body.results[index];
-						if (result.hasOwnProperty('error') &&
-							(result.error === "InvalidRegistration" ||
-							 result.error === "NotRegistered") || result.error === "MismatchSenderId") {
-							removeDevice(userRegMapping[index]);
+
+		var userRegMapping = notesForApps[packageName];
+		var registrationIds = Object.keys(userRegMapping), registrationIdsSubSet;
+
+		while (registrationIds.length > 0) {
+			registrationIdsSubSet = registrationIds.splice(0, 1000);
+			request.post({
+				uri: 'https://android.googleapis.com/gcm/send',
+				headers: headers,
+				body: JSON.stringify({
+					data:payload,
+					registration_ids: registrationIdsSubSet
+				})
+			}, function(err, res, body) {
+				try {
+					log.i("GCM request made, body", body);
+					body = JSON.parse(body);
+					if (body.failure) {
+						for (index = 0; index < body.results.length; index++) {
+							result = body.results[index];
+							if (result.hasOwnProperty('error') &&
+								(result.error === "InvalidRegistration" ||
+								 result.error === "NotRegistered") || result.error === "MismatchSenderId") {
+								removeDevice(userRegMapping[index], packageName);
+							}
 						}
 					}
+				} catch (e) {
+					log.i("Error parsing GCM response");
 				}
-			} catch (e) {
-				log.i("Error parsing GCM response");
-			}
-			console.log("Response status code", res.statusCode);
-		});
-	}
-
-	log.d(registrationIds);
-	while (registrationIds.length > 0) {
-		notifyArr = registrationIds.splice(0, 1000);
-		log.d(notifyArr, payload);
-		postData(notifyArr);
-	}
+				console.log("Response status code", res.statusCode);
+			});
+		}		
+	});
 };
