@@ -46,7 +46,6 @@ require("../authorizer/authorizer-client.js")(...args);
 require("../authorizer/requests.es6")(...args);
 // require("../authorizer/invites.es6")(...args);
 require("../email/email-client.js")(...args);
-require("../embed/embed-config-client.js")(...args);
 require("../http/notifications-client.js")(...args);
 require("../http/room-general-settings-client.js")(...args);
 require("../http/seo-client.js")(...args);

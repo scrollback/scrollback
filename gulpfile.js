@@ -201,7 +201,7 @@ gulp.task("bundle", function() {
 
 // Generate embed widget script
 gulp.task("embed-legacy", function() {
-	return bundle("embed/embed-parent.js", {
+	return bundle("widget/sdk/v1.js", {
 		transform: [ babelify, optional ]
 	}, function(bundled) {
 		bundled
@@ -214,7 +214,7 @@ gulp.task("embed-legacy", function() {
 });
 
 gulp.task("embed-apis", function() {
-	return bundle("widget/index.js", {
+	return bundle("widget/sdk/v2.js", {
 		transform: [ babelify, optional ]
 	}, function(bundled) {
 		bundled
