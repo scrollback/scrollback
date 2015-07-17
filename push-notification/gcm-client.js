@@ -10,7 +10,9 @@ module.exports = function(core, config, store) {
 	var user = require("../lib/user.js")(core, config, store),
 		LS = window.localStorage,
 		lastGCMTime, device,
-		defaultPackageName = config.pushNotification.defaultPackageName;
+		defaultPackageName;
+	
+	defaultPackageName = config.pushNotification.defaultPackageName?config.pushNotification.defaultPackageName:"";
 
 	lastGCMTime = LS.getItem("lastGCMTime");
 	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
