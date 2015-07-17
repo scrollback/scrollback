@@ -31,14 +31,12 @@ require("./plugins/jquery.validInput.js");
 
 // Core
 window.core = core = new (require("ebus"))(config.appPriorities);
-core.setDebug(3);
 window.store = store = require("./../store/store.js")(core, config);
-
 
 let args = [ core, config, store ];
 
 // Trunks
-require("../widget/widget-bridge.js")(...args);
+require("../widget/widget-client.es6")(...args);
 require("../history/history-client.js")(...args);
 
 // Apps
