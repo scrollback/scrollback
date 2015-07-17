@@ -1,3 +1,5 @@
+"use strict";
+
 /* jshint mocha: true */
 /*jshint: true*/
 var log = require("../lib/logger.js"),
@@ -17,7 +19,6 @@ var threaderValidator = {
 Communicate with scrollback java Process through TCP and set message.threads.
 */
 module.exports = function(coreObj, conf) {
-	"use strict";
 	core = coreObj;
 	config = conf;
 	redis = require('redis').createClient();
@@ -37,13 +38,14 @@ module.exports = function(coreObj, conf) {
 			if (client.writable && (!room.params || !room.params.threader || room.params.threader.enabled)) {//if client connected
 				
 				var threadId = message.thread,
-					msg = JSON.stringify({
+					msg = {
 						id: message.id, time: message.time, author: message.from.replace(/guest-/g, ""),
 						text: message.text.replace(/\s+/g, " "),
 						room: message.to
-					});
+					};
 				
 				if(threadId) msg.threadId = threadId;
+				msg = JSON.stringify(msg);
 				
 				log.d("JSB Sending msg to scrollback.jar: " + msg);
 				try {
@@ -83,7 +85,6 @@ module.exports = function(coreObj, conf) {
 * }, ... ]
 */
 function processReply(data){
-	"use strict";
 	try {
 		log("JSB Response" + data);
 		data = JSON.parse(data);
@@ -111,7 +112,6 @@ function processReply(data){
 
 
 function init(){
-	"use strict";
 	client = net.connect({port: config.port, host: config.host}, function() {
 		log.i('Threader connected.');
 		client.write("[");//sending array of JSON objects

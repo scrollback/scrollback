@@ -1,3 +1,5 @@
+"use strict";
+
 var config, log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"),
@@ -42,9 +44,9 @@ function browserAuth(action, callback) {
 		core.emit("getUsers", {
 			identity: identity,
 			session: "internal-browserid-auth"
-		}, function(err, user) {
+		}, function(e, user) {
 			if (!user.results || user.results.length === 0) {
-				action.old = {};
+				action.old = action.user;
 				action.user = {};
 				action.user.id = action.old.id;
 				action.user.identities = [identity];

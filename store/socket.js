@@ -5,6 +5,7 @@
 
 var generate = require("../lib/generate.js"),
 	appUtils = require("../lib/app-utils.js"),
+	pending = require("../lib/pendingQueries.js"),
 	config, core, client, store;
 
 var backOff = 1,
@@ -14,6 +15,25 @@ var backOff = 1,
 	queue = [],
 	initDone = false,
 	actionQueue = [];
+
+/*
+	{
+		keygenerated: [
+			{
+				queryObject: {},
+				next: callback for the next listener.
+			},
+			.
+			.
+			.,
+			{
+				queryObject: {},
+				next: callback for the next listener.
+			}
+		]
+	}
+*/
+var currentQueries = {};
 
 function sendAction(action) {
 	action.session = session;
@@ -50,8 +70,8 @@ function disconnected() {
 }
 
 function connect() {
-	if(!navigator.onLine) return disconnected();
-	
+	if (!navigator.onLine) return disconnected();
+
 	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
 	client.onclose = disconnected;
 
@@ -137,14 +157,42 @@ module.exports = function(c, conf, s) {
 
 	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
+			console.log("Making query:", q);
 			q.type = e;
+			var key = pending.generateKey(q);
+			console.log("checking key: ", key, currentQueries);
+
+			if (currentQueries[key]) {
+				currentQueries[key].push({
+					query:q,
+					next: n
+				});
+
+				return;
+			}
+
+			function finishQuery(err) {
+				console.log("Callback fired");
+				currentQueries[key].forEach(function(item) {
+					item.query.results = q.results;
+					item.next(err);
+				});
+				delete currentQueries[key];
+			}
+
+			currentQueries[key] = [{
+				query:q,
+				next: n
+			}];
+
 			if (initDone) {
-				sendQuery(q, n);
+				sendQuery(q, finishQuery);
 			} else {
 				queue.push(function() {
-					sendQuery(q, n);
+					sendQuery(q, finishQuery);
 				});
 			}
+
 		}, 10);
 	});
 

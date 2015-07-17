@@ -66,10 +66,10 @@ module.exports = function(core) {
 		action.members.forEach(function(e) {
 			var x = {};
 			if (e.id === action.from) return;
-			if (action.mentions.indexOf(e.id) >= 0) x.mention = scores.mention[e.role];
-			if (action.note.thread) x.thread = scores.thread[e.role];
-			else if (action.note.reply) x.reply = scores.reply[e.role];
-			action.notify[e.id] = x;
+			if (action.mentions.indexOf(e.id) >= 0 && scores.mention[e.role]) x.mention = scores.mention[e.role];
+			if (action.note.thread && scores.thread[e.role]) x.thread = scores.thread[e.role];
+			else if (action.note.reply && scores.reply[e.role]) x.reply = scores.reply[e.role];
+			if(Object.keys(x).length) action.notify[e.id] = x;
 		});
 
 		if (action.note.reply && action.threadObject && action.threadObject.concerns) {
