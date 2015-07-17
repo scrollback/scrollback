@@ -39,13 +39,7 @@ var core, store,
 	objUtils = require("../lib/obj-utils.js");
 
 function postMessage(data) {
-	var origin;
-
-	if (!store.get("app", "bootComplete") && data.type !== "ready") {
-		return;
-	}
-
-	origin = store.get("context", "origin");
+	var origin = store.get("context", "origin");
 
 	if (window.Android && typeof window.Android.postMessage === "function") {
 		window.Android.postMessage(JSON.stringify(data));
