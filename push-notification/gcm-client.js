@@ -11,7 +11,7 @@ module.exports = function(core, config, store) {
 		LS = window.localStorage,
 		lastGCMTime, device,
 		defaultPackageName;
-	
+
 	defaultPackageName = config.pushNotification.defaultPackageName?config.pushNotification.defaultPackageName:"";
 
 	lastGCMTime = LS.getItem("lastGCMTime");
@@ -55,8 +55,8 @@ module.exports = function(core, config, store) {
 
 		device.platform = "android";
 		key = device.uuid + (device.packageName && device.packageName!== defaultPackageName?("_" + device.packageName):"");
-		
-		
+
+
 		userObj.params.pushNotifications.devices[key] = device;
 		device.enabled = true;
 
