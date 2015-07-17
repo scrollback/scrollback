@@ -6,6 +6,7 @@ var format = require("../../lib/format.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		RoomNameEntry = require("./room-name-entry.jsx")(core, config, store),
 		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		Banner;
 
@@ -67,11 +68,8 @@ module.exports = function(core, config, store) {
 
 			if (this.state.form) {
 				items.push(
-						<div className="banner-form-container" key="banner-form">
-							<form className="banner-form" onSubmit={this.onSubmit}>
-								<input ref="roomNameEntry" className="banner-form-entry linked" type="text" placeholder="Type a room name" autofocus />
-								<input className="banner-form-submit linked" type="submit" value="Go" />
-							</form>
+				        <div className="banner-entry-container">
+							<RoomNameEntry className="banner-entry" />
 						</div>
 						);
 			}

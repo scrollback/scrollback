@@ -274,7 +274,7 @@ module.exports = function(core, config) {
 
 	require("./state-manager.es6")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);
-	require("./rule-manager.js")(core, config, store, state);
+	require("./rule-manager.es6")(core, config, store, state);
 	require("./socket.js")(core, config, store, state);
 	require("./session-manager.js")(core, config, store, state);
 	require("./guest-params-handler.js")(core, config, store, state);

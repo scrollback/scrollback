@@ -6,7 +6,8 @@ const keys = [ "view", "mode" ],
 	  types = [
 				"view", "mode", "role", "permission",
 				"embed", "toast", "canvas",
-				"color", "input", "state"
+				"color", "input", "state",
+				"invalid"
 			];
 
 module.exports = (core, config, store) => {

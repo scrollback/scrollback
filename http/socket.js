@@ -151,7 +151,7 @@ sock.on('connection', function(socket) {
 				}
 			}
 			if (data.type === 'init') {
-				if (data.old) {
+				if (data.old && data.old.id) {
 					log.i("Occupant of: ", data.occupantOf);
 					data.occupantOf.forEach(function(room) {
 						var role, cnt, l;
@@ -207,7 +207,6 @@ sock.on('connection', function(socket) {
 					refObject = data.victim;
 				}
 				connections = uConns[refObject.id];
-
 				if (connections) {
 					censoredAction = censorAction(data);
 					connections.forEach(function(c) {
@@ -239,8 +238,8 @@ sock.on('connection', function(socket) {
 	});
 });
 
-function processUser(conn, user) {
-	if (/^guest-/.test(user.from)) {
+function processUser(conn, action) {
+	if (/^guest-/.test(action.from)) {
 		core.emit("init", {
 			time: new Date().getTime(),
 			to: 'me',
@@ -249,6 +248,9 @@ function processUser(conn, user) {
 			resource: conn.resource,
 			type: "init"
 		});
+		
+		uConns[action.user.id] = uConns[action.from];
+		delete uConns[action.from];
 	}
 }
 
@@ -276,7 +278,6 @@ function storeInit(conn, init) {
 			});
 		});
 	}
-
 }
 
 function storeBack(conn, back) {

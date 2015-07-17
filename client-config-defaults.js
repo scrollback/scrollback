@@ -7,7 +7,8 @@ var defaults = {
 		protocol: "http:",
 		host: "localhost:7528",
 		apiHost: "localhost:7528"
-	}
+	},
+	pushNotification:{}
 };
 
 module.exports = (function() {
