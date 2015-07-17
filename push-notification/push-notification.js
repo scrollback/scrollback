@@ -17,7 +17,7 @@ var log = require("../lib/logger.js"),
 	url = require("../lib/url.js"),
 	format = require("../lib/format.js"),
 	gcmNotify = require("./gcm-notify.js"),
-	max = 400;
+	max = 400, defaultPackageName, keys ;
 
 /*
  * devices : [{ deviceName: device.name, registrationId: registrationId, enabled: true }]
@@ -25,8 +25,15 @@ var log = require("../lib/logger.js"),
 
 module.exports = function(core, config) {
 	var user = require("../lib/user.js")(core, config);
+	if(!config || !config.keys || !Object.keys(config.keys).length) {
+		log.i("Push notification disable: no keys specified in config.");
+		return;
+	}
 
-	function mapUsersToIds(idList, cb) {
+	defaultPackageName = config.defaultPackageName;
+	keys = config.keys;
+
+	function mapIdsToUsers(idList, cb) {
 		core.emit("getUsers", {
 			session: "internal-push-notifications",
 			ref: idList
@@ -48,10 +55,17 @@ module.exports = function(core, config) {
 
 		var regList = [];
 
+
+		var notesForApps = {};
+		for(i in keys) {
+			notesForApps[i] = [];
+		}
+
+
 		log.d(userList);
 
 		userList.forEach(function(userObj) {
-			var devices;
+			var devices, packageName;
 
 			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
 				devices = userObj.params.pushNotifications.devices;
@@ -65,23 +79,22 @@ module.exports = function(core, config) {
 				log.d("not an array: ", devices);
 
 				Object.keys(devices).forEach(function(uuid) {
-					var device = devices[uuid];
-
+					var device = devices[uuid], reg_id;
 					log.d("device: ", uuid);
 
 					if (device.hasOwnProperty("regId") && device.enabled === true) {
-						regList.push({
-							user: userObj,
-							registrationId: device.regId
-						});
+						packageName = device.packageName || defaultPackageName;
+						if(notesForApps[packageName]) {
+							notesForApps[packageName][device.regId] = userObj;
+						}
 					}
 				});
 			}
 		});
 
-		log.d("Got regLists of the room:", regList);
+		log.d("Got regLists of the room:", notesForApps);
 
-		gcmNotify(regList, payload, core, config);
+		gcmNotify(notesForApps, payload, core, config);
 	}
 
 	core.on("text", function(text, next) {
@@ -116,7 +129,7 @@ module.exports = function(core, config) {
 			})
 		};
 
-		mapUsersToIds(text.mentions, function(userList) {
+		mapIdsToUsers(text.mentions, function(userList) {
 			notifyUsers(userList, payload);
 		});
 	}
@@ -149,8 +162,8 @@ module.exports = function(core, config) {
 				return;
 			}
 
-			usersList = d.results.filter(function(err) {
-				return (err.id !== text.from);
+			usersList = d.results.filter(function(user) {
+				return (user.id !== text.from);
 			});
 
 			notifyUsers(usersList, payload);

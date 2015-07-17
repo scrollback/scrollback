@@ -6,7 +6,7 @@ var core;
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {
-		ref: "me",
+		ref: action.to,
 		session: action.session
 	}, function(meErr, response) {
 		function done() {

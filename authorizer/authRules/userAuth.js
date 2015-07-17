@@ -1,5 +1,5 @@
 var SbError = require('../../lib/SbError.js');
-
+var utils = require('../../lib/app-utils.js');
 function emailValidation(old, user) {
 	var oldEmail, newEmail;
 	for (var i = 0; i < old.length; i++) {
@@ -21,8 +21,8 @@ function emailValidation(old, user) {
 module.exports = function (core) {
 
 	core.on('user', function (action, callback) {
-		if (action.role === 'su') {
-			delete action.role;
+		if (action.role === 'su' || utils.isInternalSession(action.session)) {
+			delete action.user.role;
 			return callback();
 		} else if (action.user.role === "none") {
 			if (/^guest-/.test(action.user.id)) {
@@ -56,7 +56,4 @@ module.exports = function (core) {
 		}));
 
 	}, "authorization");
-
-
-
 };
