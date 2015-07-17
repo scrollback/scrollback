@@ -32,7 +32,8 @@
 
 */
 
-var core, store, enabled = false,
+var core, store,
+	enabled = false,
 	user = require("../lib/user.js")(),
 	generate = require("../lib/generate.js"),
 	objUtils = require("../lib/obj-utils.js");
@@ -111,6 +112,7 @@ function verifyParentOrigin(origin, callback) {
 	}
 
 	window.addEventListener("message", handleResponse);
+
 	setTimeout(done, 500);
 }
 
@@ -181,10 +183,12 @@ function onBoot(changes, next) {
 	}
 }
 
-function onStateChange(changes, next) {
+function onStateChange(changes) {
 	var message;
 
-	if (!enabled) return next();
+	if (!enabled) {
+		return;
+	}
 
 	if (changes.app && changes.app.bootComplete) {
 		postMessage({ type: "ready" });
@@ -201,9 +205,9 @@ function onStateChange(changes, next) {
 	if (changes.nav) {
 		message = objUtils.clone(store.get("nav"));
 		message.type = "nav";
+
 		postMessage(message);
 	}
-	next();
 }
 
 function onInitUp(init) {
