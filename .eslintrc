@@ -95,7 +95,7 @@
 		"wrap-iife": 1,
 		"yoda": [1, "never"],
 
-		"strict": 2,
+		"strict": [2, "global"],
 
 		"no-catch-shadow": 2,
 		"no-delete-var": 2,
@@ -121,7 +121,7 @@
 		"camelcase": 1,
 		"comma-spacing": [1, { "before": false, "after": true }],
 		"comma-style": [1, "last"],
-		"computed-property-spacing": [1, "always"],
+		"computed-property-spacing": [1, "never"],
 		"consistent-this": [1, "self"],
 		"eol-last": 1,
 		"func-names": 0,
