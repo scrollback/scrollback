@@ -1,112 +1,113 @@
 {
-	"name": "Scrollback",
-	"version": "0.1.0",
-	"description": "Where communities hangout.",
-	"author": "Askabt (info@askabt.in)",
-	"homepage": "http://scrollback.io",
-	"keywords": [
+  "name": "Scrollback",
+  "version": "0.1.0",
+  "description": "Where communities hangout.",
+  "author": "Askabt (info@askabt.in)",
+  "homepage": "http://scrollback.io",
+  "keywords": [
     "scrollback"
   ],
-	"repository": {
-		"type": "git",
-		"path": "git://github.com/scrollback/scrollback.git"
-	},
-	"bugs": "https://github.com/scrollback/scrollback/issues",
-	"contributors": [
-		{
-			"name": "Aravind R S",
-			"email": "aravind@askabt.in"
+  "repository": {
+    "type": "git",
+    "path": "git://github.com/scrollback/scrollback.git"
+  },
+  "bugs": "https://github.com/scrollback/scrollback/issues",
+  "contributors": [
+    {
+      "name": "Aravind R S",
+      "email": "aravind@askabt.in"
     },
-		{
-			"name": "Harish V",
-			"email": "harishv@scrollback.io"
+    {
+      "name": "Harish V",
+      "email": "harishv@scrollback.io"
     },
-		{
-			"name": "Kamal Joshi",
-			"email": "kamal@scrollback.io"
+    {
+      "name": "Kamal Joshi",
+      "email": "kamal@scrollback.io"
     },
-		{
-			"name": "Amal Antony",
-			"email": "amal@scrollback.io"
+    {
+      "name": "Amal Antony",
+      "email": "amal@scrollback.io"
     },
-		{
-			"name": "Satyajit Sahoo",
-			"email": "satya@scrollback.io"
+    {
+      "name": "Satyajit Sahoo",
+      "email": "satya@scrollback.io"
     }
   ],
-	"private": true,
-	"license": "AGPL",
-	"main": "./index.js",
-	"scripts": {
-		"start": "node index",
-		"test": "node_modules/.bin/mocha test/test.js",
-		"postinstall": "gulp postinstall"
-	},
-	"engines": {
-		"node": ">=0.8"
-	},
-	"dependencies": {
-		"big-integer": "latest",
-		"ebus": "latest",
-		"elasticsearch": "latest",
-		"express": "3.x",
-		"handlebars": "latest",
-		"htmlencode": "latest",
-		"irc": "git://github.com/scrollback/node-irc.git",
-		"jade": "0.x",
-		"jsonwebtoken": "latest",
-		"juri": "latest",
-		"markdown-it": "latest",
-		"markdown-it-emoji": "latest",
-		"mysql": "latest",
-		"newrelic": "latest",
-		"nodemailer": "v0.7.1",
-		"oauth": "latest",
-		"pg": "latest",
-		"react": "latest",
-		"redis": "latest",
-		"request": "latest",
-		"secure-random": "latest",
-		"sockjs": "latest",
-		"twemoji": "latest",
-		"twit": "latest",
-		"underscore": "latest",
-		"valid": "git://github.com/scrollback/valid.git",
-		"winston": "latest"
-	},
-	"optionalDependencies": {},
-	"devDependencies": {
-		"babel-eslint": "latest",
-		"babelify": "latest",
-		"bower": "latest",
-		"browserify": "latest",
-		"browserify-optional": "latest",
-		"browserstack-webdriver": "latest",
-		"chai": "latest",
-		"del": "latest",
-		"eslint-plugin-react": "latest",
-		"gulp": "latest",
-		"gulp-autoprefixer": "latest",
-		"gulp-combine-mq": "latest",
-		"gulp-concat": "latest",
-		"gulp-eslint": "latest",
-		"gulp-gitmodified": "latest",
-		"gulp-manifest": "git://github.com/scrollback/gulp-manifest.git",
-		"gulp-minify-css": "latest",
-		"gulp-notify": "latest",
-		"gulp-plumber": "latest",
-		"gulp-rename": "latest",
-		"gulp-sass": "latest",
-		"gulp-sourcemaps": "latest",
-		"gulp-strip-debug": "latest",
-		"gulp-sym": "latest",
-		"gulp-uglify": "latest",
-		"gulp-util": "latest",
-		"jshint-stylish": "latest",
-		"lazypipe": "latest",
-		"mocha": "latest",
-		"vinyl-buffer": "latest",
-		"vinyl-source-stream": "latest",
-		"watchify": "latest"
-	}
+  "private": true,
+  "license": "AGPL",
+  "main": "./index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "node_modules/.bin/mocha test/test.js",
+    "postinstall": "gulp postinstall"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "dependencies": {
+    "babel": "latest",
+    "big-integer": "latest",
+    "ebus": "latest",
+    "elasticsearch": "latest",
+    "express": "3.x",
+    "handlebars": "latest",
+    "htmlencode": "latest",
+    "irc": "git://github.com/scrollback/node-irc.git",
+    "jade": "0.x",
+    "jsonwebtoken": "latest",
+    "juri": "latest",
+    "markdown-it": "latest",
+    "markdown-it-emoji": "latest",
+    "mysql": "latest",
+    "newrelic": "latest",
+    "nodemailer": "v0.7.1",
+    "oauth": "latest",
+    "pg": "latest",
+    "react": "latest",
+    "redis": "latest",
+    "request": "latest",
+    "secure-random": "latest",
+    "sockjs": "latest",
+    "twemoji": "latest",
+    "twit": "latest",
+    "underscore": "latest",
+    "valid": "git://github.com/scrollback/valid.git",
+    "winston": "latest"
+  },
+  "optionalDependencies": {},
+  "devDependencies": {
+    "babel-eslint": "latest",
+    "babelify": "latest",
+    "bower": "latest",
+    "browserify": "latest",
+    "browserify-optional": "latest",
+    "browserstack-webdriver": "latest",
+    "chai": "latest",
+    "del": "latest",
+    "eslint-plugin-react": "latest",
+    "gulp": "latest",
+    "gulp-autoprefixer": "latest",
+    "gulp-combine-mq": "latest",
+    "gulp-concat": "latest",
+    "gulp-eslint": "latest",
+    "gulp-gitmodified": "latest",
+    "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git",
+    "gulp-minify-css": "latest",
+    "gulp-notify": "latest",
+    "gulp-plumber": "latest",
+    "gulp-rename": "latest",
+    "gulp-sass": "latest",
+    "gulp-sourcemaps": "latest",
+    "gulp-strip-debug": "latest",
+    "gulp-sym": "latest",
+    "gulp-uglify": "latest",
+    "gulp-util": "latest",
+    "jshint-stylish": "latest",
+    "lazypipe": "latest",
+    "mocha": "latest",
+    "vinyl-buffer": "latest",
+    "vinyl-source-stream": "latest",
+    "watchify": "latest"
+  }
 }
