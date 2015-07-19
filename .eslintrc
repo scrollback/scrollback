@@ -91,7 +91,7 @@
 		"no-warning-comments": 0,
 		"no-with": 2,
 		"radix": 1,
-		"vars-on-top": 1,
+		"vars-on-top": 0,
 		"wrap-iife": 1,
 		"yoda": [1, "never"],
 
