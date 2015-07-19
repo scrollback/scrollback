@@ -15,7 +15,6 @@ var gulp = require("gulp"),
 	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
-	jscs = require("gulp-jscs"),
 	eslint = require("gulp-eslint"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
@@ -154,13 +153,6 @@ gulp.task("eslint", function() {
 	.pipe(eslint())
 	.pipe(eslint.format())
 	.pipe(eslint.failOnError());
-});
-
-gulp.task("jscs", function() {
-	return gulp.src(files.js)
-	.pipe(plumber({ errorHandler: onerror }))
-	.pipe(gitmodified("modified"))
-	.pipe(jscs());
 });
 
 gulp.task("lint", [ "eslint" ]);
