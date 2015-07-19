@@ -74,7 +74,7 @@ function bundle(file, options, cb) {
 		cb(
 			watcher
 			.on("update", () => {
-				gutil.log("Starting '" + gutil.colors.yellow(file) + "'...");
+				gutil.log(`Starting '${gutil.colors.yellow(file)}'...`);
 
 				cb(
 					watcher.bundle()
@@ -83,7 +83,7 @@ function bundle(file, options, cb) {
 					.pipe(buffer())
 				);
 			})
-			.on("time", time => gutil.log("Finished '" + gutil.colors.yellow(file) + "' after " + gutil.colors.magenta(time + " ms")))
+			.on("time", time => gutil.log(`Finished '${gutil.colors.yellow(file)}' after ${gutil.colors.magenta(time + " ms")}`))
 			.bundle()
 			.pipe(source(base))
 			.pipe(buffer())
@@ -91,7 +91,7 @@ function bundle(file, options, cb) {
 	} else {
 		cb(
 			bundler.bundle()
-			.on("error", error => {
+			.on("error", function(error) {
 				errorHandler(error);
 
 				// End the stream to prevent gulp from crashing
@@ -281,7 +281,7 @@ gulp.task("clean", () => del(prefix("public/", [
 gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 
 // Build all files
-gulp.task("build", [ "polyfills", "scripts", "styles" ], () =>  gulp.start("manifest"));
+gulp.task("build", [ "polyfills", "scripts", "styles" ], () => gulp.start("manifest"));
 
 // Default Task
 gulp.task("default", [ "clean", "lint" ], () => gulp.start("build"));
