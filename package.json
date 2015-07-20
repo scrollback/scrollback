@@ -46,6 +46,7 @@
     "node": ">=0.8"
   },
   "dependencies": {
+    "babel": "latest",
     "big-integer": "latest",
     "ebus": "latest",
     "elasticsearch": "latest",
@@ -79,7 +80,6 @@
   "devDependencies": {
     "babel-eslint": "latest",
     "babelify": "latest",
-    "blanket": "latest",
     "bower": "latest",
     "browserify": "latest",
     "browserify-optional": "latest",
@@ -87,14 +87,11 @@
     "chai": "latest",
     "del": "latest",
     "eslint-plugin-react": "latest",
-    "esprima-fb": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-combine-mq": "latest",
-    "gulp-concat": "latest",
     "gulp-eslint": "latest",
     "gulp-gitmodified": "latest",
-    "gulp-jscs": "latest",
     "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git",
     "gulp-minify-css": "latest",
     "gulp-notify": "latest",
