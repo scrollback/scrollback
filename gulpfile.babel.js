@@ -7,7 +7,7 @@ import bower from "bower";
 import browserify from "browserify";
 import watchify from "watchify";
 import optional from "browserify-optional";
-import babelify from "babelify";
+import babel from "babelify";
 import source from "vinyl-source-stream";
 import buffer from "vinyl-buffer";
 import lazypipe from "lazypipe";
@@ -29,6 +29,8 @@ import minify from "gulp-minify-css";
 import manifest from "gulp-manifest";
 import config from "./server-config-defaults.js";
 
+const babelify = babel.configure({ extensions: [ ".es6", ".jsx" ] });
+
 const debug = !(gutil.env.production || config.env === "production"),
 	errorHandler = notify.onError("Error: <%= error.message %>"),
 	dirs = {
@@ -46,8 +48,6 @@ const debug = !(gutil.env.production || config.env === "production"),
 		],
 		scss: [ "public/s/styles/scss/**/*.scss" ]
 	};
-
-babelify.configure({ extensions: [ ".es6", ".jsx" ] });
 
 // Make browserify bundle
 function bundle(file, options, cb) {

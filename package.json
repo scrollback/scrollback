@@ -77,7 +77,6 @@
   },
   "optionalDependencies": {},
   "devDependencies": {
-    "babel": "latest",
     "babel-eslint": "latest",
     "babelify": "latest",
     "bower": "latest",
