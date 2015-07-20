@@ -15,7 +15,6 @@ var gulp = require("gulp"),
 	notify = require("gulp-notify"),
 	gutil = require("gulp-util"),
 	sourcemaps = require("gulp-sourcemaps"),
-	jscs = require("gulp-jscs"),
 	eslint = require("gulp-eslint"),
 	gitmodified = require("gulp-gitmodified"),
 	symlink = require("gulp-sym"),
@@ -48,10 +47,10 @@ var gulp = require("gulp"),
 	};
 
 // Make browserify bundle
-function bundle(file, opts, cb) {
-	var base, bundler, watcher;
+function bundle(file, options, cb) {
+	var base, bundler, watcher, opts;
 
-	opts = opts || {};
+	opts = options || {};
 
 	opts.entries = "./" + file;
 	opts.debug = typeof opts.debug === "boolean" ? opts.debug : true;
@@ -67,15 +66,15 @@ function bundle(file, opts, cb) {
 	base = file.split(/[\\/]/).pop();
 
 	if (bundle.watch) {
-		watcher  = watchify(bundler);
+		watcher = watchify(bundler);
 
 		cb(
-		   watcher
+			watcher
 			.on("update", function() {
 				gutil.log("Starting '" + gutil.colors.yellow(file) + "'...");
 
 				cb(
-				   watcher.bundle()
+					watcher.bundle()
 					.on("error", onerror)
 					.pipe(source(base))
 					.pipe(buffer())
@@ -90,7 +89,7 @@ function bundle(file, opts, cb) {
 		);
 	} else {
 		cb(
-		   bundler.bundle()
+			bundler.bundle()
 			.on("error", function(error) {
 				onerror(error);
 
@@ -154,13 +153,6 @@ gulp.task("eslint", function() {
 	.pipe(eslint())
 	.pipe(eslint.format())
 	.pipe(eslint.failOnError());
-});
-
-gulp.task("jscs", function() {
-	return gulp.src(files.js)
-	.pipe(plumber({ errorHandler: onerror }))
-	.pipe(gitmodified("modified"))
-	.pipe(jscs());
 });
 
 gulp.task("lint", [ "eslint" ]);

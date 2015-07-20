@@ -92,7 +92,6 @@
     "gulp-concat": "latest",
     "gulp-eslint": "latest",
     "gulp-gitmodified": "latest",
-    "gulp-jscs": "latest",
     "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git",
     "gulp-minify-css": "latest",
     "gulp-notify": "latest",
