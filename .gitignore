@@ -5,7 +5,6 @@
 !.editorconfig
 !.gitignore
 !.git-hooks
-!.jscsrc
 !.jshintrc
 !.eslintrc
 !.jsbeautifyrc
