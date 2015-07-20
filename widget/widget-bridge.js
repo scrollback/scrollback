@@ -116,7 +116,7 @@ function verifyParentOrigin(origin, callback) {
 
 function onMessage(e) {
 	var data;
-	
+
 	if(!verifyMessageOrigin(e)) { return; }
 	data = parseMessage(e.data);
 
@@ -177,7 +177,8 @@ function onBoot(changes, next) {
 }
 
 function onStateChange(changes) {
-	var message;
+	var message, rel;
+
 	if (!enabled) { return; }
 
 	if (changes.app && changes.app.bootComplete) {
@@ -203,7 +204,9 @@ function onStateChange(changes) {
 		changes.user ||
 		changes.entities && changes.entities[store.get("nav", "room") + "_" + store.get("user")]
 	) ) {
-		postMessage({ type: "follow", role: store.getRelation().role || "none" });
+		rel = store.getRelation();
+
+		postMessage({ type: "follow", role: rel && rel.role ? rel.role : "none" });
 	}
 }
 
