@@ -29,6 +29,10 @@ module.exports = function(core, config, store) {
 		onKeyDown(e) {
 			let focus = this.state.focus;
 
+			if (!this.state.suggestions.length) {
+				return;
+			}
+
 			if (e.keyCode === 38 || (e.keyCode === 9 && e.shiftKey)) {
 				// Up arrow / Shift + Tab pressed
 				e.preventDefault();
@@ -206,7 +210,7 @@ module.exports = function(core, config, store) {
 						for (let e of results) {
 							for (let entity of entities) {
 								if (entity.id === e.id && typeof entity.picture === "undefined") {
-									entity.picture === e.picture;
+									entity.picture = e.picture;
 								}
 							}
 						}

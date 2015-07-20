@@ -4,20 +4,23 @@
 
 module.exports = (core, config, store) => {
 	const React = require("react"),
-		  Suggestions = require("./suggestions.jsx")(core, config, store);
+		Suggestions = require("./suggestions.jsx")(core, config, store);
 
 	class RoomNameEntry extends React.Component {
 		constructor(props) {
 			super(props);
 
-			this.state = { query: null };
+			this.state = {
+				query: null,
+				error: false
+			};
 		}
 
 		goToRoom(room) {
 			if (room) {
 				core.emit("setstate", {
 					nav: {
-						room: room,
+						room,
 						mode: "room",
 						view: null,
 						thread: null
@@ -27,18 +30,9 @@ module.exports = (core, config, store) => {
 		}
 
 		onSubmit(e) {
-			var entry = React.findDOMNode(this.refs.entry),
-				room;
+			this.setState({ error: true });
 
 			e.preventDefault();
-
-			if (entry) {
-				room = entry.value.toLowerCase();
-			} else {
-				return;
-			}
-
-			this.goToRoom(room);
 
 		}
 
@@ -53,7 +47,10 @@ module.exports = (core, config, store) => {
 		}
 
 		onInput(e) {
-			this.setState({ query: e.target.value });
+			this.setState({
+				query: e.target.value,
+				error: false
+			});
 		}
 
 		render() {
@@ -69,7 +66,7 @@ module.exports = (core, config, store) => {
 
 					<form onSubmit={this.onSubmit.bind(this)}>
 						<input
-							className="linked" type="text" placeholder="Type a room name" ref="entry"
+							className={"linked" + (this.state.error ? " error" : "")} type="text" placeholder="Type a room name" ref="entry"
 							autofocus onInput={this.onInput.bind(this)} />
 					</form>
 				</div>
