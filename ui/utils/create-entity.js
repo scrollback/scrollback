@@ -102,7 +102,7 @@ module.exports = function(core, config, store) {
 						user: {
 							id: name,
 							identities: userObj.identities,
-							picture: userObj.picture,
+							picture: userObj.params.pictures && userObj.params.pictures[0] || "",
 							params: {
 								pictures: userObj.params.pictures
 							},

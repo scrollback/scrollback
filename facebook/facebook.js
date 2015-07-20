@@ -34,6 +34,9 @@ function loginUser(token, action, callback) {
 				if (!user.email) log.i("Facebook login failed: ", body);
 				return callback(new Error(user.error || "ERR_FB_SIGNIN_NO_EMAIL"));
 			}
+
+			gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
+			fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
 			core.emit("getUsers", {
 				identity: "mailto:" + user.email,
 				session: "internal-facebook"
@@ -44,10 +47,9 @@ function loginUser(token, action, callback) {
 					action.old = action.user;
 					action.user = {};
 					action.user.id = action.old.id;
+					action.user.type = "user";
 					action.user.identities = ["mailto:" + user.email];
-					fbpic = action.user.picture = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-					gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
-
+					action.user.picture = gravatar;
 					action.user.params = {
 						pictures: [fbpic, gravatar]
 					};
@@ -58,15 +60,6 @@ function loginUser(token, action, callback) {
 				action.old = action.user;
 				action.user = data.results[0];
 				if (!action.user.params.pictures) action.user.params.pictures = [];
-
-				fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
-
-				try {
-					gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
-				} catch (e) {
-					log.d(action, action.old);
-					log.i("Error creating the gravatar image.", "\n" + body);
-				}
 
 				if (action.user.params.pictures.indexOf(fbpic) < 0) {
 					action.user.params.pictures.push(fbpic);

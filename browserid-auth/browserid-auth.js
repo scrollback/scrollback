@@ -1,3 +1,5 @@
+"use strict";
+
 var config, log = require("../lib/logger.js"),
 	crypto = require('crypto'),
 	request = require("request"),
@@ -42,11 +44,14 @@ function browserAuth(action, callback) {
 		core.emit("getUsers", {
 			identity: identity,
 			session: "internal-browserid-auth"
-		}, function(err, user) {
+		}, function(e, user) {
+			if(e) return callback(e);
+			
 			if (!user.results || user.results.length === 0) {
 				action.old = action.user;
 				action.user = {};
 				action.user.id = action.old.id;
+				action.user.type = "user";
 				action.user.identities = [identity];
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
 				action.user.params = {};
