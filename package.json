@@ -85,7 +85,6 @@
     "chai": "latest",
     "del": "latest",
     "eslint-plugin-react": "latest",
-    "esprima-fb": "latest",
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-combine-mq": "latest",
