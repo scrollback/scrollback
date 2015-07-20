@@ -89,7 +89,6 @@
     "gulp": "latest",
     "gulp-autoprefixer": "latest",
     "gulp-combine-mq": "latest",
-    "gulp-concat": "latest",
     "gulp-eslint": "latest",
     "gulp-gitmodified": "latest",
     "gulp-manifest": "git://github.com/scrollback/gulp-manifest.git",

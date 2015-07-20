@@ -18,7 +18,6 @@ import sourcemaps from "gulp-sourcemaps";
 import eslint from "gulp-eslint";
 import gitmodified from "gulp-gitmodified";
 import symlink from "gulp-sym";
-import concat from "gulp-concat";
 import striplogs from "gulp-strip-debug";
 import uglify from "gulp-uglify";
 import rename from "gulp-rename";
@@ -164,17 +163,6 @@ gulp.task("bower", () =>
 	.on("error", errorHandler)
 );
 
-// Copy and minify polyfills
-gulp.task("polyfills", [ "bower" ], () =>
-	gulp.src(prefix(dirs.bower + "/", [
-		"flexie/dist/flexie.min.js",
-		"transformie/transformie.js"
-	]))
-	.pipe(buildscripts())
-	.pipe(concat("polyfills.min.js"))
-	.pipe(gulp.dest(dirs.scripts))
-);
-
 // Build browserify bundles
 gulp.task("bundle", () =>
 	bundle("ui/app.es6", {
@@ -281,7 +269,7 @@ gulp.task("clean", () => del(prefix("public/", [
 gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 
 // Build all files
-gulp.task("build", [ "polyfills", "scripts", "styles" ], () => gulp.start("manifest"));
+gulp.task("build", [ "scripts", "styles" ], () => gulp.start("manifest"));
 
 // Default Task
 gulp.task("default", [ "clean", "lint" ], () => gulp.start("build"));
