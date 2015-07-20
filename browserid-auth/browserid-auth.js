@@ -5,12 +5,6 @@ var config, log = require("../lib/logger.js"),
 	request = require("request"),
 	core;
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
-	core.on("init", browserAuth, "authentication");
-};
-
 function browserAuth(action, callback) {
 	var assertion;
 	if (action.response || !action.auth || !action.auth.browserid) return callback();
@@ -45,10 +39,13 @@ function browserAuth(action, callback) {
 			identity: identity,
 			session: "internal-browserid-auth"
 		}, function(e, user) {
+			if(e) return callback(e);
+
 			if (!user.results || user.results.length === 0) {
 				action.old = action.user;
 				action.user = {};
 				action.user.id = action.old.id;
+				action.user.type = "user";
 				action.user.identities = [identity];
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
 				action.user.params = {};
@@ -69,3 +66,9 @@ function browserAuth(action, callback) {
 		});
 	});
 }
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	core.on("init", browserAuth, "authentication");
+};
