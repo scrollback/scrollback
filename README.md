@@ -21,7 +21,7 @@ The install script requires __root__ priviledges for these cases:
 
 ### Configure
 
-If you have or want custom server and/or client configuration, you can override the defaults by creating `server-config.js` and/or `client-config.js`. For sample config files take a look at [`server-config-default.js`](https://github.com/scrollback/scrollback/blob/master/server-config-default.js) and [`client-config-default.js`](https://github.com/scrollback/scrollback/blob/master/client-config-default.js).
+If you have or want custom server and/or client configuration, you can override the defaults by creating `server-config.js` and/or `client-config.js`. For sample config files take a look at [`server-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/server-config-defaults.js) and [`client-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/client-config-defaults.js).
 
 ## Contribute to Scrollback
 
