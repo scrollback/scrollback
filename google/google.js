@@ -1,3 +1,5 @@
+"use strict";
+
 var core;
 var log = require("../lib/logger.js");
 var config,
@@ -40,16 +42,16 @@ module.exports = function(c, conf) {
 					core.emit("getUsers", {
 						identity: "mailto:" + body.email,
 						session: "internal-google"
-					}, function(err, data) {
-						if (err || !data) return callback(err);
+					}, function(e, data) {
+						if (e || !data) return callback(e);
 
 						if (!data.results.length) {
 							action.old = action.user;
 							action.user = {};
 							action.user.id = action.old.id;
+							action.user.type = "user";
 							action.user.identities = ["mailto:" + body.email];
-							action.user.picture = body.picture;
-							log.d("Google user object:", body.email);
+							action.user.picture = gravatar;
 							action.user.params = {
 								pictures: [googlePic, gravatar]
 							};
@@ -75,8 +77,8 @@ module.exports = function(c, conf) {
 								to: action.user.id,
 								user: action.user,
 								session: "internal-google"
-							}, function(err, action) {
-								log.d("Adding picture on sign-in: ", err, action);
+							}, function(error, act) {
+								log.d("Adding picture on sign-in: ", error, act);
 							});
 						}
 
