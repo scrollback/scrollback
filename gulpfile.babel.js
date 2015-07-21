@@ -179,7 +179,7 @@ gulp.task("bundle", () =>
 );
 
 // Generate embed widget script
-gulp.task("embed-v1", () =>
+gulp.task("embed:v1", () =>
 	bundle("widget/sdk/v1.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
@@ -190,7 +190,7 @@ gulp.task("embed-v1", () =>
 		.pipe(gulp.dest("public")))
 );
 
-gulp.task("embed-v2", () =>
+gulp.task("embed:v2", () =>
 	bundle("widget/sdk/v2.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
@@ -201,7 +201,7 @@ gulp.task("embed-v2", () =>
 		.pipe(gulp.dest("public/s")))
 );
 
-gulp.task("embed", [ "embed-v1", "embed-v2" ]);
+gulp.task("embed", [ "embed:v1", "embed:v2" ]);
 
 // Generate scripts
 gulp.task("scripts", [ "bundle", "embed" ]);
