@@ -50,18 +50,22 @@ module.exports = function(core, config, store) {
 			time = future.get("nav", "textRange", "time") || null,
 			before = future.get("nav", "textRange", "before"),
 			after = future.get("nav", "textRange", "after"),
-			r;
+			queryTime, r;
 
 		if (after) {
 			r = store.getTexts(roomId, thread, time, after);
 
 			if (r[r.length - 1] === "missing") {
-				core.emit("getTexts", {
-					to: roomId,
-					thread: thread,
-					time: (r.length > 1 ? r[r.length - 2].time : time),
-					after: Math.max(50, after - r.length + 1)
-				}, textResponse);
+				queryTime = (r.length > 1 ? r[r.length - 2].time : time);
+				if(queryTime !== null) {
+					core.emit("getTexts", {
+						to: roomId,
+						thread: thread,
+						time: queryTime,
+						after: Math.max(50, after - r.length + 1)
+					}, textResponse);
+				}
+				
 			}
 		}
 
