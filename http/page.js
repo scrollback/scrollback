@@ -18,22 +18,27 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
+"use strict";
+
 var core, config,
 	clientData = require('../client-config-defaults.js'),
 	fs = require("fs"),
-	core,
 	handlebars = require("handlebars"),
 	seo, clientTemp, clientHbs, oldAppHTML,
 	log = require('../lib/logger.js');
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
+function serverStaticFile(res) {
+	res.end(oldAppHTML);
+}
 
-	return {
-		init: init
-	};
-};
+function start() {
+	oldAppHTML = fs.readFileSync(__dirname + "/old-app-page.html");
+	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
+
+	seo = require('./seo.js')(core, config);
+
+	clientTemp = handlebars.compile(clientHbs);
+}
 
 function init (app) {
 	if (!config.https) {
@@ -75,19 +80,18 @@ function init (app) {
 			return serverStaticFile(res);
 		}
 
-		seo.getSEOHtml(req, function(r) {
+		seo.getSEO(req, function(r) {
 			clientData.seo = r;
+
 			res.end(clientTemp(clientData));
 		});
 
 	});
 }
-function serverStaticFile(res) {
-	res.end(oldAppHTML);
-}
-function start() {
-	oldAppHTML = fs.readFileSync(__dirname + "/old-app-page.html");
-	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
-	seo = require('./seo.js')(core, config);
-	clientTemp = handlebars.compile(clientHbs);
-}
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+
+	return { init: init };
+};

@@ -2,6 +2,7 @@
 
 var objUtils = require("../lib/obj-utils.js"),
 	rangeOps = require("../lib/range-ops.js"),
+	buildTitle = require("../lib/build-title.js"),
 	state = {
 		"nav": {
 			"mode": "loading",
@@ -243,30 +244,9 @@ Store.prototype.getFeaturedRooms = function() {
 };
 
 Store.prototype.getPageTitle = function(compact) {
-	var mode = this.get("nav", "mode"),
-		room = this.get("nav", "room"),
-		threadId, threadObj, title;
-
-	switch (mode) {
-	case "room":
-		title = room + (compact ? "" : " on Scrollback");
-		break;
-	case "chat":
-		threadId = this.get("nav", "thread");
-		threadObj = threadId ? this.get("indexes", "threadsById", threadId) : null;
-
-		if (threadId) {
-			title = threadObj && threadObj.title ? threadObj.title + (compact ? "" : " - " + room) : room;
-		} else {
-			title = "All messages" + (compact ? "" : " - " + room);
-		}
-
-		break;
-	default:
-		title = "Scrollback";
-	}
-
-	return title;
+	return buildTitle(this.get(), compact, function(threadId) {
+		return this.get("indexes", "threadsById", threadId);
+	}.bind(this));
 };
 
 module.exports = function(core, config) {

@@ -168,7 +168,7 @@
 		"generator-star-spacing": [2, "after"],
 		"no-this-before-super": 2,
 		"no-var": 0,
-		"object-shorthand": 1,
+		"object-shorthand": 0,
 		"prefer-const": 0
 	}
 }
