@@ -109,7 +109,7 @@
 		"no-use-before-define": 2,
 
 		"handle-callback-err": 1,
-		"no-mixed-requires": 1,
+		"no-mixed-requires": 0,
 		"no-new-require": 0,
 		"no-path-concat": 0,
 		"no-process-exit": 0,
@@ -168,7 +168,7 @@
 		"generator-star-spacing": [2, "after"],
 		"no-this-before-super": 2,
 		"no-var": 0,
-		"object-shorthand": 1,
+		"object-shorthand": 0,
 		"prefer-const": 0
 	}
 }
