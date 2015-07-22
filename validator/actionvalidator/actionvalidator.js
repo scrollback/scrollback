@@ -195,7 +195,8 @@ module.exports = function(core) {
         if (!action.to) {
             return callback(new SbError("INVALID_ROOM"));
         }
-
+		if (!action.time) action.time = new Date().getTime();
+        
         if (action.hasOwnProperty("updateTime")) {
             if (action.updateTime === null) action.updateTime = new Date().getTime();
         }
