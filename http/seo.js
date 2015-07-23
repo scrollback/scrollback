@@ -8,8 +8,21 @@ var log = require("../lib/logger.js"),
 	noOfText = 255;
 
 module.exports = function(core) {
+	function genLink(title, nav) {
+		return "<a href='" + url.build({ nav: nav }) + "'>" + format.textToHtml(title) + "</a>";
+	}
+
 	function genRoomHtml(room) {
-		return "<h1 itemprop='name'>" + room.id + "</h1><p itemprop='description'>" + room.description + "</p>";
+		return "<h1 itemprop='name'>" + room.id + "</h1>\n<p itemprop='description'>" + room.description + "</p>";
+	}
+
+	function genRoomListHtml(rooms) {
+		return "<h1 itemprop='name'>Featured rooms</h1>\n<p>" + rooms.map(function(room) {
+			return genLink(room.id, {
+				mode: "room",
+				room: room.id
+			});
+		}).join("\n") + "</p>";
 	}
 
 	function genTextHtml(res, roomid, threadid) {
@@ -20,30 +33,24 @@ module.exports = function(core) {
 		if (a.length > noOfText) {
 			a.pop();
 
-			a.push("<a href='" + url.build({
-				nav: {
-					mode: "chat",
-					room: roomid,
-					thread: threadid,
-					textRange: { time: res[res.length - 1].time }
-				}
-			}) + "'>Next</a>");
-		}
-
-		a.push("<a href='" + url.build({
-			nav: {
+			a.push(genLink("Next", {
 				mode: "chat",
 				room: roomid,
-				thread: threadid
-			}
-		}) + "'>Discussion</a>");
+				thread: threadid,
+				textRange: { time: res[res.length - 1].time }
+			}));
+		}
 
-		a.push("<a href='" + url.build({
-			nav: {
-				mode: "room",
-				room: roomid
-			}
-		}) + "'>Discussions in " + roomid + "</a>");
+		a.push(genLink("Discussion", {
+			mode: "chat",
+			room: roomid,
+			thread: threadid
+		}));
+
+		a.push(genLink("Discussions in " + roomid, {
+			mode: "room",
+			room: roomid
+		}));
 
 		return a.join("\n");
 	}
@@ -55,31 +62,27 @@ module.exports = function(core) {
 		for (var i = 0, l = Math.min(res.length, noOfThreads); i < l; i++) {
 			thread = res[i];
 
-			a.push("<a href='" + url.build({
-				nav: {
-					mode: "chat",
-					room: roomid,
-					thread: thread.id,
-					textRange: { time: thread.startTime }
-				}
-			}) + "'>" + format.textToHtml(thread.title) + "</a>");
+			a.push(genLink("Discussions in " + thread.title, {
+				mode: "chat",
+				room: roomid,
+				thread: thread.id,
+				textRange: { time: thread.startTime }
+			}));
 		}
 
 		if (res.length > noOfThreads) {
-			a.push("<a href='" + url.build({
+			a.push(genLink("Next", {
 				mode: "chat",
 				room: roomid,
 				thread: thread.id,
 				textRange: { time: res[res.length - 1].startTime }
-			}) + "'>Next</a>");
+			}));
 		}
 
-		a.push("<a href='" + url.build({
-			nav: {
-				mode: "room",
-				room: roomid
-			}
-		}) + "'>Discussions in " + roomid + "</a>");
+		a.push(genLink("Discussions in " + roomid, {
+			mode: "room",
+			room: roomid
+		}));
 
 		return a.join("\n");
 	}
@@ -149,7 +152,7 @@ module.exports = function(core) {
 		if (state.nav && state.nav.mode === "chat" && state.nav.room) {
 			time = state.nav.textRange && state.nav.textRange.time ? state.nav.textRange.time : 1;
 
-			core.emit("getTexts", {
+			return core.emit("getTexts", {
 				to: state.nav.room,
 				thread: state.nav.thread,
 				time: time,
@@ -159,15 +162,15 @@ module.exports = function(core) {
 				var room = data.room;
 
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-					cb(genRoomHtml(room) + "\n" + genTextHtml(data.results, state.nav.room, state.nav.thread));
+					return cb(genRoomHtml(room) + "\n" + genTextHtml(data.results, state.nav.room, state.nav.thread));
 				} else {
-					cb(null);
+					return cb(null);
 				}
 			});
 		} else if (state.nav && state.nav.mode === "room" && state.nav.room) {
 			time = state.nav.threadRange && state.nav.threadRange.time ? state.nav.threadRange.time : 1;
 
-			core.emit("getThreads", {
+			return core.emit("getThreads", {
 				to: state.nav.room,
 				time: time,
 				after: noOfThreads + 1,
@@ -176,14 +179,22 @@ module.exports = function(core) {
 				var room = data.room;
 
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-					cb(genRoomHtml(room) + "\n" + genThreadHtml(data.results, state.nav.room));
+					return cb(genRoomHtml(room) + "\n" + genThreadHtml(data.results, state.nav.room));
+				} else {
+					return cb(null);
+				}
+			});
+		} else {
+			return core.emit("getRooms", {
+				featured: true,
+				session: "internal-http-seo"
+			}, function(err, res) {
+				if (!err && res.results) {
+					return cb(genRoomListHtml(res.results));
 				} else {
 					cb(null);
 				}
 			});
-
-		} else {
-			cb(null);
 		}
 	}
 

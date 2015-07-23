@@ -21,35 +21,31 @@ Boston, MA 02111-1307 USA.
 "use strict";
 
 var core, config,
-	clientData = require('../client-config-defaults.js'),
+	clientData = require("../client-config-defaults.js"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
-	seo, clientTemp, clientHbs, oldAppHTML,
-	log = require('../lib/logger.js');
-
-function serverStaticFile(res) {
-	res.end(oldAppHTML);
-}
+	seo, clientTemp, clientHbs,
+	log = require("../lib/logger.js");
 
 function start() {
-	oldAppHTML = fs.readFileSync(__dirname + "/old-app-page.html");
 	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
 
-	seo = require('./seo.js')(core, config);
+	seo = require("./seo.js")(core, config);
 
 	clientTemp = handlebars.compile(clientHbs);
 }
 
-function init (app) {
+function init(app) {
 	if (!config.https) {
 		log.w("Insecure connection. Specify https options in your config file.");
 	}
 
 	start();
 
-	app.get('/t/*', function(req, res, next) {
+	app.get("/t/*", function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
+
 			next();
 		});
 	});
@@ -59,25 +55,19 @@ function init (app) {
 	});
 
 	app.get("/*", function(req, res, next) {
-		var platform;
 
-		if (/^\/t\//.test(req.path)) {
+		console.log("requested", req.path);
+
+		if (/^\/t\//.test(req.path) || /^\/s\//.test(req.path) || /^\/favicon\.ico$/.test(req.path)) {
 			return next();
 		}
 
-		if (/^\/s\//.test(req.path)) {
-			return next();
-		}
+		console.log("proceeded");
 
 		if (!req.secure && config.https) {
 			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
-			return res.redirect(301, 'https://' + config.host + req.path + queryString);
-		}
 
-		platform = req.query.platform;
-
-		if (platform && (/(cordova|android)/i).test(platform)) {
-			return serverStaticFile(res);
+			return res.redirect(301, "https://" + config.host + req.path + queryString);
 		}
 
 		seo.getSEO(req, function(r) {

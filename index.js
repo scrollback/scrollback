@@ -52,7 +52,7 @@ log.setEmailConfig(config.email);
 process.title = config.core.name;
 process.env.NODE_ENV = config.env;
 
-log.w("Running in \"" +  process.env.NODE_ENV + "\" environment");
+log.w("Running in \"" + process.env.NODE_ENV + "\" environment");
 
 function start(name) {
 	var plugin = require("./" + name + "/" + name + ".js");
@@ -65,9 +65,7 @@ function start(name) {
 	plugin(core, config[name]);
 }
 
-plugins.forEach(function(name) {
-	start(name);
-});
+plugins.forEach(start);
 
 if (process.env.NODE_ENV !== "production") {
 	start("testauth");
