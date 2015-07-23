@@ -122,8 +122,6 @@ module.exports = function(core) {
 								if (res && res.results && res.results[0]) {
 									thread = res.results[0];
 
-									console.log(thread);
-
 									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
 										parts = thread.text.match(/!\[(.*?)\]\((([^(\s\")]+)(\s+\".+\")?)(\))/);
 
@@ -133,7 +131,7 @@ module.exports = function(core) {
 
 									state.indexes = { threadsById: {} };
 
-									state.indexes.threadsById = thread;
+									state.indexes.threadsById[thread.id] = thread;
 
 									return cb({
 										title: buildTitle(state),
