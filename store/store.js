@@ -244,9 +244,7 @@ Store.prototype.getFeaturedRooms = function() {
 };
 
 Store.prototype.getPageTitle = function(compact) {
-	return buildTitle(this.get(), compact, function(threadId) {
-		return this.get("indexes", "threadsById", threadId);
-	}.bind(this));
+	return buildTitle(this.get(), compact);
 };
 
 module.exports = function(core, config) {

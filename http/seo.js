@@ -106,7 +106,7 @@ module.exports = function(core) {
 						roompic = req.protocol + "//" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
 
 						if (state.nav.mode === "chat" && state.nav.thread) {
-							return core.emit("getThreads", {
+							return core.emit("getTexts", {
 								to: state.nav.room,
 								ref: state.nav.thread,
 								session: "internal-http-seo"
@@ -122,19 +122,21 @@ module.exports = function(core) {
 								if (res && res.results && res.results[0]) {
 									thread = res.results[0];
 
+									console.log(thread);
+
 									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
-										parts = thread.text.match(/!\[(.*?)\]\((.+?)(\))/);
+										parts = thread.text.match(/!\[(.*?)\]\((([^(\s\")]+)(\s+\".+\")?)(\))/);
 
 										text = parts[1];
-										picture = parts[2];
+										picture = parts[3];
 									}
 
+									state.indexes = { threadsById: {} };
+
+									state.indexes.threadsById = thread;
+
 									return cb({
-										title: buildTitle(state, function(threadId) {
-											if (threadId === thread.id) {
-												return thread.title;
-											}
-										}),
+										title: buildTitle(state),
 										description: text || thread.text,
 										picture: picture || roompic
 									});
