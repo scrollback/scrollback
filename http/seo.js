@@ -125,8 +125,10 @@ module.exports = function(core) {
 									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
 										parts = thread.text.match(/!\[([^\)]+)\]\((([^(\s\"\')]+)(\s+\".+\")?)(\))/);
 
-										text = parts[1];
-										picture = parts[3];
+										if (parts) {
+											text = parts[1];
+											picture = parts[3];
+										}
 									}
 
 									state.indexes = { threadsById: {} };
