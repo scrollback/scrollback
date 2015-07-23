@@ -103,7 +103,7 @@ module.exports = function(core) {
 					}
 
 					if (r && r.results && r.results[0]) {
-						roompic = req.protocol + "//" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
+						roompic = req.protocol + "://" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
 
 						if (state.nav.mode === "chat" && state.nav.thread) {
 							return core.emit("getTexts", {
@@ -227,7 +227,7 @@ module.exports = function(core) {
 				return cb({
 					head: head,
 					body: body,
-					path: req.protocol + "//" + req.get("host") + req.path
+					path: req.protocol + "://" + req.get("host") + req.path
 				});
 			});
 		});
