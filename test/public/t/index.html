@@ -1,55 +1,99 @@
+<!doctype html>
+
 <html>
 
 <head>
-    <title>This is test page.</title>
+    <title>APIv2 playground</title>
+	
+	<style>
+		body, button { font: 14px/21px "Open Sans"; }
+		* { box-sizing: border-box; }
+		*:focus { outline: none; }
+		textarea { display: block; height: 25em; font: monospace; resize: vertical; width: 100%; padding: 1em; tab-size: 4; }
+		button { font-weight: bold; padding: 1em; }
+		#scrollback-container { width: 100%; height: 30em; background: #eee; }
+	</style>
+	
 </head>
 
 <body>
-    <div>
-        <input id="roomName" type="text" placeholder="room">
-        <input id="nick" type="text" placeholder="nick">
-        <input id="jws" type="text" placeholder="jws">
-        <input type="checkbox" value="createRoom" id="createRoom">CreateRoom</input>
-
-        <button id="basic-embed">Embed this room.</button>
-        <button id="basic-room-nick">Embed this room with nick</button>
-        <button id="basic-room-jws">Embed this room with jws</button>
-        <option>
-
-        </option>
+    <script src="http://local.scrollback.io:7528/s/sb.js"></script>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+	
+	<div>
+        <textarea id="create-options-area">{
+	room: "scrollback"
+}</textarea>
+		<button id="create-btn">Create</button>
+		<div id="scrollback-container"></div>
     </div>
     <script>
-        
-        // change the domain name back to test.scrollback.io if you ever change it.
-        document.write('<script src="http' +
-        	(location.protocol == 'https:' ? 's' : '') +
-        	'://stage.scrollback.io/s/sb.js"><\/script>');
-    </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script>
+		var widgets = [];
         $(function() {
-        	function embedOpts(fields) {
-        		var opts = {};
-        		fields.forEach(function(e) {
-        			opts[e] = $("#" + e).val();
-        		});
-        		opts.createRoom = $("#createRoom").prop('checked');
-        		return opts;
-        	}
-        	$("#basic-embed").on("click", function() {
-        		scrollback(embedOpts(['roomName']));
-        	});
-
-        	$("#basic-room-nick").on("click", function() {
-        		scrollback(embedOpts(['roomName', "nick"]));
-        	});
-        	$("#basic-room-jws").on("click", function() {
-        		scrollback(embedOpts(['roomName', "nick", "jws"]));
-        	});
-
+        	$("#create-btn").click(function () {
+				scrollback(eval("(" + $("#create-options-area").val() + ")"), function (err, widget) {
+					console.log("Created", widget);
+					widgets.push(widget);
+				});
+			});
         });
     </script>
-
+	
+	
+	<script>
+		/*
+			Make textareas code-friendly.
+		*/
+		function insertTextAtCursor (textarea, text) {
+			var pos = textarea.selectionStart, val = textarea.value;
+			textarea.value = val.substr(0, pos) + text + val.substr(textarea.selectionEnd);
+			textarea.selectionStart = textarea.selectionEnd = pos + text.length;
+		}
+		
+		$(function () {
+			$("textarea").keydown(function (event) {
+				if(event.keyCode === 9) {
+					insertTextAtCursor(this, String.fromCharCode(event.keyCode));
+					event.preventDefault();
+				}
+			});
+			
+			$("textarea").keypress(function (event) {
+				if (event.keyCode === 13) {
+					var val = this.value,
+						i = this.selectionStart - 1,
+						indent = "", opens = 0, c;
+					
+					while (i >= 0 && val[i] !== "\n") {
+						c = val[i];
+						if(c === " " || c === "\t") indent = c + indent;
+						else indent = "";
+						
+						if(c === "(" || c === "{" || c === "[") opens++;
+						if(c === ")" || c === "}" || c === "]") opens--;
+						
+						i--;
+					}
+					if (opens > 0) indent += "\t";
+					if (opens < 0) {
+						var lineEnd = this.selectionStart,
+							lastLine = val.substring(i + 1, lineEnd),
+							newLine = lastLine.replace(/^(\s*)(\t| {1,4})(\S)/, "$1$3");
+						
+						this.selectionStart = i + 1;
+						this.selectionEnd = lineEnd;
+						
+						indent = newLine + "\n" + indent.replace(/(\t| {1,4})$/, "");
+					} else {
+						indent = "\n" + indent;
+					}
+					insertTextAtCursor(this, indent);
+					event.preventDefault();
+				}
+			});
+			
+		});
+	</script>
 </body>
 
 </html>

@@ -5,6 +5,7 @@
 
 var generate = require("../lib/generate.js"),
 	appUtils = require("../lib/app-utils.js"),
+	objUtils = require("../lib/obj-utils.js"),
 	pending = require("../lib/pendingQueries.js"),
 	config, core, client, store;
 
@@ -49,13 +50,9 @@ function sendQuery(query, next) {
 }
 
 function disconnected() {
-	console.log("Disconnected:", backOff);
-
 	if (backOff === 1) {
 		core.emit("setstate", {
-			app: {
-				connectionStatus: "offline"
-			}
+			app: { connectionStatus: "offline" }
 		}, function(err) {
 			if (err) console.log(err.message);
 		});
@@ -157,10 +154,8 @@ module.exports = function(c, conf, s) {
 
 	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
-			console.log("Making query:", q);
 			q.type = e;
 			var key = pending.generateKey(q);
-			console.log("checking key: ", key, currentQueries);
 
 			if (currentQueries[key]) {
 				currentQueries[key].push({
@@ -172,9 +167,13 @@ module.exports = function(c, conf, s) {
 			}
 
 			function finishQuery(err) {
-				console.log("Callback fired");
-				currentQueries[key].forEach(function(item) {
-					item.query.results = q.results;
+				currentQueries[key].forEach(function(item, i) {
+					/*
+						When multiple queries have been aggregated, clones of the object
+						need to be sent as results to avoid the callbacks interfering with
+						each other by manipulating the same results objects.
+					*/
+					item.query.results = (i === currentQueries.length - 1 ? q.results : objUtils.clone(q.results));
 					item.next(err);
 				});
 				delete currentQueries[key];

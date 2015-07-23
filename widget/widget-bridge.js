@@ -91,7 +91,7 @@ function sendInit(message) {
 
 function verifyParentOrigin(origin, callback) {
 	var token = generate.uid();
-
+	
 	window.parent.postMessage({
 		type: "domain-challenge",
 		token: token
