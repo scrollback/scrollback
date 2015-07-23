@@ -2,7 +2,7 @@
 
 "use strict";
 
-module.exports = () => {
+module.exports = core => {
 	function onLogin(data) {
 		if (data) {
 			window.postMessage({
@@ -15,32 +15,15 @@ module.exports = () => {
 
 	window.addEventListener("login", e => onLogin(e.detail));
 
-	function onReady(e) {
-		if (e.origin !== window.location.origin) {
-			return;
-		}
-
-		let message = e.data,
-			data;
-
-		if (typeof message === "string") {
-			try {
-				data = JSON.parse(message);
-			} catch (err) {
-				return;
-			}
-		} else if (typeof message === "object" && message) {
-			data = message;
-		}
-
-		if (data && data.type === "ready") {
+	function onChange(changes) {
+		if (changes && changes.app && changes.app.bootComplete) {
 			if (typeof window.Android.onFinishedLoading === "function") {
 				window.Android.onFinishedLoading();
 			}
 
-			window.removeEventListener("message", onReady);
+			core.off("statechange", onChange);
 		}
 	}
 
-	window.addEventListener("message", onReady);
+	core.on("statechange", onChange);
 };
