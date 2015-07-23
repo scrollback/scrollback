@@ -7,4 +7,5 @@ module.exports = (...args) => {
 	require("./widget-config.js")(...args);
 	require("./set-statusbar-color.es6")(...args);
 	require("./user-domain-blacklist.js")(...args);
+	require("./app-compatibility-helper.es6")(...args);
 };
