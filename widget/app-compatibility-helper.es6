@@ -17,7 +17,7 @@ module.exports = core => {
 
 	function onChange(changes) {
 		if (changes && changes.app && changes.app.bootComplete) {
-			if (typeof window.Android.onFinishedLoading === "function") {
+			if (window.Android && typeof window.Android.onFinishedLoading === "function") {
 				window.Android.onFinishedLoading();
 			}
 
