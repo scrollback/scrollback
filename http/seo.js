@@ -103,7 +103,7 @@ module.exports = function(core) {
 					}
 
 					if (r && r.results && r.results[0]) {
-						roompic = req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
+						roompic = req.protocol + "//" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
 
 						if (state.nav.mode === "chat" && state.nav.thread) {
 							return core.emit("getThreads", {
@@ -122,7 +122,7 @@ module.exports = function(core) {
 								if (res && res.results && res.results[0]) {
 									thread = res.results[0];
 
-									if (thread.tags && thread.tags.indexOf("image") && thread.text) {
+									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
 										parts = thread.text.match(/!\[(.*?)\]\((.+?)(\))/);
 
 										text = parts[1];
