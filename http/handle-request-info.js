@@ -1,5 +1,8 @@
 "use strict";
 
+var getAvatar = require("../lib/get-avatar.js"),
+	getRoomPics = require("../lib/get-room-pics.js");
+
 module.exports = function(core) {
 	function parseURL(url) {
 		var parts, path, pathArr, query, queryArr, kv, o;
@@ -56,14 +59,12 @@ module.exports = function(core) {
 
 				delete entity.params;
 
-				if (entity.picture) {
-					cb(null, {
-						type: "json",
-						json: JSON.stringify(entity)
-					});
+				cb(null, {
+					type: "json",
+					json: JSON.stringify(entity)
+				});
 
-					return;
-				}
+				return;
 			}
 
 			cb(null, null);
@@ -75,7 +76,7 @@ module.exports = function(core) {
 			ref: info.entity,
 			session: "internal-http-seo"
 		}, function(err, res) {
-			var entity;
+			var entity, url;
 
 			if (err) {
 				cb(err);
@@ -87,13 +88,28 @@ module.exports = function(core) {
 				entity = res.results[0];
 
 				if (entity.picture) {
-					cb(null, {
-						type: "url",
-						url: entity.picture
-					});
-
-					return;
+					if (info.size) {
+						url = getAvatar(entity.picture, info.size);
+					} else {
+						url = entity.picture;
+					}
+				} else {
+					switch (entity.type) {
+					case "user":
+						url = "/public/s/assets/avatar-fallback.png";
+						break;
+					case "room":
+						url = getRoomPics(entity.id, [ "avatar" ], info.size).avatar;
+						break;
+					}
 				}
+
+				cb(null, {
+					type: "url",
+					url: url
+				});
+
+				return;
 			}
 
 			cb(null);
@@ -101,7 +117,7 @@ module.exports = function(core) {
 	}
 
 	return function(req, cb) {
-		var info = parseURL(req.path);
+		var info = parseURL(req.originalUrl);
 
 		switch (info.type) {
 		case "info":

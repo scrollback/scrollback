@@ -69,7 +69,7 @@ function init(app) {
 					}
 
 					if (data.type === "url") {
-						res.redirect(301, data.url);
+						res.redirect(302, data.url);
 					} else if (data.type === "json") {
 						res.end(data.json);
 					}

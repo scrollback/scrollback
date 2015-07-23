@@ -1,13 +1,14 @@
 "use strict";
 
-var stringUtils = require("../../lib/string-utils.js");
+var getRoomPics = require("../../lib/get-room-pics.js");
 
 module.exports = function(core, config, store) {
 	var roomPics = {};
 
 	return function(roomId) {
 		var room = store.getRoom(roomId),
-			hash, picture, cover, banner;
+			params = [],
+			pics, picture, cover, banner;
 
 		if (room) {
 			picture = room.picture;
@@ -18,43 +19,27 @@ module.exports = function(core, config, store) {
 			}
 		}
 
-		if (!(picture && cover)) {
-			if (roomPics[roomId]) {
-				return roomPics[roomId];
-			}
-
-			hash = stringUtils.hashCode(roomId);
+		if (!picture && !cover && roomPics[roomId]) {
+			return roomPics[roomId];
 		}
 
 		if (!picture) {
-			picture = parseInt((hash + "").slice(-4).slice(0, 2));
-
-			if (picture > 50) {
-				picture = Math.round(picture / 2) + "";
-			} else if (picture < 10) {
-				picture = "0" + picture;
-			}
-
-			picture = "/s/assets/pictures/avatar/" + picture + ".jpg";
+			params.push("avatar");
 		}
 
 		if (!cover) {
-			cover = parseInt((hash + "").slice(-2));
+			params.push("cover");
+			params.push("banner");
+		}
 
-			if (cover > 50) {
-				cover = Math.round(cover / 2) + "";
-			} else if (cover < 10) {
-				cover = "0" + cover;
-			}
-
-			banner = "/s/assets/pictures/banner/" + cover + ".jpg";
-			cover = "/s/assets/pictures/cover/" + cover + ".jpg";
+		if (params.length) {
+			pics = getRoomPics(roomId, params);
 		}
 
 		roomPics[roomId] = {
-			picture: picture,
-			cover: cover,
-			banner: banner
+			picture: picture || pics.picture,
+			cover: cover || pics.cover,
+			banner: banner || pics.banner
 		};
 
 		return roomPics[roomId];
