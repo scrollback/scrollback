@@ -53,12 +53,12 @@ module.exports = function(core, config) {
 		 * calls gcm_notify with a list of GCM registration ids and the payload.
 		 */
 
-		var regList = [];
+		var regList = [], i;
 
 
 		var notesForApps = {};
 		for(i in keys) {
-			notesForApps[i] = [];
+			notesForApps[i] = {};
 		}
 
 

@@ -49,7 +49,6 @@
     "babel": "latest",
     "big-integer": "latest",
     "ebus": "latest",
-    "elasticsearch": "latest",
     "express": "3.x",
     "handlebars": "latest",
     "htmlencode": "latest",
