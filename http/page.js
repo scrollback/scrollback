@@ -21,18 +21,16 @@ Boston, MA 02111-1307 USA.
 "use strict";
 
 var core, config,
-	clientData = require("../client-config-defaults.js"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
-	seo, clientTemp, clientHbs,
-	log = require("../lib/logger.js");
+	clientConfig = require("../client-config-defaults.js"),
+	clientTemplate = handlebars.compile(fs.readFileSync(__dirname + "/../public/app.hbs", "utf8")),
+	log = require("../lib/logger.js"),
+	seo, handleRequestInfo;
 
 function start() {
-	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
-
 	seo = require("./seo.js")(core, config);
-
-	clientTemp = handlebars.compile(clientHbs);
+	handleRequestInfo = require("./handle-request-info.js")(core, config);
 }
 
 function init(app) {
@@ -59,16 +57,41 @@ function init(app) {
 			return next();
 		}
 
+		if (/^\/i\//.test(req.path)) {
+			try {
+				handleRequestInfo(req, function(err, data) {
+					if (err || !data) {
+						log.e("Error retriving info for", req.path, err);
+
+						res.send(404);
+
+						return;
+					}
+
+					if (data.type === "url") {
+						res.redirect(301, data.url);
+					} else if (data.type === "json") {
+						res.end(data.json);
+					}
+				});
+			} catch(err) {
+				log.e("Error handling query for", req.path, err);
+
+				res.send(404);
+			}
+
+			return null;
+		}
+
 		if (!req.secure && config.https) {
 			return res.redirect(301, "https://" + req.get("host") + req.originalUrl);
 		}
 
 		seo.getSEO(req, function(r) {
-			clientData.seo = r;
+			clientConfig.seo = r;
 
-			res.end(clientTemp(clientData));
+			res.end(clientTemplate(clientConfig));
 		});
-
 	});
 }
 
