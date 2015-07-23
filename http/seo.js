@@ -94,6 +94,8 @@ module.exports = function(core) {
 					ref: state.nav.room,
 					session: "internal-http-seo"
 				}, function(e, r) {
+					var roompic;
+
 					if (e) {
 						log.e("SEO: Could not get data for room", state.nav.room);
 
@@ -101,12 +103,16 @@ module.exports = function(core) {
 					}
 
 					if (r && r.results && r.results[0]) {
+						roompic = req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
+
 						if (state.nav.mode === "chat" && state.nav.thread) {
 							return core.emit("getThreads", {
 								to: state.nav.room,
 								ref: state.nav.thread,
 								session: "internal-http-seo"
 							}, function(err, res) {
+								var thread, parts, text, picture;
+
 								if (err) {
 									log.e("SEO: Could not get data for thread", state.nav.thread);
 
@@ -114,14 +120,23 @@ module.exports = function(core) {
 								}
 
 								if (res && res.results && res.results[0]) {
+									thread = res.results[0];
+
+									if (thread.tags && thread.tags.indexOf("image") && thread.text) {
+										parts = thread.text.match(/!\[(.*?)\]\((.+?)(\))/);
+
+										text = parts[1];
+										picture = parts[2];
+									}
+
 									return cb({
 										title: buildTitle(state, function(threadId) {
-											if (threadId === res.results[0].id) {
-												return res.results[0].title;
+											if (threadId === thread.id) {
+												return thread.title;
 											}
 										}),
-										description: res.results[0].text,
-										picture: req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256"
+										description: text || thread.text,
+										picture: picture || roompic
 									});
 								}
 
@@ -131,7 +146,7 @@ module.exports = function(core) {
 							return cb({
 								title: buildTitle(state),
 								description: r.results[0].description,
-								picture: req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256"
+								picture: roompic
 							});
 						}
 
