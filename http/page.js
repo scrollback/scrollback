@@ -55,19 +55,12 @@ function init(app) {
 	});
 
 	app.get("/*", function(req, res, next) {
-
-		console.log("requested", req.path);
-
 		if (/^\/t\//.test(req.path) || /^\/s\//.test(req.path) || /^\/favicon\.ico$/.test(req.path)) {
 			return next();
 		}
 
-		console.log("proceeded");
-
 		if (!req.secure && config.https) {
-			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
-
-			return res.redirect(301, "https://" + config.host + req.path + queryString);
+			return res.redirect(301, "https://" + req.get("host") + req.originalUrl);
 		}
 
 		seo.getSEO(req, function(r) {

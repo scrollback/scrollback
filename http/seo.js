@@ -121,7 +121,7 @@ module.exports = function(core) {
 											}
 										}),
 										description: res.results[0].text,
-										picture: "/i/" + r.results[0].id + "/picture?size=256"
+										picture: req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256"
 									});
 								}
 
@@ -131,7 +131,7 @@ module.exports = function(core) {
 							return cb({
 								title: buildTitle(state),
 								description: r.results[0].description,
-								picture: "/i/" + r.results[0].id + "/picture?size=256"
+								picture: req.protocol + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256"
 							});
 						}
 
