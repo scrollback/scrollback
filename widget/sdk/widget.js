@@ -1,4 +1,5 @@
 /* eslint-env browser */
+/* eslint no-nested-ternary:0 */
 
 "use strict";
 
@@ -26,12 +27,16 @@ function parseMessage(data) {
 
 window.addEventListener("message", function (e) {
 	var data, i;
-
-	if (e.origin !== host) {
+	if (e.origin !== host) { return; }
+	data = parseMessage(e.data);
+		
+	if(data.type === "domain-challenge") {
+		e.source.postMessage(JSON.stringify({
+			type: "domain-response",
+			token: data.token
+		}), host);
 		return;
 	}
-	
-	data = parseMessage(e.data);
 	
 	for(i = 0; i < widgets.length; i++) {
 		if(widgets[i].iframe.contentWindow === e.source) {
@@ -62,7 +67,7 @@ domReady(function() {
 });
 
 function insertIframe(state) {
-	var embed = state.embed,
+	var embed = state.context.embed,
 		iframe = document.createElement("iframe");
 
 	iframe.src = host + url.build(state);
@@ -103,6 +108,9 @@ function copyProps(src, dst, props) {
 // ----- Widget class -----
 
 function Widget (opts) {
+	opts.mode = opts.mode || (opts.thread ? "chat" : opts.room ? "room" : "home");
+	opts.form = opts.form || "toast";
+	
 	this.state = {};
 	this.state.nav = copyProps(opts, ["room", "thread", "view", "mode", "dialog", "dialogState"]);
 	this.state.context = {
@@ -176,12 +184,6 @@ Widget.prototype.receiveMessage = function (message) {
 				/\s*(\bscrollback-minimized\b|$)/,
 				message.minimize? " scrollback-minimized": " "
 			);
-			break;
-		case "domain-challenge":
-			this.iframe.contentWindow.postMessage(JSON.stringify({
-				type: "domain-response",
-				token: message.token
-			}), host);
 			break;
 		case "follow":
 		case "auth":

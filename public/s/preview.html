@@ -47,7 +47,8 @@
 
 			// Don't change below this line ------------------------------------------------
 			(function(d,h,e){e=d.createElement('script');e.async=1;e.src=h+'/client.min.js';
-			scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+"//"+location.hostname));
+			scrollback.host=h;d.body.appendChild(e);}(document,location.protocol+"//"+
+			location.hostname+(location.port?":"+location.port:"")));
 		</script>
 	</body>
 </html>
