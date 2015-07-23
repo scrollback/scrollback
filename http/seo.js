@@ -123,7 +123,7 @@ module.exports = function(core) {
 									thread = res.results[0];
 
 									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
-										parts = thread.text.match(/!\[(.*?)\]\((([^(\s\")]+)(\s+\".+\")?)(\))/);
+										parts = thread.text.match(/!\[([^\)]+)\]\((([^(\s\"\')]+)(\s+\".+\")?)(\))/);
 
 										text = parts[1];
 										picture = parts[3];
