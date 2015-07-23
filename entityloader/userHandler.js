@@ -6,7 +6,7 @@ var core;
 
 function userHandler(action, callback) {
 	core.emit("getUsers", {
-		ref: action.to,
+		ref: "me", // Sign up doesn't work if changed to action.to, why was it done?
 		session: action.session
 	}, function(meErr, response) {
 		function done() {

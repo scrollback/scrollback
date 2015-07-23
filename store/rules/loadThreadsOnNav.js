@@ -49,16 +49,19 @@ module.exports = function(core, config, store) {
 			time = future.get("nav", "threadRange", "time") || null,
 			before = future.get("nav", "threadRange", "before"),
 			after = future.get("nav", "threadRange", "after"),
-			r;
+			r, queryTime;
 
 		r = store.getThreads(roomId, time, (after || 0) + 5);
 
 		if (r[r.length - 1] === "missing") {
-			core.emit("getThreads", {
-				to: roomId,
-				time: (r.length > 1 ? r[r.length - 2].startTime : time),
-				after: Math.max(16, (after || 0) - r.length + 1)
-			}, threadResponse);
+			queryTime = (r.length > 1 ? r[r.length - 2].startTime : time);
+			if(queryTime !== null) {
+				core.emit("getThreads", {
+					to: roomId,
+					time: queryTime,
+					after: Math.max(16, (after || 0) - r.length + 1)
+				}, threadResponse);
+			}
 		}
 
 		r = store.getThreads(roomId, time, -(before || 0) - 5);

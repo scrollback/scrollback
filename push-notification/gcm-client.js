@@ -27,7 +27,11 @@ module.exports = function(core, config, store) {
 			window.addEventListener("gcm_register", function(event) {
 				console.log("got device details", event);
 				device = event.detail;
-				device.packageName = window.android.getPackageName();
+
+				if (window.Android && typeof window.Android.getPackageName === "function") {
+					device.packageName = window.Android.getPackageName();
+				}
+
 				updateDevice = true;
 				if (store.get("app", "connectionStatus") === "online") {
 					saveUser();
