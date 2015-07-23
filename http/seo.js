@@ -227,7 +227,7 @@ module.exports = function(core) {
 				return cb({
 					head: head,
 					body: body,
-					path: req.path
+					path: req.protocol + "//" + req.get("host") + req.path
 				});
 			});
 		});
