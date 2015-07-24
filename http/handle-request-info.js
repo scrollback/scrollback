@@ -99,7 +99,7 @@ module.exports = function(core) {
 						url = "/public/s/assets/avatar-fallback.png";
 						break;
 					case "room":
-						url = getRoomPics(entity.id, [ "avatar" ], info.size).avatar;
+						url = getRoomPics(entity, [ "avatar" ], info.size).avatar;
 						break;
 					}
 				}

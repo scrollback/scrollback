@@ -4,7 +4,7 @@
 
 module.exports = (core, config, store) => {
 	const promisedAction = require("../lib/promised-action.es6")(core, config, store),
-		  getRoomPics = require("../ui/utils/room-pics.js")(core, config, store);
+		getRoomPics = require("../../lib/get-room-pics.js");
 
 	core.on("pref-show", tabs => {
 		let container = document.createElement("div"),
@@ -22,7 +22,7 @@ module.exports = (core, config, store) => {
 
 				let avatar = document.createElement("img");
 
-				avatar.src = getRoomPics(room).picture;
+				avatar.src = getRoomPics(room, [ "avatar" ]).avatar;
 
 				let message = document.createTextNode(room.officer + " invited you to be a " + room.transitionRole + " of " + room.id);
 

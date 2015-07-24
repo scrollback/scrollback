@@ -5,7 +5,7 @@
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  userInfo = require("../../lib/user.js")(core, config, store),
-		  getRoomPics = require("../utils/room-pics.js")(core, config, store),
+		  getRoomPics = require("../../lib/get-room-pics.js"),
 		  getAvatar = require("../../lib/get-avatar.js");
 
 	class Suggestions extends React.Component {
@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 								avatar = getAvatar(entity.picture, 48);
 							} else {
 								name = entity.id;
-								avatar = entity.picture || getRoomPics(name).picture;
+								avatar = entity.picture || getRoomPics(entity, [ "avatar" ]).avatar;
 							}
 
 							return (
