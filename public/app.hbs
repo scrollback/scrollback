@@ -6,7 +6,22 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-	{{{seo.head}}}
+	<meta name="description" content="{{seo.head.description}}">
+
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="{{seo.head.title}}">
+	<meta name="twitter:description" content="{{seo.head.description}}">
+	<meta name="twitter:image" content="{{seo.head.picture}}">
+
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{{seo.head.title}}">
+	<meta property="og:description" content="{{seo.head.description}}">
+	<meta property="og:image" content="{{seo.head.picture}}">
+	<meta property="og:url" content="{{seo.path}}">
+
+	<title>{{seo.head.title}}</title>
+
+	<link rel="image_src" href="{{seo.head.picture}}">
 
 	<link rel="shortcut icon" href="/s/assets/favicon.png" type="image/x-icon">
 
