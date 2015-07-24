@@ -2,12 +2,12 @@
 
 var format = require("../../lib/format.js"),
 	appUtils = require("../../lib/app-utils.js"),
-	getAvatar = require("../../lib/get-avatar.js");
+	getAvatar = require("../../lib/get-avatar.js"),
+	getRoomPics = require("../../lib/get-room-pics.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		RoomNameEntry = require("./room-name-entry.jsx")(core, config, store),
-		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		Banner;
 
 	Banner = React.createClass({
@@ -104,12 +104,12 @@ module.exports = function(core, config, store) {
 				if (mode === "room" && env !== "embed") {
 					rel = store.getRelation();
 					roomObj = store.getRoom() || {};
-					pics = getRoomPics(roomObj.id);
+					pics = getRoomPics(roomObj, [ "avatar", "banner" ]);
 
 					this.setState({
 						title: roomObj.id,
 						description: format.mdToHtml(roomObj.description) || "This room has no description.",
-						picture: pics.picture,
+						picture: pics.avatar,
 						cover: pics.banner,
 						banner: true,
 						form: false,

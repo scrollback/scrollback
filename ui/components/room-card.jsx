@@ -2,13 +2,13 @@
 
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var appUtils = require("../../lib/app-utils.js"),
+	getRoomPics = require("../../lib/get-room-pics.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		Badge = require("./badge.jsx")(core, config, store),
 		FollowButton = require("./follow-button.jsx")(core, config, store),
-		getRoomPics = require("../utils/room-pics.js")(core, config, store),
 		RoomCard;
 
 	RoomCard = React.createClass({
@@ -66,7 +66,7 @@ module.exports = function(core, config, store) {
 			var room = this.props.roomId,
 				user = store.get("user"),
 				rel = store.getRelation(room, user),
-				pics = getRoomPics(room),
+				pics = getRoomPics(room, [ "avatar", "cover" ]),
 				icons = [],
 				threads;
 
@@ -103,7 +103,7 @@ module.exports = function(core, config, store) {
 							<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
 							{icons}
 						</div>
-						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.picture  + ")" }}></div>
+						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.avatar  + ")" }}></div>
 						<h3 className="card-cover-title">{room}</h3>
 					</div>
 					<div className="card-content card-content-big">
