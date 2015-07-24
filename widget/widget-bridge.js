@@ -116,9 +116,9 @@ function verifyParentOrigin(origin, callback) {
 
 function onMessage(e) {
 	var data;
-
-	if(!verifyMessageOrigin(e)) { return; }
 	data = parseMessage(e.data);
+
+	if(data.type === "domain-response" || !verifyMessageOrigin(e)) { return; }
 
 	switch (data.type) {
 		case "auth":

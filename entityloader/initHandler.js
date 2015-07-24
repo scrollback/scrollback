@@ -85,7 +85,7 @@ function initHandler(action, callback) {
 			return initializerUser(action, function() {
 				if (action.suggestedNick) {
 					action.user.isSuggested = true;
-					action.user.assignedBy = action.origin.domain;
+					action.user.assignedBy = action.origin.host;
 					action.user.requestedNick = action.suggestedNick;
 				}
 				return callback();
@@ -95,13 +95,13 @@ function initHandler(action, callback) {
 		}
 
 		function allowSuggested(user) {
-			if (user.isSuggested) return (action.origin.domain === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
+			if (user.isSuggested) return (action.origin.host === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
 			else return true;
 		}
 		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
-				action.user.assignedBy = action.origin.domain;
+				action.user.assignedBy = action.origin.host;
 				action.user.requestedNick = action.suggestedNick;
 				action.old = old;
 				return callback();

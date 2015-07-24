@@ -15,9 +15,9 @@ module.exports = function(core, config) {
 			return error;
 		}
 
-		if (origin.domain === config.global.host) return;
+		if (origin.host === config.global.host) return;
 		if (guides && guides.allowedDomains && guides.allowedDomains.length) {
-			if (guides.allowedDomains.indexOf(origin.domain) == -1) {
+			if (guides.allowedDomains.indexOf(origin.host) == -1) {
 				return error;
 			}
 		}

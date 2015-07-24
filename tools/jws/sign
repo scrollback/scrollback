@@ -1,0 +1,57 @@
+#! /bin/node
+
+"use strict";
+
+// sign with default (HMAC SHA256)
+var jwt = require("jsonwebtoken"),
+	iss = "localhost:7528",
+	aud = "localhost:7528",
+	sub, key;
+
+function helpQuit() {
+	console.log("Usage: sign [-i <issuer>] [-a <audience>] [-k <key>] <subject>");
+	process.exit(1);
+}
+
+process.argv.forEach(function (segment) {
+	if (sub === "-a") {
+		aud = segment;
+		sub = null;
+	} else if (sub === "-i") {
+		iss = segment;
+		sub = null;
+	} else if (sub === "-k") {
+		key = segment;
+		sub = null;
+	} else if (segment === "sign" || segment === "sign.js") {
+		sub = null;
+	} else {
+		sub = segment;
+	}
+});
+
+if (!sub || sub[0] === "-") { helpQuit(); }
+if (!key) {
+	key = require("../../server-config-defaults.js").jws.keys[iss][0];
+	if (!key) {
+		console.log("No key found for issuer", iss);
+		process.exit(2);
+	} else {
+		console.log("Using key", key);
+	}
+}
+
+key = Buffer(key, "base64");
+
+console.log(jwt.sign(
+	{
+		iss: iss, sub: sub, aud: aud,
+		iat: Math.floor((new Date()).getTime() / 1000),
+		exp: Math.floor((new Date()).getTime() / 1000) + 30000
+	},
+	key,
+	{
+		algorithm: "HS256",
+		type: "JWS"
+	}
+));
