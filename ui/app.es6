@@ -62,7 +62,7 @@ require("../facebook/facebook-client.js")(...args);
 require("../github/github-client.js")(...args);
 require("../google/google-client.js")(...args);
 require("../push-notification/gcm-client.js")(...args);
-require("../http/logout-client.js")(...args);
+require("../http/logout-client.es6")(...args);
 
 // Modules
 require("./modules/menu-listeners.es6")(...args);
