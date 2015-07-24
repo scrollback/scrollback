@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken'),
+	log = require('../lib/logger.js'),
 	crypto = require('crypto'),
 	core,
 	keys, utils = require('../lib/app-utils.js'),
@@ -12,7 +13,7 @@ module.exports = function(c, conf) {
 	core.on("init", jwsHandler, "authentication");
 };
 
-function checkCurrentRooms(user, domain, callback) {
+function checkCurrentRooms(user, host, callback) {
 	core.emit("getRooms", {
 		hasOccupant: user,
 		session: "internal-jws"
@@ -24,7 +25,7 @@ function checkCurrentRooms(user, domain, callback) {
 		else res = rooms.results;
 		for (i = 0, l = res.length; i < l; i++) {
 			if (res[i].guides && res[i].guides.allowedDomains) {
-				if (res[i].guides.allowedDomains.indexOf(domain) < 0) {
+				if (res[i].guides.allowedDomains.indexOf(host) < 0) {
 					shouldAllow = false;
 					break;
 				}
@@ -35,26 +36,26 @@ function checkCurrentRooms(user, domain, callback) {
 }
 
 function jwsHandler(action, callback) {
-	var domain;
+	var host;
 	if (!action.auth || !action.auth.jws) return callback();
 	if (!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
-		if (!isVerified) return callback(new Error("AUTH_FAIL: INVALID_TOKEN"));
-		if (payload.iss !== action.origin.domain) return callback("AUTH_FAIL:INVALID_ISS");
+		if (!isVerified) return callback(new Error("AUTH_FAIL:INVALID_TOKEN"));
+		if (payload.iss !== action.origin.host) return callback(Error("AUTH_FAIL:INVALID_ISS " + payload.iss + ", Expected " + action.origin.host));
 
 		core.emit("getUsers", {
 			identity: "mailto:" + payload.sub,
 			session: "internal-jws"
 		}, function(err, res) {
 			var user;
-			if (err) return callback(new Error("AUTH_FAIL_DATABASE/" + err.message));
-			domain = action.origin.domain;
+			if (err) return callback(new Error("AUTH_FAIL:DATABASE/" + err.message));
+			host = action.origin.host;
 			user = (res.results && res.results.length) ? res.results[0] : null;
 
 			if (user) {
 				if (config.global.su[user.id]) return callback(new Error("Oops.."));
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, domain, function(err, shouldAllow) {
+					checkCurrentRooms(action.user.id, host, function(err, shouldAllow) {
 						if (err) return callback(err);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
@@ -62,26 +63,26 @@ function jwsHandler(action, callback) {
 						} else {
 							action.old = action.user;
 							action.user = user;
-							action.user.allowedDomains = [domain];
+							action.user.allowedDomains = [host];
 							return callback();
 						}
 					});
 				} else {
 					if (action.user.id === user.id) {
 						if (!action.user.allowedDomains) action.user.allowedDomains = [];
-						if (action.user.allowedDomains.indexOf(domain) < 0) {
-							action.user.allowedDomains.push(domain);
+						if (action.user.allowedDomains.indexOf(host) < 0) {
+							action.user.allowedDomains.push(host);
 						}
 						callback();
 					} else {
 						//this state is when i am already logged in and a website gives me JSON signature and i cant do anything with it. so throwing error.
-						callback(new Error("fail"));
+						callback(new Error("AUTH_FAIL:ALREADY_LOGGED_IN " + action.user.id + " Sign-in-attempt as " + user.id));
 					}
 				}
 			} else {
 				//			signup?
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, domain, function(err, shouldAllow) {
+					checkCurrentRooms(action.user.id, host, function(err, shouldAllow) {
 						if (err) return callback(err);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
@@ -113,12 +114,19 @@ function jwsHandler(action, callback) {
 var verify = (function() {
 	return function(action, callback) {
 		var availableKeys, i = 0;
-		if (!action.origin || !action.origin.domain || !keys[action.origin.domain]) return callback(false, {});
-		availableKeys = keys[action.origin.domain];
+		
+		log.d("Verifying JWS init", action);
+		
+		if (!action.origin || !action.origin.host || !keys[action.origin.host]) return callback(false, {});
+		availableKeys = keys[action.origin.host];
+		
+		log.d("JWS availbleKeys", availableKeys);
 
 		function testKey() {
+			console.log("JWS testing key", i);
 			if (i === availableKeys.length) return callback(false);
-			jwt.verify(action.auth.jws, availableKeys[i], { algorithm: 'HS512' }, function(err, decoded) {
+			jwt.verify(action.auth.jws, Buffer(availableKeys[i], "base64"), { algorithm: 'HS512' }, function(err, decoded) {
+				console.log("JWS verification result", err, decoded);
 				if (!err && decoded) {
 					return callback(true, decoded);
 				}

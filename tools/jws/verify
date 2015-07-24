@@ -1,0 +1,46 @@
+#! /bin/node
+
+// sign with default (HMAC SHA256)
+var jwt = require('jsonwebtoken'),
+	token, iss = "localhost:7528", key;
+
+
+function helpQuit() {
+	console.log("Usage: verify [-i <issuer>] [-k <key>] <token>");
+	process.exit(1);
+}
+
+process.argv.forEach(function (segment) {
+	if (token === "-i") {
+		iss = segment;
+		token = null;
+	} else if (token === "-k") {
+		key = segment;
+		token = null;
+	} else if (segment === "verify" || segment === "verify.js") {
+		token = null;
+	} else {
+		token = segment;
+	}
+});
+
+if (!token || token[0] === "-") { helpQuit(); }
+if (!key) {
+	key = require("../../server-config-defaults.js").jws.keys[iss][0];
+	if (!key) {
+		console.log("No key found for issuer", iss);
+		helpQuit();
+	} else {
+		console.log("Using key", key);
+	}
+}
+
+key = new Buffer(key, "base64");
+
+jwt.verify(token, key, function(err, decoded) {
+	if(err) {
+		console.log("Verification failed with error: " + err.message);
+		return;
+	}
+	console.log("Verification succeeded: " + JSON.stringify(decoded).replace(/"/g, ""));
+});

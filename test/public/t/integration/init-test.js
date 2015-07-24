@@ -23,7 +23,7 @@ describe("Action: INIT:", function(){
 		"session": "web://"+uid(),
 		"resource": uid(),
 		"origin": {
-			domain: "scrollback.io", 
+			host: "scrollback.io", 
 			verified: true }
 		};
 		socket.onmessage = function(message){
@@ -41,7 +41,7 @@ describe("Action: INIT:", function(){
 		"to": "me",
 		"resource": uid(),
 		"origin": {
-					domain: "scrollback.io", 
+					host: "scrollback.io", 
 					verified: true }
 		};
 		socket.onmessage = function(message){
@@ -64,7 +64,7 @@ describe("Action: INIT:", function(){
 			"to": "me",
 			"resource": uid(),
 			"origin": {
-						domain: "scrollback.io", 
+						host: "scrollback.io", 
 						verified: true }
 			};
 			pSocket.onmessage = function(message){
@@ -77,7 +77,7 @@ describe("Action: INIT:", function(){
 				"to": "me",
 				"resource": uid(),
 				"origin": {
-							domain: "scrollback.io", 
+							host: "scrollback.io", 
 							verified: true }
 				};
 				socket.onmessage = function(message){
@@ -102,7 +102,7 @@ describe("Action: INIT:", function(){
 				"to": "me",
 				"resource": uid(),
 				"origin": {
-							domain: "scrollback.io", 
+							host: "scrollback.io", 
 							verified: true }
 				};
 				socket.onmessage = function(message){
@@ -133,7 +133,7 @@ describe("Action: INIT:", function(){
 					"session": "web://"+uid(),
 					"resource": uid(),
 					"origin": {
-						domain: "scrollback.io", 
+						host: "scrollback.io", 
 						verified: true }
 					};
 					socket.onmessage = function(message){
@@ -171,7 +171,7 @@ describe("Action: INIT:", function(){
 		"session": "web://"+uid(),
 		"resource": uid(),
 		"origin": {
-			domain: "scrollback.io", 
+			host: "scrollback.io", 
 			verified: true }
 		};
 		socket.onmessage = function(message){
@@ -210,7 +210,7 @@ describe("Action: INIT:", function(){
 		"session": "web://"+uid(),
 		"resource": uid(),
 		"origin": {
-			domain: "scrollback.io",
+			host: "scrollback.io",
 			verified: true }
 		};
 		socket.onmessage = function(message){
@@ -236,7 +236,7 @@ describe("Action: INIT:", function(){
 					"session": "web://"+uid(),
 					"resource": uid(),
 					"origin": {
-						domain: "scrollback.io", 
+						host: "scrollback.io", 
 						verified: true }
 					};
 					socket.onmessage = function(message){
@@ -265,7 +265,7 @@ describe("Action: INIT:", function(){
 		"session": "web://"+uid(),
 		"resource": uid(),
 		"origin": {
-			domain: "scrollback.io",
+			host: "scrollback.io",
 			verified: true }
 		};
 		socket.onmessage = function(message){

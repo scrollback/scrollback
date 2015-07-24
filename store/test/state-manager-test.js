@@ -52,14 +52,16 @@ module.exports = function(c, conf, s) {
 		it("setting objects in context", function(done) {
 			core.emit("setstate", {
 				context: {
-					embed: {
-						domain: "h10.in",
+					origin: {
+						host: "h10.in"
+					},
+					init: {
 						suggestedNick: "hi"
 					}
 				}
 			}, function() {
-				assert.equal(store.get("context", "embed").domain, "h10.in", "Navigation didnot happen");
-				assert.equal(store.get("context", "embed").suggestedNick, "hi", "Navigation didnot happen");
+				assert.equal(store.get("context", "origin").host, "h10.in", "Navigation didnot happen");
+				assert.equal(store.get("context", "init").suggestedNick, "hi", "Navigation didnot happen");
 				done();
 			});
 		});

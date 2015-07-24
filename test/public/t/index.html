@@ -17,8 +17,9 @@
 </head>
 
 <body>
-    <script src="http://local.scrollback.io:7528/s/sb.js"></script>
+    <script src="http://localhost:7528/s/sb.js"></script>
     <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script src="crypto.js"></script>
 	
 	<div>
         <textarea id="create-options-area">{
@@ -38,6 +39,22 @@
 			});
         });
     </script>
+	
+	<script>
+		function jws(email) {
+			return window.sign(
+				"HS256",
+				JSON.stringify({ typ: "JWT", alg: "HS256" }),
+				JSON.stringify({
+					iss: location.host, sub: email, aud: "localhost:7528",
+					iat: Math.floor((new Date()).getTime() / 1000),
+					exp: Math.floor((new Date()).getTime() / 1000) + 30000
+				}),
+				"XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg=",
+				true
+			).result;
+		}
+	</script>
 	
 	
 	<script>

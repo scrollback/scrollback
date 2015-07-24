@@ -39,7 +39,7 @@ function createConnection(user, cb) {
 		var init = {
 			"type": "init",
 			"to": "me",
-			"origin": { domain: "scrollback.io", verified: true },
+			"origin": { host: "scrollback.io", verified: true },
 			"auth": { "testauth" : user },
 			"id": uid(),
 			"session": "web://"+uid()

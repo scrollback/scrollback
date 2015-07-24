@@ -13,7 +13,7 @@ module.exports = function () {
 	describe("Testing domain validation rules:", function(){
 		it("missing room", function(){
 			var origin = {
-				domain: "scrollback.io",
+				host: "scrollback.io",
 				verified: false
 			};
 			var room;
@@ -28,7 +28,7 @@ module.exports = function () {
 		
 		it("not verified domain", function(){
 			var origin = {
-				domain: "scrollback.io",
+				host: "scrollback.io",
 				verified: false
 			};
 			var room = {};
@@ -37,7 +37,7 @@ module.exports = function () {
 		
 		it("action with verified domain on room with no allowed domains", function(){
 			var origin = {
-				domain: "dev.scrollback.io",
+				host: "dev.scrollback.io",
 				verified: true
 			};
 			var room = {guides:{}};
@@ -46,7 +46,7 @@ module.exports = function () {
 		
 		it("action with verified not allowed domain on room with allowed domains", function(){
 			var origin = {
-				domain: "dev.scrollback.io",
+				host: "dev.scrollback.io",
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io"]}};
@@ -56,7 +56,7 @@ module.exports = function () {
 		
 		it("action with verified not allowed domain on room with allowed domains", function(){
 			var origin = {
-				domain: "dev.scrollback.io",
+				host: "dev.scrollback.io",
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io", "sock.scrollback.io"]}};
@@ -66,7 +66,7 @@ module.exports = function () {
 		
 		it("action with verified not allowed domain on room with allowed domains", function(){
 			var origin = {
-				domain: "dev.scrollback.io",
+				host: "dev.scrollback.io",
 				verified: true
 			};
 			var room = {guides:{allowedDomains: ["scrollback.io", "dev.scrollback.io"]}};
