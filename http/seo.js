@@ -1,205 +1,237 @@
 "use strict";
 
-var log = require('../lib/logger.js');
-var config;
-var noOfThreads = 50;
-var noOfText = 255;
+var log = require("../lib/logger.js"),
+	url = require("../lib/url.js"),
+	format = require("../lib/format.js"),
+	buildTitle = require("../lib/build-title.js"),
+	noOfThreads = 50,
+	noOfText = 255;
 
-module.exports = function(core, conf) {
-	config = conf;
-	return {
-		getSEOHtml: getSEOHtml
-	};
-	/**
-    callback with object {head: {string}, body: {string}}
-    */
-	function getSEOHtml(req, callback) {
-		var query = req.query;
-		if (!query.embed) {
-			getHeadHtml(req, function(head) {
-				log.d("Seo content:" + head + "kdjnksjdnfksnd");
-				if(!head) {
-					callback({
-						head:"",
-						body:""
-					});
-				} else {
-					log.d("loading seo body ");
-					getBodyHtml(req, function(body) {
-						log.d("loaded seo body ", body);
-						callback({
-							head: head,
-							body: body
-						});
-					});
-				}
-			});
-		} else {
-			callback({
-				head: "",
-				body: ""
-			});
-		}
+module.exports = function(core) {
+	function genLink(title, nav) {
+		return "<a href='" + url.build({ nav: nav }) + "'>" + format.textToHtml(title) + "</a>";
 	}
 
-	function getHeadHtml(req, callback) {
-		var path = req.path;
-		var a = path.substring(1).split("/");
-		var ct = 0;
-		var thread;
-		var room;
+	function genRoomHtml(room) {
+		return "<h1 itemprop='name'>" + room.id + "</h1>\n<p itemprop='description'>" + room.description + "</p>";
+	}
 
-		function done() {
-			if (++ct === 2) {
-				if (room && room.guides && room.guides.authorizer && room.guides.authorizer.readLevel === "guest") {
-					log.d("generating head html:", room.guides);
-					callback(genHeadHtml(room, thread));
-				} else {
-					log.d("Not generating head html:", room);
-					callback("");
-				}
+	function genRoomListHtml(rooms) {
+		return "<h1 itemprop='name'>Featured rooms</h1>\n<p>" + rooms.map(function(room) {
+			return genLink(room.id, {
+				mode: "room",
+				room: room.id
+			});
+		}).join("\n") + "</p>";
+	}
+
+	function genTextHtml(res, roomid, threadid) {
+		var a = res.map(function(text) {
+				return "<p>" + format.textToHtml(text.from.replace(/^guest\-/, "") + ": " + text.text) + "</p>";
+			});
+
+		if (a.length > noOfText) {
+			a.pop();
+
+			a.push(genLink("Next", {
+				mode: "chat",
+				room: roomid,
+				thread: threadid,
+				textRange: { time: res[res.length - 1].time }
+			}));
+		}
+
+		a.push(genLink("Discussion", {
+			mode: "chat",
+			room: roomid,
+			thread: threadid
+		}));
+
+		a.push(genLink("Discussions in " + roomid, {
+			mode: "room",
+			room: roomid
+		}));
+
+		return a.join("\n");
+	}
+
+	function genThreadHtml(res, roomid) {
+		var a = [],
+			thread;
+
+		for (var i = 0, l = Math.min(res.length, noOfThreads); i < l; i++) {
+			thread = res[i];
+
+			a.push(genLink("Discussions in " + thread.title, {
+				mode: "chat",
+				room: roomid,
+				thread: thread.id,
+				textRange: { time: thread.startTime }
+			}));
+		}
+
+		if (res.length > noOfThreads) {
+			a.push(genLink("Next", {
+				mode: "chat",
+				room: roomid,
+				thread: thread.id,
+				textRange: { time: res[res.length - 1].startTime }
+			}));
+		}
+
+		a.push(genLink("Discussions in " + roomid, {
+			mode: "room",
+			room: roomid
+		}));
+
+		return a.join("\n");
+	}
+
+	function getHead(state, req, cb) {
+		if (state.nav) {
+			if (state.nav.mode !== "home" && state.nav.room) {
+				return core.emit("getRooms", {
+					ref: state.nav.room,
+					session: "internal-http-seo"
+				}, function(e, r) {
+					var roompic;
+
+					if (e) {
+						log.e("SEO: Could not get data for room", state.nav.room);
+
+						return cb(null);
+					}
+
+					if (r && r.results && r.results[0]) {
+						roompic = req.protocol + "://" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
+
+						if (state.nav.mode === "chat" && state.nav.thread) {
+							return core.emit("getTexts", {
+								to: state.nav.room,
+								ref: state.nav.thread,
+								session: "internal-http-seo"
+							}, function(err, res) {
+								var thread, parts, text, picture;
+
+								if (err) {
+									log.e("SEO: Could not get data for thread", state.nav.thread);
+
+									return cb(null);
+								}
+
+								if (res && res.results && res.results[0]) {
+									thread = res.results[0];
+
+									if (thread.tags && thread.tags.indexOf("image") > -1 && thread.text) {
+										parts = thread.text.match(/!\[([^\]]+)\]\((([^(\s\"\')]+)(\s+\".+\")?)(\))/);
+
+										if (parts) {
+											text = parts[1];
+											picture = parts[3];
+										}
+									}
+
+									state.indexes = { threadsById: {} };
+
+									state.indexes.threadsById[thread.id] = thread;
+
+									return cb({
+										title: buildTitle(state),
+										description: text || thread.text,
+										picture: picture || roompic
+									});
+								}
+
+								return cb(null);
+							});
+						} else {
+							return cb({
+								title: buildTitle(state),
+								description: r.results[0].description,
+								picture: roompic
+							});
+						}
+
+						return null;
+					}
+
+					return cb(null);
+				});
 			}
 		}
-		if (a[0]) {
-			if (a[1]) {
-				core.emit("getThreads", {
-					to: a[0],
-					ref: a[1],
-					session: "internal-http-seo"
-				}, function(err, data) {
-					log.d("Results:", data);
-					if (!err && data && data.results && data.results.length) {
-						thread = data.results[0];
-						done();
-					} else done();
 
-				});
-
-			} else done();
-
-			core.emit("getRooms", {
-				ref: a[0],
-				session: "internal-http-seo"
-			}, function(err, data) {
-				if (!err && data.results && data.results[0]) {
-					room = data.results[0];
-					done();
-				} else done();
-			});
-		} else callback("");
+		return cb(null);
 	}
 
-	function getBodyHtml(req, callback) {
-		var path = req.path;
-		var query = req.query;
-		var a = path.substring(1).split("/");
+	function getBody(state, req, cb) {
+		var time;
 
-		if (a[1]) {
-			core.emit("getTexts", {
-				to: a[0],
-				thread: a[1],
-				time: query.time ? new Date(query.time).getTime() : 1,
+		if (state.nav && state.nav.mode === "chat" && state.nav.room) {
+			time = state.nav.textRange && state.nav.textRange.time ? state.nav.textRange.time : 1;
+
+			return core.emit("getTexts", {
+				to: state.nav.room,
+				thread: state.nav.thread,
+				time: time,
 				after: noOfText + 1,
 				session: "internal-http-seo"
 			}, function(err, data) {
 				var room = data.room;
+
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-					var r = getRoomHtml(room) + "\n" + getTextHtml(data.results, a[0], a[1]);
-					callback(r);
-				} else callback("");
+					return cb(genRoomHtml(room) + "\n" + genTextHtml(data.results, state.nav.room, state.nav.thread));
+				} else {
+					return cb(null);
+				}
 			});
-		} else if (a[0]) { //threads.
-			if (!query.time) query.time = new Date(1).toISOString();
-			core.emit("getThreads", {
-				to: a[0],
-				time: new Date(query.time).getTime(),
+		} else if (state.nav && state.nav.mode === "room" && state.nav.room) {
+			time = state.nav.threadRange && state.nav.threadRange.time ? state.nav.threadRange.time : 1;
+
+			return core.emit("getThreads", {
+				to: state.nav.room,
+				time: time,
 				after: noOfThreads + 1,
 				session: "internal-http-seo"
 			}, function(err, data) {
 				var room = data.room;
+
 				if (!err && data.results && room.params && (!room.params.http || room.params.http.seo)) {
-					var r = getRoomHtml(room) + "\n" + getThreadsHtml(data.results, a[0]);
-					callback(r);
-				} else callback("");
+					return cb(genRoomHtml(room) + "\n" + genThreadHtml(data.results, state.nav.room));
+				} else {
+					return cb(null);
+				}
 			});
-
-		} else callback("");
+		} else {
+			return core.emit("getRooms", {
+				featured: true,
+				session: "internal-http-seo"
+			}, function(err, res) {
+				if (!err && res.results) {
+					return cb(genRoomListHtml(res.results));
+				} else {
+					cb(null);
+				}
+			});
+		}
 	}
 
+	function getSEO(req, cb) {
+		var state = url.parse(req.path);
+
+		if (state.context && state.context.embed) {
+			return cb(null);
+		}
+
+		getHead(state, req, function(head) {
+			getBody(state, req, function(body) {
+				return cb({
+					head: head,
+					body: body,
+					path: req.protocol + "://" + req.get("host") + req.path
+				});
+			});
+		});
+	}
+
+	return { getSEO: getSEO };
 };
-
-
-function getRoomHtml(room) {
-	var r = "";
-	r += "<h1 itemprop=\"name\">" + room.id + "</h1>";
-	r += "<p itemprop=\"description\">" + room.description + "</p>";
-	return r;
-}
-
-function getTextHtml(r, roomid, threadid) {
-	var a = r.map(function(text) {
-		var t = text.from.replace("guest-", "") + ": " + text.text;
-		t = htmlEscape(t);
-		return ("<p>" + t + "</p>");
-	});
-
-	if (a.length > noOfText) {
-		a.pop();
-		a.push("<a href=\"/" + roomid + "/" + threadid + "?time=" +
-			new Date(r[r.length - 1].time).toISOString() +
-			"&amp;tab=threads\">Next</a>");
-	}
-
-	a.push("<a href=\"/" + roomid + "/" + threadid + "\">Discussion</a>");
-	a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
-	return a.join("\n");
-
-}
-
-function getURL(time, roomid) {
-	log("time", time, "roomId", roomid);
-	return "\"/" + roomid + "?t=" + new Date(time).toISOString() + "&amp;tab=threads\"";
-}
-
-function getThreadsHtml(r, roomid) {
-	var a = [];
-	for (var i = 0; i < Math.min(r.length, noOfThreads); i++) {
-		var thread = r[i];
-		a.push("<a href='/" + roomid + "/" +
-			thread.id + "?time=" + new Date(thread.startTime).toISOString() +
-			"&amp;tab=threads'>" + htmlEscape(thread.title) + "</a>");
-	}
-	if (r.length > noOfThreads) {
-		a.push("<a href=" + getURL(r[r.length - 1].startTime, roomid) + ">Next</a>");
-	}
-	a.push("<a href=" + getURL(1, roomid) + ">Discussions in " + roomid + "</a>");
-
-	return a.join("\n");
-}
-
-function htmlEscape(str) {
-	return String(str)
-		.replace(/&/g, '&amp;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#39;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;');
-}
-
-function genHeadHtml(room, thread) {
-	var r = [];
-	var roomIcon = "https://" + config.host + "/s/assets/preview@2x.png";
-	r.push("<meta name=\"description\" content=\"" + htmlEscape(room.description) + "\">");
-	r.push("<meta name=\"twitter:card\" content=\"summary\" />");
-	r.push("<meta name=\"twitter:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
-	r.push("<meta name=\"twitter:description\" content=\"" + htmlEscape(room.description) + "\">");
-	r.push("<meta name=\"twitter:image\" content=\"" + roomIcon + "\">"); //just a placeholder for now
-	r.push("<meta property=\"og:type\" content=\"website\"/>");
-	r.push("<meta property=\"og:url\" content=\"https://" + config.host + "/" + room.id + "\">");
-	r.push("<meta property=\"og:title\" content=\"" + htmlEscape(room.id) + " on scrollback\">");
-	r.push("<meta property=\"og:description\" content=\"" + htmlEscape(room.description) + "\">");
-	r.push("<meta property=\"og:image\" content=\"" + roomIcon + "\">"); //just a placeholder for now
-	r.push("<title>" + ((thread && thread.title) ? htmlEscape(thread.title) : (room.id + " on Scrollback")) + "</title>");
-	r.push("<link rel=\"image_src\" href=\"" + roomIcon + "\">");
-	return r.join("\n");
-}

@@ -18,33 +18,32 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
+"use strict";
+
 var core, config,
-	clientData = require('../client-config-defaults.js'),
 	fs = require("fs"),
-	core,
 	handlebars = require("handlebars"),
-	seo, clientTemp, clientHbs, oldAppHTML,
-	log = require('../lib/logger.js');
+	clientConfig = require("../client-config-defaults.js"),
+	clientTemplate = handlebars.compile(fs.readFileSync(__dirname + "/../public/app.hbs", "utf8")),
+	log = require("../lib/logger.js"),
+	seo, handleRequestInfo;
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
+function start() {
+	seo = require("./seo.js")(core, config);
+	handleRequestInfo = require("./handle-request-info.js")(core, config);
+}
 
-	return {
-		init: init
-	};
-};
-
-function init (app) {
+function init(app) {
 	if (!config.https) {
 		log.w("Insecure connection. Specify https options in your config file.");
 	}
 
 	start();
 
-	app.get('/t/*', function(req, res, next) {
+	app.get("/t/*", function(req, res, next) {
 		fs.readFile(__dirname + "/../public/s/preview.html", "utf8", function(err, data) {
 			res.end(data);
+
 			next();
 		});
 	});
@@ -54,40 +53,51 @@ function init (app) {
 	});
 
 	app.get("/*", function(req, res, next) {
-		var platform;
-
-		if (/^\/t\//.test(req.path)) {
+		if (/^\/t\//.test(req.path) || /^\/s\//.test(req.path) || /^\/favicon\.ico$/.test(req.path)) {
 			return next();
 		}
 
-		if (/^\/s\//.test(req.path)) {
-			return next();
+		if (/^\/i\//.test(req.path)) {
+			try {
+				handleRequestInfo(req, function(err, data) {
+					if (err || !data) {
+						log.e("Error retriving info for", req.path, err);
+
+						res.send(404);
+
+						return;
+					}
+
+					if (data.type === "url") {
+						res.redirect(302, data.url);
+					} else if (data.type === "json") {
+						res.end(data.json);
+					}
+				});
+			} catch(err) {
+				log.e("Error handling query for", req.path, err);
+
+				res.send(404);
+			}
+
+			return null;
 		}
 
 		if (!req.secure && config.https) {
-			var queryString = req._parsedUrl.search ? req._parsedUrl.search : "";
-			return res.redirect(301, 'https://' + config.host + req.path + queryString);
+			return res.redirect(301, "https://" + req.get("host") + req.originalUrl);
 		}
 
-		platform = req.query.platform;
+		seo.getSEO(req, function(r) {
+			clientConfig.seo = r;
 
-		if (platform && (/(cordova|android)/i).test(platform)) {
-			return serverStaticFile(res);
-		}
-
-		seo.getSEOHtml(req, function(r) {
-			clientData.seo = r;
-			res.end(clientTemp(clientData));
+			res.end(clientTemplate(clientConfig));
 		});
-
 	});
 }
-function serverStaticFile(res) {
-	res.end(oldAppHTML);
-}
-function start() {
-	oldAppHTML = fs.readFileSync(__dirname + "/old-app-page.html");
-	clientHbs = fs.readFileSync(__dirname + "/../public/app.hbs", "utf8");
-	seo = require('./seo.js')(core, config);
-	clientTemp = handlebars.compile(clientHbs);
-}
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+
+	return { init: init };
+};

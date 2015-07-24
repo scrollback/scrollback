@@ -238,7 +238,7 @@ function scrollback(opts, callback) {
 
 		if (this.pendingCallbacks[message.id]) {
 			if (message.type === "error") {
-				return this.pendingCallbacks[message.id](message);
+				this.pendingCallbacks[message.id](message);
 			}  else {
 				this.pendingCallbacks[message.id](null, message);
 			}
