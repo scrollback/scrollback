@@ -1,7 +1,8 @@
 /* eslint-env browser */
 
 "use strict";
-var Widget = require("./widget.js");
+var Widget = require("./widget.js"),
+	calls = window.scrollback && window.scrollback.scrollback || [];
 
 window.scrollback = function scrollback(opts, callback) {
 	if(typeof opts !== "object") {
@@ -17,3 +18,15 @@ window.scrollback = function scrollback(opts, callback) {
 	}
 };
 
+if(calls.forEach) { calls.forEach(function(args) { window.scrollback.apply(null, args); }); }
+
+/*
+<script>
+(function(w,d,f,s,a,e){w[f]=function(){a.push(arguments)};w[f][f]=a
+e=d.createElement(s);e.async=1;e.src='https://'+f+'.io/s/sb.js'
+d.body.appendChild(e)}(window,document,'scrollback','script',[]))
+
+scrollback({ room: "your-room-id" });
+// See https://github.com/scrollback/scrollback/wiki/Embed-API-2 for docs 
+</script>
+*/

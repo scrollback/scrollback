@@ -41,18 +41,13 @@
     </script>
 	
 	<script>
+		var key = "XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg";
 		function jws(email) {
-			return window.sign(
-				"HS256",
-				JSON.stringify({ typ: "JWT", alg: "HS256" }),
-				JSON.stringify({
-					iss: location.host, sub: email, aud: "localhost:7528",
-					iat: Math.floor((new Date()).getTime() / 1000),
-					exp: Math.floor((new Date()).getTime() / 1000) + 30000
-				}),
-				"XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg=",
-				true
-			).result;
+			return window.sign({
+				iss: location.host, sub: email, aud: "localhost:7528",
+				iat: Math.floor((new Date()).getTime() / 1000),
+				exp: Math.floor((new Date()).getTime() / 1000) + 30000
+			}, key);
 		}
 	</script>
 	
