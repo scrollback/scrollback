@@ -23,6 +23,10 @@ module.exports = function(core, config, store) {
 				all = all.filter(this.props.filter);
 			}
 
+			if (this.props.groupCount) {
+				return all.length;
+			}
+
 			let count = 0;
 
 			for (let n of all) {
