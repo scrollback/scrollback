@@ -26,7 +26,8 @@ var objUtils = require("../lib/obj-utils.js"),
 		entities: {},
 		context: {},
 		app: {
-			listeningRooms: []
+			listeningRooms: [],
+			connectionStatus: "connecting"
 		},
 		indexes: {
 			threadsById: {},
