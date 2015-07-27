@@ -5,8 +5,9 @@ var crypto = require('crypto');
 var core;
 
 function userHandler(action, callback) {
+	var ref = utils.isInternalSession(action.session)? action.to:"me";
 	core.emit("getUsers", {
-		ref: "me", // Sign up doesn't work if changed to action.to, why was it done?
+		ref: ref,
 		session: action.session
 	}, function(meErr, response) {
 		function done() {
