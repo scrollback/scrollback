@@ -1,4 +1,4 @@
-/* jshint browser:true */
+/* eslint-env browser */
 /* global SockJS*/
 
 "use strict";
@@ -36,11 +36,17 @@ var backOff = 1,
 */
 var currentQueries = {};
 
-
 function sendAction(action) {
 	action.session = session;
 	action.from = store.get("user");
 	client.send(JSON.stringify(action));
+}
+
+function sendQuery(query, next) {
+	query.session = session;
+	client.send(JSON.stringify(query));
+	pendingQueries[query.id] = next;
+	pendingQueries[query.id].query = query;
 }
 
 function disconnected() {
@@ -60,8 +66,9 @@ function disconnected() {
 	setTimeout(connect, backOff * 1000);
 }
 
-
 function connect() {
+	if (!navigator.onLine) return disconnected();
+
 	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
 	client.onclose = disconnected;
 
@@ -73,6 +80,8 @@ function connect() {
 	client.onmessage = receiveMessage;
 }
 
+window.addEventListener("offline", disconnected);
+window.addEventListener("online", connect);
 
 function receiveMessage(event) {
 	var data, note, userId;
@@ -133,13 +142,7 @@ function receiveMessage(event) {
 }
 
 function sendInit() {
-	var init = {};
-	init.id = generate.uid();
-	init.resource = generate.uid();
-	init.type = "init";
-	init.to = "me";
-	init.origin = {};
-	core.emit("init-up", init, function() {});
+	core.emit("init-up", { id: generate.uid(), resource: generate.uid() });
 }
 
 module.exports = function(c, conf, s) {
@@ -148,28 +151,21 @@ module.exports = function(c, conf, s) {
 	store = s;
 
 	connect();
-	function sendQuery(query, next) {
-		console.log("sending query", query);
-		query.session = session;
-		client.send(JSON.stringify(query));
-		pendingQueries[query.id] = next;
-		pendingQueries[query.id].query = query;
-	}
-
 
 	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy", "getNotes" ].forEach(function(e) {
 		core.on(e, function(q, n) {
 			q.type = e;
 			var key = pending.generateKey(q);
+
 			if (currentQueries[key]) {
 				currentQueries[key].push({
 					query:q,
 					next: n
 				});
-				
+
 				return;
 			}
-			
+
 			function finishQuery(err) {
 				currentQueries[key].forEach(function(item, i) {
 					/*
@@ -182,7 +178,7 @@ module.exports = function(c, conf, s) {
 				});
 				delete currentQueries[key];
 			}
-			
+
 			currentQueries[key] = [{
 				query:q,
 				next: n
@@ -195,11 +191,11 @@ module.exports = function(c, conf, s) {
 					sendQuery(q, finishQuery);
 				});
 			}
-			
+
 		}, 10);
 	});
 
-	[	
+	[
 		"text-up", "edit-up", "back-up", "away-up",
 		"join-up", "part-up", "admit-up", "expel-up",
 		"room-up", "note-up"

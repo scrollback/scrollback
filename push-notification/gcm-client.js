@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 "use strict";
 
@@ -9,7 +9,10 @@ var gcmTimeValidity = 12 * 60 * 60 * 1000,
 module.exports = function(core, config, store) {
 	var user = require("../lib/user.js")(core, config, store),
 		LS = window.localStorage,
-		lastGCMTime, device;
+		lastGCMTime, device,
+		defaultPackageName;
+
+	defaultPackageName = config.pushNotification.defaultPackageName?config.pushNotification.defaultPackageName:"";
 
 	lastGCMTime = LS.getItem("lastGCMTime");
 	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
@@ -24,6 +27,11 @@ module.exports = function(core, config, store) {
 			window.addEventListener("gcm_register", function(event) {
 				console.log("got device details", event);
 				device = event.detail;
+
+				if (window.Android && typeof window.Android.getPackageName === "function") {
+					device.packageName = window.Android.getPackageName();
+				}
+
 				updateDevice = true;
 				if (store.get("app", "connectionStatus") === "online") {
 					saveUser();
@@ -34,7 +42,7 @@ module.exports = function(core, config, store) {
 	}, 100);
 
 	function saveUser() {
-		var userObj = store.getUser(), uuid;
+		var userObj = store.getUser(), uuid, key = "";
 
 		if (!userObj.id || user.isGuest(userObj.id)) return;
 
@@ -50,8 +58,10 @@ module.exports = function(core, config, store) {
 		uuid = device.uuid;
 
 		device.platform = "android";
-		userObj.params.pushNotifications.devices[device.uuid] = device;
-		delete device.uuid;
+		key = device.uuid + (device.packageName && device.packageName!== defaultPackageName?("_" + device.packageName):"");
+
+
+		userObj.params.pushNotifications.devices[key] = device;
 		device.enabled = true;
 
 		console.log("emitting user-up.", userObj);

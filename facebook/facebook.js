@@ -7,22 +7,6 @@ var config,
 	log = require('../lib/logger.js'),
 	core;
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
-	core.on("http/init", onInit, "setters");
-	core.on("init", fbAuth, "authentication");
-};
-
-function onInit(payload, callback) {
-	payload.push({
-		get: {
-			"/r/facebook/*": handlerRequest
-		}
-	});
-	callback(null, payload);
-}
-
 function loginUser(token, action, callback) {
 	request("https://graph.facebook.com/me?access_token=" + token, function(err, res, body) {
 		var user, gravatar, fbpic, sendUpdate = false;
@@ -137,3 +121,19 @@ function handlerRequest(req, res, next) {
 		next();
 	}
 }
+
+function onInit(payload, callback) {
+	payload.push({
+		get: {
+			"/r/facebook/*": handlerRequest
+		}
+	});
+	callback(null, payload);
+}
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	core.on("http/init", onInit, "setters");
+	core.on("init", fbAuth, "authentication");
+};

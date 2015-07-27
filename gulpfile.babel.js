@@ -179,8 +179,8 @@ gulp.task("bundle", () =>
 );
 
 // Generate embed widget script
-gulp.task("embed-legacy", () =>
-	bundle("embed/embed-parent.js", {
+gulp.task("embed:v1", () =>
+	bundle("widget/sdk/v1.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
 		.pipe(sourcemaps.init({ loadMaps: true }))
@@ -190,8 +190,8 @@ gulp.task("embed-legacy", () =>
 		.pipe(gulp.dest("public")))
 );
 
-gulp.task("embed-apis", () =>
-	bundle("widget/index.js", {
+gulp.task("embed:v2", () =>
+	bundle("widget/sdk/v2.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
 		.pipe(sourcemaps.init({ loadMaps: true }))
@@ -201,7 +201,7 @@ gulp.task("embed-apis", () =>
 		.pipe(gulp.dest("public/s")))
 );
 
-gulp.task("embed", [ "embed-legacy", "embed-apis" ]);
+gulp.task("embed", [ "embed:v1", "embed:v2" ]);
 
 // Generate scripts
 gulp.task("scripts", [ "bundle", "embed" ]);

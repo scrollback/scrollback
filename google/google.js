@@ -6,6 +6,22 @@ var config,
 	crypto = require('crypto'),
 	request = require("request"),
 	core;
+
+function handlerRequest(req, res) {
+	var path = req.path.substring(3);
+	path = path.split("/");
+	if (path[0] === "google") {
+		if (path[1] === "login") {
+			return res.render(__dirname + "/login.jade", {
+				client_id: config.client_id,
+				redirect_uri: "https://" + config.global.host + "/r/google/return"
+			});
+		} else if (path[1] === "return") {
+			return res.render(__dirname + "/return.jade", {});
+		}
+	}
+}
+
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
@@ -126,19 +142,3 @@ module.exports = function(c, conf) {
 
 	}, "authentication");
 };
-
-function handlerRequest(req, res) {
-	var path = req.path.substring(3);
-	path = path.split("/");
-	if (path[0] === "google") {
-		if (path[1] === "login") {
-			return res.render(__dirname + "/login.jade", {
-				client_id: config.client_id,
-				redirect_uri: "https://" + config.global.host + "/r/google/return"
-			});
-		} else if (path[1] === "return") {
-			return res.render(__dirname + "/return.jade", {});
-		}
-	}
-
-}

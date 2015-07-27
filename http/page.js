@@ -71,6 +71,7 @@ function init(app) {
 					if (data.type === "url") {
 						res.redirect(302, data.url);
 					} else if (data.type === "json") {
+						res.setHeader("Content-Type", "application/json");
 						res.end(data.json);
 					}
 				});

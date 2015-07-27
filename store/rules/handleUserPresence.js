@@ -20,9 +20,7 @@ module.exports = function(c, conf, s) {
 
 	core.on("statechange", function(changes, next) {
 		if (changes.app && changes.app.connectionStatus) {
-			if (changes.app.connectionStatus === "offline") {
-				changes.app.listeningTo = null;
-			} else if (changes.app.connectionStatus === "online") {
+			if (changes.app.connectionStatus === "online") {
 				while (queueBack.length) enter(queueBack.splice(0, 1)[0]);
 			}
 		}

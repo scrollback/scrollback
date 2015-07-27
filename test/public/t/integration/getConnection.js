@@ -13,7 +13,7 @@ function getConnection(socket, user) {
 			"session": "web://" + uid(),
 			"resource": uid(),
 			"origin": {
-				domain: "scrollback.io",
+				host: "scrollback.io",
 				verified: true
 			}
 		};
@@ -29,7 +29,7 @@ function getConnection(socket, user) {
 			"session": "web://" + uid(),
 			"resource": uid(),
 			"origin": {
-				domain: "scrollback.io",
+				host: "scrollback.io",
 				verified: true
 			}
 		};

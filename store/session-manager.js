@@ -1,33 +1,28 @@
-/* jshint browser:true */
+/* eslint-env browser */
 
 "use strict";
 
 module.exports = function(core) {
-	var LS = window.localStorage, session, domain = "", key = "";
+	var key;
 
 	core.on("boot", function(changes, next) {
-		var embed;
-		if (changes.context && changes.context.env === "embed" && changes.context.embed && changes.context.embed.jws) {
-			embed = changes.context.embed;
-			domain = embed.origin.host;
+		var context = changes.context,
+			host = "";
+		if (context && context.env === "embed" && context.init && changes.context.init.jws) {
+			host = context.origin && context.origin.host;
 		}
-		key = domain +(domain?"_":"")+"session";
-		session = LS.getItem(key);
+		key = (host ? host + "_" : "") + "session";
 		next();
 	}, 700);
-	core.on("init-up", function(initUp, next) {
-		if(session) initUp.session = session;
-		next();
+	core.on("init-up", function(initUp) {
+		initUp.session = localStorage.getItem(key);
 	}, 999);
 
-	core.on("init-dn", function(initDn, next) {
-		LS.setItem(key, initDn.session);
-		session = initDn.session;
-		next();
+	core.on("init-dn", function(initDn) {
+		localStorage.setItem(key, initDn.session);
 	}, 999);
 
-	core.on("logout", function(logout, next) {
-		LS.removeItem(key);
-		next();
+	core.on("logout", function() {
+		localStorage.removeItem(key);
 	}, 1000);
 };

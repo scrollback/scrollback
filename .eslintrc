@@ -69,7 +69,7 @@
 		"no-labels": 0,
 		"no-lone-blocks": 2,
 		"no-loop-func": 2,
-		"no-multi-spaces": 1,
+		"no-multi-spaces": 0,
 		"no-multi-str": 2,
 		"no-native-reassign": 2,
 		"no-new-func": 2,
@@ -169,6 +169,26 @@
 		"no-this-before-super": 2,
 		"no-var": 0,
 		"object-shorthand": 0,
-		"prefer-const": 0
+		"prefer-const": 0,
+
+		"react/display-name": 0,
+		"react/jsx-boolean-value": [1, "never"],
+		"react/jsx-no-undef": 2,
+		"react/jsx-quotes": [1, "double", "avoid-escape"],
+		"react/jsx-sort-prop-types": 0,
+		"react/jsx-sort-props": 0,
+		"react/jsx-uses-react": 1,
+		"react/jsx-uses-vars": 1,
+		"react/no-danger": 1,
+		"react/no-did-mount-set-state": 1,
+		"react/no-did-update-set-state": 1,
+		"react/no-multi-comp": 1,
+		"react/no-unknown-property": 1,
+		"react/prop-types": 1,
+		"react/react-in-jsx-scope": 1,
+		"react/require-extension": 0,
+		"react/self-closing-comp": 1,
+		"react/sort-comp": 0,
+		"react/wrap-multilines": 1
 	}
 }

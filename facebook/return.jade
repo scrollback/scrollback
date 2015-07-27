@@ -3,14 +3,9 @@ html
 		title facebook callback
 	body
 		script
-			var code = location.search.substring(6);
-			var auth = {
-				command:"signin",
-				auth: {
-					facebook:{
-						code: code
-					}
-				}
-			};
-			window.opener.postMessage(auth,"*");
+			window.opener.postMessage({
+				type: "auth",
+				provider: "facebook",
+				code: location.search.substring(6)
+			},"*");
 			window.close();

@@ -5,12 +5,6 @@ var config, log = require("../lib/logger.js"),
 	request = require("request"),
 	core;
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
-	core.on("init", browserAuth, "authentication");
-};
-
 function browserAuth(action, callback) {
 	var assertion;
 	if (action.response || !action.auth || !action.auth.browserid) return callback();
@@ -46,7 +40,7 @@ function browserAuth(action, callback) {
 			session: "internal-browserid-auth"
 		}, function(e, user) {
 			if(e) return callback(e);
-			
+
 			if (!user.results || user.results.length === 0) {
 				action.old = action.user;
 				action.user = {};
@@ -72,3 +66,9 @@ function browserAuth(action, callback) {
 		});
 	});
 }
+
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	core.on("init", browserAuth, "authentication");
+};

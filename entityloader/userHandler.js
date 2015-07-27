@@ -5,8 +5,9 @@ var crypto = require('crypto');
 var core;
 
 function userHandler(action, callback) {
+	var ref = utils.isInternalSession(action.session)? action.to : "me";
 	core.emit("getUsers", {
-		ref: "me",
+		ref: ref,
 		session: action.session
 	}, function(meErr, response) {
 		function done() {
