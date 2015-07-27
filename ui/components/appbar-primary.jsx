@@ -124,7 +124,7 @@ module.exports = function(core, config, store) {
 						<div className="user-area-nick">{this.state.username}</div>
 					</div>
 					<a className="appbar-bell appbar-icon appbar-icon-alert" onClick={this.showNotifications}>
-						<Badge className="appbar-bell-badge" filter={this.badgeFilter} />
+						<Badge className="appbar-bell-badge" filter={this.badgeFilter} groupCount />
 					</a>
 					<a data-embed="toast canvas" className="appbar-icon appbar-icon-maximize" onClick={this.fullScreen}></a>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-people" onClick={this.toggleSidebarRight}></a>
@@ -149,7 +149,7 @@ module.exports = function(core, config, store) {
 				userObj;
 
 			if ((changes.nav && changes.nav.mode) || changes.user ||
-			    (changes.entities && changes.entities[user])) {
+				(changes.entities && changes.entities[user])) {
 
 				userObj = store.getUser();
 
