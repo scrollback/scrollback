@@ -46,7 +46,7 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "babel": "latest",
+    "babel-core": "latest",
     "big-integer": "latest",
     "ebus": "latest",
     "express": "3.x",
@@ -58,7 +58,6 @@
     "juri": "latest",
     "markdown-it": "latest",
     "markdown-it-emoji": "latest",
-    "mysql": "latest",
     "newrelic": "latest",
     "nodemailer": "v0.7.1",
     "oauth": "latest",
@@ -82,7 +81,6 @@
     "bower": "latest",
     "browserify": "latest",
     "browserify-optional": "latest",
-    "browserstack-webdriver": "latest",
     "chai": "latest",
     "del": "latest",
     "eslint-plugin-react": "latest",
