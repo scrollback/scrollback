@@ -82,7 +82,6 @@
     "bower": "latest",
     "browserify": "latest",
     "browserify-optional": "latest",
-    "browserstack-webdriver": "latest",
     "chai": "latest",
     "del": "latest",
     "eslint-plugin-react": "latest",
