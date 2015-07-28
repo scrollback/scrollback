@@ -6,8 +6,6 @@ const Validator = require("../../lib/validator.js");
 
 module.exports = core => {
 	return function(type, name, callback) {
-		name = (typeof name === "string") ? name.toLowerCase().trim() : "";
-
 		let validation = new Validator(name);
 
 		if (!validation.isValid()) {

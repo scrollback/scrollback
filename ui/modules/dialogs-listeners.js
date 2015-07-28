@@ -13,7 +13,7 @@ module.exports = function(core, config, store) {
 	function createAndValidate(type, entry, button, callback) {
 		var $entry = $(entry),
 			$button = $(button),
-			name = $entry.val();
+			name = $entry.val().toLowerCase();
 
 		createEntity(type, name, function(res, message) {
 			if (res === "wait") {
@@ -79,8 +79,8 @@ module.exports = function(core, config, store) {
 		}
 
 		if (typeof userChangeCallback === "function" && changes.user && appUtils.isGuest(store.get("user"))) {
-				userChangeCallback();
-				userChangeCallback = null;
+			userChangeCallback();
+			userChangeCallback = null;
 		}
 	}, 1);
 
@@ -154,7 +154,7 @@ module.exports = function(core, config, store) {
 		} else {
 			dialog.title = "Create a new room";
 			dialog.description = "Choose a room name";
-			dialog.content = ["<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>"];
+			dialog.content = [ "<input type='text' id='createroom-dialog-room' value='" + roomName + "' autofocus>" ];
 			dialog.action = {
 				text: "Create room",
 				action: function() {
