@@ -29,8 +29,6 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "ok") {
-					name = name.toLowerCase();
-
 					room = store.get("nav", "room");
 					roomObj = store.getRoom(room);
 
@@ -88,8 +86,6 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "ok") {
-					name = name.toLowerCase();
-
 					userObj = store.getUser();
 
 					if (!name || !userObj || !userObj.identities) {
