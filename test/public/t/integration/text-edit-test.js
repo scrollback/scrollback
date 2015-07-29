@@ -1,145 +1,290 @@
-/* global uid, createConnection, sentence, assert, word, specialId, SocketOakley, socketAnklebiter, socketOakley */
-/* jshint mocha: true */
-/* jshint node: true */
- /*jshint unused:false*/
+/* global describe it uid assert SockJS scrollback beforeEach afterEach getConnection */
+/* eslint quotes: 0 */
+/* eslint no-param-reassign: 0 */
+/* eslint no-console: 0 */
+"use strict";
+var timeOut = 3000;
+describe("Action EDIT: ", function() {
+	describe("Authorized user", function() {
+		var socket;
+		beforeEach(function(done) {
 
-describe("Action: TEXT", function(){
-	it("Anklebitter says 'Ruff!' and Gustav, Anklebiter heard it; Oakley didn't", function(done){
-		var SocketCrusoe, SocketOakley, socketAnklebiter;
-		this.timeout(20000);
-		var textMsg=sentence(5);
-		var thingsFinished=0;
-		var oakleyTimeout;
-		var SocketGustav = createConnection("gustav", function(socketGustav){
-			socketGustav.emit({
-				id: uid(),
-				from: "gustav",
-				type: "back",
-				to: "dachshundworld"
-			}, crusoe);
+			socket = new SockJS(scrollback.host + "/socket");
+			getConnection(socket, "testinguser");
+			done();
 		});
-		function crusoe(){
-			SocketCrusoe = createConnection("crusoe", function(socketCrusoe){
-				socketCrusoe.emit({
-					id: uid(),
-					from: "crusoe",
-					type: "back",
-					to: "dachshundworld"
-				}, oakley);
-			});
-		}
-		function oakley(){
-			SocketOakley = createConnection("oakley", function(socketOakley){
-				var specialId=uid();
-// 				socketOakley.emit({
-// 					id: uid(),
-// 					from: "oakley",
-// 					type: "back",
-// 					to: "dachshundworld"
-// 				}, function(){});
-				createConnection("anklebiter", function(socketAnklebiter){
-					socketAnklebiter.emit({
-						id: uid(),
-						from: "anklebiter",
-						type: "back",
-						to: "dachshundworld"
-					},function(results){
-						assert(results.from==="anklebiter", 
-						"Oops! Looks like Anklebiter didn't enter the room: dachshundworld");
-						SocketGustav.on(specialId, function(results){
-								console.log("gustav heard:", results);
-								thingsFinished++;
-						});
-						SocketCrusoe.on(specialId, function(results){
-							console.log("crusoe heard:", results);
-							thingsFinished++;
-						});
-						
-						SocketOakley.on(specialId, function(results){
-							console.log("oakley",results);
-							clearTimeout(oakleyTimeout);
-							closeConnections();
-							assert(false, "why did i hear it? i am not even in the room");
-						});
 
-						socketAnklebiter.emit({
-							id: specialId,
-							type: "text",
-							to: "dachshundworld",
-							text: textMsg
-						}, function(results) {
-							assert(results.text===textMsg, 
-							"Oops! looks like anklebiter didn't hear back what he said");
-							thingsFinished++;
-						});
-						oakleyTimeout = setTimeout(function() {
-							thingsFinished++;
-							closeConnections();
-							if(thingsFinished === 4) done();
-						}, 10000);
-						function closeConnections(){
-							SocketOakley.close();
-							SocketCrusoe.close();
-							SocketGustav.close();
-							socketAnklebiter.close();
-						}
-					});
-				});
-			});
-		}
-	});
-});
-
-describe("Action: EDIT", function(){
-	it("Anklebiter enters and says 'Woof!' on DachshundWorld, edits his message. Gustav, Anklebiter hear the edit; Oakley doesn't", function(done){
-		var thingsFinished=0;
-		var SocketGustav, SocketOakley, SocketAnklebiter;
-		
-		//make oakley log-in to scrollback
-		SocketOakley = createConnection("oakley", gustav);
-
-		// make gustav join dachshundworld
-		function gustav(){
-			SocketGustav = createConnection("gustav", function(socketGustav){
-				socketGustav.emit({
-					id: uid(),
-					from: "gustav",
-					type: "back",
-					to: "dachshundworld"
-				}, anklebiter);
-			});
-		}
-
-		// make anklebiter also enter the room
-		function anklebiter(){
-			createConnection("anklebiter", function(socketAnklebiter){
-				var msgId=uid();
-				socketAnklebiter.emit({
-					id: uid(),
-					type: "back",
-					to: "dachshundworld",
-					from: "anklebiter"
-				}, function(results){
-					socketAnklebiter.emit({
-						id: msgId,
+		it("Editing text tag", function(done) {
+			this.timeout(timeOut);
+			socket.onmessage = function(msg) {
+				var id = uid(),
+					back = {
+						from: "testinguser",
+						type: 'back',
+						to: "integration-test"
+					},
+					text = {
+						from: "testinguser",
+						text: "hiding message",
+						id: id,
 						type: "text",
-						text: word(5),
-						to: "dachshundworld"
-					}, function(results){
-						SocketGustav.emit({
-							id: uid(),
-							ref: msgId,
-							type: "edit",
-							text: "corrected",
-							to: "dachshundworld"
-						}, function(results){
-							assert(results.from==="gustav" && results.text==="corrected" && results.type==="edit", 
-							"Gustav (owner) couldn't edit!");
-							done();
-						});
-					});
-				});
-			});
-		}
+						to: "integration-test",
+						time: new Date().getTime()
+					},
+					edit = {
+						tags: [ "hidden" ],
+						type: "edit",
+						to: "integration-test",
+						time: new Date().getTime()
+					};
+				msg = JSON.parse(msg.data);
+				console.log(msg);
+				if (msg.type === 'init') {
+					// text.session = msg.session;
+					socket.send(JSON.stringify(back));
+					return;
+				}
+
+				if (msg.type === 'back') {
+					socket.send(JSON.stringify(text));
+					return;
+				}
+
+				if (msg.type === 'text') {
+					edit.ref = msg.id;
+					// console.log(edit);
+					socket.send(JSON.stringify(edit));
+					return;
+				}
+
+				if (msg.message === 'TEXT_NOT_FOUND') assert(msg.type !== 'error', "edit action failed " + msg.message);
+				else assert(msg.type !== 'error', "edit action failed ");
+				done();
+			};
+		});
+
+		it('Editing text content', function(done) {
+			this.timeout(timeOut);
+			socket.onmessage = function(msg) {
+				var id = uid(),
+
+					back = {
+						from: "testinguser",
+						type: 'back',
+						to: "integration-test"
+					},
+					text = {
+						from: "testinguser",
+						text: "i am the bos",
+						id: id,
+						type: "text",
+						to: "integration-test",
+						time: new Date().getTime()
+					},
+					edit = {
+						tags: [ "hidden" ],
+						type: "edit",
+						to: "integration-test",
+						time: new Date().getTime()
+					};
+				msg = JSON.parse(msg.data);
+				console.log(msg);
+				if (msg.type === 'init') {
+					// text.session = msg.session;
+					socket.send(JSON.stringify(back));
+					return;
+				}
+
+				if (msg.type === 'back') {
+					text.id = id;
+					socket.send(JSON.stringify(text));
+					return;
+				}
+
+				if (msg.type === 'text') {
+					edit.ref = msg.id;
+					edit.text = "I am not boss!!";
+					// console.log(edit);
+					socket.send(JSON.stringify(edit));
+					return;
+				}
+				if (msg.type === 'edit') {
+					console.log(msg.ref);
+				}
+				if (msg.message === 'TEXT_NOT_FOUND') assert(msg.type !== 'error', "edit action failed " + msg.message);
+				else assert(msg.type !== 'error', "edit action failed ");
+				done();
+			};
+		});
+
+		it('Editing text with wrong text id', function(done) {
+			this.timeout(timeOut);
+			socket.onmessage = function(msg) {
+				var id = uid(),
+
+					back = {
+						from: "testinguser",
+						type: 'back',
+						to: "test-room"
+					},
+					text = {
+						from: "testinguser",
+						text: "i am the bos",
+						id: id,
+						type: "text",
+						to: "test-room",
+						time: new Date().getTime()
+					},
+					edit = {
+						tags: [ "hidden" ],
+						type: "edit",
+						to: "test-room",
+						time: new Date().getTime()
+					};
+				msg = JSON.parse(msg.data);
+				console.log(msg);
+				if (msg.type === 'init') {
+					socket.send(JSON.stringify(back));
+					return;
+				}
+
+				if (msg.type === 'back') {
+					text.id = id;
+					socket.send(JSON.stringify(text));
+					return;
+				}
+
+				if (msg.type === 'text') {
+					edit.ref = uid();
+					edit.text = "I am not boss!!";
+					socket.send(JSON.stringify(edit));
+					return;
+				}
+				if (msg.type === 'edit') {
+					console.log(msg.ref);
+				}
+				assert(msg.type === 'error', "edited text with another id");
+				assert(msg.message === 'TEXT_NOT_FOUND', "wrong error message");
+				done();
+			};
+		});
+
+		afterEach(function(done) {
+			socket.close();
+			done();
+		});
 	});
+
+	describe('Guest user', function() {
+		var socket;
+		it("Edit action from a guest user", function(done) {
+			this.timeout(timeOut);
+			socket = new SockJS(scrollback.host + "/socket");
+			getConnection(socket, "guest");
+			socket.onmessage = function(msg) {
+				var id = uid(),
+					back = {
+						from: "testinguser",
+						type: 'back',
+						to: "test-room"
+					},
+					text = {
+						from: "testinguser",
+						text: "I am guest-user",
+						id: id,
+						type: "text",
+						to: "test-room"
+					},
+					edit = {
+						tags: [ "hidden" ],
+						type: "edit",
+						to: "test-room"
+					};
+				msg = JSON.parse(msg.data);
+				console.log(msg);
+				if (msg.type === 'init') {
+					// text.session = msg.session;
+					socket.send(JSON.stringify(back));
+					return;
+				}
+
+				if (msg.type === 'back') {
+					socket.send(JSON.stringify(text));
+					return;
+				}
+
+				if (msg.type === 'text') {
+					console.log(edit);
+					edit.ref = msg.id;
+					socket.send(JSON.stringify(edit));
+					return;
+				}
+				if (msg.type === 'edit') {
+					console.log(msg.ref);
+
+				}
+				assert(msg.type === 'error', "guest user can edit text");
+				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message " + msg.message);
+				socket.close();
+				done();
+			};
+		});
+	});
+	describe('Unauthorized user', function() {
+		this.timeout(timeOut);
+		var socket;
+		it('Editing action from an unauthorized user', function(done) {
+			socket = new SockJS(scrollback.host + "/socket");
+			getConnection(socket, "sbtestinguser");
+			socket.onmessage = function(msg) {
+				var id = uid(),
+					back = {
+						from: "sbtestinguser",
+						type: 'back',
+						to: "test-room"
+					},
+					text = {
+						from: "sbtestinguser",
+						text: "testing message for edit",
+						id: id,
+						type: "text",
+						to: "test-room",
+						time: new Date().getTime()
+					},
+					edit = {
+						tags: [ "hidden" ],
+						type: "edit",
+						to: "test-room",
+						time: new Date().getTime()
+					};
+				msg = JSON.parse(msg.data);
+				console.log(msg);
+				if (msg.type === 'init') {
+					socket.send(JSON.stringify(back));
+					return;
+				}
+
+				if (msg.type === 'back') {
+					socket.send(JSON.stringify(text));
+					return;
+				}
+
+				if (msg.type === 'text') {
+					console.log(edit);
+					edit.ref = msg.id;
+					socket.send(JSON.stringify(edit));
+					return;
+				}
+				if (msg.type === 'edit') {
+					console.log(msg.ref);
+
+				}
+				assert(msg.type === 'error', "unauthorized user can edit text");
+				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message " + msg.message);
+				socket.close();
+				done();
+			};
+		});
+	});
+
 });

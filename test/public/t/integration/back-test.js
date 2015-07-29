@@ -1,14 +1,8 @@
-/*global describe*/
-/*global it*/
-/*global assert*/
-/*global SockJS*/
-/*global scrollback*/
-/*global beforeEach*/
-/*global afterEach*/
-/*global getConnection*/
+/* global describe it assert SockJS scrollback beforeEach afterEach getConnection*/ /* eslint no-console: 0, array-bracket-spacing: 0, no-param-reassign: 0 */
+
 "use strict";
 var timeOut = 3000;
-describe('Action: BACK ', function() {
+describe("Action BACK: ", function() {
 	var socket;
 	beforeEach(function(done) {
 		socket = new SockJS(scrollback.host + "/socket");
@@ -21,17 +15,17 @@ describe('Action: BACK ', function() {
 		socket.onmessage = function(message) {
 			var m = {
 				from: "testinguser",
-				type: 'back',
+				type: "back",
 				to: "scrollback"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
 
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(m));
 				return;
 			}
-			assert(message.type !== 'error', "back action failed");
+			assert(message.type !== "error", "back action failed");
 			done();
 		};
 	});
@@ -40,16 +34,16 @@ describe('Action: BACK ', function() {
 		socket.onmessage = function(message) {
 			var m = {
 				from: "testinguser",
-				type: 'back'
+				type: "back"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
 
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(m));
 				return;
 			}
-			assert(message.type === 'error', "back action success without 'to' ");
+			assert(message.type === "error", "back action success without 'to' ");
 			done();
 		};
 	});
@@ -59,17 +53,17 @@ describe('Action: BACK ', function() {
 		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var m = {
-				type: 'back',
+				type: "back",
 				to: "scrollback"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
 
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(m));
 				return;
 			}
-			assert(message.type === 'error', "back action success without 'from' ");
+			assert(message.type === "error", "back action success without 'from' ");
 			done();
 		};
 	});
