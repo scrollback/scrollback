@@ -103,7 +103,7 @@ module.exports = function(core) {
 					}
 
 					if (r && r.results && r.results[0]) {
-						roompic = req.protocol + "://" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
+						roompic = "https://" + req.get("host") + "/i/" + r.results[0].id + "/picture?size=256";
 
 						if (state.nav.mode === "chat" && state.nav.thread) {
 							return core.emit("getTexts", {
@@ -225,9 +225,10 @@ module.exports = function(core) {
 		getHead(state, req, function(head) {
 			getBody(state, req, function(body) {
 				return cb({
+					name: "Scrollback",
 					head: head,
 					body: body,
-					path: req.protocol + "://" + req.get("host") + req.path
+					path: "https://" + req.get("host") + req.path
 				});
 			});
 		});
