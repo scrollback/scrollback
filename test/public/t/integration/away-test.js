@@ -1,18 +1,12 @@
-/*global describe*/
-/*global it*/
-/*global getConnection*/
-/*global assert*/
-/*global SockJS*/
-/*global scrollback*/
-/*global beforeEach*/
-/*global afterEach*/
+/* global describe it getConnection assert SockJS scrollback beforeEach afterEach */ /* eslint no-console: 0, array-bracket-spacing: 0, no-param-reassign: 0 */
+
 "use strict";
 var timeOut = 3000;
-describe('Action: AWAY ', function() {
+describe("Action AWAY: ", function() {
 	var socket,
 		b = {
 		from: "sbtestinguser",
-		type: 'back',
+		type: "back",
 		to: "scrollback"
 	};
 	beforeEach(function(done) {
@@ -25,20 +19,20 @@ describe('Action: AWAY ', function() {
 		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
-				type: 'away',
+				type: "away",
 				to: "scrollback"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
 				return;
 			}
-			if (message.type === 'back') {
+			if (message.type === "back") {
 				socket.send(JSON.stringify(a));
 				return;
 			}
-			assert(message.type !== 'error', "away action failed");
+			assert(message.type !== "error", "away action failed");
 			done();
 		};
 	});
@@ -47,19 +41,19 @@ describe('Action: AWAY ', function() {
 		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
-				type: 'away'
+				type: "away"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
 				return;
 			}
-			if (message.type === 'back') {
+			if (message.type === "back") {
 				socket.send(JSON.stringify(a));
 				return;
 			}
-			assert(message.type === 'error', "away action success without 'to' ");
+			assert(message.type === "error", "away action success without 'to' ");
 			done();
 		};
 	});
@@ -68,21 +62,21 @@ describe('Action: AWAY ', function() {
 		this.timeout(timeOut);
 		socket.onmessage = function(message) {
 			var a = {
-				type: 'away',
+				type: "away",
 				to: "facebook",
 				from: "testinguser"
 			};
 			message = JSON.parse(message.data);
 			console.log(message.type);
-			if (message.type === 'init') {
+			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
 				return;
 			}
-			if (message.type === 'back') {
+			if (message.type === "back") {
 				socket.send(JSON.stringify(a));
 				return;
 			}
-			assert(message.type === 'error', "away action success with wrong user ");
+			assert(message.type === "error", "away action success with wrong user ");
 			done();
 		};
 	});
