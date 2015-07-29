@@ -66,7 +66,7 @@ module.exports = function(core, config, store) {
 			var room = this.props.roomId,
 				user = store.get("user"),
 				rel = store.getRelation(room, user),
-				pics = getRoomPics(room, [ "avatar", "cover" ]),
+				pics = getRoomPics(store.getRoom(room), [ "avatar", "cover" ]),
 				icons = [],
 				threads;
 
