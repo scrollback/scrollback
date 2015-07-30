@@ -15,7 +15,7 @@ describe("Action admit/expel: ", function() {
 	it("expel an user", function(done) {
 		getConnection(socket, "testinguser");
 		var expel = {
-				to: "private-room",
+				to: "private-room3",
 				ref: "sbtestinguser",
 				role: "banned",
 				type: "expel",
@@ -25,7 +25,7 @@ describe("Action admit/expel: ", function() {
 			back = {
 				from: "testinguser",
 				type: "back",
-				to: "private-room"
+				to: "private-room3"
 			};
 		socket.onmessage = function(message) {
 			message = JSON.parse(message.data);
@@ -51,14 +51,14 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "sbtestinguser",
 				type: "back",
-				to: "private-room"
+				to: "private-room3"
 			},
 			text = {
 				from: "sbtestinguser",
 				text: "hiding message",
 				id: uid(),
 				type: "text",
-				to: "private-room",
+				to: "private-room3",
 				time: new Date().getTime()
 			};
 		socket.onmessage = function(message) {
@@ -85,11 +85,11 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "testinguser",
 				type: "back",
-				to: "private-room"
+				to: "private-room3"
 			},
 
 			admit = {
-				to: "private-room",
+				to: "private-room3",
 				ref: "sbtestinguser",
 				role: "none",
 				type: "admit",
@@ -120,14 +120,14 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "sbtestinguser",
 				type: "back",
-				to: "private-room"
+				to: "private-room3"
 			},
 			text = {
 				from: "sbtestinguser",
 				text: "helo!! m just unbanned",
 				id: uid(),
 				type: "text",
-				to: "private-room",
+				to: "private-room3",
 				time: new Date().getTime()
 			};
 		socket.onmessage = function(message) {
