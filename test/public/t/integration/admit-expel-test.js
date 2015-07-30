@@ -143,7 +143,7 @@ describe("Action admit/expel: ", function() {
 				socket.send(JSON.stringify(text));
 				return;
 			}
-			assert(message.type !== "error", "An expeled user can send message!! ");
+			assert(message.type === "error", "An expeled user can send message!! ");
 			done();
 		};
 	});
