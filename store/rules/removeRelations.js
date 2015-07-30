@@ -5,7 +5,7 @@ module.exports = function (core, config, store) {
 		var ru, role, status;
 		if(changes.entities) {
 				for(ru in changes.entities) {
-				if(!ru || ru.indexOf('_') < 0) continue;
+				if(!changes.entities[ru] || ru.indexOf('_') < 0) continue;
 
 				role = typeof changes.entities[ru].role === 'undefined'? store.get('entities', ru, 'role'): changes.entities[ru].role;
 				status = typeof changes.entities[ru].status === 'undefined'? store.get('entities', ru, 'status'): changes.entities[ru].status;

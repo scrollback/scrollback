@@ -4,7 +4,7 @@ module.exports = (...args) => {
 	require("./rules/loadRooms.js")(...args);
 	require("./rules/loadRelatedUsers.js")(...args);
 	require("./rules/handleUserPresence.js")(...args);
-//	require("./rules/preLoadThreads.js")(...args);
+	require("./rules/preLoadThreads.js")(...args);
 	require("./rules/preLoadTexts.js")(...args);
 	require("./rules/resetNavRanges.js")(...args);
 	require("./rules/loadTextsOnNav.js")(...args);

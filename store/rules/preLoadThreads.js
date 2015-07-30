@@ -1,38 +1,40 @@
 "use strict";
 
-var core, config, store;
+var core, store;
 //var entityOps = require("./../entity-ops.js");
 
 var query;
 
-module.exports = function(c, conf, s) {
-	core = c;
-	config = conf;
-	store = s;
+module.exports = function() {
+	core = arguments[0];
+	store = arguments[2];
 
-	query = require("../bulkQuery.js")(core, store, 'threads');
+	query = require("../bulkQuery.js")(core, store, "threads");
 
 	core.on("setstate", function(changes, next) {
 		var user = store.get("user") || "",
 			room = store.get("nav", room) || "",
-			regex = new RegExp("_" + user + "$");
+			regex = new RegExp("_" + user + "$"),
+			future = store.with(changes);
 
 		if (changes.app && changes.app.featuredRooms) {
 			changes.app.featuredRooms.forEach(query);
 		}
 
-		if(changes.entities && user) {
-			Object.keys(changes.entities).forEach(function(key) {
-				if(regex.test(key) && changes.entities[key] && changes.entities[key].room) {
-					query(changes.entities[key].room);
-				}
+		if(future.get("nav").mode === "home") {
+			if (changes.entities && user) {
+				Object.keys(changes.entities).forEach(function(key) {
+					if (regex.test(key) && changes.entities[key] && changes.entities[key].room && future.get("nav").mode === "home") {
+						query(changes.entities[key].room);
+					}
+				});
+			}
+			
+			store.getRelatedRooms().forEach(function(e) {
+				query(e.id);
 			});
 		}
+		
 		next();
 	}, 800);
 };
-
-
-
-
-
