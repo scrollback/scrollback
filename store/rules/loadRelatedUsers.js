@@ -44,14 +44,11 @@ function loadUsersList(roomId) {
 		occupantList.forEach(function(e) {
 			entities[roomId + "_" + e.id].status = "online";
 		});
-		console.log( entities);
 		core.emit("setstate", {
 			entities: entities,
 			app: {
 				listeningRooms: listeningRooms
 			}
-		}, function(){
-			console.log(arguments);
 		});
 	}
 
@@ -102,7 +99,6 @@ module.exports = function(c, conf, s) {
 			oldRelations.forEach(function(rel) {
 				changes.entities[roomId + "_" + rel.id] = null;
 			});
-			console.log("clear",changes);
 			loadUsersList(roomId);
 		}
 		
