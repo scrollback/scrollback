@@ -115,38 +115,38 @@ describe("Action admit/expel: ", function() {
 		};
 	});
 
-	it("text action from an unbanned user", function(done) {
-		getConnection(socket, "sbtestinguser");
-		var back = {
-				from: "sbtestinguser",
-				type: "back",
-				to: "private-room3"
-			},
-			text = {
-				from: "sbtestinguser",
-				text: "helo!! m just unbanned",
-				id: uid(),
-				type: "text",
-				to: "private-room3",
-				time: new Date().getTime()
-			};
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
-			console.log(message);
-
-			if (message.type === "init") {
-				socket.send(JSON.stringify(back));
-				return;
-			}
-
-			if (message.type === "back") {
-				socket.send(JSON.stringify(text));
-				return;
-			}
-			assert(message.type === "error", "An expeled user can send message!! ");
-			done();
-		};
-	});
+//	it("text action from an unbanned user", function(done) {
+//		getConnection(socket, "sbtestinguser");
+//		var back = {
+//				from: "sbtestinguser",
+//				type: "back",
+//				to: "private-room3"
+//			},
+//			text = {
+//				from: "sbtestinguser",
+//				text: "helo!! m just unbanned",
+//				id: uid(),
+//				type: "text",
+//				to: "private-room3",
+//				time: new Date().getTime()
+//			};
+//		socket.onmessage = function(message) {
+//			message = JSON.parse(message.data);
+//			console.log(message);
+//
+//			if (message.type === "init") {
+//				socket.send(JSON.stringify(back));
+//				return;
+//			}
+//
+//			if (message.type === "back") {
+//				socket.send(JSON.stringify(text));
+//				return;
+//			}
+//			assert(message.type === "error", "An expeled user can send message!! ");
+//			done();
+//		};
+//	});
 
 
 });
