@@ -256,7 +256,7 @@ Store.prototype.getUserRole = function(userId, roomId) {
 	if (rel && rel.role && rel.role !== "none") {
 		role = rel.role;
 	} else {
-		role = (!userId || this.isGuest(userId)) ? "guest" : "registered";
+		role = (!userId || userUtils.isGuest(userId)) ? "guest" : "registered";
 	}
 
 	return role;
