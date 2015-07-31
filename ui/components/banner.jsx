@@ -68,7 +68,7 @@ module.exports = function(core, config, store) {
 
 			if (this.state.form) {
 				items.push(
-				        <div className="banner-entry-container">
+				        <div className="banner-entry-container" key="container">
 							<RoomNameEntry className="banner-entry" />
 						</div>
 						);
