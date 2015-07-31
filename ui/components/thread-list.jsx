@@ -9,7 +9,6 @@ module.exports = function(core, config, store) {
 		  GridView = require("./grid-view.jsx")(core, config, store),
 		  PrivateRoom = require("./private-room.jsx")(core, config, store),
 		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store),
 		  rangeOps = require("../../lib/range-ops.js");
 
 	let ThreadList = React.createClass({
@@ -215,7 +214,7 @@ module.exports = function(core, config, store) {
 		getInitialState: function() {
 			return {
 				show: (store.get("nav", "mode") === "room"),
-				read: room.isReadable(),
+				read: store.isRoomReadable(),
 				items: this.getItems()
 			};
 		},

@@ -1,11 +1,13 @@
 "use strict";
-var utils = require('../lib/app-utils.js');
+
+var sessionUtils = require('../lib/session-utils.js');
+var userUtils = require('../lib/user-utils.js');
 var crypto = require('crypto');
 
 var core;
 
 function userHandler(action, callback) {
-	var ref = utils.isInternalSession(action.session)? action.to : "me";
+	var ref = sessionUtils.isInternalSession(action.session)? action.to : "me";
 	core.emit("getUsers", {
 		ref: ref,
 		session: action.session
@@ -29,7 +31,7 @@ function userHandler(action, callback) {
 				session: "internal-loader"
 			}, function(err, data) {
 				if (err) return callback(err);
-				if (utils.isGuest(action.from)) { // signup
+				if (userUtils.isGuest(action.from)) { // signup
 					if (data && data.results && data.results.length) {
 						return callback(new Error("ERR_USER_EXISTS"));
 					}

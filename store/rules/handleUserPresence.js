@@ -1,14 +1,29 @@
 "use strict";
 
-var core, config, store;
-var queueBack = [];
-//var entityOps = require("./../entity-ops.js");
+var userUtils = require("./../../lib/user-utils.js");
 
-var appUtils = require("./../../lib/app-utils.js");
+var core, store;
+var queueBack = [];
+
+function enter(roomId) {
+	core.emit("back-up", {
+		to: roomId
+	});
+}
+
+function sendBack(roomId) {
+	var listeningRooms = store.get("app", "listeningRooms");
+	if (listeningRooms.indexOf(roomId) < 0) {
+		if (store.get("app", "connectionStatus") === "online") {
+			enter(roomId);
+		} else {
+			queueBack.push(roomId);
+		}
+	}
+}
 module.exports = function(c, conf, s) {
 
 	core = c;
-	config = conf;
 	store = s;
 
 	core.on("setstate", function(changes, next) {
@@ -31,12 +46,12 @@ module.exports = function(c, conf, s) {
 		var entities = {};
 		init.occupantOf.forEach(function(roomObj) {
 			if(init.old && init.old.id){
-				if(appUtils.isGuest(init.old.id)) {
+				if(userUtils.isGuest(init.old.id)) {
 					entities[init.old.id] = null;
 					entities[roomObj.id + "_" + init.old.id] = null;
 				}else {
 					entities[roomObj.id + "_" + init.old.id] = {
-						statue : "offline"
+						statue: "offline"
 					};
 				}
 			}
@@ -50,20 +65,3 @@ module.exports = function(c, conf, s) {
 		next();
 	}, 500);
 };
-
-function enter(roomId) {
-	core.emit("back-up", {
-		to: roomId
-	});
-}
-
-function sendBack(roomId) {
-	var listeningRooms = store.get("app", "listeningRooms");
-	if (listeningRooms.indexOf(roomId) < 0) {
-		if (store.get("app", "connectionStatus") === "online") {
-			enter(roomId);
-		} else {
-			queueBack.push(roomId);
-		}
-	}
-}

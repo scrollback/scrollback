@@ -1,7 +1,7 @@
 "use strict";
 
 var format = require("../../lib/format.js"),
-	appUtils = require("../../lib/app-utils.js"),
+	userUtils = require("../../lib/user-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js"),
 	getRoomPics = require("../../lib/get-room-pics.js");
 
@@ -118,7 +118,7 @@ module.exports = function(core, config, store) {
 							action: this.showRoomSettings
 						} : null
 					});
-				} else if (mode === "home" && env !== "embed" && user && !appUtils.isGuest(user)) {
+				} else if (mode === "home" && env !== "embed" && user && !userUtils.isGuest(user)) {
 					userObj = store.getUser() || {};
 
 					this.setState({

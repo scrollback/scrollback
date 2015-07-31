@@ -1,6 +1,8 @@
 "use strict";
 
-var objUtils = require("../lib/obj-utils.js"),
+var permissionWeights = require("../authorizer/permissionWeights.js"),
+	userUtils = require("../lib/user-utils.js"),
+	objUtils = require("../lib/obj-utils.js"),
 	rangeOps = require("../lib/range-ops.js"),
 	buildTitle = require("../lib/build-title.js"),
 	state = {
@@ -242,6 +244,54 @@ Store.prototype.getFeaturedRooms = function() {
 	return rooms.map(function(room) {
 		return self.getRoom(room);
 	});
+};
+
+Store.prototype.getUserRole = function(userId, roomId) {
+	var rel, role;
+
+	userId = (typeof userId === "string") ? userId : this.get("user");
+
+	rel = this.getRelation(roomId, userId);
+
+	if (rel && rel.role && rel.role !== "none") {
+		role = rel.role;
+	} else {
+		role = (!userId || this.isGuest(userId)) ? "guest" : "registered";
+	}
+
+	return role;
+};
+
+Store.prototype.isUserAdmin = function(userId, roomId) {
+	var rel, role;
+
+	userId = (typeof userId === "string") ? userId : this.get("user");
+
+	rel = this.getRelation(roomId, userId);
+
+	if (rel && rel.role && rel.role !== "none") {
+		role = rel.role;
+	} else {
+		role = (!userId || userUtils.isGuest(userId)) ? "guest" : "registered";
+	}
+
+	return role;
+};
+
+Store.prototype.isRoomReadable = function(roomId, userId) {
+	var roomObj = this.getRoom(roomId),
+		readLevel = (roomObj && roomObj.guides && roomObj.guides.authorizer &&
+					 roomObj.guides.authorizer.readLevel) ? roomObj.guides.authorizer.readLevel : "guest";
+
+	return (permissionWeights[this.getUserRole(userId, roomId)] >= permissionWeights[readLevel]);
+};
+
+Store.prototype.isRoomWritable = function(roomId, userId) {
+	var roomObj = this.getRoom(roomId),
+		writeLevel = (roomObj && roomObj.guides && roomObj.guides.authorizer &&
+					  roomObj.guides.authorizer.writeLevel) ? roomObj.guides.authorizer.writeLevel : "guest";
+
+	return (permissionWeights[this.getUserRole(userId, roomId)] >= permissionWeights[writeLevel]);
 };
 
 Store.prototype.getPageTitle = function(compact) {

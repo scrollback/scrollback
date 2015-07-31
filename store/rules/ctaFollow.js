@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes) {
@@ -16,7 +16,7 @@ module.exports = function(core, config, store) {
 
 		if (roomObj === "missing") {
 			changes.app.cta = null;
-		} else if (userId && !appUtils.isGuest(userId) && ((/(visitor|none)/).test(role) || !role) && (/(chat|room)/).test(mode) &&
+		} else if (userId && !userUtils.isGuest(userId) && ((/(visitor|none)/).test(role) || !role) && (/(chat|room)/).test(mode) &&
 		    !(roomObj && roomObj.guides && roomObj.guides.authorizer && roomObj.guides.authorizer.openRoom === false)) {
 			changes.app.cta = "follow";
 		} else if (cta === "follow") {

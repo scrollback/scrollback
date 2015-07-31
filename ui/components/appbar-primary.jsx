@@ -4,7 +4,7 @@
 "use strict";
 
 const showMenu = require("../utils/show-menu.js"),
-	  appUtils = require("../../lib/app-utils.js"),
+	  userUtils = require("../../lib/user-utils.js"),
 	  getAvatar = require("../../lib/get-avatar.js"),
 	  url = require("../../lib/url.js");
 
@@ -155,7 +155,7 @@ module.exports = function(core, config, store) {
 
 				this.setState({
 					title: store.getPageTitle(true),
-					username: appUtils.formatUserName(user),
+					username: userUtils.getNick(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
 			}

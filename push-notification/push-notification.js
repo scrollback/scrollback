@@ -16,16 +16,16 @@
 var log = require("../lib/logger.js"),
 	url = require("../lib/url.js"),
 	format = require("../lib/format.js"),
+	userUtils = require("../lib/user-utils.js"),
 	gcmNotify = require("./gcm-notify.js"),
-	max = 400, defaultPackageName, keys ;
+	max = 400, defaultPackageName, keys;
 
 /*
  * devices : [{ deviceName: device.name, registrationId: registrationId, enabled: true }]
  */
 
 module.exports = function(core, config) {
-	var user = require("../lib/user.js")(core, config);
-	if(!config || !config.keys || !Object.keys(config.keys).length) {
+	if (!config || !config.keys || !Object.keys(config.keys).length) {
 		log.i("Push notification disable: no keys specified in config.");
 		return;
 	}
@@ -48,19 +48,17 @@ module.exports = function(core, config) {
 	}
 
 	function notifyUsers(userList, payload) {
+
 		/*
 		 * The function takes a list of user objects and the push notification payload, and
 		 * calls gcm_notify with a list of GCM registration ids and the payload.
 		 */
 
-		var regList = [], i;
-
-
 		var notesForApps = {};
-		for(i in keys) {
+
+		for (var i in keys) {
 			notesForApps[i] = {};
 		}
-
 
 		log.d(userList);
 
@@ -79,12 +77,14 @@ module.exports = function(core, config) {
 				log.d("not an array: ", devices);
 
 				Object.keys(devices).forEach(function(uuid) {
-					var device = devices[uuid], reg_id;
+					var device = devices[uuid];
+
 					log.d("device: ", uuid);
 
 					if (device.hasOwnProperty("regId") && device.enabled === true) {
 						packageName = device.packageName || defaultPackageName;
-						if(notesForApps[packageName]) {
+
+						if (notesForApps[packageName]) {
 							notesForApps[packageName][device.regId] = userObj;
 						}
 					}
@@ -117,7 +117,7 @@ module.exports = function(core, config) {
 		body = format.mdToText(text.text);
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " mentioned you",
+			title: text.to + ": " + userUtils.getNick(text.from) + " mentioned you",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {
@@ -140,7 +140,7 @@ module.exports = function(core, config) {
 		body = format.mdToText(text.text);
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
+			title: text.to + ": " + userUtils.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {
@@ -180,7 +180,7 @@ module.exports = function(core, config) {
 		}
 
 		payload = {
-			title: text.to + ": " + user.getNick(text.from) + " started a discussion",
+			title: text.to + ": " + userUtils.getNick(text.from) + " started a discussion",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			path: url.build({
 				nav: {
