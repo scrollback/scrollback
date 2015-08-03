@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
@@ -8,7 +8,7 @@ module.exports = function(core, config, store) {
 			user = future.get("user"),
 			env = future.get("context", "env");
 
-		if (env === "android" && user && appUtils.isGuest(user)) {
+		if (env === "android" && user && userUtils.isGuest(user)) {
 			changes.nav = changes.nav || {};
 			changes.nav.dialog = "signin";
 			changes.nav.dialogState = changes.nav.dialogState || {};

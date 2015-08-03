@@ -3,6 +3,7 @@
 "use strict";
 
 var url = require("../lib/url.js"),
+	buildTitle = require("../lib/build-title.js"),
 	oldPath;
 
 module.exports = function(core, config, store) {
@@ -23,7 +24,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		document.title = store.getPageTitle();
+		document.title = buildTitle(store.get());
 
 		path = url.build(store.get(), store);
 

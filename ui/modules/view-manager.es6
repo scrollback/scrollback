@@ -11,9 +11,6 @@ const keys = [ "view", "mode" ],
 			];
 
 module.exports = (core, config, store) => {
-	const user = require("../../lib/user.js")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
-
 	let oldClassName;
 
 	// Listen to navigate and add class names
@@ -39,11 +36,11 @@ module.exports = (core, config, store) => {
 			}
 		}
 
-		newClassList.push("role-" + user.getRole());
+		newClassList.push("role-" + store.getUserRole());
 
-		if (room.isWritable()) {
+		if (store.isRoomWritable()) {
 			newClassList.push("permission-write");
-		} else if (room.isReadable()) {
+		} else if (store.isRoomReadable()) {
 			newClassList.push("permission-read");
 		}
 

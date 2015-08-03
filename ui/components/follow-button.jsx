@@ -3,8 +3,7 @@
 "use strict";
 
 module.exports = (core, config, store) => {
-	const React = require("react"),
-		  userInfo = require("../../lib/user.js")(core, config, store);
+	const React = require("react");
 
 	class FollowButton extends React.Component {
 		constructor(props) {
@@ -17,7 +16,7 @@ module.exports = (core, config, store) => {
 			let rel = store.getRelation(this.props.room);
 
 			return {
-				role: userInfo.getRole(this.props.user, this.props.room),
+				role: store.getUserRole(this.props.user, this.props.room),
 				requested: (rel && rel.transitionRole === "follower" && rel.transitionType === "request")
 			};
 		}

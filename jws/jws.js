@@ -1,17 +1,41 @@
+"use strict";
+
 var jwt = require('jsonwebtoken'),
 	log = require('../lib/logger.js'),
 	crypto = require('crypto'),
 	core,
-	keys, utils = require('../lib/app-utils.js'),
+	keys, userUtils = require('../lib/user-utils.js'),
 	config;
 
+/* verifies and returns athentication data: */
+var verify = (function() {
+	return function(action, callback) {
+		var availableKeys, i = 0;
 
-module.exports = function(c, conf) {
-	core = c;
-	config = conf;
-	keys = config.keys;
-	core.on("init", jwsHandler, "authentication");
-};
+		log.d("Verifying JWS init", action);
+
+		if (!action.origin || !action.origin.host || !keys[action.origin.host]) return callback(false, {});
+		availableKeys = keys[action.origin.host];
+
+		log.d("JWS availbleKeys", availableKeys);
+
+		function testKey() {
+			console.log("JWS testing key", i);
+			if (i === availableKeys.length) return callback(false);
+			jwt.verify(action.auth.jws, Buffer(availableKeys[i], "base64"), { algorithm: 'HS512' }, function(err, decoded) {
+				console.log("JWS verification result", err, decoded);
+				if (!err && decoded) {
+					return callback(true, decoded);
+				}
+				testKey(i++);
+			});
+		}
+
+		if (availableKeys && availableKeys.length !== 0) {
+			testKey(i);
+		}
+	};
+}());
 
 function checkCurrentRooms(user, host, callback) {
 	core.emit("getRooms", {
@@ -38,7 +62,7 @@ function checkCurrentRooms(user, host, callback) {
 function jwsHandler(action, callback) {
 	var host;
 	if (!action.auth || !action.auth.jws) return callback();
-	if (!utils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
+	if (!userUtils.isGuest(action.user.id) && !action.user.allowedDomains) return callback();
 	verify(action, function(isVerified, payload) {
 		if (!isVerified) return callback(new Error("AUTH_FAIL:INVALID_TOKEN"));
 		if (payload.iss !== action.origin.host) return callback(Error("AUTH_FAIL:INVALID_ISS " + payload.iss + ", Expected " + action.origin.host));
@@ -55,8 +79,8 @@ function jwsHandler(action, callback) {
 			if (user) {
 				if (config.global.su[user.id]) return callback(new Error("Oops.."));
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, host, function(err, shouldAllow) {
-						if (err) return callback(err);
+					checkCurrentRooms(action.user.id, host, function(e, shouldAllow) {
+						if (e) return callback(e);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
 							callback();
@@ -82,8 +106,8 @@ function jwsHandler(action, callback) {
 			} else {
 				//			signup?
 				if (/^guest-/.test(action.user.id)) {
-					checkCurrentRooms(action.user.id, host, function(err, shouldAllow) {
-						if (err) return callback(err);
+					checkCurrentRooms(action.user.id, host, function(e, shouldAllow) {
+						if (e) return callback(e);
 						if (!shouldAllow) {
 							action.response = new Error("AUTH:RESTRICTED");
 							callback();
@@ -108,35 +132,9 @@ function jwsHandler(action, callback) {
 	});
 }
 
-
-
-
-var verify = (function() {
-	return function(action, callback) {
-		var availableKeys, i = 0;
-		
-		log.d("Verifying JWS init", action);
-		
-		if (!action.origin || !action.origin.host || !keys[action.origin.host]) return callback(false, {});
-		availableKeys = keys[action.origin.host];
-		
-		log.d("JWS availbleKeys", availableKeys);
-
-		function testKey() {
-			console.log("JWS testing key", i);
-			if (i === availableKeys.length) return callback(false);
-			jwt.verify(action.auth.jws, Buffer(availableKeys[i], "base64"), { algorithm: 'HS512' }, function(err, decoded) {
-				console.log("JWS verification result", err, decoded);
-				if (!err && decoded) {
-					return callback(true, decoded);
-				}
-				testKey(i++);
-			});
-		}
-
-		if (availableKeys && availableKeys.length !== 0) {
-			testKey(i);
-		}
-	};
-}());
-/* verifies and returns athentication data: */
+module.exports = function(c, conf) {
+	core = c;
+	config = conf;
+	keys = config.keys;
+	core.on("init", jwsHandler, "authentication");
+};
