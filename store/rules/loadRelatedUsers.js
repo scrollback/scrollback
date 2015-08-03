@@ -86,22 +86,12 @@ module.exports = function(c, conf, s) {
 	core.on("setstate", function(changes) {
 		var future = store.with(changes),
 			roomId = future.get("nav", "room"),
-			oldRoomId = store.get("nav", "room"),
-			oldRelations = store.getRelatedUsers(roomId);
-
-
-		if(!changes.entities) {
-			changes.entities = {};
-		}
+			oldRoomId = store.get("nav", "room");
+		if(!changes.entities) changes.entities = {};
 		
 
 		if (roomId && roomId !== oldRoomId) {
-			oldRelations.forEach(function(rel) {
-				changes.entities[roomId + "_" + rel.id] = null;
-			});
 			loadUsersList(roomId);
 		}
-		
-		
 	}, 850);
 };
