@@ -79,41 +79,75 @@ describe("Action admit/expel: ", function() {
 			done();
 		};
 	});
-	it("admit an user", function(done) {
-
-		getConnection(socket, "testinguser");
-		var back = {
-				from: "testinguser",
-				type: "back",
-				to: "private-room3"
-			},
-
-			admit = {
-				to: "private-room3",
-				ref: "sbtestinguser",
-				role: "none",
-				type: "admit",
-				from: "testinguser"
-			};
-
-
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
-			console.log(message);
-
-			if (message.type === "init") {
-				socket.send(JSON.stringify(back));
-				return;
-			}
-
-			if (message.type === "back") {
-				socket.send(JSON.stringify(admit));
-				return;
-			}
-			assert(message.type !== "error", "admit action failed");
-			done();
-		};
-	});
+//	it("admit an user", function(done) {
+//
+//		getConnection(socket, "testinguser");
+//		var back = {
+//				from: "testinguser",
+//				type: "back",
+//				to: "private-room3"
+//			},
+//
+//			admit = {
+//				to: "private-room3",
+//				ref: "sbtestinguser",
+//				role: "none",
+//				type: "admit",
+//				from: "testinguser"
+//			};
+//
+//
+//		socket.onmessage = function(message) {
+//			message = JSON.parse(message.data);
+//			console.log(message);
+//
+//			if (message.type === "init") {
+//				socket.send(JSON.stringify(back));
+//				return;
+//			}
+//
+//			if (message.type === "back") {
+//				socket.send(JSON.stringify(admit));
+//				return;
+//			}
+//			assert(message.type !== "error", "admit action failed");
+//			done();
+//		};
+//	});it("admit an user", function(done) {
+			//
+			//		getConnection(socket, "testinguser");
+			//		var back = {
+			//				from: "testinguser",
+			//				type: "back",
+			//				to: "private-room3"
+			//			},
+			//
+			//			admit = {
+			//				to: "private-room3",
+			//				ref: "sbtestinguser",
+			//				role: "none",
+			//				type: "admit",
+			//				from: "testinguser"
+			//			};
+			//
+			//
+			//		socket.onmessage = function(message) {
+			//			message = JSON.parse(message.data);
+			//			console.log(message);
+			//
+			//			if (message.type === "init") {
+			//				socket.send(JSON.stringify(back));
+			//				return;
+			//			}
+			//
+			//			if (message.type === "back") {
+			//				socket.send(JSON.stringify(admit));
+			//				return;
+			//			}
+			//			assert(message.type !== "error", "admit action failed");
+			//			done();
+			//		};
+			//	});
 
 //	it("text action from an unbanned user", function(done) {
 			//		getConnection(socket, "sbtestinguser");
