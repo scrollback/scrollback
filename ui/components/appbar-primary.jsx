@@ -6,6 +6,7 @@
 const showMenu = require("../utils/show-menu.js"),
 	  userUtils = require("../../lib/user-utils.js"),
 	  getAvatar = require("../../lib/get-avatar.js"),
+	  buildTitle = require("../../lib/build-title.js"),
 	  url = require("../../lib/url.js");
 
 module.exports = function(core, config, store) {
@@ -154,7 +155,7 @@ module.exports = function(core, config, store) {
 				userObj = store.getUser();
 
 				this.setState({
-					title: store.getPageTitle(true),
+					title: buildTitle(store.get(), true),
 					username: userUtils.getNick(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});

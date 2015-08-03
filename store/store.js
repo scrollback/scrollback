@@ -4,7 +4,6 @@ var permissionWeights = require("../authorizer/permissionWeights.js"),
 	userUtils = require("../lib/user-utils.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	rangeOps = require("../lib/range-ops.js"),
-	buildTitle = require("../lib/build-title.js"),
 	state = {
 		"nav": {
 			"mode": "loading",
@@ -292,10 +291,6 @@ Store.prototype.isRoomWritable = function(roomId, userId) {
 					  roomObj.guides.authorizer.writeLevel) ? roomObj.guides.authorizer.writeLevel : "guest";
 
 	return (permissionWeights[this.getUserRole(userId, roomId)] >= permissionWeights[writeLevel]);
-};
-
-Store.prototype.getPageTitle = function(compact) {
-	return buildTitle(this.get(), compact);
 };
 
 module.exports = function(core, config) {
