@@ -25,6 +25,15 @@ function getMessageObject(message) {
 	});
 }
 
+
+function getExpireTime() {
+	if (config.debug) {
+		return timeout*2;
+	}
+	else return 2*24*60*60;//2 days//TODO move this to config.
+}
+
+
 /**
  *Push message into redis
  *If threads is not defined then it will not send mentions email.
@@ -82,7 +91,6 @@ function addMessage(message){
 module.exports = function(coreObject, conf) {
 	config = conf;
 	core = coreObject;
-
 	emailDigest = require('./emailDigest.js');
 	initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
@@ -107,10 +115,3 @@ module.exports = function(coreObject, conf) {
 		log("email module is not enabled");
 	}
 };
-
-function getExpireTime() {
-	if (config.debug) {
-		return timeout*2;
-	}
-	else return 2*24*60*60;//2 days//TODO move this to config.
-}
