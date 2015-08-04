@@ -5,24 +5,32 @@ var relationsProps = require("./property-list.js").relations,
 
 module.exports = {
 	relatedEntityToEntity: function(relatedEntity) {
-		relatedEntity = objUtils.clone(relatedEntity);
+		var entity = objUtils.clone(relatedEntity);
+
 		relationsProps.forEach(function(e) {
-			delete relatedEntity[e];
+			delete entity[e];
 		});
-		return relatedEntity;
+
+		return entity;
 	},
 	entityTorelatedEntity: function(entity, relation) {
 		var x = objUtils.merge(objUtils.clone(entity), relation);
+
 		delete x.room;
 		delete x.user;
 	},
 	relatedEntityToRelation: function(entity, ref) {
 		var relation = {};
+
 		relationsProps.forEach(function(e) {
-			relation[e] = entity[e];
+			if (typeof entity[e] !== "undefined") {
+				relation[e] = entity[e];
+			}
 		});
+
 		relation[entity.type] = entity.id;
 		relation[ref.type] = ref.id;
+
 		return relation;
 	}
 };
