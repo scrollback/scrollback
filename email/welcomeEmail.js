@@ -4,7 +4,7 @@ var log = require("../lib/logger.js"),
 	send = require("./sendEmail.js"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
-	config, template;
+	config, defaultTemplate;
 
 
 /**
@@ -12,22 +12,32 @@ var log = require("../lib/logger.js"),
  *@param {Object} user
  */
 
-function sendWelcomeEmail(user) {
-	var emailHtml = template(user),
-		emailAdd = false;
+function sendWelcomeEmail(user, origin) {
+	function useTemplate(template) {
+		var emailHtml = template(user);
+		var emailAdd = false,
+			i;
 
-	user.identities.forEach(function(u) {
-		if (u.indexOf("mailto:") === 0) {
-			emailAdd = u.substring(7);
+		for (i = 0; i < user.identities.length; i++) {
+			if (user.identities[i].indexOf("mailto:") === 0) {
+				emailAdd = user.identities[i].substring(7);
+				break;
+			}
 		}
-	});
-
-	log("email add", user, emailAdd);
-
-	if (emailAdd) {
-		log("sending welcome email.", emailAdd);
-		send(config.from, emailAdd, "Welcome to Scrollback", emailHtml);
+		
+		log.d("email add", user, emailAdd);
+		if (emailAdd) {
+			log.i("sending welcome email.", emailAdd);
+			send(config.from, emailAdd, "Welcome to Scrollback", emailHtml);
+		}
 	}
+
+	fs.readFile(__dirname + "/views/" + origin.host + ".hbs", "utf8", function(err, data) {
+		var template;
+		if (err) return useTemplate(defaultTemplate);
+		template = handlebars.compile(data.toString());
+		useTemplate(template);
+	});
 }
 
 
@@ -41,7 +51,7 @@ function emailRoomListener(action, callback) {
 
 	if (!action.old.id) {
 		// user signed up
-		sendWelcomeEmail(action.user);
+		sendWelcomeEmail(action.user, action.origin);
 	}
 
 	callback();
@@ -51,7 +61,7 @@ function init() {
 	fs.readFile(__dirname + "/views/welcome-email.hbs", "utf8", function(err, data) {
 		if (err) throw err;
 
-		template = handlebars.compile(data.toString());
+		defaultTemplate = handlebars.compile(data.toString());
 	});
 }
 
