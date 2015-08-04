@@ -33,8 +33,8 @@
 
 var core, store,
 	enabled = false,
+	userUtils = require("../lib/user-utils.js"),
 	isReady = false,
-	user = require("../lib/user.js")(),
 	generate = require("../lib/generate.js"),
 	objUtils = require("../lib/obj-utils.js");
 
@@ -186,7 +186,7 @@ function onStateChange(changes) {
 	}
 
 	if (changes.user) {
-		postMessage({ type: "auth", status: user.isGuest(changes.user) ? "guest" : "registered" });
+		postMessage({ type: "auth", status: userUtils.isGuest(changes.user) ? "guest" : "registered" });
 	}
 
 	if (changes.nav) {

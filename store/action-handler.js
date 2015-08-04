@@ -7,77 +7,6 @@ var store, core,
 	pendingActions = {},
 	user, timeAdjustment = 0;
 
-module.exports = function(c, conf, s) {
-	user = require("../lib/user.js")(c, conf, s);
-
-	store = s;
-	core = c;
-	
-	core.on("admit-dn", onAdmitDn, 950);
-	core.on("expel-dn", onAdmitDn, 950);
-	core.on("init-dn", onInit, 950);
-	core.on("join-dn", onJoinPart, 950);
-	core.on("part-dn", onJoinPart, 950);
-	core.on("edit-dn", onEdit, 950);
-	core.on("text-up", onTextUp, 950);
-	core.on("text-dn", onTextDn, 950);
-	core.on("away-dn", onAwayBack, 950);
-	core.on("back-dn", onAwayBack, 950);
-	core.on("room-dn", onRoomUser, 950);
-	core.on("user-dn", onRoomUser, 950);
-	core.on("error-dn", function(error, next) {
-		var newState = {texts:{}};
-		var text = store.get("indexes", "textsById", error.id);
-		if(text) {
-			text = objUtils.clone(text);
-			(text.tags = text.tags?text.tags:[]).push("failed");
-
-			newState.texts[text.to] = [{ // put the text in all messages
-				start: text.time,
-				end: text.time,
-				items: [text]
-			}];
-
-			if (text.thread) {
-				newState.texts[keyFromText(text)] = [{ // put the text in the appropriate thread
-					start: text.time,
-					end: (text.thread === text.id) ? null : text.time,
-					items: [text]
-				}];
-			}
-
-
-			core.emit("setstate", newState);
-		}
-
-		next();
-	}, 1000);
-	[
-		"text-up", "edit-up", "back-up", "away-up", "init-up",
-		"join-up", "part-up", "admit-up", "expel-up", "room-up"
-	].forEach(function(event) {
-		core.on(event, function(action) {
-			if (!action.id) { action.id = generate.uid(); }
-			if (!action.time) { action.time = Date.now() + timeAdjustment; }
-		}, 1000);
-	});
-
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(event) {
-		core.on(event, function(query) {
-			if (!query.id) { query.id = generate.uid(); }
-		}, 1000);
-	});
-
-	[
-		"text-dn", "edit-dn", "back-dn", "away-dn", "init-dn",
-		"join-dn", "part-dn", "admit-dn", "expel-dn", "room-dn"
-	].forEach(function(event) {
-		core.on(event, function(action) {
-			timeAdjustment = action.time - Date.now();
-		}, 1000);
-	});
-};
-
 function entitiesFromRooms(list, entities, userId) {
 	list.forEach(function(e) {
 		var rkey = e.id + "_" + userId,
@@ -373,13 +302,83 @@ function onAdmitDn(action) {
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
 	entities[roomObj.id + "_" + victim.id] = relation;
-	
+
 	newState = {
 		entities: entities
 	};
-	
+
 	roomId = store.get("nav", "room");
 	if(roomId === roomObj.id) newState.nav = {room: roomId};
-	
+
 	core.emit("setstate",newState);
 }
+
+module.exports = function(c, conf, s) {
+	store = s;
+	core = c;
+
+	core.on("admit-dn", onAdmitDn, 950);
+	core.on("expel-dn", onAdmitDn, 950);
+	core.on("init-dn", onInit, 950);
+	core.on("join-dn", onJoinPart, 950);
+	core.on("part-dn", onJoinPart, 950);
+	core.on("edit-dn", onEdit, 950);
+	core.on("text-up", onTextUp, 950);
+	core.on("text-dn", onTextDn, 950);
+	core.on("away-dn", onAwayBack, 950);
+	core.on("back-dn", onAwayBack, 950);
+	core.on("room-dn", onRoomUser, 950);
+	core.on("user-dn", onRoomUser, 950);
+
+	core.on("error-dn", function(error, next) {
+		var newState = {texts:{}};
+		var text = store.get("indexes", "textsById", error.id);
+		if(text) {
+			text = objUtils.clone(text);
+			(text.tags = text.tags?text.tags:[]).push("failed");
+
+			newState.texts[text.to] = [{ // put the text in all messages
+				start: text.time,
+				end: text.time,
+				items: [text]
+			}];
+
+			if (text.thread) {
+				newState.texts[keyFromText(text)] = [{ // put the text in the appropriate thread
+					start: text.time,
+					end: (text.thread === text.id) ? null : text.time,
+					items: [text]
+				}];
+			}
+
+
+			core.emit("setstate", newState);
+		}
+
+		next();
+	}, 1000);
+	[
+		"text-up", "edit-up", "back-up", "away-up", "init-up",
+		"join-up", "part-up", "admit-up", "expel-up", "room-up"
+	].forEach(function(event) {
+		core.on(event, function(action) {
+			if (!action.id) { action.id = generate.uid(); }
+			if (!action.time) { action.time = Date.now() + timeAdjustment; }
+		}, 1000);
+	});
+
+	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(event) {
+		core.on(event, function(query) {
+			if (!query.id) { query.id = generate.uid(); }
+		}, 1000);
+	});
+
+	[
+		"text-dn", "edit-dn", "back-dn", "away-dn", "init-dn",
+		"join-dn", "part-dn", "admit-dn", "expel-dn", "room-dn"
+	].forEach(function(event) {
+		core.on(event, function(action) {
+			timeAdjustment = action.time - Date.now();
+		}, 1000);
+	});
+};

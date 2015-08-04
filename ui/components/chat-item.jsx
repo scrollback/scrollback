@@ -3,7 +3,7 @@
 "use strict";
 
 var format = require("../../lib/format.js"),
-	appUtils = require("../../lib/app-utils.js"),
+	userUtils = require("../../lib/user-utils.js"),
 	showMenu = require("../utils/show-menu.js");
 
 module.exports = function(core, config, store) {
@@ -90,7 +90,7 @@ module.exports = function(core, config, store) {
 			if (this.props.continuation) {
 				classNames += " chat-item-continuation";
 			} else {
-				nick = <div className="chat-item-nick">{appUtils.formatUserName(this.props.text.from)}</div>;
+				nick = <div className="chat-item-nick">{userUtils.getNick(this.props.text.from)}</div>;
 			}
 
 			return (

@@ -2,10 +2,11 @@
 
 "use strict";
 
-module.exports = (core, config, store) => {
-	const user = require("../lib/user.js")(core, config, store),
-		  format = require("../lib/format.js"),
-		  max = 3;
+const format = require("../lib/format.js"),
+	  userUtils = require("../lib/user-utils.js");
+
+module.exports = (core) => {
+	const max = 3;
 
 	class NotificationItem {
 		constructor(note) {
@@ -113,10 +114,10 @@ module.exports = (core, config, store) => {
 
 			switch (this.note.noteType) {
 			case "thread":
-				summary = `${user.getNick(data.from)} : ${this._format(data.title)}`;
+				summary = `${userUtils.getNick(data.from)} : ${this._format(data.title)}`;
 				break;
 			default:
-				summary = `${user.getNick(data.from)} : ${this._format(data.text)}`;
+				summary = `${userUtils.getNick(data.from)} : ${this._format(data.text)}`;
 			}
 
 			return summary;
@@ -132,7 +133,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new mentions`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> mentioned you`;
+					html = `<strong>${userUtils.getNick(data.from)}</strong> mentioned you`;
 				}
 
 				if (data.title) {
@@ -146,7 +147,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new ${data.title ? "replies" : "messages"}`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
+					html = `<strong>${userUtils.getNick(data.from)}</strong> ${data.title ? "replied" : "said"} <strong>${this._format(data.text)}</strong>`;
 				}
 
 				if (data.title) {
@@ -160,7 +161,7 @@ module.exports = (core, config, store) => {
 				if (count > max) {
 					html = `<strong>${count}</strong> new discussions`;
 				} else {
-					html = `<strong>${user.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
+					html = `<strong>${userUtils.getNick(data.from)}</strong> started a discussion on <strong>${this._format(data.title)}</strong>`;
 				}
 
 				html += ` - <strong>${this._format(this._room)}</strong>`;

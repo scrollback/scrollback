@@ -2,7 +2,7 @@
 
 var getAvatar = require("../../lib/get-avatar.js"),
 	showMenu = require("../utils/show-menu.js"),
-	appUtils = require("../../lib/app-utils.js");
+	userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -31,11 +31,11 @@ module.exports = function(core, config, store) {
 			} else {
 				role = null;
 			}
-					
+
 			return (
 			<div className="people-list-item" onClick={this.showPeopleMenu}>
 					<img className="people-list-item-avatar" src={getAvatar(this.props.user.picture, 48)} />
-					<span className="people-list-item-nick">{appUtils.formatUserName(this.props.user.id)}</span>
+					<span className="people-list-item-nick">{userUtils.getNick(this.props.user.id)}</span>
 					{role ? <span className="people-list-item-role">{role}</span> : ""}
 				</div>
 			);

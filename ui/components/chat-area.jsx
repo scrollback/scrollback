@@ -8,8 +8,7 @@ module.exports = function(core, config, store) {
 		  ScrollTo = require("./scroll-to.jsx")(core, config, store),
 		  Compose = require("./compose.jsx")(core, config, store),
 		  PrivateRoom = require("./private-room.jsx")(core, config, store),
-		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store),
-		  room = require("../../lib/room.js")(core, config, store);
+		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store);
 
 	let ChatArea = React.createClass({
 		scrollToBottom: function() {
@@ -69,7 +68,7 @@ module.exports = function(core, config, store) {
 
 				this.setState({
 					show: (store.get("nav", "mode") === "chat"),
-					read: room.isReadable()
+					read: store.isRoomReadable()
 				});
 			}
 		},

@@ -1,6 +1,6 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	core.on("setstate", function(changes, next) {
@@ -20,7 +20,7 @@ module.exports = function(core, config, store) {
 		}
 
 		if (userId) {
-			if (appUtils.isGuest(userId)) {
+			if (userUtils.isGuest(userId)) {
 				// User is not signed in
 				if (signedin) {
 					changes.nav.dialogState.signedin = null;

@@ -1,7 +1,8 @@
 "use strict";
 
-var pg = require("../../lib/pg.js");
-var appUtils = require("../../lib/app-utils.js");
+var pg = require("../../lib/pg.js"),
+	sessionUtils = require("../../lib/session-utils.js");
+
 module.exports = [
 	function (query) {
 		var type,
@@ -45,7 +46,7 @@ module.exports = [
 				filters.push({ $: "entities.timezone <= ${maxtz}", maxtz: query.timezone.lte });
 			}
 		} else if (query.memberOf || query.hasMember) {
-			source = "entities " + (query.ref? "LEFT OUTER": "INNER") + 
+			source = "entities " + (query.ref? "LEFT OUTER": "INNER") +
 				" JOIN relations ON (entities.id=relations." + type + ")";
 
 			if (query.memberOf) {
@@ -58,7 +59,7 @@ module.exports = [
 				filters.push({ $: "relations.role=${role}'", role: query.role });
 			} else {
 				var roleFilters = ["relations.role > 'none'"];
-				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id || query.hasMember &&  appUtils.isInternalSession(query.session)) {
+				if (query.memberOf && /^owner|moderator|su$/.test(query.user.role) || query.hasMember === query.user.id || query.hasMember &&  sessionUtils.isInternalSession(query.session)) {
 					// Show people who are transitioning to a visible role and
 					// rooms the current user is in the process of joining
 					roleFilters.push("relations.transitionrole > 'none' OR relations.role = 'banned'");
@@ -108,7 +109,7 @@ module.exports = [
 			{ $: (orderBy? "ORDER BY " + orderBy : "") + (limit? " LIMIT ${limit}": ""), limit : limit }
 		]);
 	},
-	
+
 	function(query, entities) {
 		var results = [];
 		if (entities.length) {
