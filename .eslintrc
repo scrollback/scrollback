@@ -126,7 +126,7 @@
 		"eol-last": 1,
 		"func-names": 0,
 		"func-style": 0,
-		"indent": [1, "tab", { "SwitchCase": true }],
+		"indent": [1, "tab", { "SwitchCase": 0 }],
 		"key-spacing": [ 1, { "beforeColon": false, "afterColon": true } ],
 		"lines-around-comment": 1,
 		"linebreak-style": 1,
