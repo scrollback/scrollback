@@ -321,5 +321,15 @@ module.exports = function(core, config, store) {
 		position: "bottom"
 	};
 
+	Suggestions.propTypes = {
+		query: React.PropTypes.string.isRequired,
+		type: React.PropTypes.oneOf([ "user", "room" ]),
+		max: React.PropTypes.number,
+		smart: React.PropTypes.bool,
+		position: React.PropTypes.oneOf([ "top", "bottom" ]),
+		onSelect: React.PropTypes.func.isRequired,
+		onDismiss: React.PropTypes.func.isRequired
+	};
+
 	return Suggestions;
 };
