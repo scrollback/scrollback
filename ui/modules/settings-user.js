@@ -32,14 +32,12 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("user-dn", function(user, next) {
-		if (JSON.stringify(user.old) !== JSON.stringify(user.user)) {
-			$("<div>").html("Your account settings were successfully saved.").
-			alertbar({
-				type: "info",
-				timeout: 1500
-			});
-			next();
-		}
+		$("<div>").html("Your account settings were successfully saved.").
+		alertbar({
+			type: "info",
+			timeout: 1500
+		});
+		next();
 	}, 500);
 
 	core.on("pref-dialog", function(dialog, next) {
