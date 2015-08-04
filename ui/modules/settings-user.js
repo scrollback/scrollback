@@ -8,7 +8,7 @@ var objUtils = require("../../lib/obj-utils.js"),
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
-
+	console.log(objUtils.clone(store.getUser()));
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),
 			userObj = objUtils.clone(store.getUser());
@@ -31,6 +31,15 @@ module.exports = function(core, config, store) {
 		});
 	});
 
+	core.on("user-dn", function(user, next) {
+		$("<div>").html("Your account settings were successfully saved.").
+		alertbar({
+			type: "info",
+			timeout: 1500
+		});
+		next();
+	}, 500);
+
 	core.on("pref-dialog", function(dialog, next) {
 		var user = store.getUser();
 
@@ -44,7 +53,9 @@ module.exports = function(core, config, store) {
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: user }, function(err, items) {
+		core.emit("pref-show", {
+			user: user
+		}, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
@@ -61,7 +72,9 @@ module.exports = function(core, config, store) {
 				prio: 300,
 				action: function() {
 					core.emit("setstate", {
-						nav: { dialog: "pref" }
+						nav: {
+							dialog: "pref"
+						}
 					});
 				}
 			};
