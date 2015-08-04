@@ -49,11 +49,14 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("room-dn", function(room, next) {
-		$("<div>").html("Your room settings were successfully saved.").
-		alertbar({
-			type: "info",
-			timeout: 1500
-		});
+		if (Object.keys(room.old).length !== 0) {
+			$("<div>").html("Your room settings were successfully saved.").
+			alertbar({
+				type: "info",
+				timeout: 1500
+			});
+
+		}
 		next();
 	}, 500);
 
