@@ -21,7 +21,7 @@ module.exports = function() {
 			changes.app.featuredRooms.forEach(query);
 		}
 
-		if (future.get("nav").mode === "home") {
+		if (future.get("nav", "mode") === "home") {
 			if (changes.entities && user) {
 				Object.keys(changes.entities).forEach(function(key) {
 					if (regex.test(key) && changes.entities[key] && changes.entities[key].room) {
