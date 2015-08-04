@@ -32,11 +32,13 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("user-dn", function(user, next) {
-		$("<div>").html("Your account settings were successfully saved.").
-		alertbar({
-			type: "info",
-			timeout: 1500
-		});
+		if (Object.keys(user.old).length !== 0) {
+			$("<div>").html("Your account settings were successfully saved.").
+			alertbar({
+				type: "info",
+				timeout: 1500
+			});
+		}
 		next();
 	}, 500);
 
