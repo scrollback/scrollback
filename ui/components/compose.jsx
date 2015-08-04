@@ -64,7 +64,7 @@ module.exports = function(core, config, store) {
 
 					// If @ pressed
 					if (/(^@|\s+@)[a-z0-9\-]*$/.test(typed)) {
-						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1);
+						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1).toLowerCase();
 
 						this.setState({ query });
 
@@ -190,8 +190,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					{typeof this.state.query === "string" ?
 						<Suggestions
-							type="user" position="top"
-							max={5} smart={true}
+							type="user" position="top" max={5} smart
 							query={this.state.query}
 							onDismiss={this.onDismissSuggestions}
 							onSelect={this.onSelectSuggestions} /> :
