@@ -1,0 +1,11 @@
+<html>
+	<head>
+		<title>Facebook Login</title>
+	</head>
+	<body>
+		<script>
+			location.href='https://www.facebook.com/dialog/oauth?'+'client_id={{client_id}}'
+				+'&redirect_uri='+encodeURIComponent("{{redirect_uri}}")+'&response_type=code&scope=email';
+		</script>
+	</body>
+</html>
