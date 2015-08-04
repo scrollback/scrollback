@@ -15,7 +15,6 @@ require("../lib/css-supports.polyfill.js");
 require("../lib/custom-events.polyfill.js");
 require("../lib/notification.polyfill.js");
 require("../lib/request-animation-frame.polyfill.js");
-require("../lib/regex-escape.polyfill.js");
 
 // Third party libraries
 require("../bower_components/sockjs/sockjs.js");
