@@ -1,7 +1,7 @@
 "use strict";
 
-var core, store;
-//var entityOps = require("./../entity-ops.js");
+var regexUtils = require("../../lib/regex-utils.js"),
+	core, store;
 
 var query;
 
@@ -14,14 +14,14 @@ module.exports = function() {
 	core.on("setstate", function(changes, next) {
 		var user = store.get("user") || "",
 			room = store.get("nav", room) || "",
-			regex = new RegExp("_" + RegExp.escape(user) + "$"),
+			regex = new RegExp("_" + regexUtils.escape(user) + "$"),
 			future = store.with(changes);
 
 		if (changes.app && changes.app.featuredRooms) {
 			changes.app.featuredRooms.forEach(query);
 		}
 
-		if(future.get("nav").mode === "home") {
+		if (future.get("nav").mode === "home") {
 			if (changes.entities && user) {
 				Object.keys(changes.entities).forEach(function(key) {
 					if (regex.test(key) && changes.entities[key] && changes.entities[key].room) {
@@ -29,12 +29,12 @@ module.exports = function() {
 					}
 				});
 			}
-			
+
 			store.getRelatedRooms().forEach(function(e) {
 				query(e.id);
 			});
 		}
-		
+
 		next();
 	}, 800);
 };
