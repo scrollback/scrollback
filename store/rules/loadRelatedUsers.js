@@ -88,8 +88,6 @@ module.exports = function(c, conf, s) {
 			roomId = future.get("nav", "room"),
 			oldRoomId = store.get("nav", "room");
 		if(!changes.entities) changes.entities = {};
-		
-
 		if (roomId && roomId !== oldRoomId) {
 			loadUsersList(roomId);
 		}

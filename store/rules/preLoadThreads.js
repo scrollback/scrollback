@@ -14,7 +14,7 @@ module.exports = function() {
 	core.on("setstate", function(changes, next) {
 		var user = store.get("user") || "",
 			room = store.get("nav", room) || "",
-			regex = new RegExp("_" + user + "$"),
+			regex = new RegExp("_" + RegExp.escape(user) + "$"),
 			future = store.with(changes);
 
 		if (changes.app && changes.app.featuredRooms) {
@@ -24,7 +24,7 @@ module.exports = function() {
 		if(future.get("nav").mode === "home") {
 			if (changes.entities && user) {
 				Object.keys(changes.entities).forEach(function(key) {
-					if (regex.test(key) && changes.entities[key] && changes.entities[key].room && future.get("nav").mode === "home") {
+					if (regex.test(key) && changes.entities[key] && changes.entities[key].room) {
 						query(changes.entities[key].room);
 					}
 				});
