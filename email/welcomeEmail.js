@@ -4,8 +4,8 @@ var log = require("../lib/logger.js"),
 	send = require("./sendEmail.js"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
-	config, defaultTemplate;
-
+	config, defaultTemplate,
+	userUtils = require('../lib/user-utils.js');
 
 /**
  * send welcome mail to user
@@ -48,12 +48,10 @@ function sendWelcomeEmail(user, origin) {
 
 function emailRoomListener(action, callback) {
 	log("user welcome email ", action);
-
-	if (!action.old.id) {
-		// user signed up
+	if (userUtils.isGuest(action.from)) {
 		sendWelcomeEmail(action.user, action.origin);
 	}
-
+	
 	callback();
 }
 
@@ -68,12 +66,11 @@ function init() {
 module.exports = function(core, conf) {
 	config = conf;
 
-	if (config.email && config.email.auth) {
+	if (config && config.auth) {
 		init();
-
+		send = send(config);
 		core.on("user", emailRoomListener, "gateway");
 	} else {
 		log("email module is not enabled");
 	}
-
 };
