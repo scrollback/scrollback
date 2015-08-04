@@ -1,7 +1,7 @@
 "use strict";
 
 var relationsProps = require("./../property-list.js").relations;
-var core, config, store;
+var core, store;
 
 
 function constructEntitiesFromUserList(list, entities, roomId) {
@@ -13,6 +13,7 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 		} else {
 			relation = {};
 		}
+
 		relation.room = roomId;
 		relation.user = e.id;
 		relation.status = "offline";
@@ -22,6 +23,7 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 				delete e[key];
 			}
 		});
+
 		entities[e.id] = e;
 		entities[roomId + "_" + e.id] = relation;
 	});
@@ -41,9 +43,11 @@ function loadUsersList(roomId) {
 	function emitSetState() {
 		constructEntitiesFromUserList(memberList, entities, roomId);
 		constructEntitiesFromUserList(occupantList, entities, roomId);
+
 		occupantList.forEach(function(e) {
 			entities[roomId + "_" + e.id].status = "online";
 		});
+
 		core.emit("setstate", {
 			entities: entities,
 			app: {
@@ -57,17 +61,20 @@ function loadUsersList(roomId) {
 		memberOf: roomId
 	}, function(err, data) {
 		memberList = data.results || [];
+
 		if (!done) {
 			done = true;
 		} else {
 			emitSetState();
 		}
 	});
+
 	core.emit("getUsers", {
 		type: "getUsers",
 		occupantOf: roomId
 	}, function(err, data) {
 		occupantList = data.results || [];
+
 		if (!done) {
 			done = true;
 		} else {
@@ -76,18 +83,16 @@ function loadUsersList(roomId) {
 	});
 }
 
-
-
 module.exports = function(c, conf, s) {
 	core = c;
-	conf = config;
 	store = s;
 
 	core.on("setstate", function(changes) {
-		var future = store.with(changes),
-			roomId = future.get("nav", "room"),
+		var roomId = store.with(changes).get("nav", "room"),
 			oldRoomId = store.get("nav", "room");
-		if(!changes.entities) changes.entities = {};
+
+		if (!changes.entities) changes.entities = {};
+
 		if (roomId && roomId !== oldRoomId) {
 			loadUsersList(roomId);
 		}

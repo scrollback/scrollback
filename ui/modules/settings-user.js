@@ -8,7 +8,7 @@ var objUtils = require("../../lib/obj-utils.js"),
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
-	console.log(objUtils.clone(store.getUser()));
+
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),
 			userObj = objUtils.clone(store.getUser());

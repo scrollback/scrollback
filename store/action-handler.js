@@ -10,11 +10,11 @@ var store, core,
 function entitiesFromRooms(list, entities, userId) {
 	list.forEach(function(e) {
 		var rkey = e.id + "_" + userId,
-			relation = entities[rkey] || {},
-			entity = entities[e.id] || {};
+			relation, entity;
 
-		relation = entityOps.relatedEntityToRelation(e, {id:userId, type:"user"});
+		relation = entityOps.relatedEntityToRelation(e, { id: userId, type: "user" });
 		entity = entityOps.relatedEntityToEntity(e);
+
 		entities[e.id] = entity;
 		entities[rkey] = relation;
 	});
@@ -26,7 +26,7 @@ function keyFromText(text) {
 	var key = text.to;
 	if (text.thread) {
 		key = key + "_" + text.thread;
-	} else if(text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
+	} else if (text.threads && text.threads.length > 0 && text.threads[0] && text.threads[0].id) {
 		key = key + "_" + text.threads[0].id;
 	}
 
@@ -43,16 +43,17 @@ function threadFromText(text) {
 }
 
 function onInit(init, next) {
-	var entities = {};
-	var newstate = {};
-	if(init.response) {
-		switch(init.response.message) {
-			case "AUTH:UNREGISTERED":
-				newstate.nav = newstate.nav || {};
-				newstate.nav.dialogState = newstate.nav.dialogState || {};
-				newstate.nav.dialogState.signingup = true;
+	var entities = {},
+		newstate = {};
 
-				break;
+	if (init.response) {
+		switch (init.response.message) {
+		case "AUTH:UNREGISTERED":
+			newstate.nav = newstate.nav || {};
+			newstate.nav.dialogState = newstate.nav.dialogState || {};
+			newstate.nav.dialogState.signingup = true;
+
+			break;
 		}
 
 		init.user = init.user || {};
@@ -60,23 +61,28 @@ function onInit(init, next) {
 
 		entities[store.get("user")] = init.user;
 		newstate.entities = entities;
+
 		core.emit("setstate", newstate);
+
 		return next();
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
 	if (init.memberOf) entities = entitiesFromRooms(init.memberOf, entities, init.user.id);
+
 	entities[init.user.id] = init.user;
+
 	core.emit("setstate", {
 		entities: entities,
 		user: init.user.id
 	});
+
 	core.emit("getRooms", {featured: true}, function(err, rooms) {
 		var featuredRooms = [], roomObjs = {};
 
-		if(rooms && rooms.results) {
+		if (rooms && rooms.results) {
 			rooms.results.forEach(function(e) {
-				if(e) {
+				if (e) {
 					featuredRooms.push(e.id);
 					roomObjs[e.id] = e;
 				}
@@ -85,9 +91,7 @@ function onInit(init, next) {
 			});
 		}
 		core.emit("setstate", {
-			app:{
-				featuredRooms: featuredRooms
-			},
+			app: { featuredRooms: featuredRooms },
 			entities: roomObjs
 		});
 	});
@@ -107,15 +111,18 @@ function onRoomUser(action, next) {
 
 function onAwayBack(action, next) {
 	var entities = {}, relation;
-	if(!action.room) action.room = store.getRoom(action.to);
-	if(!action.user) action.user = store.getRoom(action.from);
+
+	if (!action.room) action.room = store.getRoom(action.to);
+	if (!action.user) action.user = store.getRoom(action.from);
 
 	entities[action.to] = entityOps.relatedEntityToEntity(action.room || {});
 	entities[action.from] = entityOps.relatedEntityToEntity(action.user || {});
-	relation = entityOps.relatedEntityToRelation(entities[action.to], {id:action.from, type:"user"});
+
+	relation = entityOps.relatedEntityToRelation(entities[action.to], { id: action.from, type: "user" });
 	relation.status = action.type === "away" ? "offline" : "online";
 
 	entities[relation.room + "_" + relation.user] = relation;
+
 	core.emit("setstate", {
 		entities: entities
 	});
@@ -229,28 +236,30 @@ function onEdit (edit, next) {
 
 	text = edit.old;
 
-	if(text) {
+	if (text) {
 		if (text.id === text.thread) {
 			text.color = (store.get("indexes", "threadsById", text.id) || {}).color;
 			thread = threadFromText(text);
 		}
 
-		if(edit.tags) text.tags = edit.tags;
-		if(edit.text) text.text = edit.text;
+		if (edit.tags) text.tags = edit.tags;
+		if (edit.text) text.text = edit.text;
+
 		changes.texts = changes.texts || {};
 		changes.texts[keyFromText(text)] = changes.texts[text.to] = [{
 			start: text.time, end: text.time,
-			items: pleb && text.tags.indexOf("hidden")>=0? []: [text]
+			items: pleb && text.tags.indexOf("hidden") >= 0 ? [] : [text]
 		}];
 	}
 
-	if(thread) {
-		if(edit.tags) thread.tags = edit.tags;
-		if(edit.title) thread.title = edit.title;
+	if (thread) {
+		if (edit.tags) thread.tags = edit.tags;
+		if (edit.title) thread.title = edit.title;
+
 		changes.threads = changes.threads || {};
 		changes.threads[thread.to] = [{
 			start: thread.startTime, end: thread.startTime,
-			items: pleb && thread.tags.indexOf("thread-hidden")>=0? []: [thread]
+			items: pleb && thread.tags.indexOf("thread-hidden") >= 0 ?  [] : [thread]
 		}];
 	}
 	core.emit("setstate", changes);
@@ -265,14 +274,14 @@ function onJoinPart(join, next) {
 
 	relation.user = userObj.id;
 	relation.room = roomObj.id;
-	relation.role = join.role || (join.type === 'join'? 'follower': null);
-	if(relation.role === 'none') relation.role = null;
-	if(join.type === 'join'){
-		if(join.transitionType) relation.transitionType = join.transitionType;
-		if(join.transitionRole) relation.transitionRole = join.transitionRole;
+	relation.role = join.role || (join.type === 'join' ? 'follower': null);
+	if (relation.role === 'none') relation.role = null;
+	if (join.type === 'join') {
+		if (join.transitionType) relation.transitionType = join.transitionType;
+		if (join.transitionRole) relation.transitionRole = join.transitionRole;
 	} else {
 		relation.transitionRole = null;
-		relation.transitionType= null;
+		relation.transitionType = null;
 	}
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[userObj.id] = entityOps.relatedEntityToEntity(userObj);
@@ -285,7 +294,6 @@ function onJoinPart(join, next) {
 }
 
 
-
 function onAdmitDn(action) {
 	var roomObj = action.room;
 	var victim = action.victim;
@@ -295,9 +303,9 @@ function onAdmitDn(action) {
 
 	relation.user = victim.id;
 	relation.room = roomObj.id;
-	relation.role = action.role? action.role : victim.role;
-	relation.transitionRole = action.transitionRole? action.transitionRole : null;
-	relation.transitionType = action.transitionType? action.transitionType : null;
+	relation.role = action.role ? action.role : victim.role;
+	relation.transitionRole = action.transitionRole ? action.transitionRole : null;
+	relation.transitionType = action.transitionType ? action.transitionType : null;
 
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[victim.id] = entityOps.relatedEntityToEntity(victim);
@@ -308,9 +316,9 @@ function onAdmitDn(action) {
 	};
 
 	roomId = store.get("nav", "room");
-	if(roomId === roomObj.id) newState.nav = {room: roomId};
+	if (roomId === roomObj.id) newState.nav = {room: roomId};
 
-	core.emit("setstate",newState);
+	core.emit("setstate", newState);
 }
 
 module.exports = function(c, conf, s) {
@@ -331,11 +339,12 @@ module.exports = function(c, conf, s) {
 	core.on("user-dn", onRoomUser, 950);
 
 	core.on("error-dn", function(error, next) {
-		var newState = {texts:{}};
+		var newState = { texts: {} };
 		var text = store.get("indexes", "textsById", error.id);
-		if(text) {
+		if (text) {
 			text = objUtils.clone(text);
-			(text.tags = text.tags?text.tags:[]).push("failed");
+
+			(text.tags = text.tags ? text.tags : []).push("failed");
 
 			newState.texts[text.to] = [{ // put the text in all messages
 				start: text.time,

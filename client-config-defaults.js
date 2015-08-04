@@ -8,7 +8,7 @@ var defaults = {
 		host: "localhost:7528",
 		apiHost: "localhost:7528"
 	},
-	pushNotification:{
+	pushNotification: {
 		defaultPackageName: "io.scrollback.app"
 	}
 };
