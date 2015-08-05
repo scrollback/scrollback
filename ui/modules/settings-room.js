@@ -19,11 +19,14 @@ module.exports = function(core, config, store) {
 			core.emit("room-up", {
 				to: roomName,
 				room: room
-			 }, function(e, r) {
+			}, function(e, r) {
 				self.removeClass("working");
 
 				if (e) {
-					// handle the error
+					$("<div>").html("Sorry! Could not save your settings. Please try again.").
+					alertbar({
+						type: "error"
+					});
 				} else {
 					for (var i in r.room.params) {
 						if (!r.room.params.hasOwnProperty(i)) {
@@ -45,6 +48,18 @@ module.exports = function(core, config, store) {
 		});
 	});
 
+	core.on("room-dn", function(room, next) {
+		if (Object.keys(room.old).length !== 0) {
+			$("<div>").html("Your room settings were successfully saved.").
+			alertbar({
+				type: "info",
+				timeout: 1500
+			});
+
+		}
+		next();
+	}, 500);
+
 	core.on("conf-dialog", function(dialog, next) {
 		var rel = store.getRelation();
 
@@ -53,7 +68,9 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		core.emit("conf-show", { room: objUtils.clone(store.getRoom()) }, function(err, items) {
+		core.emit("conf-show", {
+			room: objUtils.clone(store.getRoom())
+		}, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();

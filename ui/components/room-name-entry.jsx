@@ -48,14 +48,14 @@ module.exports = (core, config, store) => {
 
 		onInput(e) {
 			this.setState({
-				query: e.target.value,
+				query: e.target.value.toLowerCase(),
 				error: false
 			});
 		}
 
 		render() {
 			return (
-				<div {...this.props} className={this.props.className + " room-name-entry"}>
+				<div {...this.props} className={(this.props.className || "") + " room-name-entry"}>
 					{this.state.query ?
 						<Suggestions
 							type="room" position="bottom" max={5}
@@ -67,12 +67,16 @@ module.exports = (core, config, store) => {
 					<form onSubmit={this.onSubmit.bind(this)}>
 						<input
 							className={"linked" + (this.state.error ? " error" : "")} type="text" placeholder="Type a room name" ref="entry"
-							autofocus onInput={this.onInput.bind(this)} />
+							autoFocus onInput={this.onInput.bind(this)} />
 					</form>
 				</div>
 			);
 		}
 	}
+
+	RoomNameEntry.propTypes = {
+		className: React.PropTypes.string
+	};
 
 	return RoomNameEntry;
 };

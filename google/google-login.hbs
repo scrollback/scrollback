@@ -1,0 +1,16 @@
+<html>
+
+<head>Google login</head>
+
+<body>
+    <script>
+        location.href = 'https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email '
+			+'https://www.googleapis.com/auth/userinfo.profile' 
+			+ '&client_id={{client_id}}'
+			+ '&redirect_uri='
+			+ encodeURIComponent("{{redirect_uri}}")
+			+ '&response_type=code&access_type=offline';
+    </script>
+</body>
+
+</html>

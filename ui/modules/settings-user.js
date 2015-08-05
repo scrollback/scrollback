@@ -31,6 +31,17 @@ module.exports = function(core, config, store) {
 		});
 	});
 
+	core.on("user-dn", function(user, next) {
+		if (Object.keys(user.old).length !== 0) {
+			$("<div>").html("Your account settings were successfully saved.").
+			alertbar({
+				type: "info",
+				timeout: 1500
+			});
+		}
+		next();
+	}, 500);
+
 	core.on("pref-dialog", function(dialog, next) {
 		var user = store.getUser();
 
@@ -44,7 +55,9 @@ module.exports = function(core, config, store) {
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: user }, function(err, items) {
+		core.emit("pref-show", {
+			user: user
+		}, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
@@ -61,7 +74,9 @@ module.exports = function(core, config, store) {
 				prio: 300,
 				action: function() {
 					core.emit("setstate", {
-						nav: { dialog: "pref" }
+						nav: {
+							dialog: "pref"
+						}
 					});
 				}
 			};

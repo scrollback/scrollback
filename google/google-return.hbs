@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Google callback</title>
+	</head>
+	<body>
+		<script>
+			var code = (location.search.substring(1).split("&").filter(function(seg) {
+				return seg.indexOf("code=") === 0;
+			})[0] || "").substr(5);
+
+			window.opener.postMessage({
+				type: "auth",
+				provider: "google",
+				code: code
+			}, "*");
+			window.close();
+
+		</script>
+	</body>
+</html>
