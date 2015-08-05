@@ -6,7 +6,8 @@
 var objUtils = require("../../lib/obj-utils.js");
 
 module.exports = function(core, config, store) {
-	var renderSettings = require("../utils/render-settings.js")(core, config, store);
+	var renderSettings = require("../utils/render-settings.js")(core, config, store),
+		saveInProgress = false;
 
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
@@ -39,6 +40,8 @@ module.exports = function(core, config, store) {
 						}
 					}
 
+					saveInProgress = true;
+
 					core.emit("setstate", {
 						nav: {
 							dialog: null
@@ -49,9 +52,16 @@ module.exports = function(core, config, store) {
 		});
 	});
 
+	core.on("error-dn", function(err) {
+		if (err.actionType === "room") {
+			saveInProgress = false;
+		}
+	});
+
 	core.on("room-dn", function(room, next) {
 		var user = store.get("user");
-		if (room.user.id === user && room.user.role === "owner" && Object.keys(room.old).length !== 0) {
+		if (room.user.id === user && saveInProgress && Object.keys(room.old).length !== 0) {
+			saveInProgress = false;
 			$("<div>").html("Your room settings were successfully saved.").
 			alertbar({
 				type: "info",

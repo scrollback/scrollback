@@ -98,13 +98,14 @@ sock.on('connection', function(socket) {
 		log.i("Reached here:", d);
 		core.emit(d.type, d, function(err, data) {
 			var e, action, victimId, victimSession, victimConns, awayAction;
-			
-            log.i("response", err, data);
+
+			log.i("response", err, data);
 			if (err) {
-				log.d("Error thrown: ",new Error().stack);
+				log.d("Error thrown: ", new Error().stack);
 				e = {
 					type: 'error',
 					id: d.id,
+					actionType: d.type,
 					message: err.message
 				};
 				if (err instanceof SbError) {
@@ -134,11 +135,11 @@ sock.on('connection', function(socket) {
 			}
 			if (data.type === 'away') storeAway(conn, data);
 			if (data.type === 'expel') {
-				if(data.role === 'banned') {
+				if (data.role === 'banned') {
 					victimId = data.victim.id;
 					victimConns = uConns[victimId];
-					
-					if(victimConns && victimConns.length) {
+
+					if (victimConns && victimConns.length) {
 						victimSession = victimConns[0].session;
 						awayAction = {
 							type: "away",
@@ -191,17 +192,17 @@ sock.on('connection', function(socket) {
 				storeInit(conn, data);
 			}
 			if (data.type === 'user') processUser(conn, data);
-			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities','getNotes'].indexOf(data.type) >= 0) {
+			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities', 'getNotes'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
-                log.d("sending response", data);
+				log.d("sending response", data);
 				conn.send(data);
 				data.eventStartTime = t;
 			}
 
 			if (["join", "part", "admit", "expel"].indexOf(data.type) >= 0) {
 				var refObject, connections, censoredAction;
-				if (data.type === "join" || data.type === "part" ) {
+				if (data.type === "join" || data.type === "part") {
 					refObject = data.user;
 				} else {
 					refObject = data.victim;
@@ -215,8 +216,8 @@ sock.on('connection', function(socket) {
 				}
 			}
 
-			if(data.type === "note") {
-				if(sConns[data.session]) {
+			if (data.type === "note") {
+				if (sConns[data.session]) {
 					sConns[data.session].forEach(function(c) {
 						c.send(data);
 					});
@@ -248,7 +249,7 @@ function processUser(conn, action) {
 			resource: conn.resource,
 			type: "init"
 		});
-		
+
 		uConns[action.user.id] = uConns[action.from];
 		delete uConns[action.from];
 	}
@@ -338,7 +339,7 @@ function censorAction(action, filter) {
 						outAction[i][j] = action[i][j];
 					}
 				}
-			} else if(i !== "occupants" && i !== "members"){
+			} else if (i !== "occupants" && i !== "members") {
 				outAction[i] = action[i];
 			}
 		}
@@ -374,7 +375,7 @@ function emit(action, callback) {
 
 	if (action.type === 'init') {
 		if (sConns[action.session]) {
-			if(action.response) {
+			if (action.response) {
 				error = action.response;
 				action.response = {
 					message: action.response.message
@@ -385,7 +386,7 @@ function emit(action, callback) {
 				dispatch(conn, action);
 			});
 
-			if(error) action.response = error;
+			if (error) action.response = error;
 		}
 		return callback();
 	} else if (action.type === 'user') {
@@ -408,13 +409,13 @@ function emit(action, callback) {
 				else dispatch(e, myAction);
 			} else {
 				log.d(outAction.notify, e.user);
-				if(outAction.note && outAction.notify && outAction.notify[e.user]) {
-					for(var i in outAction.note) {
-						if(outAction.note.hasOwnProperty(i)) {
+				if (outAction.note && outAction.notify && outAction.notify[e.user]) {
+					for (var i in outAction.note) {
+						if (outAction.note.hasOwnProperty(i)) {
 							note[i] = {};
 
-							for(var j in outAction.note[i]) {
-								if(outAction.note[i].hasOwnProperty(j)) {
+							for (var j in outAction.note[i]) {
+								if (outAction.note[i].hasOwnProperty(j)) {
 									note[i][j] = outAction.note[i][j];
 								}
 							}
@@ -424,8 +425,8 @@ function emit(action, callback) {
 
 					log.d(outAction.notify[e.user]);
 
-					for(i in outAction.notify[e.user]) {
-						if(outAction.notify[e.user].hasOwnProperty(i)) {
+					for (i in outAction.notify[e.user]) {
+						if (outAction.notify[e.user].hasOwnProperty(i)) {
 							note[i].score = outAction.notify[e.user][i];
 						}
 
