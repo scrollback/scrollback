@@ -11,6 +11,7 @@ module.exports = function(core, config, store) {
 	$(document).on("click", ".js-conf-save", function() {
 		var self = $(this),
 			roomName = store.get("nav", "room"),
+
 			roomObj = objUtils.clone(store.getRoom(roomName));
 
 		self.addClass("working");
@@ -49,7 +50,8 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("room-dn", function(room, next) {
-		if (Object.keys(room.old).length !== 0) {
+		var user = store.get("user");
+		if (room.user.id === user && room.user.role === "owner" && Object.keys(room.old).length !== 0) {
 			$("<div>").html("Your room settings were successfully saved.").
 			alertbar({
 				type: "info",
