@@ -5,14 +5,17 @@ var store, core,
 	objUtils = require("../lib/obj-utils.js"),
 	generate = require("../lib/generate.js"),
 	pendingActions = {},
-	user, timeAdjustment = 0;
+	timeAdjustment = 0;
 
 function entitiesFromRooms(list, entities, userId) {
 	list.forEach(function(e) {
 		var rkey = e.id + "_" + userId,
 			relation, entity;
 
-		relation = entityOps.relatedEntityToRelation(e, { id: userId, type: "user" });
+		relation = entityOps.relatedEntityToRelation(e, {
+			id: userId,
+			type: "user"
+		});
 		entity = entityOps.relatedEntityToEntity(e);
 
 		entities[e.id] = entity;
@@ -35,9 +38,14 @@ function keyFromText(text) {
 
 function threadFromText(text) {
 	return {
-		id: text.thread, from: text.from, to: text.to,
-		startTime: text.time, color: text.color, tags: null,
-		title: text.title, updateTime: text.time,
+		id: text.thread,
+		from: text.from,
+		to: text.to,
+		startTime: text.time,
+		color: text.color,
+		tags: null,
+		title: text.title,
+		updateTime: text.time,
 		updater: text.from
 	};
 }
@@ -48,12 +56,12 @@ function onInit(init, next) {
 
 	if (init.response) {
 		switch (init.response.message) {
-		case "AUTH:UNREGISTERED":
-			newstate.nav = newstate.nav || {};
-			newstate.nav.dialogState = newstate.nav.dialogState || {};
-			newstate.nav.dialogState.signingup = true;
+			case "AUTH:UNREGISTERED":
+				newstate.nav = newstate.nav || {};
+				newstate.nav.dialogState = newstate.nav.dialogState || {};
+				newstate.nav.dialogState.signingup = true;
 
-			break;
+				break;
 		}
 
 		init.user = init.user || {};
@@ -77,8 +85,11 @@ function onInit(init, next) {
 		user: init.user.id
 	});
 
-	core.emit("getRooms", {featured: true}, function(err, rooms) {
-		var featuredRooms = [], roomObjs = {};
+	core.emit("getRooms", {
+		featured: true
+	}, function(err, rooms) {
+		var featuredRooms = [],
+			roomObjs = {};
 
 		if (rooms && rooms.results) {
 			rooms.results.forEach(function(e) {
@@ -91,7 +102,9 @@ function onInit(init, next) {
 			});
 		}
 		core.emit("setstate", {
-			app: { featuredRooms: featuredRooms },
+			app: {
+				featuredRooms: featuredRooms
+			},
 			entities: roomObjs
 		});
 	});
@@ -110,7 +123,8 @@ function onRoomUser(action, next) {
 }
 
 function onAwayBack(action, next) {
-	var entities = {}, relation;
+	var entities = {},
+		relation;
 
 	if (!action.room) action.room = store.getRoom(action.to);
 	if (!action.user) action.user = store.getRoom(action.from);
@@ -118,7 +132,10 @@ function onAwayBack(action, next) {
 	entities[action.to] = entityOps.relatedEntityToEntity(action.room || {});
 	entities[action.from] = entityOps.relatedEntityToEntity(action.user || {});
 
-	relation = entityOps.relatedEntityToRelation(entities[action.to], { id: action.from, type: "user" });
+	relation = entityOps.relatedEntityToRelation(entities[action.to], {
+		id: action.from,
+		type: "user"
+	});
 	relation.status = action.type === "away" ? "offline" : "online";
 
 	entities[relation.room + "_" + relation.user] = relation;
@@ -134,7 +151,9 @@ function onAwayBack(action, next) {
 }
 
 function onTextUp(text) {
-	var newState = { texts: {} },
+	var newState = {
+			texts: {}
+		},
 		currentTexts = store.get("texts", text.to);
 
 	pendingActions[text.id] = text;
@@ -155,21 +174,21 @@ function onTextUp(text) {
 		}];
 	}
 
-//	next();
+	//	next();
 
-//	Optimistically adding new threads is made complex
-//	by the unavailability of an id on the text-up.
-//	if(text.thread === text.id) {
-//		newState.threads = {};
-//		newState.threads[text.to] = [{
-//			start: text.time, end: null, items: [{
-//				id: text.id, from: text.from, to: text.to,
-//				startTime: text.time, color: -1, tags: null,
-//				title: text.title, updateTime: text.time,
-//				updater: text.from
-//			}]
-//		}];
-//	}
+	//	Optimistically adding new threads is made complex
+	//	by the unavailability of an id on the text-up.
+	//	if(text.thread === text.id) {
+	//		newState.threads = {};
+	//		newState.threads[text.to] = [{
+	//			start: text.time, end: null, items: [{
+	//				id: text.id, from: text.from, to: text.to,
+	//				startTime: text.time, color: -1, tags: null,
+	//				title: text.title, updateTime: text.time,
+	//				updater: text.from
+	//			}]
+	//		}];
+	//	}
 
 	core.emit("setstate", newState);
 
@@ -178,7 +197,10 @@ function onTextUp(text) {
 function onTextDn(text, next) {
 	var oldRange,
 		currentThreads, currentTexts,
-		oldKey = "", newState = { texts: {} };
+		oldKey = "",
+		newState = {
+			texts: {}
+		};
 
 	currentTexts = store.get("texts", text.to);
 
@@ -230,9 +252,9 @@ function onTextDn(text, next) {
 	next();
 }
 
-function onEdit (edit, next) {
+function onEdit(edit, next) {
 	var text, thread, changes = {},
-		pleb = !user.isAdmin();
+		pleb = !store.isUserAdmin();
 
 	text = edit.old;
 
@@ -247,7 +269,8 @@ function onEdit (edit, next) {
 
 		changes.texts = changes.texts || {};
 		changes.texts[keyFromText(text)] = changes.texts[text.to] = [{
-			start: text.time, end: text.time,
+			start: text.time,
+			end: text.time,
 			items: pleb && text.tags.indexOf("hidden") >= 0 ? [] : [text]
 		}];
 	}
@@ -258,8 +281,9 @@ function onEdit (edit, next) {
 
 		changes.threads = changes.threads || {};
 		changes.threads[thread.to] = [{
-			start: thread.startTime, end: thread.startTime,
-			items: pleb && thread.tags.indexOf("thread-hidden") >= 0 ?  [] : [thread]
+			start: thread.startTime,
+			end: thread.startTime,
+			items: pleb && thread.tags.indexOf("thread-hidden") >= 0 ? [] : [thread]
 		}];
 	}
 	core.emit("setstate", changes);
@@ -274,7 +298,7 @@ function onJoinPart(join, next) {
 
 	relation.user = userObj.id;
 	relation.room = roomObj.id;
-	relation.role = join.role || (join.type === 'join' ? 'follower': null);
+	relation.role = join.role || (join.type === 'join' ? 'follower' : null);
 	if (relation.role === 'none') relation.role = null;
 	if (join.type === 'join') {
 		if (join.transitionType) relation.transitionType = join.transitionType;
@@ -316,7 +340,11 @@ function onAdmitDn(action) {
 	};
 
 	roomId = store.get("nav", "room");
-	if (roomId === roomObj.id) newState.nav = {room: roomId};
+	if (roomId === roomObj.id) {
+		newState.nav = {
+			room: roomId
+		};
+	}
 
 	core.emit("setstate", newState);
 }
@@ -339,7 +367,9 @@ module.exports = function(c, conf, s) {
 	core.on("user-dn", onRoomUser, 950);
 
 	core.on("error-dn", function(error, next) {
-		var newState = { texts: {} };
+		var newState = {
+			texts: {}
+		};
 		var text = store.get("indexes", "textsById", error.id);
 		if (text) {
 			text = objUtils.clone(text);
@@ -371,14 +401,20 @@ module.exports = function(c, conf, s) {
 		"join-up", "part-up", "admit-up", "expel-up", "room-up"
 	].forEach(function(event) {
 		core.on(event, function(action) {
-			if (!action.id) { action.id = generate.uid(); }
-			if (!action.time) { action.time = Date.now() + timeAdjustment; }
+			if (!action.id) {
+				action.id = generate.uid();
+			}
+			if (!action.time) {
+				action.time = Date.now() + timeAdjustment;
+			}
 		}, 1000);
 	});
 
-	[ "getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy" ].forEach(function(event) {
+	["getTexts", "getUsers", "getRooms", "getThreads", "getEntities", "upload/getPolicy"].forEach(function(event) {
 		core.on(event, function(query) {
-			if (!query.id) { query.id = generate.uid(); }
+			if (!query.id) {
+				query.id = generate.uid();
+			}
 		}, 1000);
 	});
 
