@@ -32,7 +32,7 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("user-dn", function(user, next) {
-		if (Object.keys(user.old).length !== 0) {
+		if (!userUtils.isGuest(user.old.id)) {
 			$("<div>").html("Your account settings were successfully saved.").
 			alertbar({
 				type: "info",
