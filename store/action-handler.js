@@ -100,11 +100,19 @@ function onInit(init, next) {
 
 function onRoomUser(action, next) {
 	var changes = {},
-		entities = {};
+		entities = {},
+		currentUser = store.getUser();
 
 	entities[action.to] = action[action.type === "room" ? "room" : "user"];
 	changes.entities = entities;
 
+	if (action.type === 'room' && action.from === currentUser.id) {
+		changes.entities[action.to + "_" + currentUser.id] = {
+			room: action.to,
+			user: currentUser.id,
+			role: "owner"
+		};
+	}
 	core.emit("setstate", changes);
 	next();
 }
