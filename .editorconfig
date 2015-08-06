@@ -21,6 +21,10 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
+[*.yml]
+indent_style = space
+indent_size = 2
+
 [*.{css,less,scss}]
 indent_style = space
 indent_size = 4
