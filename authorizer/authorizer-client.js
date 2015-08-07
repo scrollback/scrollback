@@ -87,6 +87,7 @@ module.exports = function(core) {
 
 		if (error.message === "ERR_NOT_ALLOWED" && errorActions.indexOf(error.action) > -1) {
 			handleAuthErrors(error);
+			error.handled = true;
 		}
 	}, 1000);
 };

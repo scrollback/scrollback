@@ -72,6 +72,7 @@ require("./modules/settings-room.js")(...args);
 require("./modules/settings-user.js")(...args);
 require("./modules/view-manager.es6")(...args);
 require("./modules/swipes.js")(...args);
+require("./modules/ui-handle-errors.js")(...args);
 
 // Render the client
 require("./components/client.jsx")(...args);
