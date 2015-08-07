@@ -13,7 +13,10 @@ module.exports = (core, config, store) => {
 		}
 
 		render() {
-			let freq = this.props.frequency;
+			let frequencyItems = [
+					{ value: "daily", label: "Daily" },
+					{ value: "never", label: "Never" }
+				];
 
 			return (
 				<div>
@@ -26,7 +29,7 @@ module.exports = (core, config, store) => {
 					<div className="settings-item">
 						<div className="settings-label">Email digest frequency</div>
 						<div className="settings-action">
-							<ToggleGroup ref="frequency" className="toggle-group" items={freq.items} value={freq.value} name={freq.name} />
+							<ToggleGroup ref="frequency" className="toggle-group" name="frequency" items={frequencyItems} value={this.props.frequency} />
 						</div>
 					</div>
 				</div>
@@ -59,14 +62,7 @@ module.exports = (core, config, store) => {
 	core.on("pref-show", tabs => {
 		let params = tabs.user.params,
 			container = document.createElement("div"),
-			frequency = {
-				items: [
-					{ value: "daily", label: "Daily" },
-					{ value: "never", label: "Never" }
-				],
-				value: (params && params.email && params.email.frequency) ? params.email.frequency : "daily",
-				name: "frequency"
-			},
+			frequency = (params && params.email && params.email.frequency) ? params.email.frequency : "daily",
 			notifications = (params && params.email && typeof params.email.notifications === "boolean") ? params.email.notifications : true;
 
 		React.render(<EmailConfig frequency={frequency} notifications={notifications} />, container);
