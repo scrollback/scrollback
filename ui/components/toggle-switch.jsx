@@ -11,11 +11,9 @@ module.exports = function() {
 		}
 
 		onChange(e) {
-			this.setState({ checked: e.target.checked });
+			let checked = e.target.checked;
 
-			if (typeof this.props.onChange === "function") {
-				this.props.onChange(e);
-			}
+			this.setState({ checked }, () => typeof this.props.onUpdate === "function" ? this.props.onUpdate(checked) : null);
 		}
 
 		get checked() {
@@ -25,7 +23,13 @@ module.exports = function() {
 		render() {
 			return (
 				<label {...this.props} className={(this.props.className === "string" ? this.props.className : "") + " toggle-switch"}>
-					<input type="checkbox" checked={this.state.checked} onChange={this.onChange.bind(this)} />
+					<input
+						type="checkbox"
+						checked={this.state.checked}
+						disabled={this.props.disabled}
+						required={this.props.required}
+						onChange={this.onChange.bind(this)}
+					/>
 					<span />
 				</label>
 			);
@@ -33,9 +37,11 @@ module.exports = function() {
 	}
 
 	ToggleSwitch.propTypes = {
-		 checked: React.PropTypes.bool.isRequired,
-		 className: React.PropTypes.string,
-		 onChange: React.PropTypes.func
+		checked: React.PropTypes.bool.isRequired,
+		disabled: React.PropTypes.bool,
+		required: React.PropTypes.bool,
+		className: React.PropTypes.string,
+		onUpdate: React.PropTypes.func
 	};
 
 	return ToggleSwitch;

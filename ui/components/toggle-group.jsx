@@ -11,11 +11,9 @@ module.exports = function() {
 		}
 
 		onChange(e) {
-			this.setState({ value: e.target.value });
+			let value = e.target.value;
 
-			if (typeof this.props.onChange === "function") {
-				this.props.onChange(e);
-			}
+			this.setState({ value }, () => typeof this.props.onUpdate === "function" ? this.props.onUpdate(value) : null);
 		}
 
 		get value() {
@@ -31,6 +29,7 @@ module.exports = function() {
 								<input
 									type="radio"
 									checked={this.state.value === item.value}
+									disabled={item.disabled}
 									value={item.value}
 									name={this.props.name}
 									onChange={this.onChange.bind(this)}
@@ -45,13 +44,16 @@ module.exports = function() {
 	}
 
 	ToggleGroup.propTypes = {
-		 name: React.PropTypes.string.isRequired,
-		 value: React.PropTypes.string.isRequired,
-		 items: React.PropTypes.arrayOf(React.PropTypes.shape({
-			  value: React.PropTypes.string.isRequired,
-			  label: React.PropTypes.string.isRequired
-		 })).isRequired,
-		 onChange: React.PropTypes.func
+		name: React.PropTypes.string.isRequired,
+		value: React.PropTypes.string.isRequired,
+		items: React.PropTypes.arrayOf(React.PropTypes.shape({
+			value: React.PropTypes.string.isRequired,
+			label: React.PropTypes.string.isRequired,
+			checked: React.PropTypes.bool,
+			disabled: React.PropTypes.bool,
+			required: React.PropTypes.bool
+		})).isRequired,
+		onUpdate: React.PropTypes.func
 	};
 
 	return ToggleGroup;
