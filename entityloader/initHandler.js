@@ -1,75 +1,70 @@
 "use strict";
-var crypto = require('crypto') /*, log = require("../lib/logger.js")*/ ;
-var utils = require('../lib/app-utils.js');
-var names = require('../lib/generate.js').names;
-var mathUtils = require('../lib/math-utils.js');
+var crypto = require("crypto");
+/*var log = require("../lib/logger.js")*/
+var utils = require("../lib/app-utils.js");
+var names = require("../lib/generate.js").names;
 
-var core, config;
+var core;
 
-function checkRoomUser(list, done) {
+
+/*
+	This code smells.
+	The logic depends on postgres returning the results in alphabetical order and if the name is present then it should be one of the results.
+	
+	But again this is kinda expected behaviour of like query.
+	Though not sure if this code is alright to have.
+*/
+function generateNick(suggestion, callback) {
+	var attemptingNick = suggestion || names(6);
 	core.emit("getEntities", {
-		ref: list,
-		session: "internal-loader"
-	}, function(err, data) {
-		if (!err && data && data.results && data.results.length > 0) {
-			done(false);
-		} else {
-			done(true);
+		ref: attemptingNick + "*",
+		session: "internal-entityloader"
+	}, function(err, query) {
+		var i = 1,
+			ids;
+		if (err || !query || !query.results) return callback(err);
+
+		ids = query.results.map(function(e) {
+			return e.id.replace(/^guest-/, "");
+		});
+
+		if (!ids.length || ids.indexOf(attemptingNick) < 0) return callback(null, attemptingNick);
+
+		while (i < 10) {
+			if (ids.indexOf(attemptingNick) < 0) break;
+			attemptingNick += i;
 		}
+
+		if (i === 10) return generateNick("", callback);
+
+		callback(null, attemptingNick);
 	});
 }
 
-function generateNick(sNick, next) {
-	var lowBound = 1,
-		upBound = 1;
-	if (!sNick) sNick = names(6);
-	sNick = sNick.toLowerCase();
-
-
-	function checkUser(suggestedNick, attemptC, callback) {
-		var trying = suggestedNick;
-
-		if (attemptC) {
-			lowBound = upBound;
-			upBound = 1 << attemptC;
-			trying += mathUtils.random(lowBound, upBound);
-		}
-
-		if (attemptC >= config.nickRetries) return callback(names(6));
-
-
-
-		checkRoomUser([trying, "guest-" + trying], function(result) {
-			if (result) {
-				callback(trying);
-			} else {
-				checkUser(suggestedNick, attemptC + 1, callback);
-			}
-		});
-	}
-	checkUser(sNick, 0, next);
-}
-
 function generatePick(id) {
-	return 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(id).digest('hex') + '/?d=retro';
+	return "https://gravatar.com/avatar/" + crypto.createHash("md5").update(id).digest("hex") + "/?d=retro";
 }
 
 
 function initializerUser(action, callback) {
 	var userObj;
-	generateNick(action.suggestedNick || action.ref || "", function(possibleNick) {
-		possibleNick = "guest-" + possibleNick;
-		if (!action.ref) action.from = possibleNick;
+	generateNick(action.suggestedNick || action.ref || "", function(err, nick) {
+		if(err) return callback(err);
+		
+		nick = "guest-" + nick;
+		if (!action.ref) action.from = nick;
 		userObj = {
-			id: possibleNick,
+			id: nick,
 			description: "",
 			createTime: new Date().getTime(),
 			type: "user",
 			params: {},
 			timezone: 0,
+			identities: ["guest:" + nick],
 			sessions: [action.session],
-			picture: generatePick(possibleNick)
+			picture: generatePick(nick)
 		};
+
 		action.user = userObj;
 		callback();
 	});
@@ -150,9 +145,8 @@ function loadProps(action, callback) {
 
 
 
-module.exports = function(c, conf) {
+module.exports = function(c) {
 	core = c;
-	config = conf;
 	core.on("init", function(init, next) {
 		initHandler(init, function(err) {
 			if (err) return next(err);
