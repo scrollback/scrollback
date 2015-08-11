@@ -49,8 +49,8 @@ function generatePick(id) {
 function initializerUser(action, callback) {
 	var userObj;
 	generateNick(action.suggestedNick || action.ref || "", function(err, nick) {
-		if(err) return callback(err);
-		
+		if (err) return callback(err);
+
 		nick = "guest-" + nick;
 		if (!action.ref) action.from = nick;
 		userObj = {
