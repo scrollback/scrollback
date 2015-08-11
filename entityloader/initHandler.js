@@ -6,14 +6,6 @@ var names = require("../lib/generate.js").names;
 
 var core;
 
-
-/*
-	This code smells.
-	The logic depends on postgres returning the results in alphabetical order and if the name is present then it should be one of the results.
-	
-	But again this is kinda expected behaviour of like query.
-	Though not sure if this code is alright to have.
-*/
 function generateNick(suggestion, callback) {
 	var attemptingNick = suggestion || names(6);
 	core.emit("getEntities", {
