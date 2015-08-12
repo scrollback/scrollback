@@ -15,7 +15,7 @@ module.exports = function(core, config, store) {
 		ThreadList = require("./thread-list.jsx")(core, config, store),
 		Footer = require("./footer.jsx")(core, config, store),
 		CreateRoomButton = require("./create-room-button.jsx")(core, config, store),
-		Dialogs = require("../dialogs/all.jsx")(core, config, store),
+		CurrentDialog = require("../dialogs/current-dialog.es6")(core, config, store),
 		Client;
 
 	Client = React.createClass({
@@ -72,7 +72,7 @@ module.exports = function(core, config, store) {
 
 						<SidebarRight />
 
-						<Dialogs />
+						<CurrentDialog />
 
 						<div data-mode="room chat" className="sidebar-overlay" onClick={this.closeSidebar}></div>
 
