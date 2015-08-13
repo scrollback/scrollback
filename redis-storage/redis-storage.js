@@ -1,7 +1,7 @@
 "use strict";
 var config, occupantDB, core;
 var log = require("../lib/logger.js"),
-	userOps = require("../lib/user.js")();
+	userOps = require("../lib/user-utils.js");
 
 function onBack(data, cb) {
 	occupantDB.sadd("room:{{" + data.to + "}}:hasOccupants", data.from, function(err, res) {
