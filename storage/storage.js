@@ -8,13 +8,16 @@ var writeEntity = require("./actions/entity"),
 	readEntity = require("./queries/entity"),
 	readContent = require("./queries/content"),
 	readNote = require("./queries/note"),
-		
+	log = require('./../lib/logger.js'),
 	pg = require("../lib/pg"),
 	connString;
 
 function handleEntityAction(action, next) {
+	log("init reached storage", action);
 	var sql = writeEntity(action).concat(writeNote(action));
+	
 	pg.write(connString, sql, function (err) {
+		log("init: user update done", action);
 		next(err);
 	});
 }
@@ -79,6 +82,7 @@ module.exports = function (core, config) {
 	
 	core.on("room", handleEntityAction, "storage");
 	core.on("user", handleEntityAction, "storage");
+	core.on("init", handleEntityAction, "storage");
 	
 	core.on("text", handleContentAction, "storage");
 	core.on("edit", handleContentAction, "storage");

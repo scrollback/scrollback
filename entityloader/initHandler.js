@@ -58,6 +58,7 @@ function initializerUser(action, callback) {
 		};
 
 		action.user = userObj;
+		
 		callback();
 	});
 }
@@ -80,7 +81,7 @@ function initHandler(action, callback) {
 		} else {
 			old = action.user = data.results[0];
 		}
-
+		
 		function allowSuggested(user) {
 			if (user.isSuggested) return (action.origin.host === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
 			else return true;

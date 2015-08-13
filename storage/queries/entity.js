@@ -2,6 +2,8 @@
 
 var pg = require("../../lib/pg.js");
 var appUtils = require("../../lib/app-utils.js");
+var log = require('./../../lib/logger.js');
+
 module.exports = [
 	function (query) {
 		var type,
@@ -25,13 +27,15 @@ module.exports = [
 
 		if (query.ref) {
 			if (Array.isArray(query.ref)) {
-				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref });
+				filters.push({ $: "entities.id IN ($(ids))", ids: query.ref.map(function (e){
+					return e.replace(/^guest-/,"");
+				})});
 			} else if(/\*$/.test(query.ref)) {
 				orderBy = "id";
 				if(!query.limit || query.limit>10) query.limit = 10;
 				filters.push({ $: "entities.id like ${id}", id: query.ref.replace(/\**$/,"%") });
 			} else {
-				filters.push({ $: "entities.id=${id}", id: query.ref });
+				filters.push({ $: "entities.id=${id}", id: query.ref.replace(/^guest-/,"") });
 			}
 		}
 
@@ -114,9 +118,16 @@ module.exports = [
 		if (entities.length) {
 			entities.forEach(function(row) {
 				var identities = [];
-				row.identities.forEach(function(identity) {
-					identities.push(identity[1]);
-				});
+				log.d("row identity", row);
+				
+				if(row.identities) {
+					row.identities.forEach(function(identity) {
+						log.d("identity", identity);
+						identities.push(identity[1]);
+					});
+				}
+				
+				log.d("row identity", identities, row);
 				var entity = {
 					id: row.id,
 					type: row.type,
