@@ -117,19 +117,20 @@ module.exports = [
 		var results = [];
 		if (entities.length) {
 			entities.forEach(function(row) {
-				var identities = [];
+				var identities = [], isGuest;
 				log.d("row identity", row);
 				
 				if(row.identities) {
 					row.identities.forEach(function(identity) {
 						log.d("identity", identity);
+						if(identity.indexOf("guest") >=0) isGuest = true;
 						identities.push(identity[1]);
 					});
 				}
 				
 				log.d("row identity", identities, row);
 				var entity = {
-					id: row.id,
+					id: isGuest?"guest-"+row.id:row.id,
 					type: row.type,
 					createTime: (row.createtime ? row.createtime.getTime() : null),
 					description: row.description,
@@ -158,6 +159,4 @@ module.exports = [
 
 		query.results = results;
 	}
-
-
 ];
