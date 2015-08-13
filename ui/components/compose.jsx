@@ -3,7 +3,8 @@
 
 "use strict";
 
-const gen = require("../../lib/generate.js");
+const gen = require("../../lib/generate.browser.js"),
+	  userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
@@ -11,7 +12,6 @@ module.exports = function(core, config, store) {
 		Suggestions = require("./suggestions.jsx")(core, config, store),
 		FileUpload = require("./file-upload.jsx")(core, config, store),
 		Loader = require("./loader.jsx")(core, config, store),
-		userInfo = require("../../lib/user.js")(core, config, store),
 		Compose;
 
 	Compose = React.createClass({
@@ -64,7 +64,7 @@ module.exports = function(core, config, store) {
 
 					// If @ pressed
 					if (/(^@|\s+@)[a-z0-9\-]*$/.test(typed)) {
-						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1);
+						let query = typed.match(/@[a-z0-9\-]*$/)[0].substr(1).toLowerCase();
 
 						this.setState({ query });
 
@@ -113,7 +113,7 @@ module.exports = function(core, config, store) {
 					selectionStart = area.selectionStart,
 					before = value.slice(0, selectionStart).replace(/(@[a-z0-9\-]*)$/, ""),
 					after = value.slice(selectionStart),
-					id = userInfo.getNick(user.id);
+					id = userUtils.getNick(user.id);
 
 				composeBox.val(before + "@" + id + " " + after);
 
@@ -190,8 +190,7 @@ module.exports = function(core, config, store) {
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					{typeof this.state.query === "string" ?
 						<Suggestions
-							type="user" position="top"
-							max={5} smart={true}
+							type="user" position="top" max={5} smart
 							query={this.state.query}
 							onDismiss={this.onDismissSuggestions}
 							onSelect={this.onSelectSuggestions} /> :
@@ -236,7 +235,7 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + userInfo.getNick(store.get("user")) + ", markdown supported";
+				return "Reply as " + userUtils.getNick(store.get("user")) + ", markdown supported";
 			} else {
 				return "You are offline";
 			}

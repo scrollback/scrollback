@@ -1,9 +1,7 @@
 "use strict";
 var crypto = require("crypto");
-/*var log = require("../lib/logger.js")*/
-var utils = require("../lib/app-utils.js");
 var names = require("../lib/generate.js").names;
-
+var userUtils = require('../lib/user-utils.js');
 var core;
 
 function generateNick(suggestion, callback) {
@@ -86,7 +84,7 @@ function initHandler(action, callback) {
 			if (user.isSuggested) return (action.origin.host === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
 			else return true;
 		}
-		if (action.suggestedNick && utils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
+		if (action.suggestedNick && userUtils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
 				action.user.isSuggested = true;
 				action.user.assignedBy = action.origin.host;
@@ -116,7 +114,7 @@ function loadProps(action, callback) {
 		if (wait) wait = false;
 		else callback();
 	});
-	if (!utils.isGuest(userID)) {
+	if (!userUtils.isGuest(userID)) {
 		core.emit("getRooms", {
 			hasMember: userID,
 			session: "internal-loader"
@@ -135,9 +133,6 @@ function loadProps(action, callback) {
 		else callback();
 	}
 }
-
-
-
 module.exports = function(c) {
 	core = c;
 	core.on("init", function(init, next) {

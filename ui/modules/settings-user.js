@@ -4,7 +4,7 @@
 "use strict";
 
 var objUtils = require("../../lib/obj-utils.js"),
-	appUtils = require("../../lib/app-utils.js");
+	userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
@@ -31,10 +31,21 @@ module.exports = function(core, config, store) {
 		});
 	});
 
+	core.on("user-dn", function(user, next) {
+		if (!userUtils.isGuest(user.old.id)) {
+			$("<div>").html("Your account settings were successfully saved.").
+			alertbar({
+				type: "info",
+				timeout: 1500
+			});
+		}
+		next();
+	}, 500);
+
 	core.on("pref-dialog", function(dialog, next) {
 		var user = store.getUser();
 
-		if (!(user && user.id) || appUtils.isGuest(user.id)) {
+		if (!(user && user.id) || userUtils.isGuest(user.id)) {
 			// Don't proceed
 			return;
 		}
@@ -44,7 +55,9 @@ module.exports = function(core, config, store) {
 		user.params = user.params || {};
 		user.guides = user.guides || {};
 
-		core.emit("pref-show", { user: user }, function(err, items) {
+		core.emit("pref-show", {
+			user: user
+		}, function(err, items) {
 			dialog.element = renderSettings(items);
 
 			next();
@@ -55,13 +68,15 @@ module.exports = function(core, config, store) {
 		var userObj = store.getUser(),
 			sound = (userObj.params.notifications && typeof userObj.params.notifications.sound === "boolean") ? userObj.params.notifications.sound : true;
 
-		if (userObj && !appUtils.isGuest(userObj.id)) {
+		if (userObj && !userUtils.isGuest(userObj.id)) {
 			menu.items.userpref = {
 				text: "Account settings",
 				prio: 300,
 				action: function() {
 					core.emit("setstate", {
-						nav: { dialog: "pref" }
+						nav: {
+							dialog: "pref"
+						}
 					});
 				}
 			};
@@ -83,7 +98,7 @@ module.exports = function(core, config, store) {
 			}
 		};
 
-		if (userObj && appUtils.isGuest(userObj.id)) {
+		if (userObj && userUtils.isGuest(userObj.id)) {
 			menu.title = "Sign in to Scrollback with";
 
 			core.emit("auth", menu, function() {

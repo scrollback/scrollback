@@ -1,0 +1,16 @@
+<html>
+	<head>
+		<title> facebook callback </title>
+	</head>
+	<body>
+		<script>
+				window.opener.postMessage({
+				type: "auth",
+				provider: "facebook",
+				code: location.search.substring(6)
+			},"*");
+			window.close();
+
+		</script>
+</body>
+</html>

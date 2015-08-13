@@ -1,177 +1,193 @@
 linters:
 
-	BangFormat:
-		enabled: true
-		space_before_bang: true
-		space_after_bang: false
+  BangFormat:
+    enabled: true
+    space_before_bang: true
+    space_after_bang: false
 
-	BorderZero:
-		enabled: true
+  BorderZero:
+    enabled: true
 
-	ColorKeyword:
-		enabled: true
+  ColorKeyword:
+    enabled: true
 
-	ColorVariable:
-		enabled: false
+  ColorVariable:
+    enabled: true
 
-	Comment:
-		enabled: false
+  Comment:
+    enabled: false
 
-	DebugStatement:
-		enabled: true
+  DebugStatement:
+    enabled: true
 
-	DeclarationOrder:
-		enabled: true
+  DeclarationOrder:
+    enabled: true
 
-	DuplicateProperty:
-		enabled: true
+  DisableLinterReason:
+    enabled: true
 
-	ElsePlacement:
-		enabled: true
-		style: same_line
+  DuplicateProperty:
+    enabled: true
 
-	EmptyLineBetweenBlocks:
-		enabled: true
-		ignore_single_line_blocks: false
+  ElsePlacement:
+    enabled: true
+    style: same_line
 
-	EmptyRule:
-		enabled: true
+  EmptyLineBetweenBlocks:
+    enabled: true
+    ignore_single_line_blocks: false
 
-	FinalNewline:
-		enabled: true
-		present: true
+  EmptyRule:
+    enabled: true
 
-	HexLength:
-		enabled: true
-		style: short
+  ExtendDirective:
+    enabled: true
 
-	HexNotation:
-		enabled: true
-		style: lowercase
+  FinalNewline:
+    enabled: true
+    present: true
 
-	HexValidation:
-		enabled: true
+  HexLength:
+    enabled: true
+    style: short
 
-	IdSelector:
-		enabled: true
+  HexNotation:
+    enabled: true
+    style: lowercase
 
-	ImportantRule:
-		enabled: true
+  HexValidation:
+    enabled: true
 
-	ImportPath:
-		enabled: true
-		leading_underscore: false
-		filename_extension: false
+  IdSelector:
+    enabled: true
 
-	Indentation:
-		enabled: true
-		character: space
-		width: 4
+  ImportantRule:
+    enabled: true
 
-	LeadingZero:
-		enabled: true
-		style: exclude_zero
+  ImportPath:
+    enabled: true
+    leading_underscore: false
+    filename_extension: false
 
-	MergeableSelector:
-		enabled: true
+  Indentation:
+    enabled: true
+    character: space
+    width: 4
 
-	NameFormat:
-		enabled: false
-		convention: hyphenated_lowercase
+  LeadingZero:
+    enabled: true
+    style: exclude_zero
 
-	NestingDepth:
-		enabled: true
-		max_depth: 4
+  MergeableSelector:
+    enabled: true
 
-	PlaceholderInExtend:
-		enabled: true
+  NameFormat:
+    enabled: false
+    convention: hyphenated_lowercase
 
-	PropertyCount:
-		enabled: false
+  NestingDepth:
+    enabled: true
+    max_depth: 4
 
-	PropertySortOrder:
-		enabled: false
+  PlaceholderInExtend:
+    enabled: false
 
-	PropertySpelling:
-		enabled: true
-		extra_properties: []
+  PropertyCount:
+    enabled: false
 
-	QualifyingElement:
-		enabled: true
-		allow_element_with_attribute: false
-		allow_element_with_class: false
-		allow_element_with_id: false
+  PropertySortOrder:
+    enabled: false
 
-	SelectorDepth:
-		enabled: true
-		max_depth: 3
+  PropertySpelling:
+    enabled: true
+    extra_properties: [ "icon-shadow", "outline-radius" ]
 
-	SelectorFormat:
-		enabled: true
-		convention: hyphenated_lowercase
+  PropertyUnits:
+    enabled: false
+    global: []
 
-	Shorthand:
-		enabled: true
+  QualifyingElement:
+    enabled: true
+    allow_element_with_attribute: false
+    allow_element_with_class: false
+    allow_element_with_id: false
 
-	SingleLinePerProperty:
-		enabled: true
-		allow_single_line_rule_sets: true
+  SelectorDepth:
+    enabled: true
+    max_depth: 3
 
-	SingleLinePerSelector:
-		enabled: false
+  SelectorFormat:
+    enabled: true
+    convention: hyphenated_lowercase
 
-	SpaceAfterComma:
-		enabled: true
+  Shorthand:
+    enabled: true
 
-	SpaceAfterPropertyColon:
-		enabled: true
-		style: one_space
+  SingleLinePerProperty:
+    enabled: true
+    allow_single_line_rule_sets: true
 
-	SpaceAfterPropertyName:
-		enabled: true
+  SingleLinePerSelector:
+    enabled: false
 
-	SpaceBeforeBrace:
-		enabled: true
-		style: space
-		allow_single_line_padding: true
+  SpaceAfterComma:
+    enabled: true
 
-	SpaceBetweenParens:
-		enabled: false
-		spaces: 0
+  SpaceAfterPropertyColon:
+    enabled: true
+    style: one_space
 
-	StringQuotes:
-		enabled: true
-		style: double_quotes
+  SpaceAfterPropertyName:
+    enabled: true
 
-	TrailingSemicolon:
-		enabled: true
+  SpaceAfterVariableName:
+    enabled: true
 
-	TrailingZero:
-		enabled: true
+  SpaceAroundOperator:
+    enabled: true
 
-	UnnecessaryMantissa:
-		enabled: true
+  SpaceBeforeBrace:
+    enabled: true
+    style: space
+    allow_single_line_padding: true
 
-	UnnecessaryParentReference:
-		enabled: true
+  SpaceBetweenParens:
+    enabled: false
+    spaces: 0
 
-	UrlFormat:
-		enabled: false
+  StringQuotes:
+    enabled: true
+    style: double_quotes
 
-	UrlQuotes:
-		enabled: true
+  TrailingSemicolon:
+    enabled: true
 
-	VariableForProperty:
-		enabled: false
+  TrailingZero:
+    enabled: true
 
-	VendorPrefixes:
-		enabled: false
-		identifier_list: base
-		include: []
-		exclude: []
+  UnnecessaryMantissa:
+    enabled: true
 
-	ZeroUnit:
-		enabled: true
+  UnnecessaryParentReference:
+    enabled: true
 
-	Compass::*:
-		enabled: false
+  UrlFormat:
+    enabled: false
+
+  UrlQuotes:
+    enabled: true
+
+  VariableForProperty:
+    enabled: false
+
+  VendorPrefix:
+    enabled: false
+    identifier_list: base
+    include: []
+    exclude: []
+
+  ZeroUnit:
+    enabled: true
+
+  Compass::*:
+    enabled: false

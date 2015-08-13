@@ -3,13 +3,12 @@
 "use strict";
 
 const objUtils = require("../lib/obj-utils.js"),
+	  userUtils = require("../lib/user-utils.js"),
 	  permissionWeights = require("../authorizer/permissionWeights.js");
 
 let actions = [ "text", "join" ];
 
 module.exports = (core, config, store) => {
-	const userInfo = require("../lib/user.js")(core, config, store);
-
 	let sent = {};
 
 	// Listen to actions
@@ -23,7 +22,7 @@ module.exports = (core, config, store) => {
 	// Check if any error-dn happens for the actions
 	core.on("error-dn", e => {
 		let key = e.action + ":" + e.id;
-
+		e.handled = true;
 		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
 			// Action failed because user was not signed in
 			if (e.requiredRole === "registered" && (e.currentRole === "guest")) {
@@ -55,7 +54,7 @@ module.exports = (core, config, store) => {
 	// Handle queuedActions
 	core.on("init-dn", init => {
 		// User signed in or signed up
-		if (init.user && !userInfo.isGuest(init.user.id)) {
+		if (init.user && !userUtils.isGuest(init.user.id)) {
 			let queuedActions = store.get("app", "queuedActions");
 
 			if (queuedActions && queuedActions.signup) {
@@ -64,7 +63,7 @@ module.exports = (core, config, store) => {
 						continue;
 					}
 
-					if (a === "join" && permissionWeights[userInfo.getRole()] >= permissionWeights.follower) {
+					if (a === "join" && permissionWeights[store.getUserRole()] >= permissionWeights.follower) {
 						// Avoid downgrading user role
 						continue;
 					}

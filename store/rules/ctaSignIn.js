@@ -1,9 +1,9 @@
 "use strict";
 
-var appUtils = require("../../lib/app-utils.js");
+var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
-	core.on("setstate", function(changes, next) {
+	core.on("setstate", function(changes) {
 		var future = store.with(changes),
 			mode = future.get("nav", "mode"),
 			user = future.get("user"),
@@ -11,13 +11,11 @@ module.exports = function(core, config, store) {
 
 		changes.app = changes.app || {};
 
-		if (user && appUtils.isGuest(user) && mode !== "home") {
+		if (user && userUtils.isGuest(user) && mode !== "home") {
 			changes.app.cta = "signin";
 		} else if (cta === "signin") {
 			changes.app.cta = null;
 		}
-
-		next();
 	}, 400);
 };
 

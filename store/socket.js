@@ -3,8 +3,8 @@
 
 "use strict";
 
-var generate = require("../lib/generate.js"),
-	appUtils = require("../lib/app-utils.js"),
+var generate = require("../lib/generate.browser.js"),
+	userUtils = require("../lib/user-utils.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	pending = require("../lib/pendingQueries.js"),
 	config, core, client, store;
@@ -49,39 +49,9 @@ function sendQuery(query, next) {
 	pendingQueries[query.id].query = query;
 }
 
-function disconnected() {
-	if (backOff === 1) {
-		core.emit("setstate", {
-			app: { connectionStatus: "offline" }
-		}, function(err) {
-			if (err) console.log(err.message);
-		});
-	}
-	if (backOff < 180) {
-		backOff *= 2;
-	} else {
-		backOff = 180;
-	}
-
-	setTimeout(connect, backOff * 1000);
+function sendInit() {
+	core.emit("init-up", { id: generate.uid(), resource: generate.uid() });
 }
-
-function connect() {
-	if (!navigator.onLine) return disconnected();
-
-	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
-	client.onclose = disconnected;
-
-	client.onopen = function() {
-		backOff = 1;
-		sendInit();
-	};
-
-	client.onmessage = receiveMessage;
-}
-
-window.addEventListener("offline", disconnected);
-window.addEventListener("online", connect);
 
 function receiveMessage(event) {
 	var data, note, userId;
@@ -141,9 +111,42 @@ function receiveMessage(event) {
 	}
 }
 
-function sendInit() {
-	core.emit("init-up", { id: generate.uid(), resource: generate.uid() });
+function disconnected() {
+
+	/* eslint-disable block-scoped-var, no-use-before-define */
+
+	if (backOff === 1) {
+		core.emit("setstate", {
+			app: { connectionStatus: "offline" }
+		}, function(err) {
+			if (err) console.log(err.message);
+		});
+	}
+	if (backOff < 180) {
+		backOff *= 2;
+	} else {
+		backOff = 180;
+	}
+
+	setTimeout(connect, backOff * 1000);
 }
+
+function connect() {
+	if (!navigator.onLine) return disconnected();
+
+	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
+	client.onclose = disconnected;
+
+	client.onopen = function() {
+		backOff = 1;
+		sendInit();
+	};
+
+	client.onmessage = receiveMessage;
+}
+
+window.addEventListener("offline", disconnected);
+window.addEventListener("online", connect);
 
 module.exports = function(c, conf, s) {
 	core = c;
@@ -214,7 +217,7 @@ module.exports = function(c, conf, s) {
 	});
 
 	core.on("user-up", function(userUp, next) {
-		if (appUtils.isGuest(userUp.user.id)) {
+		if (userUtils.isGuest(userUp.user.id)) {
 			next();
 			core.emit("user-dn", userUp);
 		} else {

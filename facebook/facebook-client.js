@@ -40,6 +40,8 @@ module.exports = function(core, config, store) {
 		if (error.message === "ERR_FB_SIGNIN_NO_EMAIL") {
 			$("<div>").html("Facebook did not give us your email address, which we need to sign you in. Please try anothher signin method.").
 			alertbar({ type: "error" });
+
+			error.handled = true;
 		}
 
 		next();

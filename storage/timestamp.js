@@ -30,8 +30,11 @@ function makeTimeUnique(action, propertyName, callback) {
 	if (!locks[action.to]) {
 		redis.get("lastTimeStamp:" + action.to, function(err, timestamp) {
 			if (timestamp) timestamp = parseInt(timestamp);
-			else timestamp = 1;
-			if (action.time > timestamp) {
+			if (!timestamp || isNaN(timestamp)) {
+				timestamp = 1;
+			}
+
+			if (action[propertyName] > timestamp) {
 				saveTimestamp(action[propertyName]);
 			} else {
 				action[propertyName] = timestamp + 1;

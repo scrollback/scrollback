@@ -5,19 +5,21 @@ var log = require("../lib/logger.js");
 var config,
 	crypto = require('crypto'),
 	request = require("request"),
-	core;
+	fs = require("fs"),
+	handlebars = require("handlebars"),
+	core, returnTemplate, loginTemplate;
 
 function handlerRequest(req, res) {
 	var path = req.path.substring(3);
 	path = path.split("/");
 	if (path[0] === "google") {
 		if (path[1] === "login") {
-			return res.render(__dirname + "/login.jade", {
+			return res.end(loginTemplate({
 				client_id: config.client_id,
 				redirect_uri: "https://" + config.global.host + "/r/google/return"
-			});
+			}));
 		} else if (path[1] === "return") {
-			return res.render(__dirname + "/return.jade", {});
+			res.end(returnTemplate({}));
 		}
 	}
 }
@@ -30,6 +32,11 @@ module.exports = function(c, conf) {
 		log.d("Missing google params:");
 		return;
 	}
+
+	returnTemplate = handlebars.compile(fs.readFileSync(__dirname + "/google-return.hbs", "utf8"));
+	loginTemplate = handlebars.compile(fs.readFileSync(__dirname + "/google-login.hbs", "utf8"));
+
+	
 	core.on("http/init", function(payload, callback) {
 		payload.push({
 			get: {

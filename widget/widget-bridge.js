@@ -1,3 +1,4 @@
+
 "use strict";
 
 /* eslint-env browser */
@@ -13,8 +14,6 @@
 	auth              : provider, code/token, nick
 	follow            : role
 	nav               : mode, view, room, thread, dialog, dialogState, textRange, threadRange
-
-
 
 	Outgoing messages
 
@@ -34,7 +33,8 @@
 
 var core, store,
 	enabled = false,
-	user = require("../lib/user.js")(),
+	userUtils = require("../lib/user-utils.js"),
+	isReady = false,
 	generate = require("../lib/generate.js"),
 	objUtils = require("../lib/obj-utils.js");
 
@@ -86,12 +86,12 @@ function sendInit(message) {
 
 	if (message.nick) init.suggestedNick = message.nick;
 
-	core.emit('init-up', init);
+	core.emit("init-up", init);
 }
 
 function verifyParentOrigin(origin, callback) {
 	var token = generate.uid();
-	
+
 	window.parent.postMessage({
 		type: "domain-challenge",
 		token: token
@@ -118,14 +118,14 @@ function onMessage(e) {
 	var data;
 	data = parseMessage(e.data);
 
-	if(data.type === "domain-response" || !verifyMessageOrigin(e)) { return; }
+	if (data.type === "domain-response" || !verifyMessageOrigin(e)) { return; }
 
 	switch (data.type) {
 		case "auth":
 			sendInit(data);
 			break;
 		case "follow":
-			if(data.role === "none") {
+			if (data.role === "none") {
 				core.emit("part-up", { to: store.get("nav", "room") });
 			} else {
 				core.emit("join-up", { to: store.get("nav", "room"), role: data.role });
@@ -181,33 +181,40 @@ function onStateChange(changes) {
 
 	if (!enabled) { return; }
 
-	if (changes.app && changes.app.bootComplete) {
-		postMessage({ type: "ready" });
-	}
-
 	if (changes.context && changes.context.embed && typeof changes.context.embed.minimize === "boolean") {
 		postMessage({ type: "minimize", minimize: changes.context.embed.minimize });
 	}
 
 	if (changes.user) {
-		postMessage({ type: "auth", status: user.isGuest(changes.user) ? "guest" : "registered" });
+		postMessage({ type: "auth", status: userUtils.isGuest(changes.user) ? "guest" : "registered" });
 	}
 
-	if (changes.nav) {
+	if (changes.nav && isReady) {
 		message = objUtils.clone(store.get("nav"));
 		message.type = "nav";
 
 		postMessage(message);
 	}
-	if ( store.get("nav", "mode") !== "room" && store.get("nav", "mode") !== "chat" && (
+
+	if (store.get("nav", "mode") !== "room" && store.get("nav", "mode") !== "chat" && (
 		changes.nav && changes.nav.room ||
 		changes.user ||
 		changes.entities && changes.entities[store.get("nav", "room") + "_" + store.get("user")]
-	) ) {
+	)) {
 		rel = store.getRelation();
 
 		postMessage({ type: "follow", role: rel && rel.role ? rel.role : "none" });
 	}
+}
+
+function onInitDn() {
+	if (isReady) {
+		return;
+	}
+
+	isReady = true;
+
+	postMessage({ type: "ready" });
 }
 
 function onInitUp(init) {
@@ -229,4 +236,5 @@ module.exports = function(c, conf, s) {
 	core.on("boot", onBoot, 800);
 	core.on("statechange", onStateChange, 500);
 	core.on("init-up", onInitUp, 999);
+	core.on("init-dn", onInitDn, 1);
 };

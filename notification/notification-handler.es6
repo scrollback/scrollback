@@ -2,14 +2,14 @@
 
 "use strict";
 
-module.exports = (core, config, store) => {
-	const userInfo = require("../lib/user.js")(core, config, store);
+const userUtils = require("../lib/user-utils.js");
 
+module.exports = (core, config, store) => {
 	// Load cached notifications if guest
 	function loadCache() {
 		let userId = store.get("user");
 
-		if (userInfo.isGuest(userId)) {
+		if (userUtils.isGuest(userId)) {
 			let stored;
 
 			try {
@@ -28,7 +28,7 @@ module.exports = (core, config, store) => {
 
 		loadCache();
 
-		if (!userInfo.isGuest(store.get("user"))) {
+		if (!userUtils.isGuest(store.get("user"))) {
 			// Delete cached notes if not guest
 			try {
 				window.localStorage.removeItem("notes");
@@ -58,7 +58,7 @@ module.exports = (core, config, store) => {
 	core.on("statechange", changes => {
 		let userId = store.get("user");
 
-		if (userInfo.isGuest(userId) && changes.notes) {
+		if (userUtils.isGuest(userId) && changes.notes) {
 			let notes = { [userId]: store.get("notes") };
 
 			try {

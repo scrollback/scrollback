@@ -4,18 +4,18 @@
 
 var gcmTimeValidity = 12 * 60 * 60 * 1000,
 	updateDevice = false,
-	objUtils = require("../lib/obj-utils.js");
+	objUtils = require("../lib/obj-utils.js"),
+	userUtils = require("../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
-	var user = require("../lib/user.js")(core, config, store),
-		LS = window.localStorage,
+	var LS = window.localStorage,
 		lastGCMTime, device,
 		defaultPackageName;
 
-	defaultPackageName = config.pushNotification.defaultPackageName?config.pushNotification.defaultPackageName:"";
+	defaultPackageName = config.pushNotification.defaultPackageName || "";
 
 	lastGCMTime = LS.getItem("lastGCMTime");
-	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime) : 0;
+	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime, 10) : 0;
 
 	core.on("boot", function(state, next) {
 		if (state.context.env === "android" && lastGCMTime < (new Date().getTime() - gcmTimeValidity)) {
@@ -25,7 +25,6 @@ module.exports = function(core, config, store) {
 			}
 
 			window.addEventListener("gcm_register", function(event) {
-				console.log("got device details", event);
 				device = event.detail;
 
 				if (window.Android && typeof window.Android.getPackageName === "function") {
@@ -44,7 +43,7 @@ module.exports = function(core, config, store) {
 	function saveUser() {
 		var userObj = store.getUser(), uuid, key = "";
 
-		if (!userObj.id || user.isGuest(userObj.id)) return;
+		if (!userObj.id || userUtils.isGuest(userObj.id)) return;
 
 		userObj = objUtils.clone(userObj);
 
@@ -58,13 +57,12 @@ module.exports = function(core, config, store) {
 		uuid = device.uuid;
 
 		device.platform = "android";
-		key = device.uuid + (device.packageName && device.packageName!== defaultPackageName?("_" + device.packageName):"");
+		key = device.uuid + (device.packageName && device.packageName !== defaultPackageName ? ("_" + device.packageName) : "");
 
 
 		userObj.params.pushNotifications.devices[key] = device;
 		device.enabled = true;
 
-		console.log("emitting user-up.", userObj);
 		core.emit("user-up", {
 			user: userObj,
 			to: "me"

@@ -2,11 +2,12 @@
 
 "use strict";
 
+const userUtils = require("../../lib/user-utils.js"),
+	  getRoomPics = require("../../lib/get-room-pics.js"),
+	  getAvatar = require("../../lib/get-avatar.js");
+
 module.exports = function(core, config, store) {
-	const React = require("react"),
-		  userInfo = require("../../lib/user.js")(core, config, store),
-		  getRoomPics = require("../../lib/get-room-pics.js"),
-		  getAvatar = require("../../lib/get-avatar.js");
+	const React = require("react");
 
 	class Suggestions extends React.Component {
 		constructor(props) {
@@ -67,7 +68,7 @@ module.exports = function(core, config, store) {
 							let name, avatar;
 
 							if (this.props.type === "user") {
-								name = userInfo.getNick(entity.id);
+								name = userUtils.getNick(entity.id);
 								avatar = getAvatar(entity.picture, 48);
 							} else {
 								name = entity.id;
@@ -83,7 +84,7 @@ module.exports = function(core, config, store) {
 									<img className="suggestions-list-item-avatar" src={avatar} />
 									<span className="suggestions-list-item-nick">{name}</span>
 
-									{this.props.type === "user" && userInfo.isGuest(entity.id) ?
+									{this.props.type === "user" && userUtils.isGuest(entity.id) ?
 										<span className="suggestions-list-item-info">guest</span>
 									: null}
 								</li>
@@ -144,7 +145,7 @@ module.exports = function(core, config, store) {
 				users.push(all[user]);
 			}
 
-			return users.filter(user => user.id && userInfo.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
+			return users.filter(user => user.id && userUtils.getNick(user.id).indexOf(query) === 0).sort((a, b) => {
 				if (typeof a.time === "number" && typeof b.time === "number") {
 					if (a.time < b.time) {
 						return -1;
@@ -318,6 +319,16 @@ module.exports = function(core, config, store) {
 		max: 5,
 		smart: false,
 		position: "bottom"
+	};
+
+	Suggestions.propTypes = {
+		query: React.PropTypes.string.isRequired,
+		type: React.PropTypes.oneOf([ "user", "room" ]),
+		max: React.PropTypes.number,
+		smart: React.PropTypes.bool,
+		position: React.PropTypes.oneOf([ "top", "bottom" ]),
+		onSelect: React.PropTypes.func.isRequired,
+		onDismiss: React.PropTypes.func.isRequired
 	};
 
 	return Suggestions;

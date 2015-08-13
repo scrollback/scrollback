@@ -45,7 +45,7 @@ require("../anti-abuse/anti-abuse-client.js")(...args);
 require("../authorizer/authorizer-client.js")(...args);
 require("../authorizer/requests.es6")(...args);
 // require("../authorizer/invites.es6")(...args);
-require("../email/email-client.js")(...args);
+require("../email/email-client.es6")(...args);
 require("../http/notifications-client.js")(...args);
 require("../http/room-general-settings-client.js")(...args);
 require("../http/seo-client.js")(...args);
@@ -72,6 +72,7 @@ require("./modules/settings-room.js")(...args);
 require("./modules/settings-user.js")(...args);
 require("./modules/view-manager.es6")(...args);
 require("./modules/swipes.js")(...args);
+require("./modules/ui-handle-errors.js")(...args);
 
 // Render the client
 require("./components/client.jsx")(...args);

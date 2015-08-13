@@ -1,7 +1,8 @@
 "use strict";
 
 var format = require("../../lib/format.js"),
-	appUtils = require("../../lib/app-utils.js"),
+	userUtils = require("../../lib/user-utils.js"),
+	roomUtils = require("../../lib/room-utils.js"),
 	getAvatar = require("../../lib/get-avatar.js"),
 	getRoomPics = require("../../lib/get-room-pics.js");
 
@@ -68,7 +69,7 @@ module.exports = function(core, config, store) {
 
 			if (this.state.form) {
 				items.push(
-				        <div className="banner-entry-container">
+				        <div className="banner-entry-container" key="container">
 							<RoomNameEntry className="banner-entry" />
 						</div>
 						);
@@ -107,7 +108,7 @@ module.exports = function(core, config, store) {
 					pics = getRoomPics(roomObj, [ "avatar", "banner" ]);
 
 					this.setState({
-						title: roomObj.id,
+						title: roomUtils.getName(roomObj.id),
 						description: format.mdToHtml(roomObj.description) || "This room has no description.",
 						picture: pics.avatar,
 						cover: pics.banner,
@@ -118,7 +119,7 @@ module.exports = function(core, config, store) {
 							action: this.showRoomSettings
 						} : null
 					});
-				} else if (mode === "home" && env !== "embed" && user && !appUtils.isGuest(user)) {
+				} else if (mode === "home" && env !== "embed" && user && !userUtils.isGuest(user)) {
 					userObj = store.getUser() || {};
 
 					this.setState({

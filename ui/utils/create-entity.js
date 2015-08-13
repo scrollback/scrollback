@@ -17,7 +17,7 @@ module.exports = function(core, config, store) {
 
 		if (type === "room") {
 			validateEntity("Room", name, function(res, msg) {
-				var room, roomObj, newRoom, identities, context,
+				var newRoom, identities, context,
 					nav = store.get("nav");
 
 				if (res === "wait") {
@@ -29,11 +29,11 @@ module.exports = function(core, config, store) {
 				}
 
 				if (res === "ok") {
-					room = store.get("nav", "room");
-					roomObj = store.getRoom(room);
+					//					room = store.get("nav", "room");
+					//					roomObj = store.getRoom(room);
 
 					if (nav.dialogState && nav.dialogState.roomIdentity) {
-						identities = [ nav.dialogState.roomIdentity ];
+						identities = [nav.dialogState.roomIdentity];
 					} else {
 						identities = [];
 					}
@@ -46,9 +46,9 @@ module.exports = function(core, config, store) {
 						identities: identities
 					};
 
-					if (room) {
-						newRoom.guides = roomObj.guides || {};
-					}
+					//					if (room) {
+					//						newRoom.guides = roomObj.guides || {};
+					//					}
 					if (identities) {
 						context = store.get("context");
 

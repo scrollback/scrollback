@@ -4,7 +4,10 @@
 var config,
 	crypto = require('crypto'),
 	request = require("request"),
+	fs = require("fs"),
 	log = require('../lib/logger.js'),
+	handlebars = require("handlebars"),
+	loginTemplate, returnTemplate,
 	core;
 
 function loginUser(token, action, callback) {
@@ -109,13 +112,12 @@ function handlerRequest(req, res, next) {
 	path = path.split("/");
 	if (path[0] === "facebook") {
 		if (path[1] === "login") {
-			return res.render(__dirname + "/login.jade", {
+			return res.end(loginTemplate( {
 				client_id: config.client_id,
 				redirect_uri: "https://" + config.global.host + "/r/facebook/return"
-			});
-		}
-		if (path[1] === "return") {
-			return res.render(__dirname + "/return.jade", {});
+			}));
+		} else if (path[1] === "return") {
+			return res.end(returnTemplate({}));
 		}
 	} else {
 		next();
@@ -134,6 +136,10 @@ function onInit(payload, callback) {
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
+	
+	returnTemplate = handlebars.compile(fs.readFileSync(__dirname + "/facebook-return.hbs", "utf8"));
+	loginTemplate = handlebars.compile(fs.readFileSync(__dirname + "/facebook-login.hbs", "utf8"));
+
 	core.on("http/init", onInit, "setters");
 	core.on("init", fbAuth, "authentication");
 };
