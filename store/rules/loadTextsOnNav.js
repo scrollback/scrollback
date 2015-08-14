@@ -3,18 +3,27 @@
 	Requires: textRange
 	Provides: threads (async)
 */
-
+/*eslint no-use-before-define:0 */
 "use strict";
-
+var permissionLevels = require("./../../authorizer/permissionWeights.js");
 module.exports = function(core, config, store) {
-	core.on('setstate', function(changes) {
-			var future = store.with(changes),
-				roomId = future.get("nav", "room"),
-				userId = future.get("user"),
-				rel = roomId + "_" + userId;
 
+	core.on('setstate', function(changes) {
+		var future = store.with(changes),
+			roomId = future.get("nav", "room"),
+			userId = future.get("user"),
+			rel = roomId + "_" + userId,
+			getRelation = store.getRelation(roomId, userId),
+			roomObj = store.getRoom(roomId),
+			userRelation = getRelation ? getRelation.role: "none",
+			guides = roomObj ? roomObj.guides : {};
+		
 		if ((changes.nav && ("room" in changes.nav || "thread" in changes.nav || "textRange" in changes.nav)) ||
-	        (changes.entities && changes.entities[rel])) {
+			(changes.entities && changes.entities[rel])) {
+			if ((guides && guides.authorizer && (permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel])) ||
+				(userRelation === "banned")) {
+				return;
+			}
 			handleTextChange(future);
 		}
 	}, 850);
@@ -57,7 +66,7 @@ module.exports = function(core, config, store) {
 
 			if (r[r.length - 1] === "missing") {
 				queryTime = (r.length > 1 ? r[r.length - 2].time : time);
-				if(queryTime !== null) {
+				if (queryTime !== null) {
 					core.emit("getTexts", {
 						to: roomId,
 						thread: thread,
@@ -65,7 +74,7 @@ module.exports = function(core, config, store) {
 						after: Math.max(50, after - r.length + 1)
 					}, textResponse);
 				}
-				
+
 			}
 		}
 
