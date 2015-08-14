@@ -189,7 +189,7 @@ function onStateChange(changes) {
 		postMessage({ type: "auth", status: userUtils.isGuest(changes.user) ? "guest" : "registered" });
 	}
 
-	if (changes.nav) {
+	if (changes.nav && isReady) {
 		message = objUtils.clone(store.get("nav"));
 		message.type = "nav";
 

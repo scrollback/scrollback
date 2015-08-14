@@ -9,17 +9,17 @@ var formField = function(label, type, id, value) {
 	switch (type) {
 		case "area":
 			$input = $("<textarea>").attr({
-				"id": id,
-				"name": id
+				id: id,
+				name: id
 			}).val(value);
 
 			break;
 
 		case "text":
 			$input = $("<input>").attr({
-				"type": "text",
-				"id": id,
-				"name": id
+				type: "text",
+				id: id,
+				name: id
 			}).val(value);
 
 			break;
@@ -46,20 +46,19 @@ var formField = function(label, type, id, value) {
 			break;
 
 		case "radio":
-			$input = $("<div>");
+			$input = $("<div>").addClass("radio-group");
 
 			if (value instanceof Array) {
 				for (i = 0; i < value.length; i++) {
-					$("<div>").addClass("radio-item").append($("<input>").attr({
+					$("<label>").attr("for", value[i][0]).append(
+						$("<input>").attr({
 							type: "radio",
 							id: value[i][0],
 							value: value[i][0],
 							name: id,
 							checked: (value[i][2] === true)
 						}),
-						$("<label>").attr({
-							"for": value[i][0]
-						}).text(value[i][1])
+						$("<span>").text(value[i][1])
 					).appendTo($input);
 				}
 			}
@@ -67,47 +66,45 @@ var formField = function(label, type, id, value) {
 			break;
 
 		case "toggle":
-			$input = $("<div>").addClass("switch-container").append(
-				$("<input>").addClass("switch").attr({
+			$input = $("<label>").attr("for", id).addClass("toggle-switch").append(
+				$("<input>").attr({
 					type: "checkbox",
 					id: id,
 					name: id,
 					checked: value
 				}),
-				$("<label>").attr({
-					"for": id
-				})
+				$("<span>")
 			);
 
 			break;
 
 		case "multientry":
-			$input = $.multientry("create").multientry("add", value).attr({ "id": id });
+			$input = $.multientry("create").multientry("add", value).attr({ id: id });
 
 			break;
 
 		case "info":
-			$input = $("<p>").attr({ "id": id }).addClass("tip info").text(value);
+			$input = $("<p>").attr({ id: id }).addClass("tip info").text(value);
 
 			break;
 
 		case "success":
-			$input = $("<p>").attr({ "id": id }).addClass("tip success").text(value);
+			$input = $("<p>").attr({ id: id }).addClass("tip success").text(value);
 
 			break;
 
 		case "warning":
-			$input = $("<p>").attr({ "id": id }).addClass("tip warning").text(value);
+			$input = $("<p>").attr({ id: id }).addClass("tip warning").text(value);
 
 			break;
 
 		case "error":
-			$input = $("<p>").attr({ "id": id }).addClass("tip error").text(value);
+			$input = $("<p>").attr({ id: id }).addClass("tip error").text(value);
 
 			break;
 
 		default:
-			$input = $("<div>").attr({ "id": id }).html(value);
+			$input = $("<div>").attr({ id: id }).html(value);
 
 			break;
 	}
