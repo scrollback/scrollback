@@ -13,42 +13,53 @@ module.exports = (core, config, store) => {
 		constructor(props) {
 			super(props);
 
-			this.state = {
-				readLevelItems: [
-					{ value: "guest", label: "Anyone" },
-					{ value: "registered", label: "Logged in" },
-					{ value: "follower", label: "Followers"}
-				],
-				writeLevelItems: [
-					{ value: "guest", label: "Anyone" },
-					{ value: "registered", label: "Logged in" },
-					{ value: "follower", label: "Followers"}
-				]
-			};
+			this.state = this.getComponentState(this.props.readLevel, this.props.writeLevel);
+
+			this.state.readLevelItems = [
+				{ value: "guest", label: "Anyone" },
+				{ value: "registered", label: "Logged in" },
+				{ value: "follower", label: "Followers"}
+			];
 		}
 
-		onReadLevelUpdate(value) {
-			
-			if (value === "guest") {
-				this.setState({writeLevelItems: [
+		buildComponentState(writeLevelDisabled = [], readLevel, writeLevel) {
+			let writeLevelItems = [
 					{ value: "guest", label: "Anyone"},
 					{ value: "registered", label: "Logged in"},
 					{ value: "follower", label: "Followers"}
-				]});
+				];
+
+			for (const item of writeLevelItems) {
+				item.disabled = (writeLevelDisabled.indexOf(item.value) > -1);
 			}
-			else if (value === "registered") {
-				this.setState({writeLevelItems: [
-					{ value: "guest", label: "Anyone", disabled: true},
-					{ value: "registered", label: "Logged in"},
-					{ value: "follower", label: "Followers"}
-				]});
-			} else if (value === "follower") {
-				this.setState({writeLevelItems: [
-					{ value: "guest", label: "Anyone", disabled: true},
-					{ value: "registered", label: "Logged in", disabled: true},
-					{ value: "follower", label: "Followers"}
-				]});
+			
+			for (const item of writeLevelItems) {
+				if (item.disabled && writeLevel === item.value) {
+					writeLevel = readLevel;
+					break;
+				}
 			}
+			
+			return { writeLevelItems, writeLevel, readLevel };
+		}
+
+		getComponentState(readLevel, writeLevel) {
+
+			switch (readLevel) {
+			case "registered":
+				return this.buildComponentState([ "guest" ], readLevel, writeLevel);
+			case "follower":
+				return this.buildComponentState([ "guest", "registered" ], readLevel, writeLevel);
+			default:
+				return this.buildComponentState([], readLevel, writeLevel);
+			}
+		}
+
+		onReadLevelUpdate(value) {
+			let writeLevel = this.refs.writeLevel.value;
+
+			this.setState(this.getComponentState(value, writeLevel));
+
 		}
 
 		render() {
@@ -57,13 +68,13 @@ module.exports = (core, config, store) => {
 					<div className="settings-item">
 						<div className="settings-label">Who can read messages?</div>
 						<div className="settings-action">
-							<ToggleGroup ref="readLevel" className="toggle-group" name="readLevel" items={this.state.readLevelItems}  value={this.props.readLevel} onUpdate={this.onReadLevelUpdate.bind(this)}/>
+							<ToggleGroup ref="readLevel" className="toggle-group" name="readLevel" items={this.state.readLevelItems}  value={this.state.readLevel} onUpdate={this.onReadLevelUpdate.bind(this)}/>
 						</div>
 					</div>
 					<div className="settings-item">
 						<div className="settings-label">Who can write messages?</div>
 						<div className="settings-action">
-							<ToggleGroup ref="writeLevel" className="toggle-group" name="writeLevel" items={this.state.writeLevelItems}  value={this.props.writeLevel} />
+							<ToggleGroup ref="writeLevel" className="toggle-group" name="writeLevel" items={this.state.writeLevelItems}  value={this.state.writeLevel} />
 						</div>
 					</div>
 					<div className="settings-item">
@@ -76,17 +87,15 @@ module.exports = (core, config, store) => {
 
 			return (div);
 		}
-		
+
 		onSave(room) {
+			let readlevel = this.refs.readLevel.value,
+				writelevel = this.refs.writeLevel.value;
 			room.guides.authorizer = {
-				readLevel: this.refs.readLevel.value,
-				writeLevel: this.refs.writeLevel.value,
+				readLevel: readlevel,
+				writeLevel: writelevel,
 				openRoom: this.refs.openRoom.checked
 			};
-		}
-		
-		componentWillMount(){
-			this.onReadLevelUpdate(this.props.readLevel);
 		}
 
 		componentDidMount() {
@@ -112,7 +121,6 @@ module.exports = (core, config, store) => {
 			readLevel = (guides && guides.authorizer && guides.authorizer.readLevel) ? guides.authorizer.readLevel : "guest",
 			writeLevel = (guides && guides.authorizer && guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest",
 			openRoom = (guides && guides.authorizer && typeof guides.authorizer.openRoom === "boolean") ? guides.authorizer.openRoom : true;
-//			console.log(guides.authorizer);
 		React.render(<Authorizer readLevel={readLevel} writeLevel={writeLevel} openRoom={openRoom}/>, container);
 
 		tabs.authorizer = {

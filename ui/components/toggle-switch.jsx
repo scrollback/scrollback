@@ -20,6 +20,10 @@ module.exports = function() {
 			return this.state.checked;
 		}
 
+		componentWillReceiveProps(nextProps) {
+			this.setState({ checked: nextProps.checked });
+		}
+
 		render() {
 			return (
 				<label {...this.props} className={(this.props.className === "string" ? this.props.className : "") + " toggle-switch"}>

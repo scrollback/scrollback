@@ -7,17 +7,22 @@ module.exports = function() {
 		constructor(props) {
 			super(props);
 
-			this.state = { value: this.props.value };
+			this.state = {
+				value: this.props.value
+			};
 		}
 
 		onChange(e) {
 			let value = e.target.value;
-
 			this.setState({ value }, () => typeof this.props.onUpdate === "function" ? this.props.onUpdate(value) : null);
 		}
 
 		get value() {
 			return this.state.value;
+		}
+
+		componentWillReceiveProps(nextProps) {
+			this.setState({ value: nextProps.value });
 		}
 
 		render() {
