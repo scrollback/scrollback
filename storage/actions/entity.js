@@ -2,6 +2,7 @@
 
 var pg = require("../../lib/pg.js");
 var log = require('./../../lib/logger.js');
+var userUtils = require('../../lib/user-utils.js');
 
 /*
 	Warning: This does not lock the table or do proper upserts.
@@ -24,7 +25,7 @@ module.exports = function(action) {
 		identities: entity.identities || [],
 		color: entity.color,
 		picture: entity.picture,
-		createtime: new Date(entity.createTime),
+		createtime: entity.createTime?new Date(entity.createTime): new Date(),
 		timezone: entity.timezone,
 		locale: entity.locale,
 		params: entity.params,
@@ -86,13 +87,21 @@ module.exports = function(action) {
 		id: insertObject.id
 	});
 
+	query.push(pg.cat(inserts));
+	
+	if(action.type === "user" && action.user.id !== action.old.id && userUtils.isGuest(action.from)) {
+		query.push({
+			$: "delete from entities where id=${oldId}",
+			oldId: action.old.id.replace(/^guest-/, "")
+		});
+	}
+
+	
 	if (action.type === "room" && (!action.old || !action.old.id)) {
-		inserts.push({
+		query.push({
 			$: "INSERT INTO relations(room, \"user\", role, roletime) VALUES ($(values))",
 			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
 		});
 	}
-
-	query.push(pg.cat(inserts));
 	return query;
 };

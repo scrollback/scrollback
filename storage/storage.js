@@ -63,6 +63,7 @@ function runQuery(handlers, query, results, i, callback) {
 }
 
 function handleEntityQuery(query, next) {
+	log.d("Received Query:", query);
 	if (query.results) return next();
 	runQuery(readEntity, query, null, 0, next);
 }

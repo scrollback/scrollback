@@ -35,11 +35,14 @@ function loginUser(token, action, callback) {
 					action.user = {};
 					action.user.id = action.old.id;
 					action.user.type = "user";
-					action.user.identities = ["mailto:" + user.email];
+					action.user.identities = action.old.identities || [];
 					action.user.picture = gravatar;
-					action.user.params = {
-						pictures: [fbpic, gravatar]
-					};
+					action.user.params = action.old.params || {};
+					action.user.guides = action.old.guides || {};
+					action.user.identities.push("mailto:" + user.email);
+					
+					action.user.params.pictures = [fbpic, gravatar];
+					
 					action.response = new Error("AUTH:UNREGISTERED");
 					return callback();
 				}
