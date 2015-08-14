@@ -78,7 +78,7 @@ module.exports = (core, config, store) => {
 						</div>
 					</div>
 					<div className="settings-item">
-						<div className="settings-label">Anyone can follow without request?</div>
+						<div className="settings-label">Approval required to follow</div>
 						<div className="settings-action">
 							<ToggleSwitch ref="openRoom" checked={this.props.openRoom} />
 						</div>
@@ -94,7 +94,7 @@ module.exports = (core, config, store) => {
 			room.guides.authorizer = {
 				readLevel: readlevel,
 				writeLevel: writelevel,
-				openRoom: this.refs.openRoom.checked
+				openRoom: !this.refs.openRoom.checked
 			};
 		}
 
@@ -120,7 +120,8 @@ module.exports = (core, config, store) => {
 			container = document.createElement("div"),
 			readLevel = (guides && guides.authorizer && guides.authorizer.readLevel) ? guides.authorizer.readLevel : "guest",
 			writeLevel = (guides && guides.authorizer && guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest",
-			openRoom = (guides && guides.authorizer && typeof guides.authorizer.openRoom === "boolean") ? guides.authorizer.openRoom : true;
+			openRoom = (guides && guides.authorizer && typeof guides.authorizer.openRoom === "boolean") ? !guides.authorizer.openRoom : false;
+		
 		React.render(<Authorizer readLevel={readLevel} writeLevel={writeLevel} openRoom={openRoom}/>, container);
 
 		tabs.authorizer = {
