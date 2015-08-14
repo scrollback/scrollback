@@ -22,7 +22,6 @@ module.exports = (core, config, store) => {
 	// Check if any error-dn happens for the actions
 	core.on("error-dn", e => {
 		let key = e.action + ":" + e.id;
-		e.handled = true;
 		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
 			// Action failed because user was not signed in
 			if (e.requiredRole === "registered" && (e.currentRole === "guest")) {
@@ -45,6 +44,7 @@ module.exports = (core, config, store) => {
 						}
 					}
 				});
+				e.handled = true;
 			}
 		}
 
