@@ -207,6 +207,7 @@ module.exports = function(core, config, store) {
 									ref="filebutton"
 									className="chat-area-input-action chat-area-input-image"
 									data-role="registered follower owner moderator"
+									data-permission="write"
 									accept="image/*" maxsize="5242880"
 									onstart={this.onUploadStart} onerror={this.onUploadError} onfinish={this.onUploadFinish}
 									getPayload={this.getUploadPayload}>
@@ -224,7 +225,7 @@ module.exports = function(core, config, store) {
 		},
 
 		getDisabledStatus: function(connection) {
-			if (connection === "online") {
+			if (connection === "online" && store.isRoomWritable()) {
 				return false;
 			} else {
 				return true;
@@ -232,10 +233,18 @@ module.exports = function(core, config, store) {
 		},
 
 		getPlaceholder: function(connection) {
+
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				return "Reply as " + userUtils.getNick(store.get("user")) + ", markdown supported";
+				let roomObj = store.getRoom(),
+					writeLevel = roomObj.guides.authorizer.writeLevel;
+				if(store.isRoomWritable()){
+					return "Reply as " + userUtils.getNick(store.get("user")) + ", markdown supported";
+				} else {
+					return (writeLevel === "follower"? "Follow this room" : "Sign in to scrollback")+ " to send messages";
+				}
+
 			} else {
 				return "You are offline";
 			}
@@ -254,7 +263,8 @@ module.exports = function(core, config, store) {
 		},
 
 		onStateChange: function(changes) {
-			if ((changes.app && changes.app.connectionStatus) || changes.user) {
+			if ((changes.app && changes.app.connectionStatus) || changes.user ||
+				(changes.indexes && (changes.indexes.userRooms && changes.indexes.userRooms[store.get("user")]))) {
 				this.replaceState(this.getInitialState());
 			}
 		},
