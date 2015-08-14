@@ -3,7 +3,7 @@
 var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
-	generate = require("../lib/generate.js"),
+	generate = require("../lib/generate.browser.js"),
 	pendingActions = {},
 	timeAdjustment = 0;
 

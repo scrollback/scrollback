@@ -3,7 +3,7 @@
 
 "use strict";
 
-const gen = require("../../lib/generate.js"),
+const gen = require("../../lib/generate.browser.js"),
 	  userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {

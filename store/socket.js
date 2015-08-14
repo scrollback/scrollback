@@ -3,7 +3,7 @@
 
 "use strict";
 
-var generate = require("../lib/generate.js"),
+var generate = require("../lib/generate.browser.js"),
 	userUtils = require("../lib/user-utils.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	pending = require("../lib/pendingQueries.js"),

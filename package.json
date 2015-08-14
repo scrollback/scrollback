@@ -1,7 +1,7 @@
 {
   "name": "Scrollback",
-  "version": "0.1.0",
-  "description": "Where communities hangout.",
+  "version": "1.0.0",
+  "description": "Where communities hang out.",
   "author": "Askabt (info@askabt.in)",
   "homepage": "http://scrollback.io",
   "keywords": [
@@ -12,28 +12,6 @@
     "path": "git://github.com/scrollback/scrollback.git"
   },
   "bugs": "https://github.com/scrollback/scrollback/issues",
-  "contributors": [
-    {
-      "name": "Aravind R S",
-      "email": "aravind@askabt.in"
-    },
-    {
-      "name": "Harish V",
-      "email": "harishv@scrollback.io"
-    },
-    {
-      "name": "Kamal Joshi",
-      "email": "kamal@scrollback.io"
-    },
-    {
-      "name": "Amal Antony",
-      "email": "amal@scrollback.io"
-    },
-    {
-      "name": "Satyajit Sahoo",
-      "email": "satya@scrollback.io"
-    }
-  ],
   "private": true,
   "license": "AGPL",
   "main": "./index.js",
@@ -66,7 +44,6 @@
     "react": "latest",
     "redis": "latest",
     "request": "latest",
-    "secure-random": "latest",
     "sockjs": "latest",
     "twemoji": "latest",
     "twit": "latest",
@@ -106,5 +83,8 @@
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest",
     "watchify": "latest"
+  },
+  "browser": {
+	  "lib/generate.js": "lib/generate.browser.js"
   }
 }
