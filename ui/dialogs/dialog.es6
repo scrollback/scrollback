@@ -47,14 +47,18 @@ module.exports = core => {
 				<div className="modal-container dialog-container">
 					<div ref={c => this._backdrop = React.findDOMNode(c)} className="backdrop" onClick={this.dismiss.bind(this)}></div>
 
-					<div
-						{...this.props}
-						ref={c => this._modal = React.findDOMNode(c)}
-						className={"modal dialog " + this.props.className}>
+					<div className="modal-wrapper-outer">
+						<div className="modal-wrapper">
+							<div
+								{...this.props}
+								ref={c => this._modal = React.findDOMNode(c)}
+								className={"modal dialog " + (typeof this.props.className === "string" ? this.props.className : "")}>
 
-						{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss.bind(this)} />}
+								{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss.bind(this)} />}
 
-						{this.props.children}
+								{this.props.children}
+							</div>
+						</div>
 					</div>
 				</div>
 			);
@@ -71,12 +75,16 @@ module.exports = core => {
 		}
 	}
 
+	Dialog.defaultProps = {
+		show: true
+	};
+
 	Dialog.propTypes = {
 		className: React.PropTypes.string,
 		children: React.PropTypes.oneOfType([ React.PropTypes.element, React.PropTypes.arrayOf(React.PropTypes.element) ]).isRequired,
 		onDismiss: React.PropTypes.func,
 		onShow: React.PropTypes.func,
-		show: React.PropTypes.bool.isRequired,
+		show: React.PropTypes.bool,
 		dismiss: React.PropTypes.bool,
 		closebutton: React.PropTypes.bool
 	};

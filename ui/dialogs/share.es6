@@ -17,7 +17,7 @@ module.exports = (core, config, store) => {
 				text = encodeURIComponent(dialogState.shareText);
 
 			return (
-				<Dialog ref="dialog" onDismiss={this.onDismiss} show={!!dialogState.shareUrl}>
+				<Dialog show={!!dialogState.shareUrl}>
 					<div className="modal-content dialog-content">
 						<h1 className="dialog-title">
 							{`Share ${dialogState.shareType ? ` this ${dialogState.shareType}` : " "} via`}
