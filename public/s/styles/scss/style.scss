@@ -504,12 +504,16 @@ button {
         table-layout: fixed;
         height: 100%;
         margin: auto;
+
+        @media #{$mobile-break-point} { width: 100%; }
     }
 
     &-wrapper {
         position: relative;
         display: table-cell;
         vertical-align: middle;
+
+        @media #{$mobile-break-point} { vertical-align: bottom; }
 
         > .modal {
             position: relative;
