@@ -13,7 +13,7 @@ module.exports = function(c, conf) {
 		if (query.to) roomName = query.to;
 		else if (query.memberOf) roomName = query.memberOf;
 		else if (query.occupantOf) roomName = query.occupantOf;
-
+		log.d("Entity loader received:", query);
 		function done() {
 			if (roomName) {
 				core.emit("getRooms", {

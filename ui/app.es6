@@ -42,7 +42,7 @@ require("../history/history-client.js")(...args);
 // Apps
 require("../notification/notification-client.es6")(...args);
 require("../anti-abuse/anti-abuse-client.js")(...args);
-require("../authorizer/authorizer-client.js")(...args);
+require("../authorizer/authorizer-client.es6")(...args);
 require("../authorizer/requests.es6")(...args);
 // require("../authorizer/invites.es6")(...args);
 require("../email/email-client.es6")(...args);
