@@ -18,6 +18,7 @@ function browserAuth(action, callback) {
 		}
 	}, function(err, res, body) {
 		var identity;
+		log.d("persona response:", err, res, body);
 		if (err) {
 			action.response = new Error("AUTH_FAIL_NETWORK/" + err.message);
 			return callback();
@@ -35,10 +36,12 @@ function browserAuth(action, callback) {
 		}
 
 		identity = "mailto:" + body.email;
+		log.d("Email id:", body.email);
 		core.emit("getUsers", {
 			identity: identity,
 			session: "internal-browserid-auth"
 		}, function(e, user) {
+			log.d(e, user);
 			if(e) return callback(e);
 
 			if (!user.results || user.results.length === 0) {
@@ -46,12 +49,14 @@ function browserAuth(action, callback) {
 				action.user = {};
 				action.user.id = action.old.id;
 				action.user.type = "user";
-				action.user.identities = [identity];
+				action.user.identities = action.old.identities || [];
 				action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(body.email).digest('hex') + '/?d=retro';
-				action.user.params = {};
-				action.user.guides = {};
+				action.user.params = action.old.guides || {};
+				action.user.guides = action.old.params || {};
 				action.user.params.pictures = [action.user.picture];
                 action.response = new Error("AUTH:UNREGISTERED");
+				log.d("Signup happening:", action);
+				action.user.identities.push(identity);
 				return callback();
 			}
 

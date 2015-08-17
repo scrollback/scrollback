@@ -108,7 +108,7 @@ module.exports = function(core, config, store) {
 					pics = getRoomPics(roomObj, [ "avatar", "banner" ]);
 
 					this.setState({
-						title: roomUtils.getName(roomObj.id),
+						title: roomUtils.getName(room),
 						description: format.mdToHtml(roomObj.description) || "This room has no description.",
 						picture: pics.avatar,
 						cover: pics.banner,

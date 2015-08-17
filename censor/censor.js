@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = function(core) {
 	core.on("getTexts", function(query, next) {
 		if (/^internal/.test(query.session)) return next();
@@ -21,7 +23,7 @@ module.exports = function(core) {
 			delete e.identities;
 			return e;
 		}
-		if (query.ref && (query.user.role === 'su' || query.user.role == "owner")) return next();
+		if (query.ref && (query.user.role === 'su' || query.user.role === "owner")) return next();
 		if (query.hasMember) {
 			if (query.hasMember === query.user.id || query.hasMember === "me") {
 				query.results.forEach(function(e) {
@@ -46,7 +48,7 @@ module.exports = function(core) {
 				}
 
 				query.results = query.results.map(function(r) {
-					if (r && (!roomMap[r.id] || roomMap[r.id].role != "owner")) return censor(r);
+					if (r && (!roomMap[r.id] || roomMap[r.id].role !== "owner")) return censor(r);
 					else return r;
 				});
 
@@ -60,9 +62,8 @@ module.exports = function(core) {
 
 	core.on("getUsers", function(query, next) {
 		if (/^internal/.test(query.session)) return next();
-
 		if (!query.results || !query.results.length) return next();
-		if (query.ref && (query.ref == "me" || query.user.role === 'su')) return next();
+		if (query.ref && (!query.user || query.user.role === 'su')) return next();
 		query.results.forEach(function(e) {
 			if (!e || e.id === query.user.id) return;
 			delete e.params;

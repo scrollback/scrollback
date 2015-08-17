@@ -36,7 +36,7 @@ module.exports = function(c, conf) {
 	returnTemplate = handlebars.compile(fs.readFileSync(__dirname + "/google-return.hbs", "utf8"));
 	loginTemplate = handlebars.compile(fs.readFileSync(__dirname + "/google-login.hbs", "utf8"));
 
-	
+
 	core.on("http/init", function(payload, callback) {
 		payload.push({
 			get: {
@@ -67,17 +67,17 @@ module.exports = function(c, conf) {
 						session: "internal-google"
 					}, function(e, data) {
 						if (e || !data) return callback(e);
-
 						if (!data.results.length) {
 							action.old = action.user;
 							action.user = {};
 							action.user.id = action.old.id;
 							action.user.type = "user";
-							action.user.identities = ["mailto:" + body.email];
+							action.user.identities = action.old.identities || [];
 							action.user.picture = gravatar;
-							action.user.params = {
-								pictures: [googlePic, gravatar]
-							};
+							action.user.params = action.old.params || {};
+							action.user.guides = action.old.guides || {};
+							action.user.identities.push("mailto:" + body.email);
+							action.user.params.pictures = [googlePic, gravatar];
 							action.response = new Error("AUTH:UNREGISTERED");
 							return callback();
 						}
