@@ -18,11 +18,21 @@ module.exports = function(core, config, store) {
 			userRelation = getRelation ? getRelation.role : "none",
 			guides = roomObj ? roomObj.guides : {};
 
-		
-		if ((changes.nav && ("room" in changes.nav || "threadRange" in changes.nav)) ||
-			(changes.entities && changes.entities[rel])) {
-			if ((guides && guides.authorizer && (permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel])) ||
-				(userRelation === "banned")) {
+
+		if (
+			(changes.nav && (
+				"room" in changes.nav ||
+				"threadRange" in changes.nav
+			)) || (
+				changes.entities &&
+				changes.entities[rel]
+			)) {
+			if (
+				(guides && guides.authorizer && (
+					permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel]
+				)) || (
+					userRelation === "banned"
+				)) {
 				return;
 			}
 			handleThreadChange(future);

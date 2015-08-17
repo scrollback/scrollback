@@ -15,13 +15,24 @@ module.exports = function(core, config, store) {
 			rel = roomId + "_" + userId,
 			getRelation = store.getRelation(roomId, userId),
 			roomObj = store.getRoom(roomId),
-			userRelation = getRelation ? getRelation.role: "none",
+			userRelation = getRelation ? getRelation.role : "none",
 			guides = roomObj ? roomObj.guides : {};
-		
-		if ((changes.nav && ("room" in changes.nav || "thread" in changes.nav || "textRange" in changes.nav)) ||
-			(changes.entities && changes.entities[rel])) {
-			if ((guides && guides.authorizer && (permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel])) ||
-				(userRelation === "banned")) {
+
+		if (
+			(changes.nav && (
+				"room" in changes.nav ||
+				"thread" in changes.nav ||
+				"textRange" in changes.nav
+			)) || (
+				changes.entities &&
+				changes.entities[rel]
+			)) {
+			if (
+				(guides && guides.authorizer && (
+					permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel]
+				)) || (
+					userRelation === "banned"
+				)) {
 				return;
 			}
 			handleTextChange(future);

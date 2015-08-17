@@ -237,12 +237,11 @@ module.exports = function(core, config, store) {
 			if (connection === "connecting") {
 				return "Connecting...";
 			} else if (connection === "online") {
-				let roomObj = store.getRoom(),
-					writeLevel = roomObj.guides.authorizer.writeLevel;
+				let user = store.get("user");
 				if(store.isRoomWritable()){
-					return "Reply as " + userUtils.getNick(store.get("user")) + ", markdown supported";
+					return "Reply as " + userUtils.getNick(user) + ", markdown supported";
 				} else {
-					return (writeLevel === "follower"? "Follow this room" : "Sign in to scrollback")+ " to send messages";
+					return (userUtils.isGuest(user) ? "Sign in to scrollback" : "Follow this room")+ " to send messages";
 				}
 
 			} else {
