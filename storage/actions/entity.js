@@ -1,6 +1,8 @@
 "use strict";
 
 var pg = require("../../lib/pg.js");
+var log = require('./../../lib/logger.js');
+var userUtils = require('../../lib/user-utils.js');
 
 /*
 	Warning: This does not lock the table or do proper upserts.
@@ -8,75 +10,97 @@ var pg = require("../../lib/pg.js");
 	other, the second one will fail.
 */
 
-module.exports = function (action) {
-	var entity = action[action.type],
-		updates, inserts;
-	
-	if (!action.old || !action.old.id || /^guest-/.test(action.old.id)) {
-		// Create a new entity;
-		
-		inserts = [];
-		
-		inserts.push({
-			$: "INSERT INTO entities" +
-				"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " + 
-				"VALUES (${id}, ${identities}, $(values), to_tsvector('english', ${terms}))",
-			values: [
-				entity.type, entity.description || "", 0, entity.picture || "", new Date(action.time),
-				entity.timezone || 0, entity.locale || "", entity.params, entity.guides				
-			],
-			terms: entity.id + " " + (entity.description || ""),
-			id: entity.id,
-			identities: entity.identities? entity.identities.map(function (ident) { return [ident.split(':', 2)[0], ident]; }): []
-		});
-		
-		if(action.type === "room") {
-			inserts.push({
-				$: "INSERT INTO relations(room, \"user\", role, roletime) VALUES ($(values))",
-				values: [ action.room.id, action.user.id, "owner", new Date(action.time) ]
-			});
-		}
-		
-		return inserts;
-	} else {
-		// Update an existing entity;
-		
-		updates = [];
-		['description', 'color', 'picture', 'timezone', 'locale', 'params', 'guides'].forEach(function(p) {
-			if(!(p in entity)) { return; }
-			var qp = { $: p + "=${" + p + "}" };
-			qp[p] = entity[p];
-			updates.push(qp);
-		});
+module.exports = function(action) {
+	var entity, insertObject, updateObject = {},
+		whereObject = {},
+		col;
+	var inserts = [], query = [];
 
-		if (entity.identities) {
-			updates.push({
-				$: "identities=${identities}",
-				identities: entity.identities.map(function(ident) {
-					return [ident.split(':', 2)[0], ident];
-				})
-			});
+	if (action.type === 'init') entity = action.user;
+	else entity = action[action.type];
+
+	insertObject = {
+		id: entity.id,
+		type: entity.type,
+		identities: entity.identities || [],
+		color: entity.color,
+		picture: entity.picture,
+		createtime: entity.createTime?new Date(entity.createTime): new Date(),
+		timezone: entity.timezone,
+		locale: entity.locale,
+		params: entity.params,
+		guides: entity.guides,
+		terms: entity.terms
+	};
+
+
+	if (action.type === 'user' || action.type === 'init' ) {
+		if (/^guest-/.test(action.user.id)) {
+			action.user.identities = action.user.identities || [];
+			if (action.user.identities.indexOf("guest:" + action.user.id) < 0) {
+				action.user.identities.push("guest:" + action.user.id);
+			}
+			insertObject.id = insertObject.id.replace(/^guest-/, "");
+			insertObject.identities = action.user.identities;
 		}
-		
-		if (entity.deleteTime) {
-			updates.push({
-				$: "deletetime=${deleteTime}",
-				deleteTime: new Date(action.time)
-			});
-		}
-		
-		if(entity.description) {
-			updates.push({
-				$: "terms=to_tsvector('english', ${terms})",
-				terms: entity.id + " " + (entity.description || "")
-			});
-		}
-		
-		return [pg.cat([
-			"UPDATE entities SET",
-			pg.cat(updates, ", "),
-			{ $: "WHERE id=${id}", id: entity.id }
-		])];
 	}
-};
 
+	insertObject.identities = insertObject.identities.map(function(ident) {
+		return [ident.split(':', 2)[0], ident];
+	});
+	
+	for (col in insertObject) {
+		if (col !== 'id') {
+			updateObject[col] = insertObject[col];
+		} else {
+			whereObject[col] = insertObject[col];
+		}
+	}
+
+
+	query.push(pg.lock([insertObject.id]));
+	log.d("to insert: ", insertObject);
+	query.push(pg.cat([pg.update("entities", insertObject), "WHERE", pg.nameValues(whereObject, " AND ")]));
+
+	inserts.push({
+		$: "INSERT INTO entities" +
+			"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
+			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, $(createTime)," +
+			"${timezone}, ${locale}, ${params}, ${guides}, to_tsvector('english', ${terms})",
+		type: insertObject.type,
+		description: insertObject.description || "",
+		color: 0,
+		picture: insertObject.picture || "",
+		createTime: new Date(action.time),
+		timezone: insertObject.timezone || 0,
+		locale: insertObject.locale || "",
+		params: insertObject.params,
+		guides: insertObject.guides,
+		terms: insertObject.id + " " + (entity.description || ""),
+		id: insertObject.id,
+		identities: insertObject.identities
+	});
+
+	inserts.push({
+		$: "WHERE NOT EXISTS (SELECT 1 FROM entities WHERE id = ${id})",
+		id: insertObject.id
+	});
+
+	query.push(pg.cat(inserts));
+	
+	if(action.type === "user" && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
+		query.push({
+			$: "delete from entities where id=${oldId}",
+			oldId: action.old.id.replace(/^guest-/, "")
+		});
+	}
+
+	
+	if (action.type === "room" && (!action.old || !action.old.id)) {
+		query.push({
+			$: "INSERT INTO relations(room, \"user\", role, roletime) VALUES ($(values))",
+			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
+		});
+	}
+	return query;
+};

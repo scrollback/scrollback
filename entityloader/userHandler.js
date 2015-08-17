@@ -40,6 +40,14 @@ function userHandler(action, callback) {
 					action.old = data.results[0]; // letting the authorized take care of things.
 					return done();
 				}
+				
+				if(action.user.id !== action.old.id && userUtils.isGuest(action.from)) {
+					action.user.identities = action.old.identities;
+					action.user.identities = action.user.identities.filter(function(ident) {
+						if(/^guest/.test(ident)) return false;
+						else return true;
+					});
+				}
 				core.emit("getRooms", {
 					session: "internal-loader",
 					ref: action.user.id
