@@ -65,9 +65,8 @@ module.exports = function(action) {
 	inserts.push({
 		$: "INSERT INTO entities" +
 			"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
-			"select ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture},$(createTime)," +
-			"${timezone}, ${locale}, ${params}, ${guides}," +
-			"to_tsvector('english', ${terms})",
+			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, $(createTime)," +
+			"${timezone}, ${locale}, ${params}, ${guides}, to_tsvector('english', ${terms})",
 		type: insertObject.type,
 		description: insertObject.description || "",
 		color: 0,
@@ -89,7 +88,7 @@ module.exports = function(action) {
 
 	query.push(pg.cat(inserts));
 	
-	if(action.type === "user" && action.user.id !== action.old.id && userUtils.isGuest(action.from)) {
+	if(action.type === "user" && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
 		query.push({
 			$: "delete from entities where id=${oldId}",
 			oldId: action.old.id.replace(/^guest-/, "")
