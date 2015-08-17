@@ -15,15 +15,15 @@ module.exports = (core, config, store) => {
 			this.state = {
 				readLevel: this.props.readLevel,
 				writeLevel: this.props.writeLevel,
-				approvedFollow: !this.props.openFollow;
+				approvedFollow: !this.props.openRoom
 			};
 		}
 
-		onReadLevelUpdate(value) {
+		onReadLevelUpdate() {
 			this.setState({ readLevel: this.refs.readLevel.value });
 		}
 		
-		onWriteLevelUpdate(value) {
+		onWriteLevelUpdate() {
 			this.setState({ writeLevel: this.refs.writeLevel.value });
 		}
 
@@ -55,13 +55,13 @@ module.exports = (core, config, store) => {
 					<div className="settings-item">
 						<div className="settings-label">Who can write messages?</div>
 						<div className="settings-action">
-							<ToggleGroup ref="writeLevel" className="toggle-group" name="writeLevel" items={writeLevelItems}  value={this.state.writeLevel} />
+							<ToggleGroup ref="writeLevel" className="toggle-group" name="writeLevel" items={writeLevelItems}  value={this.state.writeLevel} onUpdate={this.onWriteLevelUpdate.bind(this)}/>
 						</div>
 					</div>
 					<div className="settings-item">
 						<div className="settings-label">Approval required to follow</div>
 						<div className="settings-action">
-							<ToggleSwitch ref="openRoom" checked={this.state.approvedFollow} />
+							<ToggleSwitch ref="approvedFollow" checked={this.state.approvedFollow} />
 						</div>
 					</div>
 				</div>;
