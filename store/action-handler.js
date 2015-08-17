@@ -400,6 +400,7 @@ module.exports = function(c, conf, s) {
 
 
 			core.emit("setstate", newState);
+			error.handled = true;
 		}
 
 		next();

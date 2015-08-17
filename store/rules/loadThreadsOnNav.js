@@ -4,17 +4,37 @@
 	Provides: threads (async)
 */
 
+/*eslint no-use-before-define:0 */
 "use strict";
-
+var permissionLevels = require("./../../authorizer/permissionWeights.js");
 module.exports = function(core, config, store) {
 	core.on('setstate', function(changes) {
 		var future = store.with(changes),
 			roomId = future.get("nav", "room"),
 			userId = future.get("user"),
-			rel = roomId + "_" + userId;
+			rel = roomId + "_" + userId,
+			getRelation = store.getRelation(roomId, userId),
+			roomObj = store.getRoom(roomId),
+			userRelation = getRelation ? getRelation.role : "none",
+			guides = roomObj ? roomObj.guides : {};
 
-		if ((changes.nav && ("room" in changes.nav || "threadRange" in changes.nav)) ||
-	        (changes.entities && changes.entities[rel])) {
+
+		if (
+			(changes.nav && (
+				"room" in changes.nav ||
+				"threadRange" in changes.nav
+			)) || (
+				changes.entities &&
+				changes.entities[rel]
+			)) {
+			if (
+				(guides && guides.authorizer && (
+					permissionLevels[userRelation] < permissionLevels[guides.authorizer.readLevel]
+				)) || (
+					userRelation === "banned"
+				)) {
+				return;
+			}
 			handleThreadChange(future);
 		}
 	}, 850);
@@ -55,7 +75,7 @@ module.exports = function(core, config, store) {
 
 		if (r[r.length - 1] === "missing") {
 			queryTime = (r.length > 1 ? r[r.length - 2].startTime : time);
-			if(queryTime !== null) {
+			if (queryTime !== null) {
 				core.emit("getThreads", {
 					to: roomId,
 					time: queryTime,
@@ -76,4 +96,3 @@ module.exports = function(core, config, store) {
 
 	}
 };
-

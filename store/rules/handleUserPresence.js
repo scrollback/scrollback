@@ -1,11 +1,20 @@
 "use strict";
 
 var userUtils = require("./../../lib/user-utils.js");
-
+var permissionLevels = require("./../../authorizer/permissionWeights.js");
 var core, store;
 var queueBack = [];
 
 function enter(roomId) {
+	var room = store.getRoom(roomId),
+		user = store.getUser().id,
+		getRelation = store.getRelation(room.id, user),
+		userRelation = getRelation ? getRelation.role : "none";
+
+	if((room.guides && room.guides.authorizer && (permissionLevels[userRelation] < permissionLevels[room.guides.authorizer.readLevel])) || 
+	   (userRelation === "banned")) {
+		return;
+	}
 	core.emit("back-up", {
 		to: roomId
 	});
