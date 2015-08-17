@@ -73,4 +73,4 @@ if (process.env.NODE_ENV !== "production") {
 
 start("http"); // start http app at last
 
-core.setDebug(true);
+// core.setDebug(true);
