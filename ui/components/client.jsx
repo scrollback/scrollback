@@ -19,9 +19,9 @@ module.exports = function(core, config, store) {
 		Client;
 
 	Client = React.createClass({
-		createThread: function() {
+		startThread: function() {
 			core.emit("setstate", {
-				nav: { dialog: "createthread" }
+				nav: { dialog: "start-thread" }
 			});
 		},
 
@@ -65,7 +65,7 @@ module.exports = function(core, config, store) {
 								<span className="fab-label">Create room</span>
 							</CreateRoomButton>
 
-							<a className="fab fab-thread" data-state="online" data-mode="room" data-permission="write" onClick={this.createThread}>
+							<a className="fab fab-thread" data-state="online" data-mode="room" data-permission="write" onClick={this.startThread}>
 								<span className="fab-label">Start discussion</span>
 							</a>
 						</main>

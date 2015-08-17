@@ -208,7 +208,7 @@ module.exports = function(core, config, store) {
 									className="chat-area-input-action chat-area-input-image"
 									data-role="registered follower owner moderator"
 									data-permission="write"
-									accept="image/*" maxsize="5242880"
+									accept="image/*" maxsize={5242880}
 									onstart={this.onUploadStart} onerror={this.onUploadError} onfinish={this.onUploadFinish}
 									getPayload={this.getUploadPayload}>
 
@@ -238,10 +238,11 @@ module.exports = function(core, config, store) {
 				return "Connecting...";
 			} else if (connection === "online") {
 				let user = store.get("user");
-				if(store.isRoomWritable()){
+
+				if (store.isRoomWritable()) {
 					return "Reply as " + userUtils.getNick(user) + ", markdown supported";
 				} else {
-					return (userUtils.isGuest(user) ? "Sign in to scrollback" : "Follow this room")+ " to send messages";
+					return (userUtils.isGuest(user) ? "Sign in to scrollback" : "Follow this room") + " to send messages";
 				}
 
 			} else {
