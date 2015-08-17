@@ -22,9 +22,13 @@ module.exports = (core, config, store) => {
 		onReadLevelUpdate() {
 			this.setState({ readLevel: this.refs.readLevel.value });
 		}
-		
+
 		onWriteLevelUpdate() {
 			this.setState({ writeLevel: this.refs.writeLevel.value });
+		}
+
+		onApprovedFollowUpdate() {
+			this.setState({ approvedFollow: this.refs.approvedFollow.checked });
 		}
 
 		render() {
@@ -61,7 +65,7 @@ module.exports = (core, config, store) => {
 					<div className="settings-item">
 						<div className="settings-label">Approval required to follow</div>
 						<div className="settings-action">
-							<ToggleSwitch ref="approvedFollow" checked={this.state.approvedFollow} />
+							<ToggleSwitch ref="approvedFollow" checked={this.state.approvedFollow} onUpdate={this.onApprovedFollowUpdate.bind(this)}/>
 						</div>
 					</div>
 				</div>;
@@ -90,7 +94,7 @@ module.exports = (core, config, store) => {
 	Authorizer.propTypes = {
 		readLevel: React.PropTypes.string.isRequired,
 		writeLevel: React.PropTypes.string.isRequired,
-		openRoom: React.PropTypes.bool.isRequired
+		approvedFollow: React.PropTypes.bool.isRequired
 	};
 
 	core.on("conf-show", tabs => {
@@ -100,7 +104,7 @@ module.exports = (core, config, store) => {
 			writeLevel = (guides && guides.authorizer && guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest",
 			openRoom = (guides && guides.authorizer && typeof guides.authorizer.openRoom === "boolean") ? guides.authorizer.openRoom : true;
 		
-		React.render(<Authorizer readLevel={readLevel} writeLevel={writeLevel} openRoom={openRoom}/>, container);
+		React.render(<Authorizer readLevel={readLevel} writeLevel={writeLevel} approvedFollow={openRoom}/>, container);
 
 		tabs.authorizer = {
 			text: "Permissions",
