@@ -14,16 +14,23 @@ function loginUser(token, action, callback) {
 	request("https://graph.facebook.com/me?access_token=" + token, function(err, res, body) {
 		var user, gravatar, fbpic, sendUpdate = false;
 		delete action.auth.facebook.code;
+
 		if (err) return callback(err);
+
 		try {
 			user = JSON.parse(body);
-			if (user.error || !user.email) {
-				if (!user.email) log.i("Facebook login failed: ", body);
+
+			if (user.error) {
+				log.i("Facebook login failed: ", body);
+				return callback(new Error(user.error || "ERR_FB_SIGNIN"));
+			} else if (!user.email) {
+				log.i("Facebook login failed: ", body);
 				return callback(new Error(user.error || "ERR_FB_SIGNIN_NO_EMAIL"));
 			}
 
 			gravatar = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(user.email).digest('hex') + '/?d=retro';
 			fbpic = "https://graph.facebook.com/" + user.id + "/picture?type=square";
+
 			core.emit("getUsers", {
 				identity: "mailto:" + user.email,
 				session: "internal-facebook"
@@ -139,7 +146,7 @@ function onInit(payload, callback) {
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	
+
 	returnTemplate = handlebars.compile(fs.readFileSync(__dirname + "/facebook-return.hbs", "utf8"));
 	loginTemplate = handlebars.compile(fs.readFileSync(__dirname + "/facebook-login.hbs", "utf8"));
 
