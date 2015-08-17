@@ -23,6 +23,7 @@ module.exports = (core, config, store) => {
 	core.on("error-dn", e => {
 		let key = e.action + ":" + e.id;
 		if (e.message === "ERR_NOT_ALLOWED" && actions.indexOf(e.action) > -1 && sent[key]) {
+			e.handled = true;
 			// Action failed because user was not signed in
 			if (e.requiredRole === "registered" && (e.currentRole === "guest")) {
 				// Get previous pending actions
