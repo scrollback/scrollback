@@ -129,7 +129,18 @@ module.exports = (core, config, store) => {
 				image = this._image.value;
 
 			this.startThread({ title, text, image })
-			.then(() => this.setState({ show: false }))
+			.then(thread => {
+				this.setState({ show: false });
+
+				setTimeout(() => {
+					core.emit("setstate", {
+						nav: {
+							mode: "chat",
+							thread: thread.id
+						}
+					});
+				}, 300);
+			})
 			.catch(err => this.showError(err.message));
 		}
 
