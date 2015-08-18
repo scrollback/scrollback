@@ -3,6 +3,8 @@
 
 "use strict";
 
+const handledDialogs = [ "share", "start-thread" ];
+
 module.exports = function(core, config, store) {
 	var userUtils = require("../../lib/user-utils.js"),
 		validateEntity = require("../utils/validate-entity.es6")(core, config, store),
@@ -51,7 +53,7 @@ module.exports = function(core, config, store) {
 		var nav = store.get("nav"),
 			dialogStateChanged = false;
 
-		if (nav.dialog === "share") {
+		if (handledDialogs.indexOf(nav.dialog) > -1) {
 			return;
 		}
 

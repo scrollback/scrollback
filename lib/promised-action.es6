@@ -16,7 +16,7 @@ module.exports = core => {
 				if (id === error.id) {
 					reject(error);
 
-					core.off(down, onDone);
+					core.off(down, onDone); // eslint-disable-line no-use-before-define
 					core.off("error-dn", onError);
 				}
 			}

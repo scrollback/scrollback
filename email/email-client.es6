@@ -55,7 +55,7 @@ module.exports = (core, config, store) => {
 	}
 
 	EmailConfig.propTypes = {
-		frequency: React.PropTypes.object.isRequired,
+		frequency: React.PropTypes.string.isRequired,
 		notifications: React.PropTypes.bool.isRequired
 	};
 
