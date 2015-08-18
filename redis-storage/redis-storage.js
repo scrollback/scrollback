@@ -15,7 +15,7 @@ function onBack(data, cb) {
 
 function onAway(action, callback) {
 	occupantDB.srem("room:{{" + action.to + "}}:hasOccupants", action.from, function(err) {
-		log.e(err);
+		if(err) log.e(err);
 		occupantDB.scard("room:{{" + action.to + "}}:hasOccupants", function(error, data) {
 			log.d(error);
 			if (!data) occupantDB.del("user:{{" + action.from + "}}:occupantOf");
@@ -23,7 +23,7 @@ function onAway(action, callback) {
 	});
 
 	occupantDB.srem("user:{{" + action.from + "}}:occupantOf", action.to, function(err) {
-		log.e(err);
+		if(err) log.e(err);
 		occupantDB.scard("user:{{" + action.from + "}}:occupantOf", function(error, data) {
 			if (!data) {
 				occupantDB.del("user:{{" + action.from + "}}:occupantOf");
