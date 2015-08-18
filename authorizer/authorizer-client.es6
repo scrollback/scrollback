@@ -15,7 +15,7 @@ module.exports = (core, config, store) => {
 			this.state = {
 				readLevel: this.props.readLevel,
 				writeLevel: this.props.writeLevel,
-				approvedFollow: !this.props.openRoom
+				approvedFollow: !this.props.approvedFollow
 			};
 		}
 
