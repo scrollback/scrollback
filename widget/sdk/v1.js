@@ -1,6 +1,7 @@
 /* eslint-env browser */
 
 "use strict";
+
 var Widget = require("./widget.js"),
 	Validator = require("../../lib/validator.js"),
 	sb = window.scrollback = window.scrollback || {};
@@ -12,5 +13,5 @@ sb.nick = sb.nick || sb.suggestedNick;
 sb.form = sb.form || "toast";
 sb.minimize = (typeof sb.minimize === "boolean") ? sb.minimize : false;
 
-/* eslint no-new: 0 */
+/* eslint-disable no-new */
 new Widget(sb);
