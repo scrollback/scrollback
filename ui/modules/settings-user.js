@@ -32,16 +32,13 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("user-dn", function(user, next) {
-		if(!userUtils.isGuest(user.user.id)){
-			if (!userUtils.isGuest(user.old.id)) {
+			if (!userUtils.isGuest(user.user.id) && !userUtils.isGuest(user.old.id)) {
 				$("<div>").html("Your account settings were successfully saved.").
 				alertbar({
 					type: "info",
 					timeout: 1500
 				});
-			}
-		}
-		
+			}		
 		next();
 	}, 500);
 
