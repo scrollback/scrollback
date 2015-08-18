@@ -32,6 +32,7 @@
 
 			try {
 				if(opts.minimize) opts.minimize = JSON.parse(opts.minimize);
+				if(opts.alertSound) opts.alertSound = JSON.parse(opts.alertSound);
 			} catch(e) {}
 
 			window.scrollback = opts;

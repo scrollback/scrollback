@@ -88,7 +88,7 @@ module.exports = function(action) {
 
 	query.push(pg.cat(inserts));
 	
-	if(action.type === "user" && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
+	if(action.type === "user" && action.old && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
 		query.push({
 			$: "delete from entities where id=${oldId}",
 			oldId: action.old.id.replace(/^guest-/, "")
