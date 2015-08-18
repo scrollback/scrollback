@@ -47,6 +47,8 @@
                 }
 
                 > .loader { margin: 2em; }
+
+                &.upload-active, &.upload-complete { pointer-events: none; }
             }
         }
 

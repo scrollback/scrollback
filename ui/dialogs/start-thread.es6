@@ -116,7 +116,11 @@ module.exports = (core, config, store) => {
 		}
 
 		onImageButtonClick() {
-			this.setState({ activeInput: "image", uploadStatus: "", uploadData: null });
+			this.setState({
+				activeInput: "image",
+				uploadStatus: "",
+				uploadData: null
+			});
 
 			this._image.click();
 		}
@@ -181,7 +185,7 @@ module.exports = (core, config, store) => {
 								<div className="start-thread-inputs">
 									<textarea
 										ref={c => this._text = React.findDOMNode(c)}
-										className={"area " + (this.state.activeInput === "text" ? "active" : "")}
+										className={(this.state.activeInput === "text" ? "active" : "")}
 										placeholder="Enter your message"
 										style={{ resize: "none" }}
 										autoFocus
@@ -189,7 +193,7 @@ module.exports = (core, config, store) => {
 
 									<FileUpload
 										ref={c => this._image = React.findDOMNode(c)}
-										className={"image-drop-area area " + (this.state.activeInput === "image" ? " active" : "")}
+										className={"image-drop-area " + (this.state.activeInput === "image" ? " active" : "") + " upload-" + this.state.uploadStatus}
 										accept="image/*" maxsize={5242880}
 										onstart={this.onUploadStart.bind(this)}
 										onerror={this.onUploadError.bind(this)}
@@ -200,6 +204,7 @@ module.exports = (core, config, store) => {
 
 									</FileUpload>
 								</div>
+								{this.isFileUploadAvailable() ?
 								<div className="start-thread-buttons wide block" data-role="registered follower owner moderator">
 									<a
 										className={"start-thread-text " + (this.state.activeInput === "text" ? "active" : "")}
@@ -211,7 +216,7 @@ module.exports = (core, config, store) => {
 										onClick={this.onImageButtonClick.bind(this)}>
 										Image
 									</a>
-								</div>
+								</div> : null}
 						   </div>
 							<input className="wide block" type="submit" value="Start discussion" />
 						</form>
