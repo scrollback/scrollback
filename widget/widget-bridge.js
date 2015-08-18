@@ -99,13 +99,15 @@ function verifyParentOrigin(origin, callback) {
 
 	function handleResponse(event) {
 		if (parseMessage(event.data).token === token) {
-			done(true);
+			done(true); // eslint-disable-line no-use-before-define
 		}
 	}
 
 	function done(verified) {
 		window.removeEventListener("message", handleResponse);
-		if(callback) callback(!!verified);
+
+		if (callback) { callback(!!verified); }
+
 		callback = null; // prevents callback being invoked a second time.
 	}
 
@@ -115,26 +117,25 @@ function verifyParentOrigin(origin, callback) {
 }
 
 function onMessage(e) {
-	var data;
-	data = parseMessage(e.data);
+	var data = parseMessage(e.data);
 
 	if (data.type === "domain-response" || !verifyMessageOrigin(e)) { return; }
 
 	switch (data.type) {
-		case "auth":
-			sendInit(data);
-			break;
-		case "follow":
-			if (data.role === "none") {
-				core.emit("part-up", { to: store.get("nav", "room") });
-			} else {
-				core.emit("join-up", { to: store.get("nav", "room"), role: data.role });
-			}
-			break;
-		case "nav":
-			delete data.type;
-			core.emit("setstate", { nav: data });
-			break;
+	case "auth":
+		sendInit(data);
+		break;
+	case "follow":
+		if (data.role === "none") {
+			core.emit("part-up", { to: store.get("nav", "room") });
+		} else {
+			core.emit("join-up", { to: store.get("nav", "room"), role: data.role });
+		}
+		break;
+	case "nav":
+		delete data.type;
+		core.emit("setstate", { nav: data });
+		break;
 	}
 }
 
