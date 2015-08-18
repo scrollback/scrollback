@@ -188,7 +188,6 @@ module.exports = (core, config, store) => {
 										className={(this.state.activeInput === "text" ? "active" : "")}
 										placeholder="Enter your message"
 										style={{ resize: "none" }}
-										autoFocus
 										/>
 
 									<FileUpload
