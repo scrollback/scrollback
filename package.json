@@ -83,8 +83,5 @@
     "vinyl-buffer": "latest",
     "vinyl-source-stream": "latest",
     "watchify": "latest"
-  },
-  "browser": {
-	  "lib/generate.js": "lib/generate.browser.js"
   }
 }
