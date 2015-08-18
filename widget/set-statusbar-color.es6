@@ -14,7 +14,7 @@ module.exports = core => {
 		try {
 			hex = new Color(color).tohex();
 		} catch (e) {
-			console.log("Failed to parse color", color, e);
+			console.warn("Failed to parse color", color, e);
 		}
 
 		if (hex) {

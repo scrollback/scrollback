@@ -29,7 +29,7 @@ window.addEventListener("message", function (e) {
 	var data, i;
 	if (e.origin !== host) { return; }
 	data = parseMessage(e.data);
-		
+
 	if(data.type === "domain-challenge") {
 		e.source.postMessage(JSON.stringify({
 			type: "domain-response",
@@ -37,7 +37,7 @@ window.addEventListener("message", function (e) {
 		}), host);
 		return;
 	}
-	
+
 	for(i = 0; i < widgets.length; i++) {
 		if(widgets[i].iframe.contentWindow === e.source) {
 			widgets[i].receiveMessage(data);
@@ -81,11 +81,11 @@ function insertIframe(state) {
 				embed.form = "toast";
 			}
 		}
-		
+
 		if(embed.form === "toast") {
 			document.body.appendChild(iframe);
 		}
-		
+
 		iframe.className = "scrollback-stream scrollback-" + embed.form +
 			(embed.minimize ? " scrollback-minimized" : "");
 	});
@@ -110,7 +110,7 @@ function copyProps(src, dst, props) {
 function Widget (opts) {
 	opts.mode = opts.mode || (opts.thread ? "chat" : opts.room ? "room" : "home");
 	opts.form = opts.form || "toast";
-	
+
 	this.state = {};
 	this.state.nav = copyProps(opts, ["room", "thread", "view", "mode", "dialog", "dialogState"]);
 	this.state.context = {
@@ -122,11 +122,11 @@ function Widget (opts) {
 			path: location.pathname + location.search + location.hash
 		}
 	};
-	
+
 	if(opts.time) {
 		this.state.nav[(opts.mode === "room" ? "thread" : "text") + "Range"] = { time: opts.time, before: 0, after: 20 };
 	}
-	
+
 	this.iframe = insertIframe(this.state);
 	widgets.push(this);
 }
