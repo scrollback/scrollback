@@ -64,7 +64,7 @@ class S3Upload {
 				req.send();
 
 				req.onreadystatechange = () => {
-					if (req.readyState === XMLHttpRequest.DONE ) {
+					if (req.readyState === XMLHttpRequest.DONE) {
 						if (thumbTimer) {
 							clearTimeout(thumbTimer);
 						}

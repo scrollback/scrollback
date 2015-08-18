@@ -1,12 +1,12 @@
 @include exports(startthread) {
     .start-thread {
         &-inputs {
-            height: 5em;
+            height: 6em;
 
             &-container {
                 @extend %clearfix;
 
-                border: 1px solid rgba(0, 0, 0, .3);
+                border: 1px solid rgba(0, 0, 0, .1);
                 border-radius: $roundness;
                 margin: 1em 0;
             }
@@ -20,22 +20,38 @@
                 margin: 0;
                 width: 100%;
                 height: 100%;
+
+                &:focus, &:hover, &:active { box-shadow: 0 0 0 1px $accent-color; }
+
+                &.error { box-shadow: 0 0 0 1px $error-color; }
             }
 
             .image-drop-area {
                 width: 100%;
                 height: 100%;
                 text-align: center;
-                padding: 1.75em 1em;
                 cursor: pointer;
                 background-color: rgba(0, 0, 0, .025);
 
                 > input { display: none; }
+
+                > span {
+                    display: inline-block;
+                    padding: 2.25em 1em;
+                }
+
+                > img {
+                    max-height: 100%;
+                    width: auto;
+                    background-color: rgba(0, 0, 0, .1);
+                }
+
+                > .loader { margin: 2em; }
             }
         }
 
         &-buttons {
-            border-top: 1px solid rgba(0, 0, 0, .16);
+            border-top: 1px solid rgba(0, 0, 0, .05);
 
             > a {
                 display: block;
@@ -56,11 +72,11 @@
                 }
 
                 &.active {
-                    background-color: rgba(0, 0, 0, .05);
+                    background-color: fade-out($info-color, .8);
                     pointer-events: none;
                 }
 
-                &:not(:last-of-type) { border-right: 1px solid rgba(0, 0, 0, .1); }
+                &:not(:last-of-type) { border-right: 1px solid rgba(0, 0, 0, .05); }
 
                 &:before {
                     margin-right: 1em;

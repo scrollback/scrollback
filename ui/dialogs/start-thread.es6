@@ -1,10 +1,11 @@
-/* eslint-env es6, browser */
+/* eslint-env es6, browser, jquery */
 
 "use strict";
 
 module.exports = (core, config, store) => {
 	const React = require("react"),
 		  Dialog = require("./dialog.es6")(core, config, store),
+		  Loader = require("../components/loader.jsx")(core, config, store),
 		  FileUpload = require("../components/file-upload.jsx")(core, config, store),
 		  promisedAction = require("../../lib/promised-action.es6")(core),
 		  generate = require("../../lib/generate.browser.js");
@@ -14,9 +15,35 @@ module.exports = (core, config, store) => {
 			super(props);
 
 			this.state = {
-				show: store.get("nav", "dialog") === "start-thread",
+				show: true,
 				activeInput: "text"
 			};
+		}
+
+		showError(message) {
+			let error = document.createElement("div"),
+				content = document.createElement("div"),
+				origin;
+
+			if (message.indexOf("Text") === 0) {
+				origin = this._text;
+			} else if (message.indexOf("Image") === 0) {
+				origin = this._image;
+			} else {
+				origin = this._title;
+			}
+
+			error.className = "error";
+			content.className = "popover-content";
+			content.textContent = message;
+
+			error.appendChild(content);
+
+			origin.classList.add("error");
+
+			$(error).popover({ origin });
+
+			$(document).one("popoverDismissed", () => origin.classList.remove("error"));
 		}
 
 		onUploadStart() {
@@ -53,37 +80,45 @@ module.exports = (core, config, store) => {
 
 		startThread(opts) {
 			if (!opts.title) {
-				return Promise.reject("Title cannot be empty!");
+				return Promise.reject(new Error("Title cannot be empty!"));
 			}
 
-			let id, text;
+			let id, text, user;
 
 			if (this.state.activeInput === "text") {
 				if (!opts.text) {
-					return Promise.reject("Text cannot be empty!");
+					return Promise.reject(new Error("Text cannot be empty!"));
 				} else {
 					text = opts.text;
 					id = generate.uid(32);
+					user = store.get("user");
 				}
 			} else {
 				if (!this.state.uploadData) {
-					return Promise.reject("Image cannot be empty!");
+					return Promise.reject(new Error("Image cannot be empty!"));
 				} else {
 					let { upload, payload } = this.state.uploadData;
 
 					text = "[![" + upload.file.name + "](" + upload.thumb + ")](" + upload.url + ")";
-					id = payload.id;
+					id = payload.textId;
+					user = payload.userId;
 				}
 			}
 
-			return promisedAction("text-up", {
+			return promisedAction("text", {
 				id: id,
 				to: store.get("nav", "room"),
-				from: store.get("user"),
+				from: user,
 				text: text,
 				thread: id,
 				title: opts.title
 			});
+		}
+
+		onImageButtonClick() {
+			this.setState({ activeInput: "image", uploadStatus: "", uploadData: null });
+
+			this._image.click();
 		}
 
 		onSubmit(e) {
@@ -94,14 +129,14 @@ module.exports = (core, config, store) => {
 				image = this._image.value;
 
 			this.startThread({ title, text, image })
-			.then(() => {
-				core.emit("setstate", {
-					nav: { dialog: null }
-				});
-			})
-			.catch(() => {
-				this.showError(this._title);
-			});
+			.then(() => this.setState({ show: false }))
+			.catch(err => this.showError(err.message));
+		}
+
+		componentDidUpdate(prevProps, prevState) {
+			if (prevState.uploadStatus !== this.state.uploadStatus && this.state.uploadStatus === "error") {
+				this.showError("Image upload failed! Try again later, maybe?");
+			}
 		}
 
 		render() {
@@ -109,17 +144,17 @@ module.exports = (core, config, store) => {
 
 			switch (this.state.uploadStatus) {
 			case "active":
-				uploadStatus = "Uploading image...";
+				uploadStatus = <Loader key="loader" status={this.state.uploadStatus} />;
 				break;
 			case "complete":
 				uploadStatus = <img src={this.state.uploadData.upload.thumb} />;
 				break;
 			default:
-				uploadStatus = "Click to select image.";
+				uploadStatus = <span>Click to select image</span>;
 			}
 
 			return (
-				<Dialog className="start-thread-dialog">
+				<Dialog className="start-thread-dialog" show={this.state.show}>
 					<div className="modal-content dialog-content">
 						<h1 className="dialog-title">Start a new discussion</h1>
 						<form onSubmit={this.onSubmit.bind(this)}>
@@ -145,7 +180,9 @@ module.exports = (core, config, store) => {
 										ref={c => this._image = React.findDOMNode(c)}
 										className={"image-drop-area area " + (this.state.activeInput === "image" ? " active" : "")}
 										accept="image/*" maxsize={5242880}
-										onstart={this.onUploadStart} onerror={this.onUploadError} onfinish={this.onUploadFinish}
+										onstart={this.onUploadStart.bind(this)}
+										onerror={this.onUploadError.bind(this)}
+										onfinish={this.onUploadFinish.bind(this)}
 										getPayload={this.getUploadPayload}>
 
 										{uploadStatus}
@@ -160,7 +197,7 @@ module.exports = (core, config, store) => {
 									</a>
 									<a
 										className={"start-thread-image " + (this.state.activeInput === "image" ? "active" : "")}
-										onClick={() => this.setState({ activeInput: "image", uploadStatus: "", uploadData: null })}>
+										onClick={this.onImageButtonClick.bind(this)}>
 										Image
 									</a>
 								</div>

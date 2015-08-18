@@ -65,7 +65,11 @@ module.exports = core => {
 		}
 
 		componentWillReceiveProps(nextProps) {
-			this.setState({ show: nextProps.show });
+			if (nextProps.show === false) {
+				this.dismiss();
+			} else {
+				this.setState({ show: nextProps.show });
+			}
 		}
 
 		componentDidUpdate() {
