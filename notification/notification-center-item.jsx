@@ -50,7 +50,7 @@ module.exports = (core, ...args) => {
 					<span className="notification-center-item-close close" onClick={this.closeItem.bind(this)} />
 					<span className="notification-center-item-content content" onClick={item.act.bind(item)}>
 						<span className="notification-center-item-text" dangerouslySetInnerHTML={{__html: item.html}}/>
-						<span className="notification-center-item-timestamp">{friendlyTime(this.props.note.time)}</span>
+						<span className="notification-center-item-timestamp">{friendlyTime(this.props.note.time, Date.now())}</span>
 					</span>
 					<span className="notification-center-item-actions">{actions}</span>
 				   </div>
