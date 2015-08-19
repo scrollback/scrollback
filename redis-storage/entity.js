@@ -11,8 +11,12 @@ function onGetUsers(query, callback) {
 		return get("session", query.session, function(err, sess) {
 			log.d("response for session:", err, sess);
 			if (err) return callback(err);
-			if (sess) query.ref = sess.user;
-			return callback();
+			if (sess) {
+				query.ref = sess.user;
+				return callback();
+			} else {
+				return callback(new Error("SESSION:NOT_INITIALIZED"));
+			}
 		});
 	} else if (query.occupantOf) {
 		return occupantDB.smembers("room:{{" + query.occupantOf + "}}:hasOccupants", function(err, data) {
