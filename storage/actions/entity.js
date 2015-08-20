@@ -32,7 +32,7 @@ module.exports = function(action) {
 		locale: entity.locale,
 		params: entity.params,
 		guides: entity.guides,
-		terms:  entity.id + " " + (entity.description || "")
+		terms: entity.id + " " + (entity.description || "")
 	};
 
 
