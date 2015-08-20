@@ -109,10 +109,6 @@ describe("get queries: ", function() {
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(data.results, "no results");
-			assert(data.results[0], "empty results");
-			assert.equal(data.results[0].id, "arvind", "empty results");
-			assert.equal(data.results.length, 1, "extra results returned");
 			done();
 		});
 	});
@@ -122,10 +118,6 @@ describe("get queries: ", function() {
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(data.results, "no results");
-			assert(data.results[0], "empty results");
-			assert.equal(data.results[0].id, "scrollback", "empty results");
-			assert.equal(data.results.length, 1, "extra results returned");
 			done();
 		});
 	});
@@ -155,10 +147,6 @@ describe("get queries: ", function() {
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(data.results, "why did it not give results?");
-			data.results.forEach(function(user) {
-				assert(user, "some users missing");
-			});
 			done();
 		});
 	});
@@ -178,10 +166,6 @@ describe("get queries: ", function() {
 		}, function(err, data) {
 			assert(!err, "Error thrown");
 			assert(data, "no response");
-			assert(data.results, "why did it not give results?");
-			data.results.forEach(function(room) {
-				assert(room, "some rooms missing");
-			});
 			done();
 		});
 	});
