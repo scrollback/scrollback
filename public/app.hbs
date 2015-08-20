@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html manifest="/manifest.appcache" lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
 
 	<meta name="description" content="{{seo.head.description}}">
 
@@ -26,9 +26,9 @@
 
 	<link rel="shortcut icon" href="/s/assets/favicon.png" type="image/x-icon">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="/s/dist/styles/style.min.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="/s/dist/styles/style.min.css">
 
-    {{#if analytics.id}}
+	{{#if analytics.id}}
 		<script>
 			var _gaq = _gaq || [];
 			_gaq.push(['_setAccount', '{{analytics.id}}']);
@@ -74,7 +74,20 @@
 
 	<div id="app-client" class="app-client"></div>
 
-    <script src="/s/dist/scripts/app.bundle.min.js"></script>
+	<div class="splash-screen" id="splash-screen">
+		<div class="splash-screen-inner">
+			 <div class="chat-bubble-container">
+				  <div class="chat-bubble">
+					   <div class="chat-bubble-line"></div>
+					   <div class="chat-bubble-line"></div>
+					   <div class="chat-bubble-line"></div>
+				  </div>
+				  <div class="chat-bubble-shadow"></div>
+			 </div>
+		</div>
+	</div>
+
+	<script src="/s/dist/scripts/app.bundle.min.js"></script>
 
 	<script async defer src="//login.persona.org/include.js"></script>
 

@@ -75,8 +75,6 @@ module.exports = function(core, config, store) {
 						<CurrentDialog />
 
 						<div data-mode="room chat" className="sidebar-overlay" onClick={this.closeSidebar}></div>
-
-						<div className="progressbar loading"></div>
 					</div>
 			);
 

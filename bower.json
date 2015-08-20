@@ -13,7 +13,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "lace": "0.1.17",
+    "lace": "0.1.18",
     "sockjs": "~0.3.4",
     "endless": "*",
     "jquery": "~2.1.3"

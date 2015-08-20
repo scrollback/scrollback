@@ -24,7 +24,6 @@ require("../bower_components/lace/src/js/jquery.alertbar.js");
 require("../bower_components/lace/src/js/jquery.modal.js");
 require("../bower_components/lace/src/js/jquery.multientry.js");
 require("../bower_components/lace/src/js/jquery.popover.js");
-require("../bower_components/lace/src/js/jquery.progressbar.js");
 
 // jQuery plugins
 require("./plugins/jquery.validInput.js");
