@@ -1,0 +1,95 @@
+@include exports(startthread) {
+    .start-thread {
+        &-inputs {
+            height: 6em;
+
+            &-container {
+                @extend %clearfix;
+
+                border: 1px solid rgba(0, 0, 0, .1);
+                border-radius: $roundness;
+                margin: 1em 0;
+            }
+
+            & > .active { display: block; }
+
+            & > :not(.active) { display: none; }
+
+            textarea {
+                border: 0;
+                margin: 0;
+                width: 100%;
+                height: 100%;
+
+                &:focus, &:hover, &:active { box-shadow: 0 0 0 1px $accent-color; }
+
+                &.error { box-shadow: 0 0 0 1px $error-color; }
+            }
+
+            .image-drop-area {
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                cursor: pointer;
+                background-color: rgba(0, 0, 0, .025);
+
+                > input { display: none; }
+
+                > span {
+                    display: inline-block;
+                    padding: 2.25em 1em;
+                }
+
+                > img {
+                    max-height: 100%;
+                    width: auto;
+                    background-color: rgba(0, 0, 0, .1);
+                }
+
+                > .loader { margin: 2em; }
+
+                &.upload-active, &.upload-complete { pointer-events: none; }
+            }
+        }
+
+        &-buttons {
+            border-top: 1px solid rgba(0, 0, 0, .05);
+
+            > a {
+                display: block;
+                width: 50%;
+                float: left;
+                text-align: center;
+                border: 0;
+                padding: (.5em / .9);
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: .9em;
+                background-color: transparent;
+                color: currentColor;
+
+                &:focus, &:hover, &:active {
+                    background-color: transparent;
+                    color: $info-color;
+                }
+
+                &.active {
+                    background-color: fade-out($info-color, .8);
+                    pointer-events: none;
+                }
+
+                &:not(:last-of-type) { border-right: 1px solid rgba(0, 0, 0, .05); }
+
+                &:before {
+                    margin-right: 1em;
+                    opacity: .5;
+                }
+
+                &.start-thread-text { @include icon("document"); }
+
+                &.start-thread-image { @include icon("image"); }
+            }
+        }
+    }
+}
+

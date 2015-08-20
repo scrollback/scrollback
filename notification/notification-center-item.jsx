@@ -3,7 +3,7 @@
 "use strict";
 
 const React = require("react"),
-	  format = require("../lib/format.js");
+	  friendlyTime = require("../lib/friendly-time.js");
 
 module.exports = (core, ...args) => {
 	const NotificationItem = require("./notification-item.es6")(core, ...args);
@@ -50,13 +50,20 @@ module.exports = (core, ...args) => {
 					<span className="notification-center-item-close close" onClick={this.closeItem.bind(this)} />
 					<span className="notification-center-item-content content" onClick={item.act.bind(item)}>
 						<span className="notification-center-item-text" dangerouslySetInnerHTML={{__html: item.html}}/>
-						<span className="notification-center-item-timestamp">{format.friendlyTime(this.props.note.time, Date.now())}</span>
+						<span className="notification-center-item-timestamp">{friendlyTime(this.props.note.time, Date.now())}</span>
 					</span>
 					<span className="notification-center-item-actions">{actions}</span>
 				   </div>
 				   );
 		}
 	}
+
+	NotificationCenterItem.propTypes = {
+		note: React.PropTypes.shape({
+			noteType: React.PropTypes.string,
+			time: React.PropTypes.number
+		})
+	};
 
 	return NotificationCenterItem;
 };

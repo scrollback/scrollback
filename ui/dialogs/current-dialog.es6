@@ -4,7 +4,8 @@
 
 module.exports = (core, config, store) => {
 	const React = require("react"),
-		  ShareDialog = require("./share.es6")(core, config, store);
+		  ShareDialog = require("./share.es6")(core, config, store),
+		  StartThread = require("./start-thread.es6")(core, config, store);
 
 	class CurrentDialog extends React.Component {
 		constructor(props) {
@@ -20,6 +21,8 @@ module.exports = (core, config, store) => {
 			switch (this.state.dialog) {
 			case "share":
 				return <ShareDialog dialogState={this.state.dialogState} />;
+			case "start-thread":
+				return <StartThread dialogState={this.state.dialogState} />;
 			default:
 				return <null />;
 			}
