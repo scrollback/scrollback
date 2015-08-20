@@ -66,8 +66,6 @@ module.exports = function(action) {
 	log.d("to insert: ", insertObject);
 	query.push(pg.cat([pg.update("entities", updateObject), "WHERE", pg.nameValues(whereObject, " AND ")]));
 
-	// VERIFY: this should be updateObject?
-
 	insertObject.$ = "INSERT INTO entities" +
 			"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
 			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, $(createTime)," +
