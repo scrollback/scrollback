@@ -7,17 +7,15 @@ var queueBack = [];
 
 function enter(roomId) {
 	var room = store.getRoom(roomId),
-		user = store.getUser().id,
-		getRelation = store.getRelation(room.id, user),
-		userRelation = getRelation ? getRelation.role : "none";
+		relation = store.getRelation(roomId),
+		role = relation ? relation.role : "none";
 
-	if((room.guides && room.guides.authorizer && (permissionLevels[userRelation] < permissionLevels[room.guides.authorizer.readLevel])) || 
-	   (userRelation === "banned")) {
+	if ((room && room.guides && room.guides.authorizer && (permissionLevels[role] < permissionLevels[room.guides.authorizer.readLevel])) ||
+	   (role === "banned")) {
 		return;
 	}
-	core.emit("back-up", {
-		to: roomId
-	});
+
+	core.emit("back-up", { to: roomId });
 }
 
 function sendBack(roomId) {
