@@ -68,11 +68,15 @@ function init(app) {
 						return;
 					}
 
-					if (data.type === "url") {
+					if (data.type === "url" && data.url) {
 						res.redirect(302, data.url);
-					} else if (data.type === "json") {
+					} else if (data.type === "json" && data.json) {
 						res.setHeader("Content-Type", "application/json");
 						res.end(data.json);
+					} else {
+						log.e("Got invalid data for", req.path, ":", data, err);
+
+						res.send(404);
 					}
 				});
 			} catch(err) {
