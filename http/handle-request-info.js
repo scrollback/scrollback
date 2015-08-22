@@ -104,10 +104,10 @@ module.exports = function(core) {
 					}
 				}
 
-				cb(null, {
+				cb(null, url ? {
 					type: "url",
 					url: url
-				});
+				} : null);
 
 				return;
 			}
