@@ -60,7 +60,7 @@ function init(app) {
 		if (/^\/i\//.test(req.path)) {
 			try {
 				handleRequestInfo(req, function(err, data) {
-					if (err || !data) {
+					if (err || !data || !data.url) {
 						log.e("Error retriving info for", req.path, err);
 
 						res.send(404);
