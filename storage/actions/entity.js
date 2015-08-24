@@ -27,7 +27,7 @@ module.exports = function(action) {
 		identities: entity.identities || [],
 		color: entity.color || 0,
 		picture: entity.picture,
-		createtime: new Date(action.time),
+		createTime: new Date(action.time),
 		timezone: entity.timezone,
 		locale: entity.locale,
 		params: entity.params,
@@ -41,7 +41,7 @@ module.exports = function(action) {
 			action.user.identities = action.user.identities || [];
 			if (action.user.identities.indexOf("guest:" + action.user.id) < 0) {
 				action.user.identities.push("guest:" + action.user.id);
-			}
+			}	
 			insertObject.id = insertObject.id.replace(/^guest-/, "");
 			insertObject.identities = action.user.identities;
 		}
@@ -68,7 +68,7 @@ module.exports = function(action) {
 
 	insertObject.$ = "INSERT INTO entities" +
 			"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
-			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, $(createTime)," +
+			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, ${createTime}," +
 			"${timezone}, ${locale}, ${params}, ${guides}, to_tsvector('english', ${terms})";
 
 	query.push(pg.cat([insertObject, {
