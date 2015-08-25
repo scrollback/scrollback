@@ -71,9 +71,9 @@ module.exports = function(core, config, store) {
 				icons = [],
 				threads;
 
-			threads = (store.getThreads(room, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
+			threads = (store.getThreads(room, null, -(this.props.threadCount || 2)) || []).reverse().map(function(thread) {
 				return (
-					<div key={"room-card-thread-" + room + "-" + thread.id} className="card-thread">
+					<div key={"room-card-thread-" + room + "-" + thread.id}>
 						<span className="text">{thread.title}</span>
 						<span className="nick">{userUtils.getNick(thread.from)}</span>
 					</div>
@@ -98,7 +98,7 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
+				<div key={"room-card-" + room} className="card card-room" onClick={this.goToRoom}>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
 						<div className="card-actions">
 							<Badge className="card-actions-item card-badge notification-badge" filter={this.badgeFilter} />
@@ -107,7 +107,7 @@ module.exports = function(core, config, store) {
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.avatar  + ")" }}></div>
 						<h3 className="card-cover-title">{roomUtils.getName(room)}</h3>
 					</div>
-					<div className="card-content card-content-big">
+					<div className="card-content">
 						<h4 className="card-content-title">Recent discussions</h4>
 						{threads}
 					</div>

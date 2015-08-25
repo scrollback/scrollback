@@ -9,28 +9,6 @@ module.exports = function createBulkQuery(core, store, type) {
 
 	changes[type] = {};
 
-	function add(roomId) {
-		if(queriedRooms[roomId]) return;
-		queriedRooms[roomId] = true;
-
-
-		if(type === "texts") {
-			roomId = roomId.split("_");
-			if(store.getTexts(roomId[0], roomId[1], null, -3)[0] !== "missing") return;
-//			console.log('getting more texts', queryCount);
-//			process.nextTick(function () {
-				queryCount++;
-				core.emit("getTexts", {to:roomId[0], thread: roomId[1], time: null, before: 3}, done);
-//			});
-		} else {
-			if(store.getThreads(roomId, null, -3)[0] !== "missing") return;
-//			process.nextTick(function () {
-				queryCount++;
-				core.emit("getThreads", {to:roomId, time: null, before: 3}, done);
-//			});
-		}
-	}
-
 	function done(err, query) {
 		var key;
 		queryCount--;
@@ -50,6 +28,28 @@ module.exports = function createBulkQuery(core, store, type) {
 		if(queryCount === 0 && Object.keys(changes[type]).length) {
 //			console.log('emitting ', changes);
 			core.emit("setstate", objUtils.clone(changes));
+		}
+	}
+
+	function add(roomId) {
+		if(queriedRooms[roomId]) return;
+		queriedRooms[roomId] = true;
+
+
+		if(type === "texts") {
+			roomId = roomId.split("_");
+			if(store.getTexts(roomId[0], roomId[1], null, -4)[0] !== "missing") return;
+//			console.log('getting more texts', queryCount);
+//			process.nextTick(function () {
+				queryCount++;
+				core.emit("getTexts", {to:roomId[0], thread: roomId[1], time: null, before: 4}, done);
+//			});
+		} else {
+			if(store.getThreads(roomId, null, -2)[0] !== "missing") return;
+//			process.nextTick(function () {
+				queryCount++;
+				core.emit("getThreads", {to:roomId, time: null, before: 2}, done);
+//			});
 		}
 	}
 

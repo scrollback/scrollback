@@ -28,7 +28,7 @@
         margin-top: $bar-height * -1;
         padding-top: $bar-height;
 
-        &.flex-enhanced {
+        .flex-available & {
             @include align-items(flex-end);
 
             margin-top: 0;
@@ -58,7 +58,7 @@
 
             @media #{$screenxxxx} { padding: 1em 3em; }
 
-            .flex-enhanced & { @include flex-grow(0); }
+            .flex-available & { @include flex-grow(0); }
         }
 
         &-actions {

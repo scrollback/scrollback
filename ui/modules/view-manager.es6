@@ -13,6 +13,11 @@ const keys = [ "view", "mode" ],
 module.exports = (core, config, store) => {
 	let oldClassName;
 
+	// Add some classes to body
+	if (window.CSS.supports("display", "flex")) {
+		document.body.classList.add("flex-available");
+	}
+
 	// Listen to navigate and add class names
 	core.on("statechange", () => {
 		let newClassList = [],
@@ -75,7 +80,7 @@ module.exports = (core, config, store) => {
 		if (oldClassName !== newClassName) {
 			currentClassName = document.body.className;
 
-			for (var j = 0, k = types.length; j < k; j++) {
+			for (let j = 0, k = types.length; j < k; j++) {
 				currentClassName = currentClassName.replace(new RegExp("\\b" + types[j] + "-" + "\\S+", "g"), "").trim();
 			}
 

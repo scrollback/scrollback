@@ -49,7 +49,7 @@
 
             &-people { @include icon(people); }
 
-            &-comment { @include icon(comment); }
+            &-history { @include icon(history); }
 
             &-share { @include icon(share); }
 
@@ -130,21 +130,8 @@
 
         &-content {
             position: relative;
-            height: $card-height - 1.5em;
             margin: 1em;
-            margin-bottom: 0;
             overflow: hidden;
-
-            &:after {
-                content: "";
-                display: block;
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 1.5em;
-                background-image: linear-gradient(to bottom, rgba($light-color, 0), $light-color);
-            }
 
             &-title {
                 text-transform: uppercase;
@@ -158,17 +145,53 @@
 
                 font-size: 1em;
                 font-weight: 700;
-                margin-bottom: .75em;
+                margin: 0 1em .75em 0;
 
                 @for $i from 1 through length($palette) {
                     &.color-#{$i - 1} { color: nth($palette, $i); }
                 }
             }
 
-            > div { margin-bottom: .5em; }
+            .messages {
+                position: relative;
+                overflow: hidden;
+                height: $card-height - $bar-height;
+
+                &:before, &:after {
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: .5em;
+                    z-index: 1;
+                }
+
+                &:before {
+                    top: 0;
+                    background-image: linear-gradient(to top, rgba($light-color, 0), $light-color);
+                }
+
+                &:after {
+                    bottom: 0;
+                    background-image: linear-gradient(to bottom, rgba($light-color, 0), $light-color);
+                }
+
+                &-inner {
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    min-height: 100%;
+
+                    > div { margin-bottom: .5em; }
+                }
+            }
 
             img:not(.emoji) {
+                display: inline-block;
                 max-height: 4em;
+                margin: .5em 0;
                 border-radius: $roundness;
                 vertical-align: top;
             }
@@ -188,11 +211,6 @@
                 color: fade-out($dark-color, .2);
 
                 + .nick {
-                    &:before {
-                        content: "-";
-                        margin: 0 .5em;
-                    }
-
                     &:after { display: none; }
                 }
 
@@ -200,8 +218,26 @@
             }
         }
 
+        &-room {
+            .card-content {
+                height: $card-height - $bar-height;
+
+                .text { margin-top: .25em; }
+
+                .nick { margin-bottom: .25em; }
+
+                .text, .nick {
+                    @extend %ellipsize;
+
+                    display: block;
+                }
+            }
+        }
+
         &-thread {
             &-all { padding: 1em; }
+
+            .card-content { margin-bottom: 0; }
 
             .card-icon { opacity: .8; }
 
@@ -216,7 +252,6 @@
                     line-height: 1;
                     opacity: .8;
                     padding: (1em / .9);
-                    padding-right: (.5em / .9);
 
                     &:before {
                         font-size: 1.5em;
@@ -224,8 +259,6 @@
                         vertical-align: -.1em;
                         opacity: .5;
                     }
-
-                    &-right { float: right; }
                 }
             }
         }

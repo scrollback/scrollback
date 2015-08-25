@@ -96,17 +96,21 @@ module.exports = (core, config, store) => {
 					</div>
 					<div className="card-content" onClick={this.goToThread.bind(this)}>
 						<h3 className={"color-" + thread.color}>{thread.title}</h3>
-						{this.state.texts.reverse().map(text => {
-							return (
-								<div key={"thread-text-" + text.id}>
-									<div className="nick">{userUtils.getNick(text.from)}</div>
-									<div className="text markdown-text" dangerouslySetInnerHTML={{__html: format.mdToHtml(text.text)}} />
-								</div>
-							);
-						})}
+						<div className="messages">
+							<div className="messages-inner">
+								{this.state.texts.map(text => {
+									return (
+										<div key={"thread-text-" + text.id}>
+											<div className="nick">{userUtils.getNick(text.from)}</div>
+											<div className="text markdown-text" dangerouslySetInnerHTML={{__html: format.mdToHtml(text.text)}} />
+										</div>
+									);
+								})}
+							</div>
+						</div>
 					</div>
 					<div className="card-bottom" onClick={this.goToThread.bind(this)}>
-						<span className="card-bottom-icon card-icon-people">{thread.concerns ? thread.concerns.length : 0} people talking</span>
+						<span className="card-bottom-icon card-icon-people">{thread.concerns.length} {thread.concerns.length === 1 ? "person" : "people"} talking</span>
 					</div>
 				</div>
 			);

@@ -31,6 +31,10 @@ $grid-item-width: 27em;
 
     &:focus { outline: none; }
 
+    @media only screen and (max-width: #{$grid-item-width}) {
+        > .card { border-radius: 0; }
+    }
+
     @media only screen and (min-width: #{$grid-item-width * 2}) { margin: .5em; }
 
     @for $i from 1 through 10 {

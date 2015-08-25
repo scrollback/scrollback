@@ -33,15 +33,8 @@ module.exports = function(core, config, store) {
 				return <NoSuchRoom data-mode="chat" />;
 			}
 
-			let chatAreaClassNames = "main-content-chat chat-area";
-
-			// Enhance chat area layout in modern browsers
-			if (window.CSS.supports("display", "flex")) {
-				chatAreaClassNames += " flex-enhanced";
-			}
-
 			return (
-					<div className={chatAreaClassNames} data-mode="chat">
+					<div className="main-content-chat chat-area" data-mode="chat">
 
 						<ChatAreaMessages />
 
