@@ -11,10 +11,12 @@ var userUtils = require('../../lib/user-utils.js');
 */
 
 module.exports = function(action) {
-	var entity, insertObject, updateObject = {},
+	var entity,
+		insertObject,
+		updateObject = {},
 		whereObject = {},
 		col;
-	var inserts = [], query = [];
+	var query = [];
 
 	if (action.type === 'init') entity = action.user;
 	else entity = action[action.type];
@@ -23,14 +25,14 @@ module.exports = function(action) {
 		id: entity.id,
 		type: entity.type,
 		identities: entity.identities || [],
-		color: entity.color,
+		color: entity.color || 0,
 		picture: entity.picture,
-		createtime: entity.createTime?new Date(entity.createTime): new Date(),
+		createTime: new Date(action.time),
 		timezone: entity.timezone,
 		locale: entity.locale,
 		params: entity.params,
 		guides: entity.guides,
-		terms: entity.terms
+		terms: entity.id + " " + (entity.description || "")
 	};
 
 
@@ -39,7 +41,7 @@ module.exports = function(action) {
 			action.user.identities = action.user.identities || [];
 			if (action.user.identities.indexOf("guest:" + action.user.id) < 0) {
 				action.user.identities.push("guest:" + action.user.id);
-			}
+			}	
 			insertObject.id = insertObject.id.replace(/^guest-/, "");
 			insertObject.identities = action.user.identities;
 		}
@@ -50,43 +52,29 @@ module.exports = function(action) {
 	});
 	
 	for (col in insertObject) {
-		if (col !== 'id') {
-			updateObject[col] = insertObject[col];
-		} else {
+		if(col === 'id') {
 			whereObject[col] = insertObject[col];
+		} else if (col === 'createTime') {
+			log.i("createtime");
+		} else {
+			updateObject[col] = insertObject[col];
 		}
 	}
 
 
 	query.push(pg.lock([insertObject.id]));
 	log.d("to insert: ", insertObject);
-	query.push(pg.cat([pg.update("entities", insertObject), "WHERE", pg.nameValues(whereObject, " AND ")]));
+	query.push(pg.cat([pg.update("entities", updateObject), "WHERE", pg.nameValues(whereObject, " AND ")]));
 
-	inserts.push({
-		$: "INSERT INTO entities" +
+	insertObject.$ = "INSERT INTO entities" +
 			"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
-			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, $(createTime)," +
-			"${timezone}, ${locale}, ${params}, ${guides}, to_tsvector('english', ${terms})",
-		type: insertObject.type,
-		description: insertObject.description || "",
-		color: 0,
-		picture: insertObject.picture || "",
-		createTime: new Date(action.time),
-		timezone: insertObject.timezone || 0,
-		locale: insertObject.locale || "",
-		params: insertObject.params,
-		guides: insertObject.guides,
-		terms: insertObject.id + " " + (entity.description || ""),
-		id: insertObject.id,
-		identities: insertObject.identities
-	});
+			"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, ${createTime}," +
+			"${timezone}, ${locale}, ${params}, ${guides}, to_tsvector('english', ${terms})";
 
-	inserts.push({
+	query.push(pg.cat([insertObject, {
 		$: "WHERE NOT EXISTS (SELECT 1 FROM entities WHERE id = ${id})",
 		id: insertObject.id
-	});
-
-	query.push(pg.cat(inserts));
+	}]));
 	
 	if(action.type === "user" && action.old && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
 		query.push({

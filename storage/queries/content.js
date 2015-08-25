@@ -64,7 +64,7 @@ module.exports = [
 		return pg.cat([
 			"SELECT * FROM " + tableName + " WHERE",
 			pg.cat(filters, " AND "),
-			{ $: (orderBy? "ORDER BY " + orderBy + " " + direction: "") + " LIMIT ${limit}", limit: limit }
+			{ $: (orderBy? "ORDER BY " + orderBy + " " + (direction || ""): "") + " LIMIT ${limit}", limit: limit }
 		]);
 	},
 	

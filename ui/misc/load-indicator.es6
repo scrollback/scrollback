@@ -1,17 +1,18 @@
 /* eslint-env es6, browser */
-/* global $ */
 
 "use strict";
 
-module.exports = (core) => {
-	function dismissLoading(changes) {
-		if (changes.nav && changes.nav.mode) {
-			// We aren't really certain if the classes are added to body yet
-			$.progressbar("dismiss");
+module.exports = core => {
 
-			core.off("statechange", dismissLoading);
-		}
+	function dismissLoading() {
+		let splash = document.getElementById("splash-screen");
+
+		splash.style.opacity = 0;
+
+		setTimeout(() => splash.style.display = "none", 300);
+
+		core.off("init-dn", dismissLoading);
 	}
 
-	core.on("statechange", dismissLoading, 100);
+	core.on("init-dn", dismissLoading, 1);
 };

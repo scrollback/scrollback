@@ -20,7 +20,6 @@
 @import "../../../../bower_components/lace/src/scss/multientry";
 @import "../../../../bower_components/lace/src/scss/flexbox";
 @import "../../../../bower_components/lace/src/scss/tooltip";
-@import "../../../../bower_components/lace/src/scss/progressbar";
 @import "../../../../bower_components/lace/src/scss/linked";
 @import "../../../../bower_components/lace/src/scss/filter";
 @import "../../../../bower_components/lace/src/scss/dropshadow";
@@ -54,6 +53,7 @@
 @import "components/suggestions";
 @import "components/loader";
 @import "components/startthread";
+@import "components/splash";
 
 
 // Initialize grid
@@ -365,12 +365,6 @@ button {
 .block { display: block; }
 
 .wide { width: 100%; }
-
-.progressbar {
-    @include dropshadow(2);
-
-    background-color: $light-color;
-}
 
 .blankslate-area {
     width: 100%;
