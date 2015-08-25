@@ -1,9 +1,12 @@
 "use strict";
 
-var getAvatar = require("../lib/get-avatar.js"),
+var userUtils = require("../lib/user-utils.js"),
+	getAvatar = require("../lib/get-avatar.js"),
 	getRoomPics = require("../lib/get-room-pics.js");
 
 module.exports = function(core) {
+	var userFallbackAvatar = "/public/s/assets/avatar-fallback.png";
+
 	function parseURL(url) {
 		var parts, path, pathArr, query, queryArr, kv, o;
 
@@ -96,7 +99,7 @@ module.exports = function(core) {
 				} else {
 					switch (entity.type) {
 					case "user":
-						url = "/public/s/assets/avatar-fallback.png";
+						url = userFallbackAvatar;
 						break;
 					case "room":
 						url = getRoomPics(entity, [ "avatar" ], parseInt(info.size, 10)).avatar;
@@ -104,9 +107,18 @@ module.exports = function(core) {
 					}
 				}
 
-				cb(null, {
+				cb(null, url ? {
 					type: "url",
 					url: url
+				} : null);
+
+				return;
+			}
+
+			if (userUtils.isGuest(info.entity)) {
+				cb(null, {
+					type: "url",
+					url: userFallbackAvatar
 				});
 
 				return;
