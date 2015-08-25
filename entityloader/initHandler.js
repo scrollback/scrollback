@@ -2,12 +2,14 @@
 var crypto = require("crypto");
 var names = require("../lib/generate.js").names;
 var userUtils = require('../lib/user-utils.js');
+var 	log = require("../lib/logger.js");
 var core;
 
 function generateNick(suggestion, callback) {
-	var attemptingNick = suggestion || names(6);
+	var attemptingNick;
+	attemptingNick = suggestion = suggestion || names(6);
 	core.emit("getEntities", {
-		ref: attemptingNick + "*",
+		ref: suggestion + "*",
 		session: "internal-entityloader"
 	}, function(err, query) {
 		var i = 1,
@@ -18,11 +20,14 @@ function generateNick(suggestion, callback) {
 			return e.id.replace(/^guest-/, "");
 		});
 
+		log.d(attemptingNick+" search results: ", ids);
 		if (!ids.length || ids.indexOf(attemptingNick) < 0) return callback(null, attemptingNick);
 
-		while (i < 10) {
+		
+		while (i <= 10) {
 			if (ids.indexOf(attemptingNick) < 0) break;
-			attemptingNick += i;
+			attemptingNick = suggestion + i;
+			i++;
 		}
 
 		if (i === 10) return generateNick("", callback);
@@ -70,9 +75,10 @@ function initHandler(action, callback) {
 		if (err || !data || !data.results || !data.results.length) {
 			return initializerUser(action, function() {
 				if (action.suggestedNick) {
-					action.user.isSuggested = true;
-					action.user.assignedBy = action.origin.host;
-					action.user.requestedNick = action.suggestedNick;
+					if(!action.user.params) action.user.params = {};
+					action.user.params.isSuggested = true;
+					action.user.params.assignedBy = action.origin.host;
+					action.user.params.requestedNick = action.suggestedNick;
 				}
 				return callback();
 			});
@@ -81,14 +87,14 @@ function initHandler(action, callback) {
 		}
 		
 		function allowSuggested(user) {
-			if (user.isSuggested) return (action.origin.host === action.user.assignedBy && action.suggestedNick !== action.user.requestedNick);
+			if (user.params.isSuggested) return (action.origin.host === action.user.params.assignedBy && action.suggestedNick !== action.user.params.requestedNick);
 			else return true;
 		}
 		if (action.suggestedNick && userUtils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
 			return initializerUser(action, function() {
-				action.user.isSuggested = true;
-				action.user.assignedBy = action.origin.host;
-				action.user.requestedNick = action.suggestedNick;
+				action.user.params.isSuggested = true;
+				action.user.params.assignedBy = action.origin.host;
+				action.user.params.requestedNick = action.suggestedNick;
 				action.old = old;
 				return callback();
 			});

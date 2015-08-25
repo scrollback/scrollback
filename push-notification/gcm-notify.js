@@ -52,12 +52,13 @@ module.exports = function(notesForApps, payload, core, config) {
 		var userRegMapping = notesForApps[packageName];
 		var registrationIds = Object.keys(userRegMapping), registrationIdsSubSet;
 
-
-		function notify(err, res, body) {
+		function doneNotify(err, res, body) {
 			var index, result;
-			if(err) log.i(err);
+			if(err) return log.e(err);
+			
 			try {
 				log.i("GCM request made, body", body);
+				log.i("Response status code", res && res.statusCode);
 				body = JSON.parse(body);
 				if (body.failure) {
 					for (index = 0; index < body.results.length; index++) {
@@ -70,10 +71,10 @@ module.exports = function(notesForApps, payload, core, config) {
 					}
 				}
 			} catch (e) {
-				log.i("Error parsing GCM response");
+				log.i("Error parsing GCM response", e);
 			}
-			log.i("Response status code", res.statusCode);
 		}
+		
 		while (registrationIds.length > 0) {
 			registrationIdsSubSet = registrationIds.splice(0, 1000);
 			request.post({
@@ -83,7 +84,7 @@ module.exports = function(notesForApps, payload, core, config) {
 					data:payload,
 					registration_ids: registrationIdsSubSet
 				})
-			}, notify);
+			}, doneNotify);
 		}
 	});
 };
