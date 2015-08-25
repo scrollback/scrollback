@@ -52,31 +52,29 @@ module.exports = function(notesForApps, payload, core, config) {
 		var userRegMapping = notesForApps[packageName];
 		var registrationIds = Object.keys(userRegMapping), registrationIdsSubSet;
 
-
-		function notify(err, res, body) {
+		function doneNotify(err, res, body) {
 			var index, result;
-			if(err) {
-				log.i(err);
-			} else {
-				try {
-					log.i("GCM request made, body", body);
-					log.i("Response status code", res && res.statusCode);
-					body = JSON.parse(body);
-					if (body.failure) {
-						for (index = 0; index < body.results.length; index++) {
-							result = body.results[index];
-							if (result.hasOwnProperty('error') &&
-								(result.error === "InvalidRegistration" ||
-								result.error === "NotRegistered") || result.error === "MismatchSenderId") {
-								removeDevice(userRegMapping[index], packageName);
-							}
+			if(err) return log.e(err);
+			
+			try {
+				log.i("GCM request made, body", body);
+				log.i("Response status code", res && res.statusCode);
+				body = JSON.parse(body);
+				if (body.failure) {
+					for (index = 0; index < body.results.length; index++) {
+						result = body.results[index];
+						if (result.hasOwnProperty('error') &&
+							(result.error === "InvalidRegistration" ||
+							result.error === "NotRegistered") || result.error === "MismatchSenderId") {
+							removeDevice(userRegMapping[index], packageName);
 						}
 					}
-				} catch (e) {
-					log.i("Error parsing GCM response");
 				}
+			} catch (e) {
+				log.i("Error parsing GCM response", e);
 			}
 		}
+		
 		while (registrationIds.length > 0) {
 			registrationIdsSubSet = registrationIds.splice(0, 1000);
 			request.post({
@@ -86,7 +84,7 @@ module.exports = function(notesForApps, payload, core, config) {
 					data:payload,
 					registration_ids: registrationIdsSubSet
 				})
-			}, notify);
+			}, doneNotify);
 		}
 	});
 };
