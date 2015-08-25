@@ -23,7 +23,7 @@ module.exports = function(core, config, store) {
 		},
 
 		goToRoom: function(e) {
-			if (/card-header-icon/.test(e.target.className)) {
+			if (/card-icon/.test(e.target.className)) {
 				return;
 			}
 
@@ -74,24 +74,24 @@ module.exports = function(core, config, store) {
 			threads = (store.getThreads(room, null, -(this.props.threadCount || 3)) || []).reverse().map(function(thread) {
 				return (
 					<div key={"room-card-thread-" + room + "-" + thread.id} className="card-thread">
-						<span className="card-thread-message">{thread.title}</span>
-						<span className="card-thread-by">{userUtils.getNick(thread.from)}</span>
+						<span className="text">{thread.title}</span>
+						<span className="nick">{userUtils.getNick(thread.from)}</span>
 					</div>
 				);
 			});
 
-			icons.push(<a className="card-header-icon card-header-icon-share card-cover-icon" key={"card-share-" + room} onClick={this.shareRoom}></a>);
+			icons.push(<a className="card-icon card-icon-share card-actions-item" key={"card-share-" + room} onClick={this.shareRoom}></a>);
 
 			if (user && !userUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
-					icons.push(<a data-state="online" className="card-header-icon card-header-icon-configure card-cover-icon"
+					icons.push(<a data-state="online" className="card-icon card-icon-configure card-actions-item"
 					           key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);
 				} else {
 					icons.push(
 						<FollowButton
 							room={room}
 							data-state="online"
-							className="card-header-icon card-header-icon-follow card-cover-icon"
+							className="card-icon card-icon-follow card-actions-item"
 							key={"card-follow-" + room}
 						/>);
 				}
@@ -100,8 +100,8 @@ module.exports = function(core, config, store) {
 			return (
 				<div key={"room-card-" + room} className="card room-card" onClick={this.goToRoom}>
 					<div className="card-cover" style={{ backgroundImage: "url(" + pics.cover  + ")" }}>
-						<div className="card-cover-header card-header">
-							<Badge className="card-header-badge notification-badge" filter={this.badgeFilter} />
+						<div className="card-actions">
+							<Badge className="card-actions-item card-badge notification-badge" filter={this.badgeFilter} />
 							{icons}
 						</div>
 						<div className="card-cover-logo" style={{ backgroundImage: "url(" + pics.avatar  + ")" }}></div>

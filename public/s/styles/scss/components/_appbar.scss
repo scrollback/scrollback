@@ -2,7 +2,7 @@
     .appbar {
         @extend %clearfix;
         @include transition(.3s $easeOutQuad);
-        @include dropshadow(2);
+        @include dropshadow(1);
 
         position: relative;
         z-index: 600;
@@ -19,12 +19,6 @@
             @for $i from 1 through length($palette) {
                 .color-#{$i - 1} & { background-color: nth($palette, $i); }
             }
-        }
-
-        &-secondary {
-            border-top: 1px solid rgba(0, 0, 0, .1);
-            background-color: $light-color;
-            color: fade-out($dark-color, .3);
         }
 
         &-logotype {
@@ -54,13 +48,6 @@
                 line-height: $bar-height / 1.2;
                 font-size: 1.2em;
                 padding: 0 (.25em / 1.2);
-            }
-
-            &-secondary {
-                float: left;
-                line-height: $bar-height;
-                font-size: 1em;
-                padding: 0 .25em;
             }
         }
 
