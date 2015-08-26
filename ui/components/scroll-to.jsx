@@ -3,7 +3,7 @@
 module.exports = function(core, config, store) {
 	const React = require("react");
 
-	class ScrollTo extends React.Components {
+	class ScrollTo extends React.Component {
 		constructor(props) {
 			super(props);
 

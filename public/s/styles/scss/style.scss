@@ -484,3 +484,13 @@ button {
 .invalid-room {
     .fab-thread { display: none; }
 }
+
+.go-to-thread {
+    border-top: 1px solid rgba(0, 0, 0, .1);
+    box-shadow: 0 -1.5px 3px rgba(0, 0, 0, .12);
+
+    > button {
+        padding: .5em 1em;
+        margin: .5em 1em;
+    }
+}

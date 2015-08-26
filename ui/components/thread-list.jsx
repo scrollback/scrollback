@@ -162,17 +162,8 @@ module.exports = function(core, config, store) {
 				positionKey = 'top';
 			}
 
-			sections = [{
-				key: "threads-" + nav.room + "-all",
-				endless: false,
-				items: [{
-					key: "thread-all",
-					elem: <div className="card card-thread-all" onClick={() => core.emit("setstate", { nav: { thread: null, mode: "chat" }})}>All messages</div>
-				}]
-			}];
-
 			if (items.length) {
-				sections.push({
+				sections = [{
 					key: "threads-" + nav.room,
 					header: "Discussions",
 					endless: true,
@@ -180,7 +171,7 @@ module.exports = function(core, config, store) {
 					atTop: atTop,
 					atBottom: atBottom,
 					position: positionKey
-				});
+				}];
 			} else {
 				empty = (
 					<div className="thread-feed-empty blankslate-area">
