@@ -6,16 +6,12 @@
         @include dropshadow(2);
 
         z-index: 400;
-        left: 50%;
-        margin: 1.5em;
-        margin-left: -6em;
-        width: 12.5em;
-        border-radius: 2em;
+        right: 0;
+        margin: 2em;
         opacity: 0;
         pointer-events: none;
         text-transform: none;
-
-        &:before { margin-right: .5em; }
+        padding: .5em 1em;
 
         &.visible {
             opacity: 1;
