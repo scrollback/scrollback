@@ -91,6 +91,7 @@ function initHandler(action, callback) {
 		// Yes, these conditions can be combined and improved but this is more readable.
 		function shouldInitialize() {
 			if(!old) return true;
+			if (!action.suggestedNick) return false;
 			if(!old.params || !old.params.isSuggested) return true;
 			if(action.suggestedNick === old.params.requestedNick) return false;
 			
