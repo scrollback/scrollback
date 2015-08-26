@@ -18,7 +18,13 @@ module.exports = (core, config, store) => {
 		}
 
 		getTexts(props) {
-			return (store.getTexts(props.roomId, props.thread.id, null, -4) || []).filter(text => text.from && text.text);
+			let texts = store.getTexts(props.roomId, props.thread.id, null, -4);
+
+			if (Array.isArray(texts)) {
+				return texts.filter(text => text.from && text.text && (text.tags ? text.tags.indexOf("hidden") === -1 : true));
+			}
+
+			return [];
 		}
 
 		goToThread(e) {
@@ -79,6 +85,42 @@ module.exports = (core, config, store) => {
 			this.setState({ texts: this.getTexts(nextProps) });
 		}
 
+		shouldComponentUpdate(nextProps, nextState) {
+			if (this.props.thread !== nextProps.thread || this.state.texts.length !== nextState.texts.length) {
+				return true;
+			}
+
+			let { tags } = this.props.thread,
+				{ nextTags } =  nextProps.thread;
+
+			if (Array.isArray(tags) && Array.isArray(nextTags)) {
+				if (tags.join(" ") !== nextTags.join(" ")) {
+					return true;
+				}
+			} else if (tags !== nextTags) {
+				return true;
+			}
+
+			for (let i = 0, l = this.state.texts.length; i < l; i++) {
+				let text = this.state.texts[i],
+					nextText = nextState.texts[i];
+
+				if (text === nextText) {
+					continue;
+				}
+
+				if (text && nextText) {
+					if (text.from !== nextText.from || text.text !== nextText.text) {
+						return true;
+					}
+				} else {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		render() {
 			const { thread } = this.props;
 
@@ -110,7 +152,11 @@ module.exports = (core, config, store) => {
 						</div>
 					</div>
 					<div className="card-bottom" onClick={this.goToThread.bind(this)}>
-						<span className="card-bottom-icon card-icon-people">{thread.concerns.length} {thread.concerns.length === 1 ? "person" : "people"} talking</span>
+						<span className="card-bottom-icon card-icon-people">{() => {
+							const length = thread.concerns ? thread.concerns.length : 0;
+
+							return `${length} ${length === 1 ? "person" : "people"} talking`;
+						}()}</span>
 					</div>
 				</div>
 			);
