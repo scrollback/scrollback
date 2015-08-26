@@ -1,8 +1,10 @@
+$grid-item-width: 27em;
+
 @mixin gridheader {
     text-transform: uppercase;
     opacity: .8;
     font-size: 1em;
-    margin: .5em 1.5em 0 1.5em;
+    margin: .5em 1.5em 0;
     font-weight: 700;
 }
 
@@ -12,14 +14,15 @@
     margin: 0;
     list-style: none;
     background: none;
-    border: none;
+    border: 0;
     box-shadow: none;
-    padding: .5em 1em;
+    padding: .5em 0;
+
+    @media only screen and (min-width: #{$grid-item-width}) { padding: .5em 1em; }
 }
 
 @mixin griditem {
     @extend %snappy;
-    @include dropshadow(1);
 
     float: left;
     width: 100%;
@@ -28,22 +31,20 @@
 
     &:focus { outline: none; }
 
-    &:focus, &:hover { @include dropshadow(2); }
+    @media only screen and (max-width: #{$grid-item-width}) {
+        > .card { border-radius: 0; }
+    }
 
-    &:active { @include dropshadow(1); }
-
-    $item-width: 27em;
-
-    @media only screen and (min-width: #{$item-width * 2}) { margin: .5em; }
+    @media only screen and (min-width: #{$grid-item-width * 2}) { margin: .5em; }
 
     @for $i from 1 through 10 {
-        @media only screen and (min-width: #{$item-width * $i}) {
+        @media only screen and (min-width: #{$grid-item-width * $i}) {
             width: (100% / $i) - 10%;
             width: calc(#{100% / $i} - 1em);
         }
     }
 
-    @media only screen and (min-width: #{$item-width * 11}) { min-width: 21em; }
+    @media only screen and (min-width: #{$grid-item-width * 11}) { min-width: 21em; }
 }
 
 @include exports(gridview) {

@@ -12,10 +12,6 @@ module.exports = core => {
 			super(props);
 		}
 
-		showChooser() {
-			React.findDOMNode(this.refs.filechooser).click();
-		}
-
 		uploadFiles(e) {
 			let file = e.target.files[0];
 
@@ -66,7 +62,7 @@ module.exports = core => {
 		render() {
 			return (
 				<label {...this.props}>
-					<input ref="filechooser" type="file" onChange={this.uploadFiles.bind(this)} accept={this.props.accept} />
+					<input style={{ display: "none" }} ref="filechooser" type="file" onChange={this.uploadFiles.bind(this)} accept={this.props.accept} />
 					{this.props.children}
 				</label>
 			);

@@ -4,8 +4,7 @@
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
-		  ThreadCard = require("./thread-card.jsx")(core, config, store),
-		  ThreadListItem = require("./thread-list-item.jsx")(core, config, store),
+		  ThreadCard = require("./thread-card.es6")(core, config, store),
 		  GridView = require("./grid-view.jsx")(core, config, store),
 		  PrivateRoom = require("./private-room.jsx")(core, config, store),
 		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store),
@@ -163,18 +162,12 @@ module.exports = function(core, config, store) {
 				positionKey = 'top';
 			}
 
-			let allThread = {
-				title: "All messages",
-				id: null,
-				startTime: null
-			};
-
 			sections = [{
 				key: "threads-" + nav.room + "-all",
 				endless: false,
 				items: [{
 					key: "thread-all",
-					elem: <ThreadListItem roomId={nav.room} thread={allThread} />
+					elem: <div className="card card-thread-all" onClick={() => core.emit("setstate", { nav: { thread: null, mode: "chat" }})}>All messages</div>
 				}]
 			}];
 
