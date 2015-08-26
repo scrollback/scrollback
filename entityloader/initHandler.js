@@ -14,24 +14,30 @@ function generateNick(suggestion, callback) {
 	}, function(err, query) {
 		var i = 1,
 			ids;
-		if (err || !query || !query.results) return callback(err);
-
+		if (err || !query || !query.results) {
+			return callback(err);
+		}
 		ids = query.results.map(function(e) {
 			return e.id.replace(/^guest-/, "");
 		});
 
 		log.d(attemptingNick+" search results: ", ids);
-		if (!ids.length || ids.indexOf(attemptingNick) < 0) return callback(null, attemptingNick);
-
+		if (!ids.length || ids.indexOf(attemptingNick) < 0) {
+			return callback(null, attemptingNick);
+		}
 		
 		while (i <= 10) {
-			if (ids.indexOf(attemptingNick) < 0) break;
+			if (ids.indexOf(attemptingNick) < 0) {
+				break;
+			}
 			attemptingNick = suggestion + i;
 			i++;
 		}
 
-		if (i === 10) return generateNick("", callback);
-
+		if (i === 10) {
+			return generateNick("", callback);
+		}
+		
 		callback(null, attemptingNick);
 	});
 }
@@ -44,10 +50,15 @@ function generatePick(id) {
 function initializerUser(action, callback) {
 	var userObj;
 	generateNick(action.suggestedNick || action.ref || "", function(err, nick) {
-		if (err) return callback(err);
-
+		if (err) {
+			return callback(err);
+		}
+		
 		nick = "guest-" + nick;
-		if (!action.ref) action.from = nick;
+		if (!action.ref) {
+			action.from = nick;
+		}
+		
 		userObj = {
 			id: nick,
 			description: "",
@@ -72,7 +83,26 @@ function initHandler(action, callback) {
 		session: action.session
 	}, function(err, data) {
 		var old;
-		if (err || !data || !data.results || !data.results.length) {
+		
+		if(!err && data && data.results && data.results.length) {
+			old = data.results[0];
+		}
+		
+		// Yes, these conditions can be combined and improved but this is more readable.
+		function shouldInitialize() {
+			if(!old) return true;
+			if(!old.params || !old.params.isSuggested) return true;
+			if(action.suggestedNick === old.params.requestedNick) return false;
+			
+			if(action.origin && action.origin.protocol === "http:"){
+				if(action.origin.host === old.params.assignedBy) return true;
+				else return false;
+			}
+			
+			return true;
+		}
+		
+		if (shouldInitialize()) {
 			return initializerUser(action, function() {
 				if (action.suggestedNick) {
 					if(!action.user.params) action.user.params = {};
@@ -80,26 +110,13 @@ function initHandler(action, callback) {
 					action.user.params.assignedBy = action.origin.host;
 					action.user.params.requestedNick = action.suggestedNick;
 				}
+				if(old) action.old = old;
+					
 				return callback();
 			});
 		} else {
-			old = action.user = data.results[0];
-		}
-		
-		function allowSuggested(user) {
-			if (user.params.isSuggested) return (action.origin.host === action.user.params.assignedBy && action.suggestedNick !== action.user.params.requestedNick);
-			else return true;
-		}
-		if (action.suggestedNick && userUtils.isGuest(action.user.id) && allowSuggested(data.results[0])) {
-			return initializerUser(action, function() {
-				action.user.params.isSuggested = true;
-				action.user.params.assignedBy = action.origin.host;
-				action.user.params.requestedNick = action.suggestedNick;
-				action.old = old;
-				return callback();
-			});
-		} else {
-			callback();
+			action.user = old;
+			return callback();
 		}
 	});
 }
