@@ -10,6 +10,8 @@ function onBack(data, cb) {
 	occupantDB.sadd("user:{{" + data.from + "}}:occupantOf", data.to, function(err, res) {
 		if (err) log.d(err, res);
 	});
+	
+	data.user.status = "online";
 	cb();
 }
 
