@@ -36,15 +36,6 @@ var defaults = {
 			name: 'Scrollback Local'
 		}
 	},
-	analytics: {
-		pg: { //post gre config
-			server: "localhost", //server:port
-			db: "logs",
-			username: "scrollback",
-			password: "scrollback"
-			//port:
-		}
-	},
 	"browserid-auth": {
 		audience: "http://localhost:7528"
 	},
