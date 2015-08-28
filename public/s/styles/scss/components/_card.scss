@@ -145,7 +145,7 @@
 
                 font-size: 1em;
                 font-weight: 700;
-                margin: 0 1em .75em 0;
+                margin: .25em 1em .75em 0;
 
                 @for $i from 1 through length($palette) {
                     &.color-#{$i - 1} { color: nth($palette, $i); }
