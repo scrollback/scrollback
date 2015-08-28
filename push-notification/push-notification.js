@@ -97,20 +97,6 @@ module.exports = function(core, config) {
 		gcmNotify(notesForApps, payload, core, config);
 	}
 
-	core.on("text", function(text, next) {
-		if (text.mentions.length) {
-			onMentions(text);
-		}
-
-		if (text.thread === text.id) {
-			onNewDisscussion(text);
-		} else {
-			onReply(text);
-		}
-
-		next();
-	}, "gateway");
-
 	function onMentions(text) {
 		var payload, body;
 
@@ -131,42 +117,6 @@ module.exports = function(core, config) {
 
 		mapIdsToUsers(text.mentions, function(userList) {
 			notifyUsers(userList, payload);
-		});
-	}
-
-	function onReply(text) {
-		var payload, body;
-
-		body = format.mdToText(text.text);
-
-		payload = {
-			title: text.to + ": " + userUtils.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
-			text: body.length > max ? body.substring(0, max) + "…" : body,
-			path: url.build({
-				nav: {
-					mode: "chat",
-					room: text.to,
-					thread: text.thread,
-					textRange: { time: text.time }
-				}
-			})
-		};
-
-		core.emit("getUsers", {
-			memberOf: text.to,
-			session: "internal-push-notifications"
-		}, function(e, d) {
-			var usersList;
-
-			if (!(d && d.results)) {
-				return;
-			}
-
-			usersList = d.results.filter(function(user) {
-				return (user.id !== text.from);
-			});
-
-			notifyUsers(usersList, payload);
 		});
 	}
 
@@ -209,4 +159,14 @@ module.exports = function(core, config) {
 			notifyUsers(usersList, payload);
 		});
 	}
+
+	core.on("text", function(text) {
+		if (text.mentions.length) {
+			onMentions(text);
+		}
+
+		if (text.thread === text.id) {
+			onNewDisscussion(text);
+		}
+	}, "gateway");
 };
