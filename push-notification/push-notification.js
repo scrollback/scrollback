@@ -161,7 +161,7 @@ module.exports = function(core, config) {
 	}
 
 	core.on("text", function(text) {
-		if (text.mentions.length) {
+		if (text.mentions && text.mentions.length) {
 			onMentions(text);
 		}
 
