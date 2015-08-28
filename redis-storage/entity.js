@@ -46,7 +46,7 @@ function updateUser(action, callback) {
 		if (action.occupantOf && action.occupantOf.length) {
 			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
 				if (err) {
-					log.e("Old not present", JSON.stringify(action));
+					log.e("Redis user update problem:", err, JSON.stringify(action));
 				}
 			});
 		}

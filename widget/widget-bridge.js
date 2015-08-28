@@ -127,14 +127,16 @@ function onMessage(e) {
 		break;
 	case "follow":
 		if (data.role === "none") {
-			core.emit("part-up", { to: store.get("nav", "room") });
+			core.emit("part-up", { to: data.room || store.get("nav", "room") });
 		} else {
-			core.emit("join-up", { to: store.get("nav", "room"), role: data.role });
+			core.emit("join-up", { to: data.room || store.get("nav", "room"), role: data.role });
 		}
 		break;
 	case "nav":
 		delete data.type;
+
 		core.emit("setstate", { nav: data });
+
 		break;
 	}
 }
