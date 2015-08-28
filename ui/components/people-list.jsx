@@ -22,12 +22,12 @@ module.exports = function(core, config, store) {
 
 			for (var i = 0, l = people.length; i < l; i++) {
 				if (!people[i]) {
-					continue;	
+					continue;
 				}
 
 				people[i].status = people[i].status || "offline";
 				user = store.get("entities", people[i].user);
-				
+
 				if (headers[people[i].status]) {
 					if (user && user.id && user.id.indexOf(this.state.query) > -1) {
 						headers[people[i].status].push({
@@ -44,7 +44,7 @@ module.exports = function(core, config, store) {
 				if (items.length) {
 					sections.push({
 						key: "people-list-" + status,
-						header: status.charAt(0).toUpperCase() + status.slice(1) + " (" + items.length>180? "180+": items.length + ")",
+						header: status + " (" + (items.length > 180 ? "180+" : items.length) + ")",
 						items: items
 					});
 				}
