@@ -196,6 +196,9 @@ sock.on('connection', function(socket) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
 				log.d("sending response", data);
+				if(data.type === 'getUsers' && data.results) {
+					data.results = data.results.splice(0,181);
+				}
 				conn.send(data);
 				data.eventStartTime = t;
 			}
