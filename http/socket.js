@@ -75,10 +75,19 @@ sock.on('connection', function(socket) {
 					sConns[d.session].push(conn);
 				}
 			}
-		} else if (conn.session) {
-			d.session = conn.session;
-			d.resource = conn.resource;
-			d.origin = conn.origin;
+		} else {
+			if (conn.session) {
+				d.session = conn.session;
+				d.resource = conn.resource;
+				d.origin = conn.origin;
+			} else {
+				return conn.send({
+					type: 'error',
+					id: d.id,
+					actionType: d.type,
+					message: "SESSION_NOT_INITED"
+				});
+			}
 		}
 
 		if (d.type === 'back') {
