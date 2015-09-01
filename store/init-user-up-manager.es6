@@ -6,7 +6,6 @@ module.exports = function(core) {
 		core.emit("init-user-up", {}, function (err, payload) {
 			if (Object.keys(payload).length === 0) return;
 			var userObj = objUtils.merge(init.user, payload);
-			console.log(userObj);
 			core.emit("user-up", {
 				user: userObj,
 				to: "me"
