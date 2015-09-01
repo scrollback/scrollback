@@ -72,7 +72,8 @@ require("./modules/settings-user.js")(...args);
 require("./modules/view-manager.es6")(...args);
 require("./modules/swipes.js")(...args);
 require("./modules/ui-handle-errors.js")(...args);
-
+require("../store/init-user-up-manager.es6")(...args);
+require("../store/add-user-timezone.es6")(...args);
 // Render the client
 require("./components/client.jsx")(...args);
 
