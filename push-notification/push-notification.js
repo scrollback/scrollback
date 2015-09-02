@@ -188,7 +188,7 @@ module.exports = function(core, config) {
 		userIDs.forEach(function(userID) {
 			if (notify[userID].mention >= 80) groups.mention.push(userID);
 			else if (notify[userID].thread >= 30) groups.thread.push(userID);
-			else if (notify[userID].reply >= 30) groups.reply.push(userID);
+			else if (notify[userID].reply > 30) groups.reply.push(userID);
 		});
 
 		Object.keys(groups).forEach(function(noteType) {
