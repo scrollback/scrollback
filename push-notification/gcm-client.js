@@ -13,12 +13,9 @@ module.exports = function(core, config, store) {
 	function addGcmData() {
 		var userObj, params, key = "",
 			defaultPackageName = config.pushNotification.defaultPackageName || "";
-		
 		if (!device || typeof initCallback !== "function" || !initObject) {
-			initCallback();
 			return;
 		}
-		
 		userObj = store.getUser();
 		if (!userObj.id || userUtils.isGuest(userObj.id)) {
 			initCallback();
@@ -36,10 +33,7 @@ module.exports = function(core, config, store) {
 		key = device.uuid + (device.packageName && device.packageName !== defaultPackageName ? ("_" + device.packageName) : "");
 
 		initObject.params.pushNotifications.devices[key] = device;
-		userActionID = userObj.id;
-		updateDevice = false;
 		initCallback();
-		
 		LS.setItem("lastGCMTime", new Date().getTime());
 		LS.setItem("currentDevice", device.uuid);
 	}
