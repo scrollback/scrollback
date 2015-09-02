@@ -36,21 +36,22 @@ function onGetUsers(query, callback) {
 function updateUser(action, callback) {
 	if (action.old && action.old.id !== action.user.id) {
 		occupantDB.smembers("user:{{" + action.old.id + "}}:occupantOf", function(error, data) {
-			data.forEach(function(room) {
-				occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
-				occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id, function(err, res) {
-					if (err) log.d(err, res);
+			if(!error && data) {
+				data.forEach(function(room) {
+					occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
+					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id, function(err, res) {
+						if (err) log.d(err, res);
+					});
 				});
-			});
+			}
 		});
 		if (action.occupantOf && action.occupantOf.length) {
 			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
-				if (err) {
-					log.e("Redis user update problem:", err, JSON.stringify(action));
+				if (err && err.message !== "ERR no such key") {
+					log.e("Redis error:", err, JSON.stringify(action));
 				}
 			});
 		}
-
 	}
 	callback();
 }
