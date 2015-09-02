@@ -35,7 +35,7 @@ var core, store,
 	enabled = false,
 	userUtils = require("../lib/user-utils.js"),
 	isReady = false,
-	generate = require("../lib/generate.js"),
+	generate = require("../lib/generate.browser.js"),
 	objUtils = require("../lib/obj-utils.js");
 
 function postMessage(data) {
