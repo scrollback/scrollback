@@ -1,84 +1,73 @@
 /* eslint-env browser */
-
+/* eslint complexity: 0 */
 "use strict";
 
 var gcmTimeValidity = 12 * 60 * 60 * 1000,
-	updateDevice = false,
 	objUtils = require("../lib/obj-utils.js"),
 	userUtils = require("../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	var LS = window.localStorage,
-		lastGCMTime, device,
-		defaultPackageName;
+		device, initObject, initCallback, gcmRegisterSkipped = false;
 
-	defaultPackageName = config.pushNotification.defaultPackageName || "";
+	function addGcmData() {
+		var userObj, params, key = "",
+			defaultPackageName = config.pushNotification.defaultPackageName || "";
+		if (!device || typeof initCallback !== "function" || !initObject) {
+			return;
+		}
+		userObj = store.getUser();
+		if (!userObj.id || userUtils.isGuest(userObj.id)) {
+			initCallback();
+			return;
+		}
 
-	lastGCMTime = LS.getItem("lastGCMTime");
-	lastGCMTime = lastGCMTime ? parseInt(lastGCMTime, 10) : 0;
+		params = userObj.params ? objUtils.clone(userObj.params) : {};
+		initObject.params = initObject.params || {};
+		initObject.params.pushNotifications = params.pushNotifications || {};
+		initObject.params.pushNotifications.devices = params.pushNotifications.devices || {};
+		device.expiryTime = new Date().getTime() + gcmTimeValidity;
+
+		device.platform = "android";
+		device.enabled = true;
+		key = device.uuid + (device.packageName && device.packageName !== defaultPackageName ? ("_" + device.packageName) : "");
+
+		initObject.params.pushNotifications.devices[key] = device;
+		initCallback();
+		LS.setItem("lastGCMTime", new Date().getTime());
+		LS.setItem("currentDevice", device.uuid);
+	}
 
 	core.on("boot", function(state, next) {
-		if (state.context.env === "android" && lastGCMTime < (new Date().getTime() - gcmTimeValidity)) {
+		var lastGCMTime = LS.getItem("lastGCMTime");
+		lastGCMTime = lastGCMTime ? parseInt(lastGCMTime, 10) : 0;
 
-			if (window.Android && typeof window.Android.registerGCM === "function") {
-				window.Android.registerGCM();
-			}
-
-			window.addEventListener("gcm_register", function(event) {
-				device = event.detail;
-
-				if (window.Android && typeof window.Android.getPackageName === "function") {
-					device.packageName = window.Android.getPackageName();
-				}
-
-				updateDevice = true;
-				if (store.get("app", "connectionStatus") === "online") {
-					saveUser();
-				}
-			});
+		if (
+			state.context.env === "android" &&
+			lastGCMTime < (new Date().getTime() - gcmTimeValidity) &&
+			window.Android && typeof window.Android.registerGCM === "function"
+		) {
+			window.Android.registerGCM();
+		} else {
+			gcmRegisterSkipped = true;
 		}
 		next();
 	}, 100);
 
-	function saveUser() {
-		var userObj = store.getUser(), uuid, key = "";
-
-		if (!userObj.id || userUtils.isGuest(userObj.id)) return;
-
-		userObj = objUtils.clone(userObj);
-
-		if (!userObj.params) userObj.params = {};
-		if (!userObj.params.pushNotifications || userObj.params.pushNotifications instanceof Array) userObj.params.pushNotifications = {};
-		if (!userObj.params.pushNotifications.devices || typeof userObj.params.pushNotifications.devices.length === "number") {
-			userObj.params.pushNotifications.devices = {};
+	window.addEventListener("gcm_register", function(event) {
+		device = objUtils.clone(event.detail);
+		if (window.Android && typeof window.Android.getPackageName === "function") {
+			device.packageName = window.Android.getPackageName();
 		}
+		addGcmData();
+	});
 
-		device.expiryTime = new Date().getTime() + gcmTimeValidity;
-		uuid = device.uuid;
-
-		device.platform = "android";
-		key = device.uuid + (device.packageName && device.packageName !== defaultPackageName ? ("_" + device.packageName) : "");
-
-
-		userObj.params.pushNotifications.devices[key] = device;
-		device.enabled = true;
-
-		core.emit("user-up", {
-			user: userObj,
-			to: "me"
-		}, function() {
-			LS.setItem("lastGCMTime", new Date().getTime());
-			LS.setItem("currentDevice", uuid);
-			updateDevice = false;
-		});
-	}
-
-	core.on("statechange", function(changes, next) {
-		if (changes.user && device && updateDevice) {
-			saveUser();
-		}
-		next();
-	}, 500);
+	core.on("init-user-up", function(payload, next) {
+		if (gcmRegisterSkipped) return next();
+		initObject = payload;
+		initCallback = next;
+		addGcmData();
+	});
 
 	core.on("logout", function(payload, next) {
 		if (store.get("context", "env") === "android" && typeof window.Android.unregisterGCM === "function") {

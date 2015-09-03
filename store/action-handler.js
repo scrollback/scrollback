@@ -261,14 +261,18 @@ function onTextDn(text, next) {
 }
 
 function onEdit(edit, next) {
-	var text, thread, changes = {},
+	var text, thread, currentThread, changes = {},
 		pleb = !store.isUserAdmin();
 
 	text = edit.old;
 
 	if (text) {
 		if (text.id === text.thread) {
-			text.color = (store.get("indexes", "threadsById", text.id) || {}).color;
+			currentThread = store.get("indexes", "threadsById", text.id);
+
+			text.color = currentThread ? currentThread.color : text.color;
+			text.concerns = currentThread ? currentThread.concerns : text.concerns;
+
 			thread = threadFromText(text);
 		}
 
