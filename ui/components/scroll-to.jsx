@@ -1,44 +1,52 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ScrollTo;
+	const React = require("react");
 
-	ScrollTo = React.createClass({
-		render: function() {
+	class ScrollTo extends React.Component {
+		constructor(props) {
+			super(props);
+
+			this.state = { show: false };
+		}
+
+		render() {
 			var className = "scroll-to scroll-to-" + this.props.type + " " + (this.props.className || "");
 
 			if (this.state.show) {
 				className += " visible";
 			}
 
-			return <div {...this.props} className={className}>{"Scroll to " + this.props.type}</div>;
-		},
+			return <div {...this.props} className={className}></div>;
+		}
 
-		getInitialState: function() {
-		    return { show: false };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if (changes.nav) {
 				if (this.props.type === "top" && "threadRange" in changes.nav)  {
 					this.setState({ show: store.get("nav", "threadRange", "time") });
 				} else if (this.props.type === "bottom" && "textRange" in changes.nav) {
 					this.setState({ show: store.get("nav", "textRange", "time") });
 				} else {
-					this.setState(this.getInitialState());
+					this.setState({ show: false });
 				}
 			}
-		},
-
-		componentDidMount: function() {
-			core.on("statechange", this.onStateChange, 500);
-		},
-
-		componentWillUnmount: function() {
-			core.off("statechange", this.onStateChange);
 		}
-	});
+
+		componentDidMount() {
+			this.stateChangeHandler = this.onStateChange.bind(this);
+
+			core.on("statechange", this.stateChangeHandler, 100);
+		}
+
+		componentWillUnmount() {
+			core.off("statechange", this.stateChangeHandler);
+		}
+	}
+
+	ScrollTo.propTypes = {
+		type: React.PropTypes.string.isRequired,
+		className: React.PropTypes.string
+	};
 
 	return ScrollTo;
 };
