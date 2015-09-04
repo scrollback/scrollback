@@ -105,6 +105,8 @@ module.exports = (core, config, store) => {
 				}
 			}
 
+			this._submit.classList.add("working");
+
 			return promisedAction("text", {
 				id: id,
 				to: store.get("nav", "room"),
@@ -145,7 +147,7 @@ module.exports = (core, config, store) => {
 					});
 				}, 300);
 			})
-			.catch(err => this.showError(err.message));
+			.catch(() => this.showError("An error occured while starting the discussion :("));
 		}
 
 		componentDidUpdate(prevProps, prevState) {
@@ -217,7 +219,7 @@ module.exports = (core, config, store) => {
 									</a>
 								</div> : null}
 						   </div>
-							<input className="wide block" type="submit" value="Start discussion" />
+							<input ref={c => this._submit = React.findDOMNode(c)} className="wide block" type="submit" value="Start discussion" />
 						</form>
 					</div>
 				</Dialog>
