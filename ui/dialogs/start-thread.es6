@@ -114,6 +114,10 @@ module.exports = (core, config, store) => {
 				text: text,
 				thread: id,
 				title: opts.title
+			}).catch(() => {
+				this._submit.classList.remove("working");
+
+				throw new Error("An error occured while starting the discussion :(");
 			});
 		}
 
@@ -147,7 +151,7 @@ module.exports = (core, config, store) => {
 					});
 				}, 300);
 			})
-			.catch(() => this.showError("An error occured while starting the discussion :("));
+			.catch(err => this.showError(err.message));
 		}
 
 		componentDidUpdate(prevProps, prevState) {
