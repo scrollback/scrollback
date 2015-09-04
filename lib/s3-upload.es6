@@ -94,7 +94,7 @@ class S3Upload {
 	start(file) {
 		this._request.onprogress = this.onprogress;
 		this._request.onabort = this.onabort;
-		this._request.onerror = this.onaerror;
+		this._request.onerror = this.onerror;
 
 		this.file = file;
 
