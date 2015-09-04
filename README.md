@@ -3,7 +3,7 @@
 
 ## Scrollback, where communities hang out
 
-Scrollback provides a free-to-use service at [scrollback.io](http://scrollback.io). If you’re planning run a community chat room, you should [try it](https://scrollback.io/me) out now!
+Scrollback provides a free-to-use service at [scrollback.io](http://scrollback.io). If you’re planning to run a community chat room, you should [try it](https://scrollback.io/me) out now!
 
 You can even [embed Scrollback room](https://github.com/scrollback/scrollback/wiki/Basic-Usage#embed-scrollback-room) on your webpage/blog.
 
