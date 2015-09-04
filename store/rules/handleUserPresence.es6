@@ -23,11 +23,25 @@ module.exports = function(core, config, store) {
 
 			if (listeningRooms.indexOf(roomId) === -1) {
 				listeningRooms.push(roomId);
-			}
 
-			core.emit("setstate", {
-				app: { listeningRooms }
-			});
+				core.emit("setstate", {
+					app: { listeningRooms }
+				});
+			}
+		}).catch(() => {
+			let listeningRooms = store.get("app", "listeningRooms");
+
+			listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
+
+			let index = listeningRooms.indexOf(roomId);
+
+			if (index > -1) {
+				listeningRooms.splice(index, 1);
+
+				core.emit("setstate", {
+					app: { listeningRooms }
+				});
+			}
 		});
 	}
 
