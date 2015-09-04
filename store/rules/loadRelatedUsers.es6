@@ -31,14 +31,7 @@ function constructEntitiesFromUserList(list, entities, roomId) {
 
 function loadUsersList(roomId) {
 	var occupantList, memberList, done = false,
-		entities = {},
-		listeningRooms = store.get("app", "listeningRooms");
-
-	listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
-
-	if (listeningRooms.indexOf(roomId) < 0) {
-		listeningRooms.push(roomId);
-	}
+		entities = {};
 
 	function emitSetState() {
 		constructEntitiesFromUserList(memberList, entities, roomId);
@@ -48,12 +41,7 @@ function loadUsersList(roomId) {
 			entities[roomId + "_" + e.id].status = "online";
 		});
 
-		core.emit("setstate", {
-			entities: entities,
-			app: {
-				listeningRooms: listeningRooms
-			}
-		});
+		core.emit("setstate", { entities: entities });
 	}
 
 	core.emit("getUsers", {
