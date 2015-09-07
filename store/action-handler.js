@@ -3,6 +3,7 @@
 var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
+	userUtils = require("../lib/user-utils.js"),
 	generate = require("../lib/generate.browser.js"),
 	pendingActions = {},
 	timeAdjustment = 0;
@@ -55,14 +56,16 @@ function onInit(init, next) {
 		newstate = {};
 
 	if (init.response) {
-		switch (init.response.message) {
-			case "AUTH:UNREGISTERED":
-				newstate.nav = newstate.nav || {};
-				newstate.nav.dialogState = newstate.nav.dialogState || {};
-				newstate.nav.dialogState.signingup = true;
 
-				break;
+		if (
+			init.user.identities.filter(ident => ident.split(":")[0] === "mailto").length > 0 &&
+			userUtils.isGuest(init.user.id)
+		) {
+			newstate.nav = newstate.nav || {};
+			newstate.nav.dialogState = newstate.nav.dialogState || {};
+			newstate.nav.dialogState.signingup = true;
 		}
+
 
 		init.user = init.user || {};
 		init.user.type = "user";
