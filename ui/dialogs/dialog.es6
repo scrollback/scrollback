@@ -49,14 +49,16 @@ module.exports = core => {
 
 					<div className="modal-wrapper-outer">
 						<div className="modal-wrapper">
-							<div
-								{...this.props}
-								ref={c => this._modal = React.findDOMNode(c)}
-								className={"modal dialog " + (typeof this.props.className === "string" ? this.props.className : "")}>
+							<div className="modal-wrapper-inner">
+								<div
+									{...this.props}
+									ref={c => this._modal = React.findDOMNode(c)}
+									className={"modal dialog " + (typeof this.props.className === "string" ? this.props.className : "")}>
 
-								{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss.bind(this)} />}
+									{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss.bind(this)} />}
 
-								{this.props.children}
+									{this.props.children}
+								</div>
 							</div>
 						</div>
 					</div>
