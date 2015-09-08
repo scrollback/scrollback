@@ -53,6 +53,7 @@ function handleContentAction(action, next) {
 function runQuery(handlers, query, results, i, callback) {
 	var sql;
 	if (i < handlers.length && (sql = handlers[i](query, results))) {
+		log.d(sql);
 		pg.read(connString, sql, function(err, res) {
 			if (err) return callback(err);
 			runQuery(handlers, query, res, i + 1, callback);
