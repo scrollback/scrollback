@@ -51,21 +51,60 @@ function threadFromText(text) {
 	};
 }
 
-function onInit(init, next) {
+function addConcerns(text) {
+	if (text.concerns) {
+		if (text.concerns.indexOf(text.from) === -1 && !userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
+
+		if (Array.isArray(text.mentions)) {
+			for (let user of text.mentions) {
+				if (text.concerns.indexOf(user) === -1 && !userUtils.isGuest(text.from)) {
+					text.concerns.push(user);
+				}
+			}
+		}
+	}
+
+	return text;
+}
+
+function onBoot() {
+	core.emit("getRooms", { featured: true }, (err, rooms) => {
+		if (err) {
+			return;
+		}
+
+		let featuredRooms = [],
+			roomObjs = {};
+
+		if (rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if (e) {
+					featuredRooms.push(e.id);
+					roomObjs[e.id] = e;
+				}
+			});
+		}
+
+		core.emit("setstate", {
+			app: { featuredRooms },
+			entities: roomObjs
+		});
+	});
+}
+
+function onInit(init) {
 	var entities = {},
 		newstate = {};
 
-	if (init.response) {
-
-		if (
-			init.user.identities.filter(ident => ident.split(":")[0] === "mailto").length > 0 &&
-			userUtils.isGuest(init.user.id)
-		) {
-			newstate.nav = newstate.nav || {};
-			newstate.nav.dialogState = newstate.nav.dialogState || {};
-			newstate.nav.dialogState.signingup = true;
-		}
-
+	if (
+		init.user.identities.filter(ident => ident.split(":")[0] === "mailto").length > 0 &&
+		userUtils.isGuest(init.user.id)
+	) {
+		newstate.nav = newstate.nav || {};
+		newstate.nav.dialogState = newstate.nav.dialogState || {};
+		newstate.nav.dialogState.signingup = true;
 
 		init.user = init.user || {};
 		init.user.type = "user";
@@ -74,8 +113,6 @@ function onInit(init, next) {
 		newstate.entities = entities;
 
 		core.emit("setstate", newstate);
-
-		return next();
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
@@ -87,31 +124,6 @@ function onInit(init, next) {
 		entities: entities,
 		user: init.user.id
 	});
-
-	core.emit("getRooms", {
-		featured: true
-	}, function(err, rooms) {
-		var featuredRooms = [],
-			roomObjs = {};
-
-		if (rooms && rooms.results) {
-			rooms.results.forEach(function(e) {
-				if (e) {
-					featuredRooms.push(e.id);
-					roomObjs[e.id] = e;
-				}
-
-
-			});
-		}
-		core.emit("setstate", {
-			app: {
-				featuredRooms: featuredRooms
-			},
-			entities: roomObjs
-		});
-	});
-	next();
 }
 
 function onRoomUser(action, next) {
@@ -253,13 +265,14 @@ function onTextDn(text, next) {
 		newState.threads[text.to] = [{
 			start: text.time,
 			end: (currentThreads && currentThreads.length) ? text.time : null,
-			items: [threadFromText(text)]
+			items: [text.threadObject]
 		}];
 	}
 
 	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
+
 	next();
 }
 
@@ -276,7 +289,7 @@ function onEdit(edit, next) {
 			text.color = currentThread ? currentThread.color : text.color;
 			text.concerns = currentThread ? currentThread.concerns : text.concerns;
 
-			thread = threadFromText(text);
+			thread = threadFromText(addConcerns(text));
 		}
 
 		if (edit.tags) text.tags = edit.tags;
@@ -367,6 +380,8 @@ function onAdmitDn(action) {
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
+
+	core.on("boot", onBoot, 1);
 
 	core.on("admit-dn", onAdmitDn, 950);
 	core.on("expel-dn", onAdmitDn, 950);
