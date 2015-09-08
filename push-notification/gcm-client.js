@@ -23,9 +23,11 @@ module.exports = function(core, config, store) {
 		}
 
 		params = userObj.params ? objUtils.clone(userObj.params) : {};
+		params.pushNotifications = params.pushNotifications || {};
+		params.pushNotifications.devices = params.pushNotifications.devices || {};
+		
 		initObject.params = initObject.params || {};
-		initObject.params.pushNotifications = params.pushNotifications || {};
-		initObject.params.pushNotifications.devices = params.pushNotifications.devices || {};
+		initObject.params.pushNotifications = params.pushNotifications;
 		device.expiryTime = new Date().getTime() + gcmTimeValidity;
 
 		device.platform = "android";
