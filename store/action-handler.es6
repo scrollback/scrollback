@@ -206,7 +206,7 @@ function onTextUp(text) {
 }
 
 function onTextDn(text, next) {
-	var oldRange,
+	let oldRange,
 		currentThreads, currentTexts,
 		oldKey = "",
 		newState = {
@@ -248,6 +248,12 @@ function onTextDn(text, next) {
 
 	if (text.thread === text.id) {
 		currentThreads = store.get("threads", text.to);
+
+		text.concerns = [];
+
+		if (!userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
 
 		newState.threads = {};
 		newState.threads[text.to] = [{
