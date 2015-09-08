@@ -113,6 +113,8 @@ function onInit(init) {
 		newstate.entities = entities;
 
 		core.emit("setstate", newstate);
+
+		return;
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
