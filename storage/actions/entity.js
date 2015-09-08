@@ -55,9 +55,7 @@ module.exports = function(action) {
 	for (col in insertObject) {
 		if (col === 'id') {
 			whereObject[col] = insertObject[col];
-		} else if (col === 'createTime') {
-			log.i("createtime");
-		} else {
+		} else if (col !== 'createTime') {
 			updateObject[col] = insertObject[col];
 		}
 	}
@@ -68,8 +66,8 @@ module.exports = function(action) {
 
 
 	updateObject.$ = (function() {
-		var update = "update entities set ";
-		var parts = ["id", "identities", "type", "description", "color", "picture", "createtime", "timezone", "locale", "params", "guides"];
+		var update = "UPDATE entities SET ";
+		var parts = ["identities", "type", "description", "color", "picture",  "timezone", "locale", "params", "guides"];
 		update += parts.map(function(e) {
 			return "\"" + e + "\"=${" + e + "}";
 		}).join(", ");
