@@ -3,6 +3,7 @@
 "use strict";
 
 const format = require("../../lib/format.js"),
+	  friendlyTime = require("../../lib/friendly-time.js"),
 	  userUtils = require("../../lib/user-utils.js"),
 	  showMenu = require("../utils/show-menu.js");
 
@@ -152,11 +153,7 @@ module.exports = (core, config, store) => {
 						</div>
 					</div>
 					<div className="card-bottom" onClick={this.goToThread.bind(this)}>
-						<span className="card-bottom-icon card-icon-people">{() => {
-							const length = thread.concerns ? thread.concerns.length : 0;
-
-							return `${length} ${length === 1 ? "person" : "people"} talking`;
-						}()}</span>
+						<span className="card-bottom-icon card-icon-history">{friendlyTime(thread.updateTime)}</span>
 					</div>
 				</div>
 			);
@@ -169,7 +166,6 @@ module.exports = (core, config, store) => {
 			id: React.PropTypes.string.isRequired,
 			title: React.PropTypes.string.isRequired,
 			color: React.PropTypes.number,
-			concerns: React.PropTypes.arrayOf(React.PropTypes.string),
 			tags: React.PropTypes.arrayOf(React.PropTypes.string),
 			updateTime: React.PropTypes.number.isRequired
 		})

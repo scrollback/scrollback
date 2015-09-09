@@ -9,12 +9,10 @@ module.exports = () => {
 	// Check if a new cache is available on page load.
 	if (window.applicationCache) {
 		window.applicationCache.addEventListener("updateready", () => {
-			if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-				$alert.alertbar({
-					type: "info",
-					id: "appcache-updateready-notify"
-				});
-			}
+			$alert.alertbar({
+				type: "info",
+				id: "appcache-updateready-notify"
+			});
 		});
 	}
 
