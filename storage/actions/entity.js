@@ -55,7 +55,7 @@ module.exports = function(action) {
 	for (col in insertObject) {
 		if (col === 'id') {
 			whereObject[col] = insertObject[col];
-		} else if (col !== 'createTime') {
+		} else if (col !== 'createTime' && col !== 'terms') {
 			updateObject[col] = insertObject[col];
 		}
 	}
@@ -65,22 +65,19 @@ module.exports = function(action) {
 	log.d("to insert: ", insertObject);
 
 
-	updateObject.$ = (function() {
-		var update = "UPDATE entities SET ";
-		var parts = ["identities", "type", "description", "color", "picture",  "timezone", "locale", "params", "guides"];
-		update += parts.map(function(e) {
-			return "\"" + e + "\"=${" + e + "}";
-		}).join(", ");
 
-		update += ", \"terms\" =" + "to_tsvector('english', ${terms})";
-		return update;
-	}());
-
+	updateObject = pg.cat([
+	 "UPDATE entities SET",
+	 pg.nameValues(updateObject, ", "),
+		{
+			$: ", \"terms\"=to_tsvector('english', ${terms})",
+			terms: insertObject.terms
+		},
+	 "WHERE",
+	 pg.nameValues(whereObject, " AND ")
+	]);
 	
-	
-
-	query.push(pg.cat([updateObject, "WHERE", pg.nameValues(whereObject, " AND ")]));
-
+	query.push(updateObject);
 	insertObject.$ = "INSERT INTO entities" +
 		"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
 		"SELECT ${id}, ${identities}, ${type}, ${description}, ${color}, ${picture}, ${createTime}," +
@@ -105,5 +102,6 @@ module.exports = function(action) {
 			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
 		});
 	}
+	
 	return query;
 };

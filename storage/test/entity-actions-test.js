@@ -37,7 +37,7 @@ describe("Insert Query: ", function() {
 				hash: '0'
 			},
 			{
-				'$': "UPDATE entities SET \"identities\"=${identities}, \"type\"=${type}, \"description\"=${description}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides}, \"terms\" =to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
+				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
 				type: 'room',
 				identities: [],
 				color: 0,
@@ -100,7 +100,7 @@ describe("Insert Query: ", function() {
 				hash: '0'
 			},
 			{
-				'$': "UPDATE entities SET \"identities\"=${identities}, \"type\"=${type}, \"description\"=${description}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides}, \"terms\" =to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
+				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
 				type: 'user',
 				description: "I am Testinguser.",
 				identities: [],
@@ -163,7 +163,7 @@ describe("Update Query: ", function() {
 				hash: '0'
 			},
 			{
-				'$': "UPDATE entities SET \"identities\"=${identities}, \"type\"=${type}, \"description\"=${description}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides}, \"terms\" =to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
+				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
 				type: undefined,
 				description: "",
 				identities: [['mailto', 'mailto:hello@world.com']],
@@ -233,7 +233,7 @@ describe("Update Query: ", function() {
 				hash: '0'
 			},
 			{
-				'$': "UPDATE entities SET \"identities\"=${identities}, \"type\"=${type}, \"description\"=${description}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides}, \"terms\" =to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
+				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
 				type: undefined,
 				description: "new one",
 				identities: [],
@@ -303,7 +303,7 @@ describe("Update Query: ", function() {
 				hash: '0'
 			},
 			{
-				'$': "UPDATE entities SET \"identities\"=${identities}, \"type\"=${type}, \"description\"=${description}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides}, \"terms\" =to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
+				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
 				type: undefined,
 				description: "",
 				identities: [],
