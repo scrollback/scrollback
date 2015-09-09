@@ -77,7 +77,7 @@ function receiveMessage(event) {
 		}
 	}
 
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
+	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note", "error"].indexOf(data.type) !== -1) {
 		//data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);
