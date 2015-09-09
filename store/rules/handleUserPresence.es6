@@ -47,6 +47,7 @@ module.exports = function(core, config, store) {
 
 	function sendBack(roomId) {
 		var listeningRooms = store.get("app", "listeningRooms");
+
 		if (listeningRooms.indexOf(roomId) < 0) {
 			if (store.get("app", "connectionStatus") === "online") {
 				enter(roomId);
@@ -56,11 +57,15 @@ module.exports = function(core, config, store) {
 		}
 	}
 
-	core.on("setstate", function(changes, next) {
+	core.on("setstate", changes => {
+		if (store.with(changes).get("app", "connectionStatus") === "offline") {
+			changes.app = changes.app || {};
+			changes.app.listeningRooms = [];
+		}
+
 		if (changes.nav && changes.nav.room) {
 			sendBack(changes.nav.room);
 		}
-		next();
 	}, 998);
 
 	core.on("statechange", function(changes, next) {
@@ -74,9 +79,10 @@ module.exports = function(core, config, store) {
 
 	core.on("init-dn", function(init, next) {
 		var entities = {};
+
 		init.occupantOf.forEach(function(roomObj) {
-			if(init.old && init.old.id){
-				if(userUtils.isGuest(init.old.id)) {
+			if (init.old && init.old.id) {
+				if (userUtils.isGuest(init.old.id)) {
 					entities[init.old.id] = null;
 					entities[roomObj.id + "_" + init.old.id] = null;
 				}else {
@@ -85,6 +91,7 @@ module.exports = function(core, config, store) {
 					};
 				}
 			}
+
 			sendBack(roomObj.id);
 		});
 
