@@ -3,6 +3,7 @@
 var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
+	userUtils = require("../lib/user-utils.js"),
 	generate = require("../lib/generate.browser.js"),
 	pendingActions = {},
 	timeAdjustment = 0;
@@ -50,19 +51,60 @@ function threadFromText(text) {
 	};
 }
 
-function onInit(init, next) {
+function addConcerns(text) {
+	if (text.concerns) {
+		if (text.concerns.indexOf(text.from) === -1 && !userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
+
+		if (Array.isArray(text.mentions)) {
+			for (let user of text.mentions) {
+				if (text.concerns.indexOf(user) === -1 && !userUtils.isGuest(text.from)) {
+					text.concerns.push(user);
+				}
+			}
+		}
+	}
+
+	return text;
+}
+
+function onBoot() {
+	core.emit("getRooms", { featured: true }, (err, rooms) => {
+		if (err) {
+			return;
+		}
+
+		let featuredRooms = [],
+			roomObjs = {};
+
+		if (rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if (e) {
+					featuredRooms.push(e.id);
+					roomObjs[e.id] = e;
+				}
+			});
+		}
+
+		core.emit("setstate", {
+			app: { featuredRooms },
+			entities: roomObjs
+		});
+	});
+}
+
+function onInit(init) {
 	var entities = {},
 		newstate = {};
 
-	if (init.response) {
-		switch (init.response.message) {
-			case "AUTH:UNREGISTERED":
-				newstate.nav = newstate.nav || {};
-				newstate.nav.dialogState = newstate.nav.dialogState || {};
-				newstate.nav.dialogState.signingup = true;
-
-				break;
-		}
+	if (
+		init.user.identities.filter(ident => ident.split(":")[0] === "mailto").length > 0 &&
+		userUtils.isGuest(init.user.id)
+	) {
+		newstate.nav = newstate.nav || {};
+		newstate.nav.dialogState = newstate.nav.dialogState || {};
+		newstate.nav.dialogState.signingup = true;
 
 		init.user = init.user || {};
 		init.user.type = "user";
@@ -72,7 +114,7 @@ function onInit(init, next) {
 
 		core.emit("setstate", newstate);
 
-		return next();
+		return;
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
@@ -84,31 +126,6 @@ function onInit(init, next) {
 		entities: entities,
 		user: init.user.id
 	});
-
-	core.emit("getRooms", {
-		featured: true
-	}, function(err, rooms) {
-		var featuredRooms = [],
-			roomObjs = {};
-
-		if (rooms && rooms.results) {
-			rooms.results.forEach(function(e) {
-				if (e) {
-					featuredRooms.push(e.id);
-					roomObjs[e.id] = e;
-				}
-
-
-			});
-		}
-		core.emit("setstate", {
-			app: {
-				featuredRooms: featuredRooms
-			},
-			entities: roomObjs
-		});
-	});
-	next();
 }
 
 function onRoomUser(action, next) {
@@ -203,7 +220,7 @@ function onTextUp(text) {
 }
 
 function onTextDn(text, next) {
-	var oldRange,
+	let oldRange,
 		currentThreads, currentTexts,
 		oldKey = "",
 		newState = {
@@ -246,6 +263,12 @@ function onTextDn(text, next) {
 	if (text.thread === text.id) {
 		currentThreads = store.get("threads", text.to);
 
+		text.concerns = [];
+
+		if (!userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
+
 		newState.threads = {};
 		newState.threads[text.to] = [{
 			start: text.time,
@@ -257,6 +280,7 @@ function onTextDn(text, next) {
 	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
+
 	next();
 }
 
@@ -273,7 +297,7 @@ function onEdit(edit, next) {
 			text.color = currentThread ? currentThread.color : text.color;
 			text.concerns = currentThread ? currentThread.concerns : text.concerns;
 
-			thread = threadFromText(text);
+			thread = threadFromText(addConcerns(text));
 		}
 
 		if (edit.tags) text.tags = edit.tags;
@@ -364,6 +388,8 @@ function onAdmitDn(action) {
 module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
+
+	core.on("boot", onBoot, 1);
 
 	core.on("admit-dn", onAdmitDn, 950);
 	core.on("expel-dn", onAdmitDn, 950);
