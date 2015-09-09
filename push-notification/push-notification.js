@@ -64,7 +64,7 @@ module.exports = function(core, config) {
 		userList = userList.filter(function(user) {
 			return user && user.params && user.params.pushNotifications && user.params.pushNotifications.devices;
 		});
-		
+
 		userList.forEach(function(userObj) {
 			var devices, packageName;
 			devices = userObj.params.pushNotifications.devices;
@@ -104,6 +104,7 @@ module.exports = function(core, config) {
 		payload = {
 			title: text.to + ": " + userUtils.getNick(text.from) + " mentioned you",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
 			path: url.build({
 				nav: {
 					mode: "chat",
@@ -127,6 +128,7 @@ module.exports = function(core, config) {
 		payload = {
 			title: text.to + ": " + userUtils.getNick(text.from) + " started a discussion",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
 			path: url.build({
 				nav: {
 					mode: "chat",
@@ -149,6 +151,7 @@ module.exports = function(core, config) {
 		payload = {
 			title: text.to + ": " + userUtils.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
 			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
 			path: url.build({
 				nav: {
 					mode: "chat",
@@ -183,17 +186,28 @@ module.exports = function(core, config) {
 		};
 
 		userIDs = Object.keys(notify);
-		if (!userIDs.length) return;
+
+		if (!userIDs.length) {
+			return;
+		}
 
 		userIDs.forEach(function(userID) {
-			if (notify[userID].mention >= 80) groups.mention.push(userID);
-			else if (notify[userID].thread >= 30) groups.thread.push(userID);
-			else if (notify[userID].reply > 30) groups.reply.push(userID);
+			if (notify[userID].mention >= 80) {
+				groups.mention.push(userID);
+			} else if (notify[userID].thread >= 30) {
+				groups.thread.push(userID);
+			} else if (notify[userID].reply > 30) {
+				groups.reply.push(userID);
+			}
 		});
 
 		Object.keys(groups).forEach(function(noteType) {
 			var payload;
-			if (!groups[noteType].length) return;
+
+			if (!groups[noteType].length) {
+				return;
+			}
+
 			payload = payloads[noteType](text);
 
 			mapIdsToUsers(groups[noteType], function(userList) {
@@ -202,4 +216,4 @@ module.exports = function(core, config) {
 		});
 	}, "gateway");
 };
-	
+
