@@ -42,7 +42,7 @@ module.exports = function(core, config, store) {
 						<div className="chat-area-actions">
 							<ScrollTo type="bottom" onClick={this.scrollToBottom} />
 
-							{store.get("nav", "thread") === null ? <GoToThread /> : <Compose />}
+							{store.get("nav", "thread") === null && store.get("nav", "thread") === null ? <GoToThread /> : <Compose />}
 						</div>
 					</div>
 			);

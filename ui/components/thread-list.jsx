@@ -126,7 +126,7 @@ module.exports = function(core, config, store) {
 
 			// Don't show
 			if (!this.state.show) {
-				return <div data-mode="none" />;
+				return <null />;
 			}
 
 			if (!this.state.read) {
@@ -189,7 +189,7 @@ module.exports = function(core, config, store) {
 			return (
 				<div className="main-content-threads">
 					{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
-					<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
+					{sections ? <GridView endlesskey={key} sections={sections} onScroll={this.onScroll} /> : null}
 					{empty}
 				</div>
 			);
