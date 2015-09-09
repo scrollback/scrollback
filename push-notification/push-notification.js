@@ -105,6 +105,7 @@ module.exports = function(core, config) {
 			title: text.to + ": " + userUtils.getNick(text.from) + " mentioned you",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			picture: userUtils.getPicture(text.from),
+			group: text.to + "/" + text.thread,
 			path: url.build({
 				nav: {
 					mode: "chat",
@@ -129,6 +130,7 @@ module.exports = function(core, config) {
 			title: text.to + ": " + userUtils.getNick(text.from) + " started a discussion",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			picture: userUtils.getPicture(text.from),
+			group: text.to,
 			path: url.build({
 				nav: {
 					mode: "chat",
@@ -152,6 +154,7 @@ module.exports = function(core, config) {
 			title: text.to + ": " + userUtils.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
 			text: body.length > max ? body.substring(0, max) + "…" : body,
 			picture: userUtils.getPicture(text.from),
+			group: text.to + "/" + text.thread,
 			path: url.build({
 				nav: {
 					mode: "chat",
