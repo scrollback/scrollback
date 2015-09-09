@@ -50,7 +50,7 @@ require("../http/room-general-settings-client.js")(...args);
 require("../http/seo-client.js")(...args);
 require("../http/user-profile-settings-client.js")(...args);
 require("../irc/irc-client.js")(...args);
-require("../threader/threader-client.js")(...args);
+require("../threader/threader-client.es6")(...args);
 require("../twitter/twitter-client.js")(...args);
 require("../customization/customization-client.es6")(...args);
 require("../authorizer/error-handlers.es6")(...args);
