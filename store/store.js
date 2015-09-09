@@ -297,7 +297,7 @@ module.exports = function(core, config) {
 	var store = new Store([ state ]);
 
 	require("./state-manager.es6")(core, config, store, state);
-	require("./action-handler.js")(core, config, store, state);
+	require("./action-handler.es6")(core, config, store, state);
 	require("./rule-manager.es6")(core, config, store, state);
 	require("./socket.js")(core, config, store, state);
 	require("./session-manager.js")(core, config, store, state);
