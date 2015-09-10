@@ -7,7 +7,6 @@ module.exports = function(core, config, store) {
 		  ChatAreaMessages = require("./chat-area-messages.jsx")(core, config, store),
 		  ScrollTo = require("./scroll-to.jsx")(core, config, store),
 		  Compose = require("./compose.jsx")(core, config, store),
-		  GoToThread = require("./go-to-thread.es6")(core, config, store),
 		  PrivateRoom = require("./private-room.jsx")(core, config, store),
 		  NoSuchRoom = require("./no-such-room.jsx")(core, config, store);
 
@@ -42,7 +41,7 @@ module.exports = function(core, config, store) {
 						<div className="chat-area-actions">
 							<ScrollTo type="bottom" onClick={this.scrollToBottom} />
 
-							{store.get("nav", "thread") === null && store.get("nav", "thread") === null ? <GoToThread /> : <Compose />}
+							<Compose />
 						</div>
 					</div>
 			);
