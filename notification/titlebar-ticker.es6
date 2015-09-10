@@ -89,8 +89,12 @@ module.exports = (core, config, store) => {
 		};
 	}());
 
-	core.on("note-dn", notification => {
-		let item = new NotificationItem(notification),
+	core.on("note-dn", note => {
+		if (typeof note.dismissTime === "number") {
+			return;
+		}
+
+		let item = new NotificationItem(note),
 			user = store.getUser(),
 			sound = (
 						(user.params && user.params.notifications && user.params.notifications.sound === false) ||

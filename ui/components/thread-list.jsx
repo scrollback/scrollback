@@ -124,9 +124,9 @@ module.exports = function(core, config, store) {
 				positionKey,
 				scrollToClassNames, sections, empty, loading = false;
 
-			// Don't show
+			// Don"t show
 			if (!this.state.show) {
-				return <div data-mode="none" />;
+				return <null />;
 			}
 
 			if (!this.state.read) {
@@ -157,19 +157,25 @@ module.exports = function(core, config, store) {
 			items.reverse();
 
 			if (nav.threadRange.time === 1) {
-				positionKey = 'bottom';
+				positionKey = "bottom";
 			} else if (!nav.threadRange.time) {
-				positionKey = 'top';
+				positionKey = "top";
 			}
 
-			sections = [{
-				key: "threads-" + nav.room + "-all",
-				endless: false,
-				items: [{
-					key: "thread-all",
-					elem: <div className="card card-thread-all" onClick={() => core.emit("setstate", { nav: { thread: null, mode: "chat" }})}>All messages</div>
-				}]
-			}];
+			sections = [];
+
+			let roomObj = store.getRoom();
+
+			if (roomObj && roomObj.params && roomObj.params.threader && roomObj.params.threader.showAllMessages) {
+				sections.push({
+					key: "threads-" + nav.room + "-all",
+					endless: false,
+					items: [{
+						key: "thread-all",
+						elem: <div className="card card-thread-all" onClick={() => core.emit("setstate", { nav: { thread: null, mode: "chat" }})}>All messages</div>
+					}]
+				});
+			}
 
 			if (items.length) {
 				sections.push({
@@ -197,8 +203,7 @@ module.exports = function(core, config, store) {
 
 			return (
 				<div className="main-content-threads">
-					{/*<div className={scrollToClassNames} onClick={this.scrollToTop}>Scroll to top</div>*/}
-					<GridView endlesskey={key} sections={sections} onScroll={this.onScroll} />
+					{sections && sections.length ? <GridView endlesskey={key} sections={sections} onScroll={this.onScroll} /> : null}
 					{empty}
 				</div>
 			);

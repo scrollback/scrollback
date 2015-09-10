@@ -42,14 +42,21 @@ module.exports = (core, config, store) => {
 					{ value: "registered", label: "Logged in" },
 					{ value: "follower", label: "Followers"}
 				];
-			
+
 			for (const item of writeLevelItems) {
-				if (item.value === this.state.readLevel) break;
-				if (this.state.writeLevel === item.value) this.state.writeLevel = this.state.readLevel;
+				if (item.value === this.state.readLevel) {
+					break;
+				}
+
+				if (this.state.writeLevel === item.value) {
+					this.state.writeLevel = this.state.readLevel;
+				}
+
 				item.disabled = true;
 			}
 
-			var div = <div>
+			return (
+				<div>
 					<div className="settings-item">
 						<div className="settings-label">Who can read messages?</div>
 						<div className="settings-action">
@@ -68,9 +75,8 @@ module.exports = (core, config, store) => {
 							<ToggleSwitch ref="approvedFollow" checked={this.state.approvedFollow} onUpdate={this.onApprovedFollowUpdate.bind(this)}/>
 						</div>
 					</div>
-				</div>;
-
-			return (div);
+				</div>
+			);
 		}
 
 		onSave(room) {
@@ -103,7 +109,7 @@ module.exports = (core, config, store) => {
 			readLevel = (guides && guides.authorizer && guides.authorizer.readLevel) ? guides.authorizer.readLevel : "guest",
 			writeLevel = (guides && guides.authorizer && guides.authorizer.writeLevel) ? guides.authorizer.writeLevel : "guest",
 			openRoom = (guides && guides.authorizer && typeof guides.authorizer.openRoom === "boolean") ? guides.authorizer.openRoom : true;
-		
+
 		React.render(<Authorizer readLevel={readLevel} writeLevel={writeLevel} openRoom={openRoom}/>, container);
 
 		tabs.authorizer = {

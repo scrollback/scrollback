@@ -6,7 +6,7 @@ module.exports = (core, config, store) => {
 	const NotificationItem = require("./notification-item.es6")(core, config, store);
 
 	core.on("note-dn", note => {
-		if (note.score < 70) {
+		if (typeof note.dismissTime === "number" || note.score < 70) {
 			return;
 		}
 
