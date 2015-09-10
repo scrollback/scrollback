@@ -66,7 +66,6 @@ require("../http/logout-client.es6")(...args);
 // Modules
 require("./modules/menu-listeners.es6")(...args);
 require("./modules/dialogs-listeners.es6")(...args);
-require("./modules/thread-dialog.js")(...args);
 require("./modules/settings-room.js")(...args);
 require("./modules/settings-user.js")(...args);
 require("./modules/view-manager.es6")(...args);
