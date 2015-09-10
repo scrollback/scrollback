@@ -82,7 +82,10 @@ function onInit(init, next) {
 
 	core.emit("setstate", {
 		entities: entities,
-		user: init.user.id
+		user: init.user.id,
+		app:(init.old && init.old.id !== init.user.id)?{listeningRooms : []}:{}
+	}, function(){
+		next();
 	});
 
 	core.emit("getRooms", {
@@ -108,7 +111,6 @@ function onInit(init, next) {
 			entities: roomObjs
 		});
 	});
-	next();
 }
 
 function onRoomUser(action, next) {
