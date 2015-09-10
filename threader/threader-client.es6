@@ -17,7 +17,7 @@ module.exports = (core, config, store) => {
 		}
 
 		onGroupMessagesUpdate() {
-			this.setState({ showAllMessages: this.refs.groupMessages.checked });
+			this.setState({ groupMessages: this.refs.groupMessages.checked });
 		}
 
 		onShowAllMessagesUpdate() {
