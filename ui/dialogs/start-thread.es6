@@ -28,7 +28,7 @@ module.exports = (core, config, store) => {
 			if (message.indexOf("Text") === 0) {
 				origin = this._text;
 			} else if (message.indexOf("Image") === 0) {
-				origin = this._image;
+				origin = React.findDOMNode(this.refs.fileupload);
 			} else {
 				origin = this._title;
 			}
@@ -128,7 +128,7 @@ module.exports = (core, config, store) => {
 				uploadData: null
 			});
 
-			this._image.click();
+			this.refs.fileupload.click();
 		}
 
 		onSubmit(e) {
@@ -136,7 +136,7 @@ module.exports = (core, config, store) => {
 
 			let title = this._title.value,
 				text = this._text.value,
-				image = this._image.value;
+				image = React.findDOMNode(this.refs.fileupload).value;
 
 			this.startThread({ title, text, image })
 			.then(thread => {
@@ -197,7 +197,7 @@ module.exports = (core, config, store) => {
 										/>
 
 									<FileUpload
-										ref={c => this._image = React.findDOMNode(c)}
+										ref="fileupload"
 										className={"image-drop-area " + (this.state.activeInput === "image" ? " active" : "") + " upload-" + this.state.uploadStatus}
 										accept="image/*" maxsize={5242880}
 										onstart={this.onUploadStart.bind(this)}
