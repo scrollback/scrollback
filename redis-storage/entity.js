@@ -7,9 +7,7 @@ function onGetUsers(query, callback) {
 		return callback();
 	}
 	if (query.ref && query.ref === 'me') {
-		log.d("request for session:", query.session);
 		return get("session", query.session, function(err, sess) {
-			log.d("response for session:", err, sess);
 			if (err) return callback(err);
 			if (sess) {
 				query.ref = sess.user;
@@ -39,14 +37,12 @@ function updateUser(action, callback) {
 			if(!error && data) {
 				data.forEach(function(room) {
 					occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
-					occupantDB.sadd("room:{{" + room + "}}:hasOccupants", action.user.id, function(err, res) {
-						if (err) log.d(err, res);
-					});
 				});
 			}
 		});
+
 		if (action.occupantOf && action.occupantOf.length) {
-			occupantDB.rename("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
+			occupantDB.del("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
 				if (err && err.message !== "ERR no such key") {
 					log.e("Redis error:", err, JSON.stringify(action));
 				}
