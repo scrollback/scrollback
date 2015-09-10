@@ -10,20 +10,33 @@ module.exports = (core, config, store) => {
 		constructor(props) {
 			super(props);
 
-			this.state = { allMessages: this.props.allMessages };
+			this.state = {
+				groupMessages: this.props.groupMessages,
+				showAllMessages: this.props.showAllMessages
+			};
 		}
 
-		onAllMessagesUpdate() {
-			this.setState({ allMessages: this.refs.allMessages.checked });
+		onGroupMessagesUpdate() {
+			this.setState({ showAllMessages: this.refs.groupMessages.checked });
+		}
+
+		onShowAllMessagesUpdate() {
+			this.setState({ showAllMessages: this.refs.showAllMessages.checked });
 		}
 
 		render() {
 			return (
 				<div>
 					<div className="settings-item">
-						<div className="settings-label">Display all messages card</div>
+						<div className="settings-label">Automatically group messages into discussions</div>
 						<div className="settings-action">
-							<ToggleSwitch ref="allMessages" checked={this.state.allMessages} onUpdate={this.onAllMessagesUpdate.bind(this)}/>
+							<ToggleSwitch ref="groupMessages" checked={this.state.groupMessages} onUpdate={this.onGroupMessagesUpdate.bind(this)}/>
+						</div>
+					</div>
+					<div className="settings-item">
+						<div className="settings-label">Display the "All messages" card</div>
+						<div className="settings-action">
+							<ToggleSwitch ref="showAllMessages" checked={this.state.showAllMessages} onUpdate={this.onShowAllMessagesUpdate.bind(this)}/>
 						</div>
 					</div>
 				</div>
@@ -32,8 +45,8 @@ module.exports = (core, config, store) => {
 
 		onSave(room) {
 			room.params.threader = {
-				enabled: false,
-				showAllMessages: this.refs.allMessages.checked
+				enabled: this.refs.groupMessages.checked,
+				showAllMessages: this.refs.showAllMessages.checked
 			};
 		}
 
@@ -49,15 +62,17 @@ module.exports = (core, config, store) => {
 	}
 
 	ThreadSettings.propTypes = {
-		allMessages: React.PropTypes.bool.isRequired
+		groupMessages: React.PropTypes.bool.isRequired,
+		showAllMessages: React.PropTypes.bool.isRequired
 	};
 
 	core.on("conf-show", tabs => {
 		let params = tabs.room.params,
 			container = document.createElement("div"),
-			allMessages = params.threader && params.threader.showAllMessages === true ? true : false;
+			groupMessages = params.threader && params.threader.enabled === true ? true : false,
+			showAllMessages = params.threader && params.threader.showAllMessages === true ? true : false;
 
-		React.render(<ThreadSettings allMessages={allMessages}/>, container);
+		React.render(<ThreadSettings showAllMessages={showAllMessages} groupMessages={groupMessages} />, container);
 
 		tabs.threader = {
 			text: "Discussions",
