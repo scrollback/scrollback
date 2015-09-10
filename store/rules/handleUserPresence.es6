@@ -58,7 +58,7 @@ module.exports = function(core, config, store) {
 	}
 
 	core.on("setstate", changes => {
-		if (store.with(changes).get("app", "connectionStatus") === "offline") {
+		if (changes.app && changes.app.connectionStatus === "offline") {
 			changes.app = changes.app || {};
 			changes.app.listeningRooms = [];
 		}
