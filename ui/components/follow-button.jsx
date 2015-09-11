@@ -50,9 +50,10 @@ module.exports = (core, config, store) => {
 		}
 
 		onStateChange(changes) {
-			let user = this.props.user || store.get("user");
+			let user = this.props.user || store.get("user"),
+				room = this.props.room || store.get("nav", "room");
 
-			if (changes.user || (changes.indexes && (changes.indexes.userRooms && changes.indexes.userRooms[user]))) {
+			if (changes.user || (changes.entities && (changes.entities[user] || changes.entities[room + "_" + user]))) {
 				this.setState(this.buildState);
 			}
 		}
