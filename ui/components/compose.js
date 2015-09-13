@@ -1,4 +1,4 @@
-/* eslint-env es6, browser */
+/* eslint-env browser */
 /* global $ */
 
 "use strict";

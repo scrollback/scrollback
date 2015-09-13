@@ -1,5 +1,3 @@
-/* eslint-env es6 */
-
 "use strict";
 
 module.exports = (core, config, store) => {

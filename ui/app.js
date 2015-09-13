@@ -1,4 +1,4 @@
-/* eslint-env es6, browser */
+/* eslint-env browser */
 "use strict";
 
 let config = require("../client-config-defaults.js"),

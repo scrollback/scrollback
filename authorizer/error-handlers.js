@@ -1,5 +1,3 @@
-/* eslint-env es6 */
-
 "use strict";
 
 const objUtils = require("../lib/obj-utils.js"),
