@@ -243,10 +243,10 @@ gulp.task("manifest", () =>
 		"public/s/assets/logo/*",
 		"public/s/dist/**/*",
 		"!**/{*.map,config.json,LICENSE.txt}"
-	])
+	], { base: "public/" })
 	.pipe(plumber())
 	.pipe(manifest({
-		basePath: "public",
+		prefix: "/",
 		network: [ "*" ],
 		fallback: [
 			"/socket /s/socket-fallback",
