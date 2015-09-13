@@ -5,7 +5,7 @@
 var listenersAdded;
 
 module.exports = function(core, config, store) {
-	var validateEntity = require("./validate-entity.es6")(core, config, store),
+	var validateEntity = require("./validate-entity.js")(core, config, store),
 		roomError = "We could not create the room. Please refresh the page and try again.",
 		userError = "We could not create your account. Please refresh the page and try again.",
 		roomCallback, userCallback;
