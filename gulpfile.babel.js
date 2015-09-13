@@ -28,7 +28,13 @@ import minify from "gulp-minify-css";
 import manifest from "gulp-manifest";
 import config from "./server-config-defaults.js";
 
-const babelify = babel.configure({ extensions: [ ".es6", ".jsx" ] });
+const babelify = babel.configure({
+	extensions: [ ".es6", ".jsx" ],
+	optional: [
+		"runtime",
+		"validation.react"
+	]
+});
 
 const debug = !(gutil.env.production || config.env === "production"),
 	errorHandler = notify.onError("Error: <%= error.message %>"),
