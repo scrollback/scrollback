@@ -29,7 +29,7 @@ import manifest from "gulp-manifest";
 import config from "./server-config-defaults.js";
 
 const babelify = babel.configure({
-	extensions: [ ".es6", ".jsx" ],
+	ignore: "**/bower_components/**",
 	optional: [
 		"runtime",
 		"validation.react"
@@ -47,7 +47,7 @@ const debug = !(gutil.env.production || config.env === "production"),
 	},
 	files = {
 		js: [
-			"**/*.js", "**/*.es6", "**/*.jsx", "!**/*.min.js",
+			"**/*.js", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
@@ -171,7 +171,7 @@ gulp.task("bower", () =>
 
 // Build browserify bundles
 gulp.task("bundle", () =>
-	bundle("ui/app.es6", {
+	bundle("ui/app.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
 		.pipe(sourcemaps.init({ loadMaps: true }))
