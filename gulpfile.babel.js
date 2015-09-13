@@ -220,13 +220,13 @@ gulp.task("scripts:watch", () => {
 });
 
 // Generate styles
-gulp.task("fonts", [ "bower" ], () =>
+gulp.task("fonts", () =>
 	gulp.src(dirs.bower + "/lace/src/fonts/**/*")
 	.pipe(plumber({ errorHandler }))
 	.pipe(gulp.dest(dirs.fonts))
 );
 
-gulp.task("scss", [ "bower" ], () =>
+gulp.task("scss", () =>
 	gulp.src(files.scss)
 	.pipe(plumber({ errorHandler }))
 	.pipe(sourcemaps.init())
@@ -278,4 +278,4 @@ gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 gulp.task("build", [ "scripts", "styles" ], () => gulp.start("manifest"));
 
 // Default Task
-gulp.task("default", [ "clean", "lint" ], () => gulp.start("build"));
+gulp.task("default", [ "clean", "lint", "bower" ], () => gulp.start("build"));
