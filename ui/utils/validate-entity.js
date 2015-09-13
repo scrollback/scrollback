@@ -1,5 +1,3 @@
-/* eslint-env es6 */
-
 "use strict";
 
 const Validator = require("../../lib/validator.js");
