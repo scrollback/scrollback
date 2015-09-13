@@ -128,7 +128,7 @@ function onInit(init) {
 	});
 }
 
-function onRoomUser(action, next) {
+function onRoomUser(action) {
 	var changes = {},
 		entities = {},
 		currentUser = store.getUser();
@@ -144,10 +144,9 @@ function onRoomUser(action, next) {
 		};
 	}
 	core.emit("setstate", changes);
-	next();
 }
 
-function onAwayBack(action, next) {
+function onAwayBack(action) {
 	var entities = {},
 		relation;
 
@@ -171,8 +170,6 @@ function onAwayBack(action, next) {
 
 	// TODO: start thread and text ranges in this room with start: current timestamp, end: null, items: []
 	// for each thread already here
-
-	next();
 }
 
 function onTextUp(text) {
@@ -199,8 +196,6 @@ function onTextUp(text) {
 		}];
 	}
 
-	//	next();
-
 	//	Optimistically adding new threads is made complex
 	//	by the unavailability of an id on the text-up.
 	//	if(text.thread === text.id) {
@@ -219,7 +214,7 @@ function onTextUp(text) {
 
 }
 
-function onTextDn(text, next) {
+function onTextDn(text) {
 	let oldRange,
 		currentThreads, currentTexts,
 		oldKey = "",
@@ -280,11 +275,9 @@ function onTextDn(text, next) {
 	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
-
-	next();
 }
 
-function onEdit(edit, next) {
+function onEdit(edit) {
 	var text, thread, currentThread, changes = {},
 		pleb = !store.isUserAdmin();
 
@@ -323,10 +316,9 @@ function onEdit(edit, next) {
 		}];
 	}
 	core.emit("setstate", changes);
-	next();
 }
 
-function onJoinPart(join, next) {
+function onJoinPart(join) {
 	var roomObj = join.room;
 	var userObj = join.user;
 	var relation = {},
@@ -350,7 +342,6 @@ function onJoinPart(join, next) {
 	core.emit("setstate", {
 		entities: entities
 	});
-	return next();
 }
 
 
@@ -404,7 +395,7 @@ module.exports = function(c, conf, s) {
 	core.on("room-dn", onRoomUser, 950);
 	core.on("user-dn", onRoomUser, 950);
 
-	core.on("error-dn", function(error, next) {
+	core.on("error-dn", function(error) {
 		var newState = {
 			texts: {}
 		};
@@ -432,8 +423,6 @@ module.exports = function(c, conf, s) {
 			core.emit("setstate", newState);
 			error.handled = true;
 		}
-
-		next();
 	}, 1000);
 	[
 		"text-up", "edit-up", "back-up", "away-up", "init-up",
