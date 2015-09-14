@@ -1,11 +1,9 @@
 /* eslint-env browser */
+
 "use strict";
 
 let config = require("../client-config-defaults.js"),
 	core, store;
-
-// ES6 polyfills
-require("babelify/polyfill");
 
 // jQuery library
 window.jQuery = window.$ = require("../bower_components/jquery/dist/jquery.min.js");
