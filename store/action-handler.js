@@ -94,7 +94,7 @@ function onBoot() {
 	});
 }
 
-function onInit(init) {
+function onInit(init, next) {
 	var entities = {},
 		newstate = {};
 
@@ -114,7 +114,7 @@ function onInit(init) {
 
 		core.emit("setstate", newstate);
 
-		return;
+		return next();
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
