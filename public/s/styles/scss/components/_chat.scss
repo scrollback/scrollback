@@ -148,14 +148,6 @@
 
                 &:focus, &:hover, &:active { opacity: 1; }
 
-                [type="file"] {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    opacity: 0;
-                    pointer-events: none;
-                }
-
                 .loader {
                     position: absolute;
                     top: .41em;

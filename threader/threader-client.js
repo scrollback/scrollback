@@ -1,35 +1,83 @@
-/* jshint browser: true */
-/* global $ */
+/* eslint-env browser */
 
-var formField = require("../ui/utils/form-field.js");
+"use strict";
 
-module.exports = function(core) {
-	core.on("conf-show", function(tabs, next) {
-		var results = tabs.room;
+module.exports = (core, config, store) => {
+	const React = require("react"),
+		  ToggleSwitch = require("../ui/components/toggle-switch.js")(core, config, store);
 
-		if (!results.params.threader) {
-			results.params.threader = {
-				enabled: true
+	class ThreadSettings extends React.Component {
+		constructor(props) {
+			super(props);
+
+			this.state = {
+				groupMessages: this.props.groupMessages,
+				showAllMessages: this.props.showAllMessages
 			};
 		}
 
-		var $div = $("<div>").append(formField("Automatically group text into discussions", "toggle",
-											   "threader-allow-threading", results.params.threader.enabled));
+		onGroupMessagesUpdate() {
+			this.setState({ groupMessages: this.refs.groupMessages.checked });
+		}
+
+		onShowAllMessagesUpdate() {
+			this.setState({ showAllMessages: this.refs.showAllMessages.checked });
+		}
+
+		render() {
+			return (
+				<div>
+					<div className="settings-item">
+						<div className="settings-label">Automatically group messages into discussions</div>
+						<div className="settings-action">
+							<ToggleSwitch ref="groupMessages" checked={this.state.groupMessages} onUpdate={this.onGroupMessagesUpdate.bind(this)}/>
+						</div>
+					</div>
+					<div className="settings-item">
+						<div className="settings-label">Display the "All messages" card</div>
+						<div className="settings-action">
+							<ToggleSwitch ref="showAllMessages" checked={this.state.showAllMessages} onUpdate={this.onShowAllMessagesUpdate.bind(this)}/>
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		onSave(room) {
+			room.params.threader = {
+				enabled: this.refs.groupMessages.checked,
+				showAllMessages: this.refs.showAllMessages.checked
+			};
+		}
+
+		componentDidMount() {
+			this.saveHandler = this.onSave.bind(this);
+
+			core.on("conf-save", this.saveHandler, 100);
+		}
+
+		componentWillUnmount() {
+			core.off("conf-save", this.saveHandler);
+		}
+	}
+
+	ThreadSettings.propTypes = {
+		groupMessages: React.PropTypes.bool.isRequired,
+		showAllMessages: React.PropTypes.bool.isRequired
+	};
+
+	core.on("conf-show", tabs => {
+		let params = tabs.room.params,
+			container = document.createElement("div"),
+			groupMessages = params.threader && params.threader.enabled === true ? true : false,
+			showAllMessages = params.threader && params.threader.showAllMessages === true ? true : false;
+
+		React.render(<ThreadSettings showAllMessages={showAllMessages} groupMessages={groupMessages} />, container);
 
 		tabs.threader = {
 			text: "Discussions",
-			html: $div
+			html: container
 		};
-
-		next();
-	}, 400);
-
-	core.on("conf-save", function(room, next) {
-		if (!room.params.threader) {
-			room.params.threader = {};
-		}
-
-		room.params.threader.enabled = $("#threader-allow-threading").is(":checked");
-		next();
-	}, 500);
+	}, 300);
 };
+
