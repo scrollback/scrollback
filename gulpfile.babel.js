@@ -28,7 +28,13 @@ import minify from "gulp-minify-css";
 import manifest from "gulp-manifest";
 import config from "./server-config-defaults.js";
 
-const babelify = babel.configure({ extensions: [ ".es6", ".jsx" ] });
+const babelify = babel.configure({
+	ignore: "**/bower_components/**",
+	optional: [
+		"runtime",
+		"validation.react"
+	]
+});
 
 const debug = !(gutil.env.production || config.env === "production"),
 	errorHandler = notify.onError("Error: <%= error.message %>"),
@@ -41,7 +47,7 @@ const debug = !(gutil.env.production || config.env === "production"),
 	},
 	files = {
 		js: [
-			"**/*.js", "**/*.es6", "**/*.jsx", "!**/*.min.js",
+			"**/*.js", "!**/*.min.js",
 			"!node_modules/**", "!bower_components/**",
 			"!public/s/**/*.js"
 		],
@@ -165,7 +171,7 @@ gulp.task("bower", () =>
 
 // Build browserify bundles
 gulp.task("bundle", () =>
-	bundle("ui/app.es6", {
+	bundle("ui/app.js", {
 		transform: [ babelify, optional ]
 	}, bundled => bundled
 		.pipe(sourcemaps.init({ loadMaps: true }))
@@ -214,13 +220,13 @@ gulp.task("scripts:watch", () => {
 });
 
 // Generate styles
-gulp.task("fonts", [ "bower" ], () =>
+gulp.task("fonts", () =>
 	gulp.src(dirs.bower + "/lace/src/fonts/**/*")
 	.pipe(plumber({ errorHandler }))
 	.pipe(gulp.dest(dirs.fonts))
 );
 
-gulp.task("scss", [ "bower" ], () =>
+gulp.task("scss", () =>
 	gulp.src(files.scss)
 	.pipe(plumber({ errorHandler }))
 	.pipe(sourcemaps.init())
@@ -243,10 +249,10 @@ gulp.task("manifest", () =>
 		"public/s/assets/logo/*",
 		"public/s/dist/**/*",
 		"!**/{*.map,config.json,LICENSE.txt}"
-	])
+	], { base: "public/" })
 	.pipe(plumber())
 	.pipe(manifest({
-		basePath: "public",
+		prefix: "/",
 		network: [ "*" ],
 		fallback: [
 			"/socket /s/socket-fallback",
@@ -272,4 +278,4 @@ gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 gulp.task("build", [ "scripts", "styles" ], () => gulp.start("manifest"));
 
 // Default Task
-gulp.task("default", [ "clean", "lint" ], () => gulp.start("build"));
+gulp.task("default", [ "clean", "lint", "bower" ], () => gulp.start("build"));
