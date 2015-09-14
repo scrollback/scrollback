@@ -54,6 +54,7 @@
   "optionalDependencies": {},
   "devDependencies": {
     "babel-eslint": "latest",
+    "babel-runtime": "latest",
     "babelify": "latest",
     "bower": "latest",
     "browserify": "latest",
