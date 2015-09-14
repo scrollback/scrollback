@@ -24,6 +24,7 @@ module.exports = function(core, config, store) {
 			case "follower":
 			case "none":
 			case "moderator":
+			case "registered":
 				if (senderRole === "moderator" && rel.role !== "owner") break;
 				menu.items.banuser = {
 					prio: 550,
