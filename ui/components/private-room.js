@@ -31,7 +31,7 @@ module.exports = (core, config, store) => {
 						</h2>
 
 						<p className="blankslate-area-message">
-							{role === "banned" ? "" : "Follow the room to access it's content."}
+							{role === "banned" ? "" : "Follow the room to see discussions."}
 						</p>
 
 						<img className="blankslate-area-image" src="/s/assets/blankslate/stop.png" />
