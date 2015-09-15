@@ -324,7 +324,7 @@ function onEdit(edit) {
 function onJoinPart(join) {
 	var roomObj = join.room;
 	var userObj = join.user;
-	var relation = {},
+	var relation = objUtils.clone(store.getRelation(roomObj.id, userObj.id) || {}),
 		entities = {};
 
 	relation.user = userObj.id;
