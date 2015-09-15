@@ -26,7 +26,7 @@
   "dependencies": {
     "babel-core": "latest",
     "big-integer": "latest",
-    "ebus": "latest",
+    "ebus": "0.11.0",
     "express": "3.x",
     "handlebars": "latest",
     "htmlencode": "latest",
