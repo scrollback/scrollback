@@ -3,7 +3,6 @@
 "use strict";
 
 const format = require("../../lib/format.js"),
-	  friendlyTime = require("../../lib/friendly-time.js"),
 	  userUtils = require("../../lib/user-utils.js"),
 	  showMenu = require("../utils/show-menu.js");
 
@@ -123,7 +122,10 @@ module.exports = (core, config, store) => {
 		}
 
 		render() {
-			const { thread } = this.props;
+			const { thread } = this.props,
+				  { texts } = this.state;
+
+			let noOfPeople = thread.concerns ? thread.concerns.length : 1;
 
 			return (
 				<div
@@ -141,7 +143,7 @@ module.exports = (core, config, store) => {
 						<h3 className={"color-" + thread.color}>{thread.title}</h3>
 						<div className="messages">
 							<div className="messages-inner">
-								{this.state.texts.map(text => {
+								{texts.map(text => {
 									return (
 										<div key={"thread-text-" + text.id}>
 											<div className="nick">{userUtils.getNick(text.from)}</div>
@@ -153,7 +155,7 @@ module.exports = (core, config, store) => {
 						</div>
 					</div>
 					<div className="card-bottom" onClick={this.goToThread.bind(this)}>
-						<span className="card-bottom-icon card-icon-history">{friendlyTime(thread.updateTime)}</span>
+						<span className="card-bottom-icon card-icon-people">{noOfPeople + (noOfPeople > 1 ? " people" : " person") + " talking"}</span>
 					</div>
 				</div>
 			);

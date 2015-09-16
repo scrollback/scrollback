@@ -268,8 +268,40 @@ function onTextDn(text) {
 		newState.threads[text.to] = [{
 			start: text.time,
 			end: (currentThreads && currentThreads.length) ? text.time : null,
-			items: [threadFromText(text)]
+			items: [ threadFromText(text) ]
 		}];
+	} else if (!userUtils.isGuest(text.from)) {
+		let threadObj = store.get("indexes", "threadsById", text.thread);
+
+		if (threadObj) {
+			let changed;
+
+			if (Array.isArray(threadObj.concerns)) {
+				if (threadObj.concerns.indexOf(text.from) === -1) {
+					threadObj = objUtils.clone(threadObj);
+
+					threadObj.concerns.push(text.from);
+
+					changed = true;
+				}
+			} else {
+				threadObj = objUtils.clone(threadObj);
+
+				threadObj.concerns = [ text.from ];
+
+				changed = true;
+			}
+
+			if (changed) {
+				newState.threads = {
+					[text.to]: [{
+						start: threadObj.startTime,
+						end: threadObj.startTime,
+						items: [ threadObj ]
+					}]
+				};
+			}
+		}
 	}
 
 	// TODO? If text.title exists, change title of thread.
