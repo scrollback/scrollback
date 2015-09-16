@@ -4,6 +4,7 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		ReactDOM = require("react-dom"),
 		Landing = require("./landing.js")(core, config, store),
 		Banner = require("./banner.js")(core, config, store),
 		AppbarPrimary = require("./appbar-primary.js")(core, config, store),
@@ -86,7 +87,7 @@ module.exports = function(core, config, store) {
 		}
 	}
 
-	React.render(<Client />, document.getElementById("app-client"));
+	ReactDOM.render(<Client />, document.getElementById("app-client"));
 
 	return Client;
 };

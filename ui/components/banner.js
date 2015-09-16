@@ -8,6 +8,7 @@ var format = require("../../lib/format.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		ReactDOM = require("react-dom"),
 		RoomNameEntry = require("./room-name-entry.js")(core, config, store);
 
 	class Banner extends React.Component {
@@ -45,7 +46,7 @@ module.exports = function(core, config, store) {
 		}
 
 		onSubmit(e) {
-			var roomNameEntry = React.findDOMNode(this.refs.roomNameEntry),
+			var roomNameEntry = ReactDOM.findDOMNode(this.refs.roomNameEntry),
 				roomName;
 
 			e.preventDefault();

@@ -3,7 +3,8 @@
 "use strict";
 
 module.exports = () => {
-	const React = require("react");
+	const React = require("react"),
+		  ReactDOM = require("react-dom");
 
 	class ValidInput extends React.Component {
 		constructor(props) {
@@ -11,7 +12,7 @@ module.exports = () => {
 		}
 
 		onInput() {
-			let value = React.findDOMNode(this).value;
+			let value = ReactDOM.findDOMNode(this).value;
 
 			let result = this.props.validator(value);
 

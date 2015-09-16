@@ -5,7 +5,8 @@
 const S3Upload = require("../../lib/s3-upload.js");
 
 module.exports = core => {
-	const React = require("react");
+	const React = require("react"),
+		  ReactDOM = require("react-dom");
 
 	class FileUpload extends React.Component {
 		constructor(props) {
@@ -75,7 +76,7 @@ module.exports = core => {
 							width: 0,
 							opacity: 0
 						}}
-						ref={c => this._chooser = React.findDOMNode(c)}
+						ref={c => this._chooser = ReactDOM.findDOMNode(c)}
 						type="file"
 						onChange={this.uploadFiles.bind(this)}
 						accept={this.props.accept} />

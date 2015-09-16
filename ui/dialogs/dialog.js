@@ -1,7 +1,8 @@
 "use strict";
 
 module.exports = core => {
-	const React = require("react");
+	const React = require("react"),
+		  ReactDOM = require("react-dom");
 
 	class Dialog extends React.Component {
 		constructor(props) {
@@ -43,13 +44,13 @@ module.exports = core => {
 
 			return (
 				<div className="modal-container dialog-container">
-					<div ref={c => this._backdrop = React.findDOMNode(c)} className="backdrop" onClick={this.dismiss.bind(this)}></div>
+					<div ref={c => this._backdrop = ReactDOM.findDOMNode(c)} className="backdrop" onClick={this.dismiss.bind(this)}></div>
 
 					<div className="modal-wrapper-outer">
 						<div className="modal-wrapper">
 							<div
 								{...this.props}
-								ref={c => this._modal = React.findDOMNode(c)}
+								ref={c => this._modal = ReactDOM.findDOMNode(c)}
 								className={"modal dialog " + (typeof this.props.className === "string" ? this.props.className : "")}>
 
 								{(this.props.dismiss === false || this.props.closebutton === false) ? "" : <span className="modal-close" onClick={this.dismiss.bind(this)} />}

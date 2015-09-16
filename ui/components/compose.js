@@ -8,6 +8,7 @@ const gen = require("../../lib/generate.browser.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
+		ReactDOM = require("react-dom"),
 		TextArea = require("./textarea.js")(core, config, store),
 		Suggestions = require("./suggestions.js")(core, config, store),
 		FileUpload = require("./file-upload.js")(core, config, store),
@@ -70,7 +71,7 @@ module.exports = function(core, config, store) {
 		}
 
 		setEmpty() {
-			let el = React.findDOMNode(this),
+			let el = ReactDOM.findDOMNode(this),
 				value = this.refs.composeBox.val();
 
 			if (value) {
@@ -160,7 +161,7 @@ module.exports = function(core, config, store) {
 		}
 
 		onUploadError(err) {
-			let button = React.findDOMNode(this.refs.filebutton),
+			let button = ReactDOM.findDOMNode(this.refs.filebutton),
 				popover = document.createElement("div"),
 				message = document.createElement("div");
 

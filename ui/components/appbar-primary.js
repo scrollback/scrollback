@@ -11,6 +11,7 @@ const showMenu = require("../utils/show-menu.js"),
 
 module.exports = function(core, config, store) {
 	const React = require("react"),
+		  ReactDOM = require("react-dom"),
 		  Badge = require("./badge.js")(core, config, store),
 		  NotificationCenter = require("../../notification/notification-center.js")(core, config, store),
 		  FollowButton = require("./follow-button.js")(core, config, store);
@@ -64,7 +65,7 @@ module.exports = function(core, config, store) {
 			popover.appendChild(content);
 			popover.appendChild(action);
 
-			$popover.popover({ origin: React.findDOMNode(this.refs.followButton) });
+			$popover.popover({ origin: ReactDOM.findDOMNode(this.refs.followButton) });
 		}
 
 		toggleMinimize(e) {
@@ -95,7 +96,7 @@ module.exports = function(core, config, store) {
 
 			center.className = "menu menu-notifications";
 
-			React.render(<NotificationCenter />, center);
+			ReactDOM.render(<NotificationCenter />, center);
 
 			$(center).popover({
 				arrow: false,

@@ -4,6 +4,7 @@
 
 module.exports = (core, config, store) => {
 	const React = require("react"),
+		  ReactDOM = require("react-dom"),
 		  Dialog = require("./dialog.js")(core, config, store),
 		  Loader = require("../components/loader.js")(core, config, store),
 		  FileUpload = require("../components/file-upload.js")(core, config, store),
@@ -28,7 +29,7 @@ module.exports = (core, config, store) => {
 			if (message.indexOf("Text") === 0) {
 				origin = this._text;
 			} else if (message.indexOf("Image") === 0) {
-				origin = React.findDOMNode(this.refs.fileupload);
+				origin = ReactDOM.findDOMNode(this.refs.fileupload);
 			} else {
 				origin = this._title;
 			}
@@ -136,7 +137,7 @@ module.exports = (core, config, store) => {
 
 			let title = this._title.value,
 				text = this._text.value,
-				image = React.findDOMNode(this.refs.fileupload).value;
+				image = ReactDOM.findDOMNode(this.refs.fileupload).value;
 
 			this.startThread({ title, text, image })
 			.then(thread => {
@@ -180,7 +181,7 @@ module.exports = (core, config, store) => {
 						<h1 className="dialog-title">Start a new discussion</h1>
 						<form onSubmit={this.onSubmit.bind(this)}>
 							<input
-								ref={c => this._title = React.findDOMNode(c)}
+								ref={c => this._title = ReactDOM.findDOMNode(c)}
 								className="wide block"
 								type="text"
 								placeholder="Enter discussion title"
@@ -190,7 +191,7 @@ module.exports = (core, config, store) => {
 							<div className="wide block start-thread-inputs-container">
 								<div className="start-thread-inputs">
 									<textarea
-										ref={c => this._text = React.findDOMNode(c)}
+										ref={c => this._text = ReactDOM.findDOMNode(c)}
 										className={(this.state.activeInput === "text" ? "active" : "")}
 										placeholder="Enter your message"
 										style={{ resize: "none" }}
@@ -223,7 +224,7 @@ module.exports = (core, config, store) => {
 									</a>
 								</div> : null}
 						   </div>
-							<input ref={c => this._submit = React.findDOMNode(c)} className="wide block" type="submit" value="Start discussion" />
+							<input ref={c => this._submit = ReactDOM.findDOMNode(c)} className="wide block" type="submit" value="Start discussion" />
 						</form>
 					</div>
 				</Dialog>

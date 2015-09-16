@@ -1,7 +1,8 @@
 "use strict";
 
 module.exports = function() {
-	var React = require("react");
+	const React = require("react"),
+		  ReactDOM = require("react-dom");
 
 	class TextArea extends React.Component {
 		constructor(props, context) {
@@ -10,12 +11,12 @@ module.exports = function() {
 		}
 
 		focus() {
-			return React.findDOMNode(this.refs.textBox).focus();
+			return ReactDOM.findDOMNode(this.refs.textBox).focus();
 		}
 
 		val(value) {
-			var contentBox = React.findDOMNode(this.refs.contentBox),
-				textBox = React.findDOMNode(this.refs.textBox);
+			var contentBox = ReactDOM.findDOMNode(this.refs.contentBox),
+				textBox = ReactDOM.findDOMNode(this.refs.textBox);
 
 			if (typeof value === "string") {
 				contentBox.textContent = textBox.value = value;
@@ -25,11 +26,11 @@ module.exports = function() {
 		}
 
 		area() {
-			return React.findDOMNode(this.refs.textBox);
+			return ReactDOM.findDOMNode(this.refs.textBox);
 		}
 
 		onInput(e) {
-			var contentBox = React.findDOMNode(this.refs.contentBox);
+			var contentBox = ReactDOM.findDOMNode(this.refs.contentBox);
 
 			contentBox.textContent = e.target.value;
 

@@ -1,7 +1,8 @@
 "use strict";
 
 module.exports = () => {
-	const React = require("react");
+	const React = require("react"),
+		  ReactDOM = require("react-dom");
 
 	class InputText extends React.Component {
 		constructor(props) {
@@ -9,7 +10,7 @@ module.exports = () => {
 		}
 
 		validateField() {
-			let value = React.findDOMNode(this).value;
+			let value = ReactDOM.findDOMNode(this).value;
 
 			if (this.isRequired && !value) {
 				return false;
