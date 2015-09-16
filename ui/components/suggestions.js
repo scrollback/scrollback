@@ -64,7 +64,39 @@ module.exports = function(core, config, store) {
 		render() {
 			return (
 				<ul className={"suggestions-list position-" + this.props.position}>
-						{this.state.suggestions.map((entity, i) => {
+						{this.state.suggestions.sort((a, b) => {
+							if (this.props.position === "top") {
+								if (a.id === this.props.query) {
+									return 1;
+								} else if (b.id === this.props.query) {
+									return -1;
+								}
+
+								if (a.id < b.id) {
+									return 1;
+								}
+
+								if (a.id > b.id) {
+									return -1;
+								}
+							} else {
+								if (a.id === this.props.query) {
+									return -1;
+								} else if (b.id === this.props.query) {
+									return 1;
+								}
+
+								if (a.id < b.id) {
+									return -1;
+								}
+
+								if (a.id > b.id) {
+									return 1;
+								}
+							}
+
+							return 0;
+						}).map((entity, i) => {
 							let name, avatar;
 
 							if (this.props.type === "user") {
@@ -85,8 +117,9 @@ module.exports = function(core, config, store) {
 									<span className="suggestions-list-item-nick">{name}</span>
 
 									{this.props.type === "user" && userUtils.isGuest(entity.id) ?
-										<span className="suggestions-list-item-info">guest</span>
-									: null}
+										<span className="suggestions-list-item-info">guest</span> :
+										null
+									}
 								</li>
 								);
 						})}
