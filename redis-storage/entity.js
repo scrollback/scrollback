@@ -54,8 +54,8 @@ module.exports = function(c, conf) {
 	occupantDB.select(config.occupantsDB);
 	get = require("./get.js")(config);
 	changeUser = require("./change-user.js")(core, config);
-	core.on("init", changeUser, "storage");
-	core.on("user", changeUser, "storage");
+	core.on("init", changeUser, "cache");
+	core.on("user", changeUser, "cache");
 	core.on("getUsers", onGetUsers, "cache");
 	core.on("getRooms", onGetRooms, "cache");
 };
