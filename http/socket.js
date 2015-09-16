@@ -157,21 +157,12 @@ sock.on('connection', function(socket) {
 				}
 			}
 			if (data.type === 'init') {
-				if (data.old && data.old.id !== data.user.id) {
-					data.occupantOf.forEach(function(room) {
-						emit({
-							id: generate.uid(),
-							type: "away",
-							to: room.id,
-							from: data.old.id,
-							user: data.old,
-							room: room
-						});
-					});
-				}
-				storeInit(conn, data);
+				changeUser(conn, data);
 			}
-			if (data.type === 'user') processUser(conn, data);
+			if (data.type === 'user') {
+				changeUser(conn, data)
+				processUser(conn, data);
+			}
 			if (['getUsers', 'getTexts', 'getRooms', 'getThreads', 'getEntities', 'getNotes'].indexOf(data.type) >= 0) {
 				var t = data.eventStartTime; //TODO: copy properties of each query that is needed on client side.
 				delete data.eventStartTime;
@@ -237,7 +228,7 @@ function processUser(conn, action) {
 	}
 }
 
-function storeInit(conn, init) {
+function changeUser(conn, init) {
 	if (!uConns[init.user.id]) uConns[init.user.id] = [];
 	if (uConns[init.user.id].indexOf(conn) < 0) uConns[init.user.id].push(conn);
 	conn.user = init.user.id;

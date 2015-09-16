@@ -1,6 +1,5 @@
 "use strict";
-var core, occupantDB, config, get,
-	log = require("../lib/logger.js");
+var core, occupantDB, config, get, changeUser;
 
 function onGetUsers(query, callback) {
 	if (query.memberOf || query.results) {
@@ -31,26 +30,6 @@ function onGetUsers(query, callback) {
 	}
 }
 
-function updateUser(action, callback) {
-	if (action.old && action.old.id !== action.user.id) {
-		occupantDB.smembers("user:{{" + action.old.id + "}}:occupantOf", function(error, data) {
-			if(!error && data) {
-				data.forEach(function(room) {
-					occupantDB.srem("room:{{" + room + "}}:hasOccupants", action.old.id);
-				});
-			}
-		});
-
-		if (action.occupantOf && action.occupantOf.length) {
-			occupantDB.del("user:{{" + action.old.id + "}}:occupantOf", "user:{{" + action.user.id + "}}:occupantOf", function(err) {
-				if (err && err.message !== "ERR no such key") {
-					log.e("Redis error:", err, JSON.stringify(action));
-				}
-			});
-		}
-	}
-	callback();
-}
 function onGetRooms(query, callback) {
 	if (query.hasOccupant) {
 		return occupantDB.smembers("user:{{" + query.hasOccupant + "}}:occupantOf", function(err, data) {
@@ -74,8 +53,9 @@ module.exports = function(c, conf) {
 	occupantDB = require('redis').createClient();
 	occupantDB.select(config.occupantsDB);
 	get = require("./get.js")(config);
-
-	core.on("init", updateUser, "storage");
+	changeUser = require("./change-user.js")(core, config);
+	core.on("init", changeUser, "storage");
+	core.on("user", changeUser, "storage");
 	core.on("getUsers", onGetUsers, "cache");
 	core.on("getRooms", onGetRooms, "cache");
 };

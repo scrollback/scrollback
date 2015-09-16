@@ -149,6 +149,7 @@ function onRoomUser(action, next) {
 
 	if(action.type === 'user' && action.old && userUtils.isGuest(action.old.id)) {
 		changes.app = {listeningRooms: []};
+		changes.user = action.user.id;
 	}
 	core.emit("setstate", changes, function(){
 		next();
