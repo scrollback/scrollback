@@ -101,4 +101,16 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 500);
+
+	core.on("user-dn", function(userDn) {
+		var relatedRooms;
+		if (userDn.old && userUtils.isGuest(userDn.old.id)) {
+			relatedRooms = store.getRelatedRooms(userDn.old.id);
+			if (relatedRooms) {
+					relatedRooms.map(function(e) {
+					return e.id;
+				}).forEach(sendBack);
+			}
+		}
+	}, 500);
 };

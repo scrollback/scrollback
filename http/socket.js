@@ -157,7 +157,7 @@ sock.on('connection', function(socket) {
 				}
 			}
 			if (data.type === 'init') {
-				if (data.old && data.old.id) {
+				if (data.old && data.old.id !== data.user.id) {
 					data.occupantOf.forEach(function(room) {
 						emit({
 							id: generate.uid(),
@@ -431,7 +431,7 @@ function handleClose(conn) {
 			log("Couldn't find session to close.", err, sess);
 			return;
 		}
-		user = sess.results[0];
+			user = sess.results[0];
 		setTimeout(function() {
 			if (!conn.listeningTo || !conn.listeningTo.length) return;
 

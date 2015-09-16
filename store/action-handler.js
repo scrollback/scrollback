@@ -131,7 +131,7 @@ function onInit(init, next) {
 	});
 }
 
-function onRoomUser(action) {
+function onRoomUser(action, next) {
 	var changes = {},
 		entities = {},
 		currentUser = store.getUser();
@@ -146,7 +146,13 @@ function onRoomUser(action) {
 			role: "owner"
 		};
 	}
-	core.emit("setstate", changes);
+
+	if(action.type === 'user' && action.old && userUtils.isGuest(action.old.id)) {
+		changes.app = {listeningRooms: []};
+	}
+	core.emit("setstate", changes, function(){
+		next();
+	});
 }
 
 function onAwayBack(action) {
