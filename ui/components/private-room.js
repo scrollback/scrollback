@@ -20,8 +20,8 @@ module.exports = (core, config, store) => {
 		}
 
 		render() {
-
-			let role = store.getRelation(this.props.room).role;
+			let rel = store.getRelation(this.props.room),
+				role = rel ? rel.role : null;
 
 			return (
 				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
@@ -38,7 +38,7 @@ module.exports = (core, config, store) => {
 
 						<p className="blankslate-area-actions">
 							{
-								role === "banned" ? "" :
+								role === "banned" ? null :
 								<FollowButton className={"button" + (this.state.requested ? " disabled" : "")}>
 									{this.state.requested ? "Request sent" : "Follow " + store.get("nav", "room")}
 								</FollowButton>
