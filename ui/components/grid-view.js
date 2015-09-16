@@ -2,8 +2,7 @@
 
 module.exports = function() {
 	var React = require("react"),
-		Endless = require("../../bower_components/endless/endless.js"),
-		GridView;
+		Endless = require("../../bower_components/endless/endless.js");
 
 	/**
 	 * GridView component.
@@ -30,8 +29,8 @@ module.exports = function() {
 	 * endless: false
 	 */
 
-	GridView = React.createClass({
-		render: function() {
+	class GridView extends React.Component {
+		render() {
 			var sections = this.props.sections,
 				gridview = [],
 				content, items, key;
@@ -63,7 +62,7 @@ module.exports = function() {
 
 			return (<div className="grid-view">{gridview}</div>);
 		}
-	});
+	}
 
 	return GridView;
 };

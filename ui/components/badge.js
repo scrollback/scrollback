@@ -5,8 +5,14 @@
 module.exports = function(core, config, store) {
 	const React = require("react");
 
-	let Badge = React.createClass({
-		getCount: function() {
+	class Badge extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.state = { count: this.getCount() };
+		}
+
+		getCount() {
 			let all = store.get("notes");
 
 			all = all.filter(n => typeof n.readTime !== "number");
@@ -38,30 +44,26 @@ module.exports = function(core, config, store) {
 			}
 
 			return count;
-		},
+		}
 
-		render: function() {
+		render() {
 			return <span className={this.props.className + " badge"}>{this.state.count ? this.state.count : ""}</span>;
-		},
+		}
 
-		getInitialState: function() {
-			return { count: this.getCount() };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if ("notes" in changes) {
 				this.setState({ count: this.getCount() });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return Badge;
 };

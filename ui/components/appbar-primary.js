@@ -15,12 +15,32 @@ module.exports = function(core, config, store) {
 		  NotificationCenter = require("../../notification/notification-center.js")(core, config, store),
 		  FollowButton = require("./follow-button.js")(core, config, store);
 
-	let AppbarPrimary = React.createClass({
-		toggleSidebarRight: function() {
-			core.emit("setstate", { nav: { view: "sidebar-right" }});
-		},
+	class AppbarPrimary extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.badgeFilter = this.badgeFilter.bind(this);
+			this.fullScreen = this.fullScreen.bind(this);
+			this.goBack = this.goBack.bind(this);
+			this.onJoin = this.onJoin.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.showNotifications = this.showNotifications.bind(this);
+			this.showUserMenu = this.showUserMenu.bind(this);
+			this.toggleMinimize = this.toggleMinimize.bind(this);
+			this.toggleSidebarRight = this.toggleSidebarRight.bind(this);
 
-		showJoinStatus: function() {
+			this.state = {
+				title: "",
+				username: "",
+				picture: "",
+				following: false
+			};
+		}
+
+		toggleSidebarRight() {
+			core.emit("setstate", { nav: { view: "sidebar-right" }});
+		}
+
+		showJoinStatus() {
 			let popover = document.createElement("div"),
 				message = document.createElement("div"),
 				content = document.createElement("div"),
@@ -45,11 +65,11 @@ module.exports = function(core, config, store) {
 			popover.appendChild(action);
 
 			$popover.popover({ origin: React.findDOMNode(this.refs.followButton) });
-		},
+		}
 
-		toggleMinimize: function(e) {
+		toggleMinimize(e) {
 			if (e.target.tagName === "A" || e.target.parentNode.tagName === "A" ||
-			    (e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
+				(e.target.className && e.target.className.indexOf && e.target.className.indexOf("user-area") > -1)) {
 				return;
 			}
 
@@ -60,17 +80,17 @@ module.exports = function(core, config, store) {
 					}
 				});
 			}
-		},
+		}
 
-		fullScreen: function() {
+		fullScreen() {
 			window.open(url.build({ nav: store.get("nav") }), "_blank");
-		},
+		}
 
-		badgeFilter: function(note) {
+		badgeFilter(note) {
 			return note.score >= 30;
-		},
+		}
 
-		showNotifications: function(event) {
+		showNotifications(event) {
 			let center = document.createElement("div");
 
 			center.className = "menu menu-notifications";
@@ -81,9 +101,9 @@ module.exports = function(core, config, store) {
 				arrow: false,
 				origin: event.currentTarget
 			});
-		},
+		}
 
-		showUserMenu: function(e) {
+		showUserMenu(e) {
 			core.emit("user-menu", {
 				origin: e.currentTarget,
 				buttons: {},
@@ -95,9 +115,9 @@ module.exports = function(core, config, store) {
 
 				showMenu("user-menu", menu);
 			});
-		},
+		}
 
-		goBack: function() {
+		goBack() {
 			var mode = store.get("nav", "mode");
 
 			if (mode === "chat") {
@@ -109,9 +129,9 @@ module.exports = function(core, config, store) {
 					nav: { mode: "home" }
 				});
 			}
-		},
+		}
 
-		render: function() {
+		render() {
 			return (
 				<div key="appbar-primary" className="appbar appbar-primary custom-titlebar-bg custom-titlebar-fg" onClick={this.toggleMinimize}>
 					<a data-mode="room chat" className="appbar-icon appbar-icon-back appbar-icon-left" onClick={this.goBack}></a>
@@ -134,18 +154,9 @@ module.exports = function(core, config, store) {
 						ref="followButton" className="appbar-icon appbar-icon-follow" />
 				</div>
 			);
-		},
+		}
 
-		getInitialState: function() {
-			return {
-				title: "",
-				username: "",
-				picture: "",
-				following: false
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			var user = store.get("user"),
 				userObj;
 
@@ -160,25 +171,25 @@ module.exports = function(core, config, store) {
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});
 			}
-		},
+		}
 
-		onJoin: function(action) {
+		onJoin(action) {
 			if (/^(room|chat)$/.test(store.get("nav", "mode")) && store.get("nav", "room") === action.to &&
 				action.transitionType === "request" && action.transitionRole === "follower" && action.user && action.user.id === store.get("user")) {
 				this.showJoinStatus();
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
 			core.on("join-dn", this.onJoin, 100);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 			core.off("join-dn", this.onJoin);
 		}
-	});
+	}
 
 	return AppbarPrimary;
 };

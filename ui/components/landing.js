@@ -4,11 +4,16 @@ var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		RoomNameEntry = require("./room-name-entry.js")(core, config, store),
-		Landing;
+		RoomNameEntry = require("./room-name-entry.js")(core, config, store);
 
-	Landing = React.createClass({
-		render: function() {
+	class Landing extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.state = { showLanding: false };
+		}
+
+		render() {
 			if (this.state.showLanding) {
 				return (
 						<div data-state="online" className="banner banner-landing">
@@ -30,17 +35,13 @@ module.exports = function(core, config, store) {
 			} else {
 				return <div data-mode="home" />;
 			}
-		},
+		}
 
-		getInitialState: function() {
-			return { showLanding: false };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			var mode, user, env;
 
 			if ((changes.nav && changes.nav.mode) ||
-			    (changes.context && changes.context.env) || changes.user) {
+				(changes.context && changes.context.env) || changes.user) {
 				mode = store.get("nav", "mode");
 				user = store.get("user");
 				env = store.get("context", "env");
@@ -49,16 +50,16 @@ module.exports = function(core, config, store) {
 					showLanding: !!(mode === "home" && env !== "embed" && env !== "android" && user && userUtils.isGuest(user))
 				});
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return Landing;
 };

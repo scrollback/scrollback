@@ -1,19 +1,20 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ConnectionStatus;
+	var React = require("react");
 
-	ConnectionStatus = React.createClass({
-		render: function() {
+	class ConnectionStatus extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.state = { text: "" };
+		}
+
+		render() {
 			return <div className="connection-status" data-state="offline connecting">{this.state.text}</div>;
-		},
+		}
 
-		getInitialState: function() {
-			return { text: "" };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			var connection, text;
 
 			if (changes.app && "connectionStatus" in changes.app) {
@@ -29,16 +30,16 @@ module.exports = function(core, config, store) {
 
 				this.setState({ text: text });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return ConnectionStatus;
 };

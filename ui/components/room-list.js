@@ -3,11 +3,16 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		RoomCard = require("./room-card.js")(core, config, store),
-		GridView = require("./grid-view.js")(core, config, store),
-		RoomList;
+		GridView = require("./grid-view.js")(core, config, store);
 
-	RoomList = React.createClass({
-		render: function() {
+	class RoomList extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.state = { show: false };
+		}
+
+		render() {
 			var titles = {
 					visitor: "Recently visited",
 					owner: "My rooms",
@@ -85,27 +90,23 @@ module.exports = function(core, config, store) {
 					<GridView sections={sections} />
 				</div>
 			);
-		},
+		}
 
-		getInitialState: function() {
-			return { show: false };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if ((changes.nav && changes.nav.mode) ||
-			    (changes.indexes && changes.indexes.userRooms)) {
+				(changes.indexes && changes.indexes.userRooms)) {
 				this.setState({ show: (store.get("nav", "mode") === "home") });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return RoomList;
 };

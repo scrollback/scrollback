@@ -1,19 +1,23 @@
 "use strict";
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		Footer;
+	var React = require("react");
 
-	Footer = React.createClass({
+	class Footer extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.state = { show: false };
+		}
 
-		render: function() {
+		render() {
 			if (!this.state.show) {
 				return <div data-mode="none" />;
 			}
 
 			return (
-				     <footer className="footer" >
-				     	<div className="footer-inner">
+					 <footer className="footer" >
+						<div className="footer-inner">
 
 							<ul className="footer-item-container">
 								<li className="footer-item" >
@@ -51,39 +55,35 @@ module.exports = function(core, config, store) {
 								<a href="https://github.com/scrollback/scrollback" target="_blank">GitHub</a>
 								</li>
 							</ul>
-							
+
 							<ul className="footer-playstore-container">
 								<li className="footer-playstore">
 								<a href="https://play.google.com/store/apps/details?id=io.scrollback.app" target="_blank">Get the app</a>
 								</li>
 							</ul>
 
-	
+
 						</div>
-    				</footer>
-		
+					</footer>
+
 
 					);
-		},
+		}
 
-		getInitialState: function() {
-			return { show: false };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if (changes.nav && changes.nav.mode) {
 				this.setState({ show: (store.get("nav", "mode") === "home" && store.get("context", "env") !== "android") });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return Footer;
 };

@@ -15,23 +15,28 @@ module.exports = function(core, config, store) {
 		ThreadList = require("./thread-list.js")(core, config, store),
 		Footer = require("./footer.js")(core, config, store),
 		CreateRoomButton = require("./create-room-button.js")(core, config, store),
-		CurrentDialog = require("../dialogs/current-dialog.js")(core, config, store),
-		Client;
+		CurrentDialog = require("../dialogs/current-dialog.js")(core, config, store);
 
-	Client = React.createClass({
-		startThread: function() {
+	class Client extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.closeSidebar = this.closeSidebar.bind(this);
+			this.startThread = this.startThread.bind(this);
+		}
+
+		startThread() {
 			core.emit("setstate", {
 				nav: { dialog: "start-thread" }
 			});
-		},
+		}
 
-		closeSidebar: function() {
+		closeSidebar() {
 			core.emit("setstate", {
 				nav: { view: null }
 			});
-		},
+		}
 
-		render: function() {
+		render() {
 			return (
 					<div className="app-container">
 
@@ -79,7 +84,7 @@ module.exports = function(core, config, store) {
 			);
 
 		}
-	});
+	}
 
 	React.render(<Client />, document.getElementById("app-client"));
 

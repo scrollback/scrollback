@@ -5,17 +5,33 @@
 var showMenu = require("../utils/show-menu.js");
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		CallToActionBar;
+	var React = require("react");
 
-	CallToActionBar = React.createClass({
-		hideSelf: function() {
+	class CallToActionBar extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.followRoom = this.followRoom.bind(this);
+			this.hideSelf = this.hideSelf.bind(this);
+			this.installApp = this.installApp.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.showUserMenu = this.showUserMenu.bind(this);
+
+			this.state = {
+				cta: {
+					text: "",
+					label: "",
+					action: null
+				}
+			};
+		}
+
+		hideSelf() {
 			core.emit("setstate", {
 				app: { dismissedCtas: [ store.get("app", "cta") ] }
 			});
-		},
+		}
 
-		showUserMenu: function(e) {
+		showUserMenu(e) {
 			core.emit("user-menu", {
 				origin: e.currentTarget,
 				buttons: {},
@@ -23,46 +39,38 @@ module.exports = function(core, config, store) {
 			}, function(err, menu) {
 				showMenu("user-menu", menu);
 			});
-		},
+		}
 
-		followRoom: function() {
+		followRoom() {
 			var room = store.get("nav", "room");
 
 			core.emit("join-up",  {
 				to: room,
 				room: room
 			});
-		},
+		}
 
-		installApp: function() {
+		installApp() {
 			window.open("https://play.google.com/store/apps/details?id=io.scrollback.app", "_blank");
 
 			this.hideSelf();
-		},
+		}
 
-		render: function() {
-			if (!this.state.action) {
-				return <div data-mode="none" className="call-to-action-bar" />;
-			} else {
+		render() {
+			if (this.state.cta && this.state.cta.action) {
 				return (
 					<div className="call-to-action-bar" ref="callToActionBar">
-						<p className="call-to-action-bar-info">{this.state.text}</p>
+						<p className="call-to-action-bar-info">{this.state.cta.text}</p>
 						<a className="call-to-action-bar-close" onClick={this.hideSelf}></a>
-						<button className="call-to-action-bar-button info" onClick={this.state.action}>{this.state.label}</button>
+						<button className="call-to-action-bar-button info" onClick={this.state.cta.action}>{this.state.cta.label}</button>
 					</div>
 				);
+			} else {
+				return <null />;
 			}
-		},
+		}
 
-		getInitialState: function() {
-			return {
-				text: "",
-				label: "",
-				action: null
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			var data;
 
 			if (changes.app && "cta" in changes.app) {
@@ -86,18 +94,18 @@ module.exports = function(core, config, store) {
 					}
 				};
 
-				this.setState(data[store.get("app", "cta")] || this.getInitialState());
+				this.setState({ cta: data[store.get("app", "cta")] });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return CallToActionBar;
 };

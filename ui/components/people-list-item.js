@@ -5,11 +5,15 @@ var getAvatar = require("../../lib/get-avatar.js"),
 	userUtils = require("../../lib/user-utils.js");
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		PeopleListItem;
+	var React = require("react");
 
-	PeopleListItem = React.createClass({
-		showPeopleMenu: function(e) {
+	class PeopleListItem extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.showPeopleMenu = this.showPeopleMenu.bind(this);
+		}
+
+		showPeopleMenu(e) {
 			core.emit("people-menu", {
 				origin: e.currentTarget,
 				buttons: {},
@@ -19,8 +23,9 @@ module.exports = function(core, config, store) {
 			}, function(err, menu) {
 				showMenu("people-menu", menu);
 			});
-		},
-		render: function() {
+		}
+
+		render() {
 			let rel = store.getRelation(store.get("nav","room"), this.props.user.id), role;
 			if (rel.role === "owner") {
 				role = "owner";
@@ -40,7 +45,7 @@ module.exports = function(core, config, store) {
 				</div>
 			);
 		}
-	});
+	}
 
 	return PeopleListItem;
 };

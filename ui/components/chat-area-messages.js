@@ -8,8 +8,21 @@ module.exports = function(core, config, store) {
 		  Endless = require("../../bower_components/endless/endless.js"),
 		  rangeOps = require("../../lib/range-ops.js");
 
-	let ChatAreaMessages = React.createClass({
-		onScroll: function(key, before, after) {
+	class ChatAreaMessages extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+
+			this.onScroll = this.onScroll.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+
+			this.state = this.buildInitialState();
+		}
+
+		buildInitialState() {
+			return { items: this.getItems(store.get("nav", "textRange")) };
+		}
+
+		onScroll(key, before, after) {
 			var time;
 
 			if (key === "top") {
@@ -34,9 +47,9 @@ module.exports = function(core, config, store) {
 					}
 				}
 			});
-		},
+		}
 
-		getItems: function(textRange) {
+		getItems(textRange) {
 			var before, after, beforeItems, afterItems,
 				atTop = false, atBottom = false, loading = false,
 				roomId = store.get("nav", "room"),
@@ -75,9 +88,9 @@ module.exports = function(core, config, store) {
 			ret.atBottom = atBottom;
 
 			return ret;
-		},
+		}
 
-		render: function() {
+		render() {
 			var chatitems = [], atTop = false, atBottom = true,
 				textRange = store.get("nav", "textRange"),
 				roomId = store.get("nav", "room"),
@@ -141,19 +154,15 @@ module.exports = function(core, config, store) {
 					</div>
 				);
 			}
-		},
+		}
 
-		getInitialState: function() {
-			return { items: this.getItems(store.get("nav", "textRange")) };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			const thread = store.get("nav", "thread"),
 				  roomId = store.get("nav", "room"),
 				  key = thread ? roomId + "_" + thread : roomId;
 
 			if (changes.texts && changes.texts[key] && changes.texts[key].length) {
-				this.setState(this.getInitialState());
+				this.setState(this.buildInitialState());
 			} else if (changes.nav && changes.nav.textRange) {
 				let items = this.state.items,
 					textRange = store.get("nav", "textRange");
@@ -170,18 +179,18 @@ module.exports = function(core, config, store) {
 
 				}
 
-				this.setState(this.getInitialState());
+				this.setState(this.buildInitialState());
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 400);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return ChatAreaMessages;
 };

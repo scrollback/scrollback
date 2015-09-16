@@ -8,11 +8,15 @@ var format = require("../../lib/format.js"),
 	showMenu = require("../utils/show-menu.js");
 
 module.exports = function(core, config, store) {
-	var React = require("react"),
-		ChatItem;
+	var React = require("react");
 
-	ChatItem = React.createClass({
-		showChatMenu: function(e) {
+	class ChatItem extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.selectMessage = this.selectMessage.bind(this);
+		}
+
+		showChatMenu(e) {
 			if (/\bchat-item-nick\b/.test(e.target.className)) {
 				return;
 			}
@@ -26,9 +30,9 @@ module.exports = function(core, config, store) {
 			}, function(err, menu) {
 				showMenu("text-menu", menu);
 			});
-		},
+		}
 
-		selectMessage: function(e) {
+		selectMessage(e) {
 			var appChanges = {},
 				index, currentText, selectedTexts,
 				selection = window.getSelection();
@@ -66,9 +70,9 @@ module.exports = function(core, config, store) {
 			appChanges.currentText = currentText;
 
 			core.emit("setstate", { app: appChanges });
-		},
+		}
 
-		render: function() {
+		render() {
 			var nav =  store.get("nav"),
 				text = format.mdToHtml(this.props.text.text),
 				time = friendlyTime(this.props.text.time),
@@ -102,7 +106,7 @@ module.exports = function(core, config, store) {
 				</div>
 			);
 		}
-	});
+	}
 
 	return ChatItem;
 };

@@ -2,8 +2,7 @@
 
 module.exports = function() {
 	var React = require("react"),
-		Endless = require("../../bower_components/endless/endless.js"),
-		ListView;
+		Endless = require("../../bower_components/endless/endless.js");
 
 	/**
 	 * ListView component.
@@ -30,8 +29,8 @@ module.exports = function() {
 	 * endless = false
 	 */
 
-	ListView = React.createClass({
-		render: function() {
+	class ListView extends React.Component {
+		render() {
 			var sections = this.props.sections,
 				listview = [],
 				content, items, key;
@@ -63,7 +62,7 @@ module.exports = function() {
 
 			return (<div className="list-view">{listview}</div>);
 		}
-	});
+	}
 
 	return ListView;
 };

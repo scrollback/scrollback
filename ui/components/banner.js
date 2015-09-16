@@ -8,23 +8,43 @@ var format = require("../../lib/format.js"),
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		RoomNameEntry = require("./room-name-entry.js")(core, config, store),
-		Banner;
+		RoomNameEntry = require("./room-name-entry.js")(core, config, store);
 
-	Banner = React.createClass({
-		showRoomSettings: function() {
+	class Banner extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.showRoomSettings = this.showRoomSettings.bind(this);
+			this.showUserSettings = this.showUserSettings.bind(this);
+
+			this.state = this.buildInitialState();
+		}
+
+		buildInitialState() {
+			return {
+				title: "",
+				description: "",
+				picture: "",
+				cover: "",
+				banner: false,
+				form: false,
+				button: null
+			};
+		}
+
+		showRoomSettings() {
 			core.emit("setstate", {
 				nav: { dialog: "conf" }
 			});
-		},
+		}
 
-		showUserSettings: function() {
+		showUserSettings() {
 			core.emit("setstate", {
 				nav: { dialog: "pref" }
 			});
-		},
+		}
 
-		onSubmit: function(e) {
+		onSubmit(e) {
 			var roomNameEntry = React.findDOMNode(this.refs.roomNameEntry),
 				roomName;
 
@@ -47,9 +67,9 @@ module.exports = function(core, config, store) {
 				});
 			}
 
-		},
+		}
 
-		render: function() {
+		render() {
 			var items = [];
 
 			if (this.state.banner) {
@@ -69,28 +89,16 @@ module.exports = function(core, config, store) {
 
 			if (this.state.form) {
 				items.push(
-				        <div className="banner-entry-container" key="container">
+						<div className="banner-entry-container" key="container">
 							<RoomNameEntry className="banner-entry" />
 						</div>
 						);
 			}
 
 			return <div className="banner">{items}</div>;
-		},
+		}
 
-		getInitialState: function() {
-			return {
-				title: "",
-				description: "",
-				picture: "",
-				cover: "",
-				banner: false,
-				form: false,
-				button: null
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			var user = store.get("user"),
 				room = store.get("nav", "room"),
 				mode, env, pics,
@@ -135,19 +143,19 @@ module.exports = function(core, config, store) {
 						}
 					});
 				} else {
-					this.setState(this.getInitialState());
+					this.setState(this.buildInitialState());
 				}
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return Banner;
 };

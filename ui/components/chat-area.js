@@ -10,16 +10,23 @@ module.exports = function(core, config, store) {
 		  PrivateRoom = require("./private-room.js")(core, config, store),
 		  NoSuchRoom = require("./no-such-room.js")(core, config, store);
 
-	let ChatArea = React.createClass({
-		scrollToBottom: function() {
+	class ChatArea extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.scrollToBottom = this.scrollToBottom.bind(this);
+			this.state = { read: true };
+		}
+
+		scrollToBottom() {
 			core.emit("setstate", {
 				nav: {
 					textRange: { time: null }
 				}
 			});
-		},
+		}
 
-		render: function() {
+		render() {
 			// Don't show
 			if (!this.state.show) {
 				return <div data-mode="none" />;
@@ -45,35 +52,31 @@ module.exports = function(core, config, store) {
 						</div>
 					</div>
 			);
-		},
+		}
 
-		getInitialState: function() {
-			return { read: true };
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			const roomId = store.get("nav", "room"),
 				  userId = store.get("user"),
 				  rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.mode || changes.nav.room || "thread" in changes.nav)) ||
-			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user) {
+				(changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user) {
 
 				this.setState({
 					show: (store.get("nav", "mode") === "chat"),
 					read: store.isRoomReadable()
 				});
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return ChatArea;
 };

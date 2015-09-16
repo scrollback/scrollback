@@ -10,16 +10,32 @@ module.exports = function(core, config, store) {
 		  NoSuchRoom = require("./no-such-room.js")(core, config, store),
 		  rangeOps = require("../../lib/range-ops.js");
 
-	let ThreadList = React.createClass({
-		scrollToTop: function() {
+	class ThreadList extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onScroll = this.onScroll.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+
+			this.state = this.buildInitialState();
+		}
+
+		buildInitialState() {
+			return {
+				show: (store.get("nav", "mode") === "room"),
+				read: store.isRoomReadable(),
+				items: this.getItems()
+			};
+		}
+
+		scrollToTop() {
 			core.emit("setstate", {
 				nav: {
 					threadRange: { time: null, after: 5 * this.getCols(), before: 0 }
 				}
 			});
-		},
+		}
 
-		getCols: function() {
+		getCols() {
 			var container = document.querySelector(".main-content-threads"),
 				card = document.querySelector(".main-content-threads .grid-item");
 
@@ -28,9 +44,9 @@ module.exports = function(core, config, store) {
 			}
 
 			return (Math.floor(container.offsetWidth / card.offsetWidth) || 1);
-		},
+		}
 
-		getItems: function() {
+		getItems() {
 			let nav = store.get("nav"),
 				before, after, beforeItems, afterItems, beforeCount, afterCount,
 				atTop = false, atBottom = false, loading = false,
@@ -89,9 +105,9 @@ module.exports = function(core, config, store) {
 			var closest = Math.min(ret.length - 1, rangeOps.findIndex(ret, "startTime", nav.threadRange.time || null));
 			ret.key = ret.length ? ret[closest].startTime : null;
 			return ret;
-		},
+		}
 
-		onScroll: function(key, after, before) { /* reverse chronological; below -> before, above -> after */
+		onScroll(key, after, before) { /* reverse chronological; below -> before, above -> after */
 			var time;
 
 			if (key === "top") {
@@ -114,9 +130,9 @@ module.exports = function(core, config, store) {
 					}
 				}
 			});
-		},
+		}
 
-		render: function() {
+		render() {
 			var nav = store.get("nav"),
 				key = "thread-" + nav.room,
 				threadItems,
@@ -207,27 +223,19 @@ module.exports = function(core, config, store) {
 					{empty}
 				</div>
 			);
-		},
+		}
 
-		getInitialState: function() {
-			return {
-				show: (store.get("nav", "mode") === "room"),
-				read: store.isRoomReadable(),
-				items: this.getItems()
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			const roomId = store.get("nav", "room"),
 				userId = store.get("user"),
 				rel = roomId + "_" + userId;
 
 			if ((changes.nav && (changes.nav.room || "thread" in changes.nav)) ||
-			    (changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
+				(changes.entities && (changes.entities[roomId] || changes.entities[userId] || changes.entities[rel])) || changes.user ||
 				(changes.threads && changes.threads[roomId]) ||
 				(changes.texts && Object.keys(changes.texts).filter(key => key.indexOf(roomId) === 0).length > 0)
 			) {
-				this.setState(this.getInitialState());
+				this.setState(this.buildInitialState());
 			} else if (changes.nav && changes.nav.threadRange) {
 				let items = this.state.items,
 					threadRange = store.get("nav", "threadRange");
@@ -245,20 +253,20 @@ module.exports = function(core, config, store) {
 
 				}
 
-				this.setState(this.getInitialState());
+				this.setState(this.buildInitialState());
 			} else if (changes.nav && changes.nav.mode) {
 				this.setState({ show: (store.get("nav", "mode") === "room") });
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return ThreadList;
 };

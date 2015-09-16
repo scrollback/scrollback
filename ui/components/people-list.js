@@ -3,15 +3,25 @@
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		ListView = require("./list-view.js")(core, config, store),
-		PeopleListItem = require("./people-list-item.js")(core, config, store),
-		PeopleList;
+		PeopleListItem = require("./people-list-item.js")(core, config, store);
 
-	PeopleList = React.createClass({
-		onChange: function(e) {
+	class PeopleList extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onChange = this.onChange.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+
+			this.state = {
+				people: [],
+				query: ""
+			};
+		}
+
+		onChange(e) {
 			this.setState({ query: e.target.value });
-		},
+		}
 
-		render: function() {
+		render() {
 			var people = this.state.people,
 				headers = {
 					online: [],
@@ -51,7 +61,7 @@ module.exports = function(core, config, store) {
 			}
 
 			return (
-			        <div className="sidebar-people-list">
+					<div className="sidebar-people-list">
 						<div className="searchbar custom-titlebar-bg">
 							<input type="search" className="searchbar-input" placeholder="Filter people" required="true"
 								   value={this.state.query} onChange={this.onChange} />
@@ -62,18 +72,11 @@ module.exports = function(core, config, store) {
 						</div>
 					</div>
 					);
-		},
+		}
 
-		getInitialState: function() {
-			return {
-				people: [],
-				query: ""
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if ((changes.nav && (changes.nav.mode || changes.nav.room)) ||
-			    (changes.indexes && changes.indexes.roomUsers)) {
+				(changes.indexes && changes.indexes.roomUsers)) {
 
 				if (/^(room|chat)$/.test(store.get("nav", "mode"))) {
 					this.setState({
@@ -81,16 +84,16 @@ module.exports = function(core, config, store) {
 					});
 				}
 			}
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 500);
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return PeopleList;
 };

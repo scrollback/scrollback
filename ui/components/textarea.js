@@ -1,15 +1,19 @@
 "use strict";
 
 module.exports = function() {
-	var React = require("react"),
-		TextArea;
+	var React = require("react");
 
-	TextArea = React.createClass({
-		focus: function() {
+	class TextArea extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.onInput = this.onInput.bind(this);
+		}
+
+		focus() {
 			return React.findDOMNode(this.refs.textBox).focus();
-		},
+		}
 
-		val: function(value) {
+		val(value) {
 			var contentBox = React.findDOMNode(this.refs.contentBox),
 				textBox = React.findDOMNode(this.refs.textBox);
 
@@ -18,13 +22,13 @@ module.exports = function() {
 			} else {
 				return textBox.value;
 			}
-		},
+		}
 
-		area: function() {
+		area() {
 			return React.findDOMNode(this.refs.textBox);
-		},
+		}
 
-		onInput: function(e) {
+		onInput(e) {
 			var contentBox = React.findDOMNode(this.refs.contentBox);
 
 			contentBox.textContent = e.target.value;
@@ -32,17 +36,17 @@ module.exports = function() {
 			if (typeof this.props.onInput === "function") {
 				this.props.onInput(e);
 			}
-		},
+		}
 
-		render: function() {
+		render() {
 			return (
-			        <div className="textarea-container">
+					<div className="textarea-container">
 						<pre className={this.props.className}><span ref="contentBox" /><br /></pre>
 						<textarea ref="textBox" {...this.props} onInput={this.onInput} />
-			        </div>
-			        );
+					</div>
+					);
 		}
-	});
+	}
 
 	return TextArea;
 };

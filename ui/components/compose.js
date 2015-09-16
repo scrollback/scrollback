@@ -11,11 +11,40 @@ module.exports = function(core, config, store) {
 		TextArea = require("./textarea.js")(core, config, store),
 		Suggestions = require("./suggestions.js")(core, config, store),
 		FileUpload = require("./file-upload.js")(core, config, store),
-		Loader = require("./loader.js")(core, config, store),
-		Compose;
+		Loader = require("./loader.js")(core, config, store);
 
-	Compose = React.createClass({
-		sendMessage: function() {
+	class Compose extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.getUploadPayload = this.getUploadPayload.bind(this);
+			this.onBlur = this.onBlur.bind(this);
+			this.onDismissSuggestions = this.onDismissSuggestions.bind(this);
+			this.onFocus = this.onFocus.bind(this);
+			this.onInput = this.onInput.bind(this);
+			this.onKeyDown = this.onKeyDown.bind(this);
+			this.onSelectSuggestions = this.onSelectSuggestions.bind(this);
+			this.onStateChange = this.onStateChange.bind(this);
+			this.onUploadError = this.onUploadError.bind(this);
+			this.onUploadFinish = this.onUploadFinish.bind(this);
+			this.onUploadStart = this.onUploadStart.bind(this);
+			this.sendMessage = this.sendMessage.bind(this);
+
+			this.state = this.buildInitialState();
+		}
+
+		buildInitialState() {
+			let connection = store.get("app", "connectionStatus");
+
+			return {
+				placeholder: this.getPlaceholder(connection),
+				disabled: this.getDisabledStatus(connection),
+				autofocus: document.hasFocus(),
+				uploadStatus: this.state && this.state.uploadStatus ? this.state.uploadStatus : "",
+				query: null
+			};
+		}
+
+		sendMessage() {
 			var composeBox = this.refs.composeBox,
 				nav = store.get("nav"),
 				text = composeBox.val();
@@ -38,9 +67,9 @@ module.exports = function(core, config, store) {
 			composeBox.val("");
 
 			this.setEmpty();
-		},
+		}
 
-		setEmpty: function() {
+		setEmpty() {
 			let el = React.findDOMNode(this),
 				value = this.refs.composeBox.val();
 
@@ -49,9 +78,9 @@ module.exports = function(core, config, store) {
 			} else {
 				el.classList.add("empty");
 			}
-		},
+		}
 
-		onInput: function() {
+		onInput() {
 			this.setEmpty();
 
 			let value = this.refs.composeBox.val();
@@ -76,35 +105,35 @@ module.exports = function(core, config, store) {
 			if (this.state.query !== null) {
 				this.setState({ query: null });
 			}
-		},
+		}
 
-		onKeyDown: function(e) {
+		onKeyDown(e) {
 			if (this.state.query === null && e.keyCode === 13 && !(e.altKey || e.shiftKey || e.ctrlKey)) {
 				e.preventDefault();
 
 				this.sendMessage();
 			}
-		},
+		}
 
-		onBlur: function() {
+		onBlur() {
 			if (store.get("app", "focusedInput") === "compose") {
 				core.emit("setstate", {
 					app: { focusedInput: null }
 				});
 			}
-		},
+		}
 
-		onFocus: function() {
+		onFocus() {
 			core.emit("setstate", {
 				app: { focusedInput: "compose" }
 			});
-		},
+		}
 
-		onDismissSuggestions: function() {
+		onDismissSuggestions() {
 			this.setState({ query: null });
-		},
+		}
 
-		onSelectSuggestions: function(user) {
+		onSelectSuggestions(user) {
 			let composeBox = this.refs.composeBox,
 				value = composeBox.val();
 
@@ -124,13 +153,13 @@ module.exports = function(core, config, store) {
 			}
 
 			this.setState({ query: null });
-		},
+		}
 
-		onUploadStart: function() {
+		onUploadStart() {
 			this.setState({ uploadStatus: "active" });
-		},
+		}
 
-		onUploadError: function(err) {
+		onUploadError(err) {
 			let button = React.findDOMNode(this.refs.filebutton),
 				popover = document.createElement("div"),
 				message = document.createElement("div");
@@ -151,9 +180,9 @@ module.exports = function(core, config, store) {
 			});
 
 			this.setState({ uploadStatus: "error" });
-		},
+		}
 
-		onUploadFinish: function(payload, upload) {
+		onUploadFinish(payload, upload) {
 			this.setState({ uploadStatus: "complete" });
 
 			core.emit("text-up", {
@@ -166,26 +195,26 @@ module.exports = function(core, config, store) {
 			});
 
 			setTimeout(() => this.setState({ uploadStatus: "" }), 3000);
-		},
+		}
 
-		getUploadPayload: function() {
+		getUploadPayload() {
 			return {
 				uploadType: "content",
 				generateThumb: true,
 				userId: store.get("user"),
 				textId: gen.uid()
 			};
-		},
+		}
 
-		isFileUploadAvailable: function() {
+		isFileUploadAvailable() {
 			if (window.Android) {
 				return (typeof window.Android.isFileUploadAvailable === "function" && window.Android.isFileUploadAvailable());
 			} else {
 				return true;
 			}
-		},
+		}
 
-		render: function() {
+		render() {
 			return (
 				<div key="chat-area-input" className="chat-area-input" data-mode="chat">
 					{typeof this.state.query === "string" ?
@@ -222,17 +251,17 @@ module.exports = function(core, config, store) {
 					</div>
 				</div>
 			);
-		},
+		}
 
-		getDisabledStatus: function(connection) {
+		getDisabledStatus(connection) {
 			if (connection === "online" && store.isRoomWritable()) {
 				return false;
 			} else {
 				return true;
 			}
-		},
+		}
 
-		getPlaceholder: function(connection) {
+		getPlaceholder(connection) {
 
 			if (connection === "connecting") {
 				return "Connecting...";
@@ -248,45 +277,33 @@ module.exports = function(core, config, store) {
 			} else {
 				return "You are offline";
 			}
-		},
+		}
 
-		getInitialState: function() {
-			let connection = store.get("app", "connectionStatus");
-
-			return {
-				placeholder: this.getPlaceholder(connection),
-				disabled: this.getDisabledStatus(connection),
-				autofocus: document.hasFocus(),
-				uploadStatus: this.state && this.state.uploadStatus ? this.state.uploadStatus : "",
-				query: null
-			};
-		},
-
-		onStateChange: function(changes) {
+		onStateChange(changes) {
 			if ((changes.app && changes.app.connectionStatus) || changes.user ||
 				(changes.indexes && (changes.indexes.userRooms && changes.indexes.userRooms[store.get("user")]))) {
-				this.replaceState(this.getInitialState());
+				this.setState(this.buildInitialState());
 			}
-		},
+		}
 
-		componentDidUpdate: function() {
+		componentDidUpdate() {
 			if (this.state.autofocus) {
 				this.refs.composeBox.focus();
 			}
 
 			this.setEmpty();
-		},
+		}
 
-		componentDidMount: function() {
+		componentDidMount() {
 			core.on("statechange", this.onStateChange, 400);
 
 			this.setEmpty();
-		},
+		}
 
-		componentWillUnmount: function() {
+		componentWillUnmount() {
 			core.off("statechange", this.onStateChange);
 		}
-	});
+	}
 
 	return Compose;
 };

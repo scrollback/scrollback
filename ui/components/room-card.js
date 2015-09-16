@@ -9,20 +9,27 @@ var userUtils = require("../../lib/user-utils.js"),
 module.exports = function(core, config, store) {
 	var React = require("react"),
 		Badge = require("./badge.js")(core, config, store),
-		FollowButton = require("./follow-button.js")(core, config, store),
-		RoomCard;
+		FollowButton = require("./follow-button.js")(core, config, store);
 
-	RoomCard = React.createClass({
-		showRoomSettings: function() {
+	class RoomCard extends React.Component {
+		constructor(props, context) {
+			super(props, context);
+			this.badgeFilter = this.badgeFilter.bind(this);
+			this.goToRoom = this.goToRoom.bind(this);
+			this.shareRoom = this.shareRoom.bind(this);
+			this.showRoomSettings = this.showRoomSettings.bind(this);
+		}
+
+		showRoomSettings() {
 			core.emit("setstate", {
 				nav: {
 					room: this.props.roomId,
 					dialog: "conf"
 				}
 			});
-		},
+		}
 
-		goToRoom: function(e) {
+		goToRoom(e) {
 			if (/card-icon/.test(e.target.className)) {
 				return;
 			}
@@ -35,9 +42,9 @@ module.exports = function(core, config, store) {
 					thread: null
 				}
 			});
-		},
+		}
 
-		shareRoom: function() {
+		shareRoom() {
 			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId,
 				text = "Join " + this.props.roomId + " on scrollback";
 
@@ -57,13 +64,13 @@ module.exports = function(core, config, store) {
 					}
 				}
 			});
-		},
+		}
 
-		badgeFilter: function(note) {
+		badgeFilter(note) {
 			return note.group.split("/")[0] === this.props.roomId;
-		},
+		}
 
-		render: function() {
+		render() {
 			var room = this.props.roomId,
 				user = store.get("user"),
 				rel = store.getRelation(room, user),
@@ -85,7 +92,7 @@ module.exports = function(core, config, store) {
 			if (user && !userUtils.isGuest(user)) {
 				if (rel && (/owner|moderator/).test(rel.role)) {
 					icons.push(<a data-state="online" className="card-icon card-icon-configure card-actions-item"
-					           key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);
+							   key={"card-configure-" + room} onClick={this.showRoomSettings}></a>);
 				} else {
 					icons.push(
 						<FollowButton
@@ -114,7 +121,7 @@ module.exports = function(core, config, store) {
 				</div>
 			);
 		}
-	});
+	}
 
 	return RoomCard;
 };

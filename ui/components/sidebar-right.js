@@ -2,11 +2,10 @@
 
 module.exports = function(core, config, store) {
 	var React = require("react"),
-		PeopleList = require("./people-list.js")(core, config, store),
-		SidebarRight;
+		PeopleList = require("./people-list.js")(core, config, store);
 
-	SidebarRight = React.createClass({
-		render: function() {
+	class SidebarRight extends React.Component {
+		render() {
 			return (
 				<div data-mode="room chat" className="column sidebar sidebar-right">
 					<PeopleList />
@@ -14,7 +13,7 @@ module.exports = function(core, config, store) {
 			);
 
 		}
-	});
+	}
 
 	return SidebarRight;
 };
