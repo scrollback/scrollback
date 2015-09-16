@@ -270,26 +270,46 @@ function onTextDn(text) {
 			end: (currentThreads && currentThreads.length) ? text.time : null,
 			items: [ threadFromText(text) ]
 		}];
-	} else if (!userUtils.isGuest(text.from)) {
+	} else if (!userUtils.isGuest(text.from) || (text.mentions && text.mentions.length)) {
 		let threadObj = store.get("indexes", "threadsById", text.thread);
 
 		if (threadObj) {
 			let changed;
 
-			if (Array.isArray(threadObj.concerns)) {
-				if (threadObj.concerns.indexOf(text.from) === -1) {
+			if (!userUtils.isGuest(text.from)) {
+				if (Array.isArray(threadObj.concerns)) {
+					if (threadObj.concerns.indexOf(text.from) === -1) {
+						threadObj = objUtils.clone(threadObj);
+
+						threadObj.concerns.push(text.from);
+
+						changed = true;
+					}
+				} else {
 					threadObj = objUtils.clone(threadObj);
 
-					threadObj.concerns.push(text.from);
+					threadObj.concerns = [ text.from ];
 
 					changed = true;
 				}
-			} else {
-				threadObj = objUtils.clone(threadObj);
+			}
 
-				threadObj.concerns = [ text.from ];
+			if (text.mentions && text.mentions.length) {
+				threadObj = changed ? threadObj : objUtils.clone(threadObj);
 
-				changed = true;
+				if (Array.isArray(threadObj.concerns)) {
+					for (const user of text.mentions) {
+						if (threadObj.concerns.indexOf(user) === -1) {
+							threadObj.concerns.push(user);
+
+							changed = true;
+						}
+					}
+				} else {
+					threadObj.concerns = text.mentions.slice(0);
+
+					changed = true;
+				}
 			}
 
 			if (changed) {
