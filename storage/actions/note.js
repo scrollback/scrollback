@@ -16,7 +16,7 @@ module.exports = function (action) {
 		if(action.readTime) { updateObject.readtime = new Date(action.readTime); }
 		if(action.dismissTime) { updateObject.dismisstime = new Date(action.dismissTime); }
 
-		if(!(Object.keys(updateObject).length)) return;
+		if(!(Object.keys(updateObject).length)) return [];
 
 		return [pg.cat([
 			pg.update("notes", updateObject), // UPDATE notes SET readTime=${readTime}
