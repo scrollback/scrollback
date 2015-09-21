@@ -82,6 +82,10 @@ module.exports = (core, config, store) => {
 			if (!opts.title) {
 				return Promise.reject(new Error("Title cannot be empty!"));
 			}
+			
+			if (opts.title.length < 8 || opts.title.length > 64) {
+				return Promise.reject(new Error("Title should contain 8 to 64 characters"));
+			}
 
 			let id, text, user;
 
