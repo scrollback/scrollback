@@ -42,6 +42,7 @@ module.exports = [
 		if (query.identity) {
 			filters.push({ $: "entities.identities @> ${identities}", identities: [query.identity] });
 		} else if (query.timezone) {
+			filters.push({ $: "entities.identities @> ${identities}", identities: ['mailto'] });
 			if (typeof query.timezone.gte === 'number') {
 				filters.push({ $: "entities.timezone >= ${mintz}", mintz: query.timezone.gte });
 			}
