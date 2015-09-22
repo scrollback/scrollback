@@ -206,7 +206,7 @@ sock.on('connection', function(socket) {
 				delete data.eventStartTime;
 				log.d("sending response", data);
 				if(data.type === 'getUsers' && data.results) {
-					data.results = data.results.splice(0,181);
+					data.results = data.results.splice(0,61);
 				}
 				conn.send(data);
 				data.eventStartTime = t;
