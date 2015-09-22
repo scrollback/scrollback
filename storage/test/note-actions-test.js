@@ -45,8 +45,8 @@ it("notification query test(type text)", function() {
 		},
 		notify: {
 			"testinguser": {
-					 mention: 4,
-					 reply: 3
+					 mention: 40,
+					 reply: 30
 			}
 		},
 		occupants: [
@@ -60,19 +60,14 @@ it("notification query test(type text)", function() {
 	console.log(util.inspect(query, {
 		depth: 4
 	}));
-	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "user", "ref", "notetype", "group", "score", "time", "notedata" ) VALUES ( ${user}, ${ref}, ${notetype}, ${group}, ${score}, ${time}, ${notedata}), (${user}, ${ref}, ${notetype_1}, ${group_1}, ${score_1}, ${time_1}, ${notedata_1} )',
+	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "user", "ref", "notetype", "group", "score", "time", "notedata" ) VALUES ( ${user}, ${ref}, ${notetype}, ${group}, ${score}, ${time}, ${notedata} )',
     user: 'testinguser',
     ref: '4egwqyt326gewe23',
     notetype: 'mention',
     group: 'scrollback',
-    score: 4,
+    score: 40,
     time: new Date(1433856224914),
-    notedata: {},
-    notetype_1: 'reply',
-    group_1: undefined,
-    score_1: 3,
-    time_1: new Date(1433856224914),
-    notedata_1: {} } ], "wrong query for notification of text action");
+    notedata: {} } ], "wrong query for notification of text action");
 });
 
 it("notification query test(without notify property)", function() {
