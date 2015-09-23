@@ -2,6 +2,7 @@
 
 var sessionUtils = require('../lib/session-utils.js');
 var userUtils = require('../lib/user-utils.js');
+var log = require('../lib/logger.js');
 var crypto = require('crypto');
 
 var core;
@@ -63,14 +64,28 @@ function userHandler(action, callback) {
 	});
 }
 
-
 module.exports = function(c) {
 	core = c;
 	core.on("user", function(action, next) {
+		var userID;
 		userHandler(action, function(err) {
+			if(action.old && action.old.id) userID = action.old.id;
+			else userID = action.user.id;
+			
 			if (err) return next(err);
-			action.user.createTime = action.old.createTime ? action.old.createTime : action.user.createTime;
-			next();
+			core.emit("getRooms", {
+				hasOccupant: userID,
+				session: "internal-loader"
+			}, function(err, rooms) {
+				log.d("user event occupant",err, rooms);
+				if (err || !rooms || !rooms.results || !rooms.results.length) {
+					action.occupantOf = [];
+				} else {
+					action.occupantOf = rooms.results;
+				}
+				action.user.createTime = action.old.createTime ? action.old.createTime : action.user.createTime;
+				next();
+			});
 		});
 	}, "loader");
 };
