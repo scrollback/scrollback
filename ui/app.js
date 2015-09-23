@@ -14,9 +14,6 @@ require("../lib/custom-events.polyfill.js");
 require("../lib/notification.polyfill.js");
 require("../lib/request-animation-frame.polyfill.js");
 
-// Third party libraries
-require("../bower_components/sockjs/sockjs.js");
-
 // UI widgets
 require("../bower_components/lace/src/js/jquery.alertbar.js");
 require("../bower_components/lace/src/js/jquery.modal.js");

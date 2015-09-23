@@ -341,12 +341,7 @@ module.exports = function(core) {
 						socket.write(JSON.stringify(data));
 					}
 				},
-				ip = socket.remoteAddress;
-
-			// TODO: Get IP
-			// if (socket.headers && socket.headers["x-forwarded-for"]) {
-			// 	ip = socket.headers["x-forwarded-for"];
-			// }
+				ip = socket.request.connection.remoteAddress;
 
 			log("socket:", ip);
 
