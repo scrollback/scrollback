@@ -28,8 +28,7 @@ Boston, MA 02111-1307 USA.
 
 var engine = require("engine.io"),
 	log = require("../lib/logger.js"),
-	SbError = require("../lib/SbError.js"),
-	generate = require("../lib/generate.js");
+	SbError = require("../lib/SbError.js");
 
 module.exports = function(core) {
 	var rConns = {},
@@ -412,7 +411,7 @@ module.exports = function(core) {
 				log.i("Reached here:", d);
 
 				core.emit(d.type, d, function(err, data) {
-					var e, action, victimId, victimSession, victimConns, awayAction;
+					var e, victimId, victimSession, victimConns, awayAction;
 
 					log.i("response", err, data);
 
