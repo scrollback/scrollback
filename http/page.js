@@ -86,7 +86,7 @@ function init(app) {
 				res.send(404);
 			}
 
-			return next();
+			return null;
 		}
 
 		if (!req.secure && config.https) {
