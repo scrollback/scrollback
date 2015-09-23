@@ -21,24 +21,24 @@ module.exports = (core, config, store) => {
 
 		render() {
 			let rel = store.getRelation(this.props.room),
-			role = rel ? rel.role : null;
+				role = rel ? rel.role : null;
 
 			return (
 				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
 					<div className="blankslate-area-inner">
 						<h2 className="blankslate-area-title">
-							{(role && role === "banned") ? "You are banned in this room!" : "This room is private!"}
+							{role === "banned" ? "You are banned in this room!" : "This room is private!"}
 						</h2>
 
 						<p className="blankslate-area-message">
-							{(role && role === "banned") ? "" : "Follow the room to see discussions."}
+							{role === "banned" ? "" : "Follow the room to see discussions."}
 						</p>
 
 						<img className="blankslate-area-image" src="/s/assets/blankslate/stop.png" />
 
 						<p className="blankslate-area-actions">
 							{
-								(role && role === "banned") ? "" :
+								role === "banned" ? null :
 								<FollowButton className={"button" + (this.state.requested ? " disabled" : "")}>
 									{this.state.requested ? "Request sent" : "Follow " + store.get("nav", "room")}
 								</FollowButton>

@@ -278,8 +278,60 @@ function onTextDn(text) {
 		newState.threads[text.to] = [{
 			start: text.time,
 			end: (currentThreads && currentThreads.length) ? text.time : null,
-			items: [threadFromText(text)]
+			items: [ threadFromText(text) ]
 		}];
+	} else if (!userUtils.isGuest(text.from) || (text.mentions && text.mentions.length)) {
+		let threadObj = store.get("indexes", "threadsById", text.thread);
+
+		if (threadObj) {
+			let changed;
+
+			if (!userUtils.isGuest(text.from)) {
+				if (Array.isArray(threadObj.concerns)) {
+					if (threadObj.concerns.indexOf(text.from) === -1) {
+						threadObj = objUtils.clone(threadObj);
+
+						threadObj.concerns.push(text.from);
+
+						changed = true;
+					}
+				} else {
+					threadObj = objUtils.clone(threadObj);
+
+					threadObj.concerns = [ text.from ];
+
+					changed = true;
+				}
+			}
+
+			if (text.mentions && text.mentions.length) {
+				threadObj = changed ? threadObj : objUtils.clone(threadObj);
+
+				if (Array.isArray(threadObj.concerns)) {
+					for (const user of text.mentions) {
+						if (threadObj.concerns.indexOf(user) === -1) {
+							threadObj.concerns.push(user);
+
+							changed = true;
+						}
+					}
+				} else {
+					threadObj.concerns = text.mentions.slice(0);
+
+					changed = true;
+				}
+			}
+
+			if (changed) {
+				newState.threads = {
+					[text.to]: [{
+						start: threadObj.startTime,
+						end: threadObj.startTime,
+						items: [ threadObj ]
+					}]
+				};
+			}
+		}
 	}
 
 	// TODO? If text.title exists, change title of thread.
