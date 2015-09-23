@@ -35,9 +35,9 @@ var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abu
 		antiabuse: 600,
 		setters: 510,
 		modifier: 500,
-		gateway: 400,
-		cache: 300,
-		storage: 200,
+		cache: 400,
+		storage: 300,
+		gateway: 200,
 		watcher: 100
 	};
 

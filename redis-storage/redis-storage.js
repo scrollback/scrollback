@@ -44,6 +44,6 @@ module.exports = function(c, conf) {
 	occupantDB.flushdb();
 	require("./entity.js")(core, config);
 	require("./session.js")(core, config);
-	core.on("back", onBack, "storage");
-	core.on("away", onAway, "storage");
+	core.on("back", onBack, "cache");
+	core.on("away", onAway, "cache");
 };

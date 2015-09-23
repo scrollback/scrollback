@@ -2,7 +2,6 @@
 
 var pg = require("../../lib/pg.js");
 var log = require('./../../lib/logger.js');
-var userUtils = require('../../lib/user-utils.js');
 
 /*
 	Warning: This does not lock the table or do proper upserts.
@@ -87,14 +86,6 @@ module.exports = function(action) {
 		$: "WHERE NOT EXISTS (SELECT 1 FROM entities WHERE id = ${id})",
 		id: insertObject.id
 	}]));
-
-	if (action.type === "user" && action.old && action.user.id !== action.old.id && userUtils.isGuest(action.old.id)) {
-		query.push({
-			$: "delete from entities where id=${oldId}",
-			oldId: action.old.id.replace(/^guest-/, "")
-		});
-	}
-
 
 	if (action.type === "room" && (!action.old || !action.old.id)) {
 		query.push({

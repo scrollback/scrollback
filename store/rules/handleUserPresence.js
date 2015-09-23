@@ -101,4 +101,14 @@ module.exports = function(core, config, store) {
 
 		next();
 	}, 500);
+
+	core.on("user-dn", function(userDn) {
+		if (userDn.old && userUtils.isGuest(userDn.old.id)) {
+			if (userDn.occupantOf && userDn.occupantOf.length) {
+				userDn.occupantOf.map(function(e) {
+					return e.id;
+				}).forEach(sendBack);
+			}
+		}
+	}, 500);
 };

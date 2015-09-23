@@ -94,7 +94,7 @@ function onBoot() {
 	});
 }
 
-function onInit(init) {
+function onInit(init, next) {
 	var entities = {},
 		newstate = {};
 
@@ -114,7 +114,7 @@ function onInit(init) {
 
 		core.emit("setstate", newstate);
 
-		return;
+		return next();
 	}
 
 	if (init.occupantOf) entities = entitiesFromRooms(init.occupantOf, entities, init.user.id);
@@ -124,11 +124,14 @@ function onInit(init) {
 
 	core.emit("setstate", {
 		entities: entities,
-		user: init.user.id
+		user: init.user.id,
+		app:(init.old && init.old.id !== init.user.id)?{listeningRooms : []}:{}
+	}, function(){
+		next();
 	});
 }
 
-function onRoomUser(action) {
+function onRoomUser(action, next) {
 	var changes = {},
 		entities = {},
 		currentUser = store.getUser();
@@ -143,7 +146,14 @@ function onRoomUser(action) {
 			role: "owner"
 		};
 	}
-	core.emit("setstate", changes);
+
+	if(action.type === 'user' && action.old && userUtils.isGuest(action.old.id)) {
+		changes.app = {listeningRooms: []};
+		changes.user = action.user.id;
+	}
+	core.emit("setstate", changes, function(){
+		next();
+	});
 }
 
 function onAwayBack(action) {
@@ -321,7 +331,7 @@ function onEdit(edit) {
 function onJoinPart(join) {
 	var roomObj = join.room;
 	var userObj = join.user;
-	var relation = {},
+	var relation = objUtils.clone(store.getRelation(roomObj.id, userObj.id) || {}),
 		entities = {};
 
 	relation.user = userObj.id;
