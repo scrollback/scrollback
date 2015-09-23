@@ -343,7 +343,12 @@ module.exports = function(core) {
 				},
 				ip = socket.request.connection.remoteAddress;
 
-			log("socket:", ip);
+			// Works only under nginx as we need to add the request header
+			if (socket.request && socket.request.headers && socket.request.headers["x-forwarded-for"]) {
+				ip = socket.request.headers["x-forwarded-for"];
+			}
+
+			log("socket ip address:", ip);
 
 			socket.on("data", function(d) {
 				try {
