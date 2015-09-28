@@ -226,10 +226,9 @@ module.exports = function(core) {
 
 							log.d(i, note);
 						}
-
+						
 						outAction.note = note;
 					}
-
 					delete outAction.notify;
 
 					log.d("diapatching: ", e.user, outAction);

@@ -1,6 +1,7 @@
 "use strict";
 var log = require('../../lib/logger.js');
 var pg = require("../../lib/pg.js");
+// var userUtils = require("../../lib/user-utils.js");
 
 module.exports = function (action) {
 	var noteType, occupants = [];
@@ -33,8 +34,10 @@ module.exports = function (action) {
 		});
 
 		for(user in action.notify) {
+//			if (userUtils.isGuest(user)) continue;
+//			if (occupants[user]) continue;
 			for(noteType in  action.notify[user]) {
-				if (occupants[user] && action.notify[user][noteType] < 30) continue;
+				if (action.notify[user][noteType] < 40) continue;
 
 				insertObjects.push({
 					user: user,
