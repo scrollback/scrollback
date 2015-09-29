@@ -255,8 +255,7 @@ gulp.task("manifest", () =>
 		prefix: "/",
 		network: [ "*" ],
 		fallback: [
-			"/socket /s/socket-fallback",
-			"/ /fallback.html"
+			"/socket /s/socket-fallback"
 		],
 		timestamp: true,
 		filename: "manifest.appcache"

@@ -57,6 +57,7 @@ function init(app) {
 			return next();
 		}
 
+		if(/^\/r\//.test(req.path)) return next();
 		if (/^\/i\//.test(req.path)) {
 			try {
 				handleRequestInfo(req, function(err, data) {

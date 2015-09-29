@@ -350,7 +350,7 @@ function onEdit(edit) {
 			currentThread = store.get("indexes", "threadsById", text.id);
 
 			text.color = currentThread ? currentThread.color : text.color;
-			text.concerns = currentThread ? currentThread.concerns : text.concerns;
+			text.concerns = currentThread ? objUtils.clone(currentThread.concerns) : text.concerns;
 
 			thread = threadFromText(addConcerns(text));
 		}
