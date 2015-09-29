@@ -14,7 +14,7 @@ function userHandler(action, callback) {
 		session: action.session
 	}, function(meErr, response) {
 		function done() {
-			if (action.user.identities) {
+			if (action.user.identities && action.user.identities.length) {
 				if (!action.user.picture) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=retro';
 			} else {
 				action.user.picture = 'https://gravatar.com/avatar/default';
@@ -76,9 +76,9 @@ module.exports = function(c) {
 			core.emit("getRooms", {
 				hasOccupant: userID,
 				session: "internal-loader"
-			}, function(err, rooms) {
-				log.d("user event occupant",err, rooms);
-				if (err || !rooms || !rooms.results || !rooms.results.length) {
+			}, function(error, rooms) {
+				log.d("user event occupant",error, rooms);
+				if (error || !rooms || !rooms.results || !rooms.results.length) {
 					action.occupantOf = [];
 				} else {
 					action.occupantOf = rooms.results;
