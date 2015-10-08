@@ -26,6 +26,10 @@ var fs = require("fs");
 var config = {};
 
 var defaults = {
+	plugins:  [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
+				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
+				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
+				"push-notification", "google", "upload" ],
 	global: {
 		host: "localhost",
 		su: {}
