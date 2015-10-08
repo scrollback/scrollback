@@ -42,6 +42,7 @@
     "pg": "latest",
     "pigment": "latest",
     "react": "latest",
+    "react-dom": "^0.14.0",
     "redis": "latest",
     "request": "latest",
     "sockjs": "latest",
