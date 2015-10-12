@@ -28,7 +28,7 @@ function sendWelcomeEmail(user, origin) {
 		log.d("email add", user, emailAdd);
 		if (emailAdd) {
 			log.i("sending welcome email.", emailAdd);
-			send(config.from, emailAdd, "Welcome to Scrollback", emailHtml);
+			send(config.from, emailAdd, "Welcome to " + config.welcomeEmailSub, emailHtml);
 		}
 	}
 
