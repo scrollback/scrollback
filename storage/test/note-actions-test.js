@@ -38,15 +38,26 @@ it("notification query test(type text)", function() {
 				text: "some text",
 				from: "officer"
 			}},
-			reply: {}
+			reply: {
+				group: "scrollback", data: {
+				title: "some titile",
+				text: "some text",
+				from: "officer"
+			}}
 		},
 		user: {
 			id: "user1"
 		},
 		notify: {
 			"testinguser": {
-					 mention: 40,
-					 reply: 30
+				 mention: 80,
+				 reply: 60
+			},
+			"testuser2": {
+				reply: 30
+			},
+			"testuser3": {
+				reply: 60
 			}
 		},
 		occupants: [

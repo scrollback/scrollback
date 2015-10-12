@@ -13,23 +13,25 @@
 module.exports = [
 	function(query) { // Stage 1, group and get notifications
 		return {
-			$: 	"SELECT \"ref\", \"notetype\", \"user\", \"score\", \"notedata\", \"group\", \"time\"," +
-				"COUNT(*) OVER (PARTITION BY \"user\", \"notetype\", \"group\" ) \"count\"," +
-				"RANK() OVER (PARTITION BY \"user\", \"notetype\", \"group\" ORDER BY \"time\" DESC) timeRank " +
+			$: 	"SELECT \"ref\", \"notetype\", \"score\", \"notedata\", \"group\", \"time\", \"count\"" +
+				" FROM (" +
+				"SELECT \"ref\", \"notetype\", \"notify\"->>${user} \"score\", \"notedata\", \"group\", \"time\"," +
+				"COUNT(*) OVER (PARTITION BY \"notetype\", \"group\" ) \"count\"," +
+				"RANK() OVER (PARTITION BY \"notetype\", \"group\" ORDER BY \"time\" DESC) timeRank " +
 				"FROM notes " +
-				"WHERE \"user\" = ${user} AND dismisstime IS NULL AND timeRank = 1;",
+				"WHERE \"notify\" ? ${user}" +
+				") t" +
+				" WHERE \"count\" <= 2 OR timeRank = 1;",
 			user: query.user.id
 		};
 	},
 	function(query, results) { // Stage 2, result transform
 		query.results = (query.results ? query.results : []).concat(results.map(function(row) {
 			return {
-				user: query.user.id,
-				action: row.action,
 				noteType: row.notetype,
 				group: row.group,
 				ref: row.ref,
-				score: row.score,
+				score: parseInt(row.score),
 				time: row.time.getTime(),
 				noteData: row.notedata,
 				count: parseInt(row.count)
