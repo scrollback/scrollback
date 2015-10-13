@@ -14,7 +14,6 @@ module.exports = function(core, config, store) {
 		RoomList = require("./room-list.js")(core, config, store),
 		ThreadList = require("./thread-list.js")(core, config, store),
 		Footer = require("./footer.js")(core, config, store),
-		CreateRoomButton = require("./create-room-button.js")(core, config, store),
 		CurrentDialog = require("../dialogs/current-dialog.js")(core, config, store),
 		Client;
 
@@ -60,10 +59,6 @@ module.exports = function(core, config, store) {
 							</div>
 
 							<ChatArea />
-
-							<CreateRoomButton className="fab fab-room" data-state="online" data-mode="home">
-								<span className="fab-label">Create room</span>
-							</CreateRoomButton>
 
 							<a className="fab fab-thread" data-state="online" data-mode="room" data-permission="write" onClick={this.startThread}>
 								<span className="fab-label">Start discussion</span>
