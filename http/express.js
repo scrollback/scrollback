@@ -44,8 +44,11 @@ function init() {
 	app.set('view options', { debug: true });
 
 	app.use(function(req, res, next) {
-		if (/^okhttp\/*/.test(req.headers["user-agent"]) ||
-			(req.headers["x-requested-with"] && /^io.scrollback.neighborhoods.*/.test(req.headers["x-requested-with"]))) {
+		if (
+			/^okhttp\/*/.test(req.headers["user-agent"]) ||
+			(req.headers["x-requested-with"] && /^io.scrollback.neighborhoods.*/.test(req.headers["x-requested-with"])) && 
+			config.global.host === "scrollback.io"
+		   ) {
 			return res.redirect(301, "https://heyneighbor.chat" + req.originalUrl);
 		}
 
