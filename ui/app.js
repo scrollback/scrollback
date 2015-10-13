@@ -51,7 +51,6 @@ require("../customization/customization-client.js")(...args);
 require("../authorizer/error-handlers.js")(...args);
 
 // User menu providers
-require("../browserid-auth/browserid-auth-client.js")(...args);
 require("../facebook/facebook-client.js")(...args);
 require("../github/github-client.js")(...args);
 require("../google/google-client.js")(...args);
