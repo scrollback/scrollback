@@ -36,22 +36,15 @@ require("../history/history-client.js")(...args);
 // Apps
 require("../notification/notification-client.js")(...args);
 require("../anti-abuse/anti-abuse-client.js")(...args);
-require("../authorizer/authorizer-client.js")(...args);
 require("../authorizer/requests.js")(...args);
 // require("../authorizer/invites.js")(...args);
 require("../email/email-client.js")(...args);
 require("../http/notifications-client.js")(...args);
 require("../http/room-general-settings-client.js")(...args);
-require("../http/seo-client.js")(...args);
 require("../http/user-profile-settings-client.js")(...args);
-require("../irc/irc-client.js")(...args);
-require("../threader/threader-client.js")(...args);
-require("../twitter/twitter-client.js")(...args);
-require("../customization/customization-client.js")(...args);
 require("../authorizer/error-handlers.js")(...args);
 
 // User menu providers
-require("../browserid-auth/browserid-auth-client.js")(...args);
 require("../facebook/facebook-client.js")(...args);
 require("../github/github-client.js")(...args);
 require("../google/google-client.js")(...args);

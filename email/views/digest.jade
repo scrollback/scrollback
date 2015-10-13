@@ -2,10 +2,10 @@ html
 	body(style="font-family: Helvetica,Arial,sans-serif")
 		table(style="width: 100%; border: 1px solid #ccc;", cellspacing="0", border="0")
 			tr: td(style="background: #000; border-bottom: 4px solid #3ca; padding: 10px 20px;")
-				a(href="https://scrollback.io/" style="text-decoration: none")
-					img(src="https://scrollback.io/s/assets/logo/scrollback-logo.png", alt="scrollback")
+				a(href="https://heyneighbor.chat/me" style="text-decoration: none")
+					img(src="https://github.com/scrollback/heyneighbor-site2/blob/gh-pages/assets/logotype.png?raw=true", alt="heyneighbor")
 			tr: td(style="background: #eee; padding: 20px 20px 0 30px;")
-				p(style="padding: 0; margin: 0; font-weight:bold; text-transform: uppercase; color: #999;") Updates from rooms you follow
+				p(style="padding: 0; margin: 0; font-weight:bold; text-transform: uppercase; color: #999;") Updates from localities you follow
 			tr: td(style="background: #eee; padding: 0 10px 10px 10px;")
 				table(cellspacing="0",cellpadding="0",border="0" ): tr
 					each r in rooms
@@ -13,12 +13,12 @@ html
 							table(style="width: 320px; background: #fff; table-layout: fixed; box-shadow: 0 4px 16px 0 #555;" cellspacing="0", border="0")
 								tr(style="background: #555; color: #fff; font-weight: bold;")
 									td(style="width: 230px; padding: 10px 0px 10px 20px;")
-										a(href="https://scrollback.io/#{r.id}" style="color: #fff; font-weight: bold; text-decoration: none") #{r.id}
+										a(href="https://heyneighbor.chat/#{r.id}" style="color: #fff; font-weight: bold; text-decoration: none") #{r.id}
 									td(style="width: 30px; padding: 10px 20px 10px 0; vertical-align: top; text-align: right;") #{r.totalCount}
 								each l in r.threads
 									tr(style="background: #fff; color: #000;")
 										td(style="color: #fff; padding: 10px 0 5px 20px;")
-											a(href="https://scrollback.io/#{r.id}/#{l.thread}/#{l.title}", style="color: #000; text-decoration: none") #{formatText(l.title)}
+											a(href="https://heyneighbor.chat/#{r.id}/#{l.thread}/#{l.title}", style="color: #000; text-decoration: none") #{formatText(l.title)}
 										td(style="padding: 10px 20px 5px 0; vertical-align: top; text-align: right;") #{l.count}
 									each m in l.interesting
 										tr: td(colspan="2" style="padding: 5px 20px 5px 40px;")
@@ -29,7 +29,7 @@ html
 
 			tr: td(style="background: #eee; padding: 10px 20px; font-size: 0.8em; color: #999")
 				p If you don't want these email notifications anymore,
-					a(style="color: #555", href='https://scrollback.io/me') unfollow these rooms on scrollback
+					a(style="color: #555", href='https://heyneighbor.chat/me') unfollow these rooms on heyneighbor
 					| . Copyright &copy; 2014 Askabt Pte. Ltd.
 
 

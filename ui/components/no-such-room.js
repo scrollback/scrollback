@@ -1,24 +1,18 @@
 "use strict";
 
-module.exports = (core, config, store) => {
-	const React = require("react"),
-		  CreateRoomButton = require("./create-room-button.js")(core, config, store);
+module.exports = (core) => {
+	const React = require("react");
 
 	class NoSuchRoom extends React.Component {
 		constructor(props) {
 			super(props);
 		}
 
-		render() {
-			let room = store.get("nav", "room"),
-				identity, prefill;
+		goToHome() {
+			core.emit("setstate", { nav: { room: null,mode:  "home"}});
+		}
 
-			if (room && room.indexOf(":") > -1) {
-				identity = room;
-				prefill = room.split(":")[1];
-			} else {
-				prefill = room;
-			}
+		render() {
 
 			return (
 				<div {...this.props} className={this.props.className + " blankslate-area blankslate-area-gray"}>
@@ -27,16 +21,12 @@ module.exports = (core, config, store) => {
 							This room does not exist!
 						</h2>
 
-						<p className="blankslate-area-message">
-							May be create it?
-						</p>
-
 						<img className="blankslate-area-image" src="/s/assets/blankslate/still.png" />
 
 						<p className="blankslate-area-actions">
-							<CreateRoomButton className="button" prefill={prefill} identity={identity}>
-								Create room
-							</CreateRoomButton>
+							<button className="button" onClick={this.goToHome}>
+								Go back to home screen
+							</button>
 						</p>
 					</div>
 				</div>

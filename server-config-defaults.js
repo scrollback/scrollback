@@ -55,6 +55,7 @@ var defaults = {
 		index: "/me" //index URL redirect
 	},
 	email: {
+		welcomeEmailSub: "Welcome to Scrollback",
 		from: "scrollback@scrollback.io",
 		redisDB: 7
 	},
