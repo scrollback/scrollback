@@ -1,7 +1,7 @@
 @mixin banner-image($size: 1) {
-    $base: "https://scrollback.github.io/static/assets/banner";
+    $base: "https://scrollback.github.io/static/assets/heyneighbor-banner";
 
-    background-image: url(#{$base}/banner@#{$size}x.jpg)
+    background-image: url(#{$base}/HNBanner@#{$size}x.jpg)
 }
 
 @include exports("banner") {

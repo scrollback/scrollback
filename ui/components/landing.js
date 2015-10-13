@@ -14,7 +14,7 @@ module.exports = function(core, config, store) {
 						<div data-state="online" className="banner banner-landing">
 							<div className="banner-landing-content">
 								<div className="banner-landing-content-inner">
-									<img src="https://scrollback.github.io/static/assets/banner/scrollback-large.png" />
+									<img src="/s/assets/heyneighbor-logo/heyneighbor-logo-white@4x.png" />
 									<p>Where communities hang out</p>
 
 									<RoomNameEntry className="banner-entry banner-landing-entry" />
