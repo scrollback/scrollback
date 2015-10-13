@@ -31,6 +31,7 @@ var defaults = {
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
 				"push-notification", "google", "upload" ],
 	global: {
+		appName: "Scrollback",
 		host: "localhost",
 		su: {}
 	},

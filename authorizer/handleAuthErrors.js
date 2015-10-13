@@ -5,14 +5,14 @@
 const strings = {
 	EN: {
 		requiredRoleStr: {
-			"registered": "signed into scrollback",
+			"registered": "signed in",
 			"follower": "a follower of this room",
 			"moderator": "a moderator of this room",
 			"owner": "an owner of this room"
 		},
 		currentRoleTasks: {
 			"banned": "",
-			"guest": "signing into scrollback"
+			"guest": "signing in"
 		},
 		requiredRoleTasks: {
 			"follower": "following this room",
