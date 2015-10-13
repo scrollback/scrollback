@@ -155,7 +155,7 @@ module.exports = function(core, config, store) {
 				userObj = store.getUser();
 
 				this.setState({
-					title: buildTitle(store.get(), true),
+					title: buildTitle(store.get(), true, config),
 					username: userUtils.getNick(user),
 					picture: userObj ? getAvatar(userObj.picture, 48) : ""
 				});

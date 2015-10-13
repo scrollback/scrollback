@@ -3,6 +3,7 @@
 var merge = require("./merge-config.js");
 
 var defaults = {
+	appName: "Scrollback",
 	server: {
 		protocol: "http:",
 		host: "localhost:7528",

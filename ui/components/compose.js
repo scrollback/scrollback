@@ -242,7 +242,7 @@ module.exports = function(core, config, store) {
 				if (store.isRoomWritable()) {
 					return "Reply as " + userUtils.getNick(user) + ", markdown supported";
 				} else {
-					return (userUtils.isGuest(user) ? "Sign in to scrollback" : "Follow this room") + " to send messages";
+					return (userUtils.isGuest(user) ? "Sign in to " + config.appName : "Follow this room") + " to send messages";
 				}
 
 			} else {

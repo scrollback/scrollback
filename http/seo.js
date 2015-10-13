@@ -7,7 +7,7 @@ var log = require("../lib/logger.js"),
 	noOfThreads = 50,
 	noOfText = 255;
 
-module.exports = function(core) {
+module.exports = function(core, config) {
 	function genLink(title, nav) {
 		return "<a href='" + url.build({ nav: nav }) + "'>" + format.textToHtml(title) + "</a>";
 	}
@@ -136,7 +136,7 @@ module.exports = function(core) {
 									state.indexes.threadsById[thread.id] = thread;
 
 									return cb({
-										title: buildTitle(state),
+										title: buildTitle(state, false, config),
 										description: text || thread.text,
 										picture: picture || roompic
 									});
@@ -146,7 +146,7 @@ module.exports = function(core) {
 							});
 						} else {
 							return cb({
-								title: buildTitle(state),
+								title: buildTitle(state, false, config),
 								description: r.results[0].description,
 								picture: roompic
 							});
