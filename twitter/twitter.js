@@ -215,7 +215,7 @@ function fetchTweets(room) {
 						log("var reply= ", reply);
 						if (new Date().getTime() - startTime >= timeout) {
 							log.e("Twitter search is taking time more then the search interval: ",
-								  (new Date.getTime() - startTime), room.id);
+								  (new Date().getTime() - startTime), room.id);
 						} else if (reply.statuses && reply.statuses[0] && !reply.statuses[0].retweeted &&
 								   (new Date(reply.statuses[0].created_at).getTime()) > (data ? parseInt(data, 10) : 1)) {
 							redis.set("twitter:lastTweetTime:" + room.id,
