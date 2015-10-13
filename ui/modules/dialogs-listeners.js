@@ -141,7 +141,7 @@ module.exports = function(core, config, store) {
 				};
 			} else {
 				dialog.title = "Create a new room";
-				dialog.description = "<b>Step 1:</b> Sign in to scrollback";
+				dialog.description = "<b>Step 1:</b> Sign in to " + config.appName;
 				dialog.content = [
 					"<b>Step 2:</b> Choose a room name",
 					"<input type='text' id='createroom-dialog-room' value='" + roomName + "' disabled>"
@@ -176,7 +176,7 @@ module.exports = function(core, config, store) {
 			dialog.description = "Choose a username";
 			dialog.content = [
 				"<input type='text' id='signup-dialog-user' autofocus>",
-				"<p>Be creative. People in Scrollback will know you by this name.</p>"
+				"<p>Be creative. People in " + config.appName + " will know you by this name.</p>"
 			];
 			dialog.action = {
 				text: "Create account",
@@ -185,7 +185,7 @@ module.exports = function(core, config, store) {
 				}
 			};
 		} else {
-			dialog.title = "Sign in to scrollback";
+			dialog.title = "Sign in to " + config.appName;
 
 			core.emit("auth", dialog, function() {
 				next();
