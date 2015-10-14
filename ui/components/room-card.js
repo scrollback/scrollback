@@ -39,7 +39,7 @@ module.exports = function(core, config, store) {
 
 		shareRoom: function() {
 			let url = window.location.protocol + "//" + window.location.host + "/" + this.props.roomId,
-				text = "Join " + this.props.roomId + " on scrollback";
+				text = "Join " + this.props.roomId + " on " + config.appName;
 
 			if (window.Android && typeof window.Android.shareItem === "function") {
 				window.Android.shareItem("Share room via", text + " - " + url);

@@ -100,7 +100,7 @@ module.exports = function(core, config, store) {
 		};
 
 		if (userObj && userUtils.isGuest(userObj.id)) {
-			menu.title = "Sign in to Scrollback with";
+			menu.title = "Sign in to " + config.appName + " with";
 
 			core.emit("auth", menu, function() {
 				next();
