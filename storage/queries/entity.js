@@ -9,7 +9,7 @@ module.exports = [
 		var type,
 			filters = [],
 			source = "entities",
-			limit, orderBy, startPosition;
+			limit, orderBy, startPosition, location = {};
 
 		if(query.type === 'getUsers') {
 			type = 'user';
@@ -107,6 +107,15 @@ module.exports = [
 		} else {
 			limit = null; // 256;
 		}
+
+		if(query.location){
+			location.long = query.location[0];
+			location.lat = query.location[1];
+			location.$ = "SELECT *, ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance from entities WHERE ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000) order by distance";
+
+			return pg.cat([location]);
+		}
+
 		return pg.cat([
 			"SELECT * FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
