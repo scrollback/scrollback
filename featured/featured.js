@@ -19,5 +19,5 @@ module.exports = function(coreObject, config) {
 				callback();
 			});
 		} else callback();
-	}, "gateway");
+	}, 500);
 };
