@@ -24,7 +24,7 @@ module.exports = function(core, config, store) {
 			return;
 		}
 
-		document.title = buildTitle(store.get());
+		document.title = buildTitle(store.get(), false, config);
 
 		path = url.build(store.get(), store);
 

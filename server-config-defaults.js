@@ -31,6 +31,7 @@ var defaults = {
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
 				"push-notification", "google", "upload" ],
 	global: {
+		appName: "Scrollback",
 		host: "localhost",
 		su: {}
 	},
@@ -54,6 +55,11 @@ var defaults = {
 		index: "/me" //index URL redirect
 	},
 	email: {
+		auth: {
+			"user": "",
+			"pass": ""
+		},
+		to: "devs@scrollback.io",
 		from: "scrollback@scrollback.io",
 		redisDB: 7
 	},
@@ -102,6 +108,13 @@ var defaults = {
 		redisDB: 12
 	},
 	facebook: {
+	},
+	"push-notification": {
+                defaultPackageName:"",
+                keys:{
+                        "io.scrollback.app" : "",
+                        "io.scrollback.neighborhoods": ""
+                }
 	},
 	google: {
 	},

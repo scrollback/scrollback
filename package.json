@@ -43,7 +43,7 @@
     "oauth": "latest",
     "pg": "latest",
     "pigment": "latest",
-    "react": "latest",
+    "react": "^0.13",
     "redis": "latest",
     "request": "latest",
     "twemoji": "latest",
