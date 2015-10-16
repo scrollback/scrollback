@@ -6,23 +6,23 @@ module.exports = [
 	function(query) {
 		var tableName, filters = [], orderBy, startPosition, direction, limit;
 
-		tableName = (query.type === 'getThreads'? 'threads': 'texts');
+		tableName = (query.type === "getThreads" ? "threads" : "texts");
 
 		if (query.to) {
 			filters.push({ $: "\"to\"=${to}", to: query.to });
 		}
 
-		if (query.thread && query.type === 'getTexts') {
+		if (query.thread && query.type === "getTexts") {
 			filters.push({ $: "thread=${thread}", thread: query.thread });
-		} 
+		}
 
 		if (query.tags) {
 			filters.push({ $: "tags@>${tags}", tags: query.tags });
 		}
 
 		if (!query.user || query.user.role !== "owner" && query.user.role !== "moderator" && query.user.role !== "su") {
-			filters.push({ $: 'NOT("tags" @> ${hidden})',
-						   hidden: [ query.type === 'getThreads'? "thread-hidden": "hidden" ] });
+			filters.push({ $: "NOT(\"tags\" @> ${hidden})",
+						   hidden: [ query.type === "getThreads" ? "thread-hidden" : "hidden" ] });
 		}
 
 		if (query.ref) {
@@ -44,14 +44,14 @@ module.exports = [
 			startPosition = (query.time ? (new Date(query.time)) : (new Date()));
 		}
 
-		if(query.after) {
+		if (query.after) {
 			limit = query.after;
 			direction = "ASC";
 			filters.push({
 				$: "\"" + orderBy + "\" >= ${start}",
 				start: startPosition
 			});
-		} else if(query.before) {
+		} else if (query.before) {
 			limit = query.before;
 			direction = "DESC";
 			filters.push({
@@ -64,19 +64,19 @@ module.exports = [
 		return pg.cat([
 			"SELECT * FROM " + tableName + " WHERE",
 			pg.cat(filters, " AND "),
-			{ $: (orderBy? "ORDER BY " + orderBy + " " + (direction || ""): "") + " LIMIT ${limit}", limit: limit }
+			{ $: (orderBy ? "ORDER BY " + orderBy + " " + (direction || "") : "") + " LIMIT ${limit}", limit: limit }
 		]);
 	},
-	
 	function(query, rows) {
-		var results = [];
+		var results = [], ids, refMap = {};
 		if (rows.length) {
 			rows.forEach(function(row) {
-				var obj = {
+				var obj, propName;
+				obj = {
 					id: row.id,
 					to: row.to,
 					from: row.from,
-					type: (query.type === 'getThreads'? 'thread': 'text'),
+					type: (query.type === "getThreads" ? "thread" : "text"),
 					title: row.title,
 					text: row.text,
 					thread: row.thread,
@@ -89,23 +89,43 @@ module.exports = [
 					startTime: row.starttime && row.starttime.getTime(),
 					updateTime: row.updatetime.getTime(),
 					updater: row.updater
-				}, propName;
-				
-				for(propName in obj) if(typeof obj[propName] === "undefined") {
+				};
+
+				for (propName in obj) if (typeof obj[propName] === "undefined") {
 					delete obj[propName];
 				}
-				
+
 				results.push(obj);
 			});
 
 			if (query.before) {
 				results.reverse();
-			} else if (query.ref instanceof Array) { //order based on ref
-				var refMap = {};
+			} else if (query.ref instanceof Array) { //	order based on ref
 				query.ref.forEach(function (ref, i) { refMap[ref] = i; });
 				results.sort(function (a, b) { return refMap[a.id] - refMap[b.id]; });
 			}
 		}
+
 		query.results = results;
+		if (query.type !== "getThreads") return null;
+
+		ids = rows.map(function (thread) {
+			return thread.id;
+		});
+
+		return pg.cat([ {
+			$: "SELECT id,text FROM texts WHERE id in ($(ids))",
+			ids: ids
+		} ]);
+	},
+	function (query, rows) {
+		if (!query.results) return;
+		var threads = query.results.reduce(function (prev, thread) {
+			prev[thread.id] = thread;
+			return prev;
+		}, {});
+		rows.forEach(function(t) {
+			if (threads[t.id]) threads[t.id].text = t.text;
+		});
 	}
 ];
