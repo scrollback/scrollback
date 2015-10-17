@@ -40,7 +40,7 @@ module.exports = function(core, config, store) {
 
 								</li>
 								<li className="footer-social footer-social-twitter">
-								<a href="https://twitter.com/neighbour_hey" target="_blank">Twitter</a>
+								<a href="https://twitter.com/neighbor_hey" target="_blank">Twitter</a>
 								</li>
 
 							</ul>
