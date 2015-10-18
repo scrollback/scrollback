@@ -13,8 +13,7 @@ module.exports = function(core, conf) {
 	core.on('text', function(message, callback) {
 		var room = message.room,
 			text, customPhrases, textMessage, textArray;
-		log("Heard \"text\" event");
-		text = message.text;
+		text = (message.title || "") + " " + message.text;
 		if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
 			if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
 				message.tags = Array.isArray(message.tags) ? message.tags : [];
