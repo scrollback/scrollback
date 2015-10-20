@@ -39,15 +39,15 @@ module.exports = (core) => {
 
 	let actions = [ "text", "user", "room", "edit" ];
 
-	actions.forEach(action => {
+	actions.forEach(function(action) {
 		core.on(action, (a, n) => {
 			let text = [
 					(a.id || ""),
 					(a.text || ""),
+					(a.title || ""),
 					(a.to || ""),
 					(a.description || "")
 				].join(" "),
-				title = a.title ? a.title : "",
 				appliedFilters = [],
 				matches;
 
@@ -73,17 +73,12 @@ module.exports = (core) => {
 					a.tags = Array.isArray(a.tags) ? a.tags : [];
 					matches = appliedFilters.map(re => check(text, re)).filter(b => !!b);
 					if (matches.length) {
-						log.e(matches, appliedFilters.length);
+						if (a.id === a.thread) a.tags.push("thread-hidden");
 						a.tags.push("abusive", "hidden");
 						log(a);
 						return n();
 					}
 
-					let m = appliedFilters.map(re => check(title, re)).filter(b => !!b);
-					if (m.length) {
-						a.tags.push("thread-hidden");
-						return n();
-					}
 				}
 				return n();
 			}
@@ -101,18 +96,9 @@ module.exports = (core) => {
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					let c = a.room.params.antiAbuse.customPhrases;
-					let l = 0;
 					if (c instanceof Array) {
-						for (let i = 0; i < c.length; i++) {
-							let sentance = c[i];
-							if (!sentance) {
-								c.splice(i, 1);
-								i--;
-							}
-							l += sentance.length;
-							if (l > limit) {
-								return n(new Error("ERR_LIMIT_NOT_ALLOWED"));
-							}
+						if (c.join(" ").length > limit) {
+							return n(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}
 						n();
 					} else {
