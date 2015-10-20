@@ -12,7 +12,6 @@ module.exports = function(core) {
 		process.nextTick(function() {
 			return next();
 		});
-
 	}, 400);
 
 	[ "init", "user" ].forEach(function(event) {
