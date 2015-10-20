@@ -1,5 +1,5 @@
 "use strict";
-var log = require('../../lib/logger.js');
+//var log = require('../../lib/logger.js');
 var pg = require("../../lib/pg.js");
 // var userUtils = require("../../lib/user-utils.js");
 
@@ -12,7 +12,7 @@ module.exports = function (action) {
 
 		if(action.ref) { whereObject.ref = action.ref; }
 		if(action.group) { whereObject.group = action.group; }
-		if(action.notetype) { whereObject.notetype = action.notetype; }
+		if(action.noteType) { whereObject.notetype = action.noteType; }
 
 //		if(action.readTime) { updateObject.readtime = new Date(action.readTime); }
 //		if(action.dismissTime) { updateObject.dismisstime = new Date(action.dismissTime); }
@@ -24,7 +24,7 @@ module.exports = function (action) {
 		return [pg.cat([
 			{ $: "UPDATE \"notes\" SET \"notify\" = \"notify\" || ${notify} WHERE \"notify\" ? ${user}",
 			  notify: notifyObject, user: action.user.id },
-			pg.nameValues(whereObject, " AND "),
+			pg.nameValues(whereObject, " AND ")
 		], " AND ")];
 	} else {
 		if(!action.notify) { return []; }
