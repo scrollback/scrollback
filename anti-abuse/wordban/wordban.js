@@ -6,7 +6,7 @@ let SbError = require("../../lib/SbError.js"),
 	fs = require("fs"),
 	filters = {};
 
-fs.readdirSync(__dirname + "/badwords").forEach(filename => {
+fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
 	if (filename === "en" || filename === "hi") {
 		filters[filename] = new RegExp("\\b" + fs.readFileSync(
 			__dirname + "/badwords/" + filename
