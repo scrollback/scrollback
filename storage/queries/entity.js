@@ -151,7 +151,7 @@ module.exports = [
 		if (query.location) {
 			location.long = query.location[0];
 			location.lat = query.location[1];
-			location.$ = "SELECT *, ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance from entities WHERE ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000) order by distance";
+			location.$ = "SELECT *, string_to_array(substring(ST_AsText(location) from '[\\d. ]+'), ' ') as coordinates, ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance from entities WHERE ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 5000) order by distance";
 
 			return pg.cat([ location ]);
 		}
@@ -183,6 +183,7 @@ module.exports = [
 				}
 
 				log.d("row identity", identities, row);
+				log.e(row.coordinates);
 				var entity = {
 					id: isGuest ? "guest-" + row.id : row.id,
 					type: row.type,
@@ -194,7 +195,9 @@ module.exports = [
 					picture: row.picture,
 					timezone: row.timezone,
 					role: row.role,
-					roleSince: row.roletime
+					roleSince: row.roletime,
+					coordinates: row.coordinates,
+					distance: row.distance
 				};
 
 				if (row.transitiontype) entity.transitionType = row.transitiontype;
