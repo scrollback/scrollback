@@ -24,23 +24,12 @@ function check (text, re) {
 		.match(re);
 }
 
-//let appliedFilters = [];
-//	appliedFilters.push(filters.en);
-//	appliedFilters.push(filters.hi);
-//let s = "some kutta random string";
-//
-//let matches = appliedFilters.map(re => check(s, re)).filter(b => !!b);
-//
-//if (matches.length) {
-//	console.log(matches, appliedFilters);
-//}
-
-module.exports = (core) => {
+module.exports = function(core) {
 
 	let actions = [ "text", "user", "room", "edit" ];
 
 	actions.forEach(function(action) {
-		core.on(action, (a, n) => {
+		core.on(action, function(a, next) {
 			let text = [
 					(a.id || ""),
 					(a.text || ""),
@@ -71,16 +60,18 @@ module.exports = (core) => {
 					}
 
 					a.tags = Array.isArray(a.tags) ? a.tags : [];
-					matches = appliedFilters.map(re => check(text, re)).filter(b => !!b);
+					matches = appliedFilters.map(function(re) {
+						return check(text, re);
+					}).filter(function(b)  {return !!b; });
 					if (matches.length) {
 						if (a.id === a.thread) a.tags.push("thread-hidden");
 						a.tags.push("abusive", "hidden");
 						log(a);
-						return n();
+						return next();
 					}
 
 				}
-				return n();
+				return next();
 			}
 
 			if (action === "room") {
@@ -88,32 +79,36 @@ module.exports = (core) => {
 				appliedFilters.push(filters.hi);
 				let limit = 10000;
 				log.d("room action:", a);
-				matches = appliedFilters.map(re => check(text, re)).filter(b => !!b);
+				matches = appliedFilters.map(function(re) {
+					return check(text, re);
+				}).filter(function(b)  {return !!b; });
 
 				if (matches.length) {
-					return n(new SbError("Abusive_room_name"));
+					return next(new SbError("Abusive_room_name"));
 				}
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					let c = a.room.params.antiAbuse.customPhrases;
 					if (c instanceof Array) {
 						if (c.join(" ").length > limit) {
-							return n(new Error("ERR_LIMIT_NOT_ALLOWED"));
+							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}
-						n();
+						next();
 					} else {
-						n(new Error("INVALID_WORDBLOCK"));
+						next(new Error("INVALID_WORDBLOCK"));
 					}
-				} else n();
+				} else next();
 			}
 
 			if (action === "user") {
 				appliedFilters.push(filters.en);
 				appliedFilters.push(filters.hi);
-				matches = appliedFilters.map(re => check(text, re)).filter(b => !!b);
+				matches = appliedFilters.map(function(re) {
+					return check(text, re);
+				}).filter(function(b)  {return !!b; });
 
 				if (matches.length) {
-					return n(new SbError("Abusive_user_name"));
+					return next(new SbError("Abusive_user_name"));
 				}
 			}
 
