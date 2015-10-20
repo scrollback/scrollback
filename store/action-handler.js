@@ -44,7 +44,7 @@ function threadFromText(text) {
 		to: text.to,
 		startTime: text.time,
 		color: text.color,
-		tags: null,
+		tags: text.tags,
 		title: text.title,
 		updateTime: text.time,
 		updater: text.from

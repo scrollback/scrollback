@@ -1,0 +1,18 @@
+[submodule "modules/emai"]
+	path = modules/emai
+	url = git@github.com:scrollback/sb-email
+[submodule "modules/email"]
+	path = modules/email
+	url = git@github.com:scrollback/sb-email
+[submodule "modules/antiabuse"]
+	path = modules/antiabuse
+	url = git@github.com:scrollback/sb-antiabuse
+[submodule "modules/censor"]
+	path = modules/censor
+	url = git@github.com:scrollback/sb-censor
+[submodule "modules/customization"]
+	path = modules/customization
+	url = git@github.com:scrollback/sb-customization
+[submodule "anti-abuse/wordban/badwords"]
+	path = anti-abuse/wordban/badwords
+	url = https://github.com/shutterstock/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words.git
