@@ -14,4 +14,11 @@ module.exports = function(core) {
 		});
 
 	}, 400);
+
+	[ "init", "user" ].forEach(function(event) {
+		core.on(event, function (action, next) {
+			if (action.user && action.user.id) sessionCache[action.user.id] = action.user;
+			return next();
+		});
+	});
 };
