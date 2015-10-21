@@ -1,7 +1,7 @@
 "use strict";
 var log = require("../lib/logger.js"),
 	generateMentions = require("../entityloader/generateMentions.js"), loadRelatedUser, loadEntity, moderators,
-	core, config, events = ["text", "edit", "join", "part", "away", "back", "admit", "expel"];
+	core, config, events = [ "text", "edit", "join", "part", "away", "back", "admit", "expel" ], handlers;
 
 function loadMembers(room, callback) {
 	core.emit("getUsers", {
@@ -54,7 +54,7 @@ function loadThread(action, next) {
 }
 
 
-var handlers = {
+handlers = {
 	text: function(text, next) {
 		loadThread(text, function(err) {
 			if (err) return next(err);
@@ -121,35 +121,22 @@ function basicLoad(action, next) {
 	}
 
 	queriesCount++;
-	loadMe(action.to, "me", action.session, function(err, result) {
+	loadMe(action, function(err, result) {
 		log.d(action.id + " loading relatedUser", err, result);
 		if (err) return done(err);
-		action.user = result;
 
 		if (moderators[action.user.id]) action.user.role = "owner";
 		done();
 	});
 
-	action.room = {
-		id: action.to,
-		description: action.to,
-		guides: {
-			authorizer: {
-				openRoom: true,
-				readLevel: "guest",
-				writeLevel: "registered"
-			}
-		},
-		params: {
-			antiAbuse: {
-				spam: true,
-				block: {
-					english: true
-				}
-			},
-			customPhrases: []
-		}
-	};
+	queriesCount++;
+	loadEntity(action.to, "room", "internal-loader", function(err, result) {
+		log.d(action.id + " loading entity", err, result);
+		if (err) return done(err);
+		action.room = result;
+		done();
+	});
+
 
 	if (action.type === "text" || action.type === "edit") {
 		queriesCount++;
@@ -182,7 +169,7 @@ module.exports = function(c, conf) {
 	});
 
 	core.on("note", loadMe, "loader");
-	core.on('upload/getPolicy', loadMe, "loader");
+	core.on("upload/getPolicy", loadMe, "loader");
 
 
 	require("../entityloader/userHandler.js")(core, config);
