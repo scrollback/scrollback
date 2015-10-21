@@ -203,7 +203,7 @@ module.exports = [
 					timezone: row.timezone,
 					role: row.role,
 					roleSince: row.roletime,
-					location: row.coordinates ? {longitude: parseFloat(row.coordinates[0], 10), latitude: parseFloat(row.coordinates[1], 10)} : {},
+					location: row.coordinates ? {long: parseFloat(row.coordinates[0], 10), lat: parseFloat(row.coordinates[1], 10)} : {},
 					distance: row.distance
 				};
 
