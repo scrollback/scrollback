@@ -35,7 +35,7 @@ module.exports = function(core, config, store) {
 		},
 
 		installApp: function() {
-			window.open("https://play.google.com/store/apps/details?id=io.scrollback.app", "_blank");
+			window.open("https://play.google.com/store/apps/details?id=io.scrollback.neighborhoods", "_blank");
 
 			this.hideSelf();
 		},
