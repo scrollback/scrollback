@@ -1,7 +1,7 @@
 /* eslint complexity: 0*/
 
 "use strict";
-let SbError = require("../../lib/SbError.js"),
+var SbError = require("../../lib/SbError.js"),
 	log = require("../../lib/logger.js"),
 	fs = require("fs"),
 	filters = {};
@@ -27,11 +27,11 @@ function check (text, re) {
 
 module.exports = function(core) {
 
-	let actions = [ "text", "user", "room", "edit" ];
+	var actions = [ "text", "user", "room", "edit" ];
 
 	actions.forEach(function(action) {
 		core.on(action, function(a, next) {
-			let text = [
+			var text = [
 					(a.id || ""),
 					(a.text || ""),
 					(a.title || ""),
@@ -42,12 +42,12 @@ module.exports = function(core) {
 				matches;
 
 			if (action === "text" || action === "edit") {
-				let room = a.room;
+				var room = a.room;
 				log("Heard \"text\" event");
 				if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
 
 					if (room.params && room.params.antiAbuse) {
-						let customPhrases = room.params.antiAbuse.customPhrases;
+						var customPhrases = room.params.antiAbuse.customPhrases;
 						if (customPhrases instanceof Array && customPhrases.length !== 0) {
 							filters.custom = new RegExp("\\b" + customPhrases.toString().replace(/,/g, "|") + "\\b");
 							appliedFilters.push(filters.custom);
@@ -78,7 +78,7 @@ module.exports = function(core) {
 			if (action === "room") {
 				appliedFilters.push(filters.en);
 				appliedFilters.push(filters.hi);
-				let limit = 10000;
+				var limit = 10000;
 				log.d("room action:", a);
 				matches = appliedFilters.map(function(re) {
 					return check(text, re);
@@ -89,7 +89,7 @@ module.exports = function(core) {
 				}
 
 				if (a.room.params && a.room.params.antiAbuse) {
-					let c = a.room.params.antiAbuse.customPhrases;
+					var c = a.room.params.antiAbuse.customPhrases;
 					if (c instanceof Array) {
 						if (c.join(" ").length > limit) {
 							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
