@@ -21,7 +21,7 @@ function check (text, re) {
 		.replace(/\$&/g, "s")
 		.replace(/\0/g, "o")
 		.replace(/\!/g, "i")
-		.replace(/* spaces between single characters: l i k e this */)
+//		.replace(/* spaces between single characters: l i k e this */)
 		.match(re);
 }
 
@@ -55,7 +55,6 @@ module.exports = function(core) {
 					}
 
 					if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
-
 						appliedFilters.push(filters.en);
 						appliedFilters.push(filters.hi);
 					}
@@ -64,13 +63,13 @@ module.exports = function(core) {
 					matches = appliedFilters.map(function(re) {
 						return check(text, re);
 					}).filter(function(b)  {return !!b; });
+					
 					if (matches.length) {
 						if (a.id === a.thread) a.tags.push("thread-hidden");
 						a.tags.push("abusive", "hidden");
 						log(a);
 						return next();
 					}
-
 				}
 				return next();
 			}
