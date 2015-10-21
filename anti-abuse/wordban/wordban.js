@@ -10,7 +10,7 @@ fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
 	if (filename === "en" || filename === "hi") {
 		filters[filename] = new RegExp("\\b" + fs.readFileSync(
 			__dirname + "/badwords/" + filename
-		).toString("utf-8").replace(/\n/g, "|") + "\\b");
+		).toString("utf-8").trim().replace(/\n/g, "|") + "\\b");
 	}
 });
 
