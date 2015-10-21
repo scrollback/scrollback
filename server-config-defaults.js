@@ -20,13 +20,12 @@ Boston, MA 02111-1307 USA.
 
 "use strict";
 
-var merge = require("./merge-config.js");
-var fs = require("fs");
+var merge = require("./merge-config.js"),
+	fs = require("fs"),
+	config = {}, defaults;
 
-var config = {};
-
-var defaults = {
-	plugins:  [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
+defaults = {
+	plugins: [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
 				"push-notification", "google", "upload" ],
@@ -38,7 +37,7 @@ var defaults = {
 	core: {
 		name: "scrollback",
 		newrelic: {
-			name: 'Scrollback Local'
+			name: "Scrollback Local"
 		}
 	},
 	"browserid-auth": {
@@ -52,10 +51,15 @@ var defaults = {
 		home: "public", // the directory containing static files
 		time: 60000,
 		limit: 30,
-		index: "/me" //index URL redirect
+		index: "/me" // index URL redirect
 	},
 	email: {
 		welcomeEmailSub: "Welcome to Scrollback",
+		auth: {
+			user: "",
+			pass: ""
+		},
+		to: "devs@scrollback.io",
 		from: "scrollback@scrollback.io",
 		redisDB: 7
 	},
@@ -70,6 +74,10 @@ var defaults = {
 	entityloader: {
 		nickRetries: 100
 	},
+	"hn-entityloader": {
+		nickRetries: 100,
+		moderators: []
+	},
 	threader: {
 		host: "localhost",
 		port: 55555,
@@ -80,8 +88,6 @@ var defaults = {
 		numColors: 10
 	},
 	twitter: {
-		//consumerKey: ".."
-		//consumerSecret: ".."
 		timeout: 1000 * 60 * 5,
 		silentTimeout: 1000 * 60 * 10,
 		redisDB: 6
@@ -94,10 +100,10 @@ var defaults = {
 		path: "/data",
 		disableQueries: true
 	},
-	featured:{
+	featured: {
 		redisDB: 13
 	},
-	search:{
+	search: {
 		redisDB: 14
 	},
 	sitemap: {
@@ -105,11 +111,18 @@ var defaults = {
 	},
 	facebook: {
 	},
+	"push-notification": {
+		defaultPackageName: "",
+		keys: {
+				"io.scrollback.app": "",
+				"io.scrollback.neighborhoods": ""
+			}
+	},
 	google: {
 	},
 	storage: {
 		pg: {
-			server: "localhost", //server:port
+			server: "localhost", // server:port
 			db: "scrollback",
 			username: "scrollback",
 			password: "scrollback"
@@ -128,7 +141,7 @@ var defaults = {
 	},
 	jws: {
 		keys: {
-			"localhost:7528": ["XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg="]
+			"localhost:7528": [ "XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg=" ]
 		}
 	}
 };

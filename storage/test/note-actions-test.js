@@ -22,11 +22,12 @@ it("notification query test", function() {
 	console.log(util.inspect(query, {
 		depth: 4
 	}));
-	assert.deepEqual(query, [ { '$': 'UPDATE "notes" SET  "readtime"=${readtime} WHERE "user"=${user} AND "ref"=${ref} AND "group"=${group}',
-    readtime: new Date(1433856224914),
+	assert.deepEqual(query, [ { '$': 'UPDATE "notes" SET "notify" = "notify" || ${notify} WHERE "notify" ? ${user} AND "ref"=${ref} AND "group"=${group} AND "notetype"=${notetype}',
+    notify: { user1: null },
     user: 'user1',
     ref: '4egwqyt326gewe23',
-    group: 'scrollback' } ], "wrong querry");
+    group: 'scrollback',
+    notetype: 'mention' } ]);
 });
 
 it("notification query test(type text)", function() {
@@ -38,15 +39,26 @@ it("notification query test(type text)", function() {
 				text: "some text",
 				from: "officer"
 			}},
-			reply: {}
+			reply: {
+				group: "scrollback", data: {
+				title: "some titile",
+				text: "some text",
+				from: "officer"
+			}}
 		},
 		user: {
 			id: "user1"
 		},
 		notify: {
 			"testinguser": {
-					 mention: 40,
-					 reply: 30
+				 mention: 80,
+				 reply: 60
+			},
+			"testuser2": {
+				reply: 30
+			},
+			"testuser3": {
+				reply: 60
 			}
 		},
 		occupants: [
@@ -60,14 +72,15 @@ it("notification query test(type text)", function() {
 	console.log(util.inspect(query, {
 		depth: 4
 	}));
-	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "user", "ref", "notetype", "group", "score", "time", "notedata" ) VALUES ( ${user}, ${ref}, ${notetype}, ${group}, ${score}, ${time}, ${notedata} )',
-    user: 'testinguser',
+	assert.deepEqual(query, [ { '$': 'INSERT INTO "notes" ( "ref", "notetype", "group", "notify", "time", "notedata" ) VALUES ( ${ref}, ${notetype}, ${group}, ${notify}, ${time}, ${notedata}), (${ref}, ${notetype_1}, ${group}, ${notify_1}, ${time}, ${notedata} )',
     ref: '4egwqyt326gewe23',
     notetype: 'mention',
     group: 'scrollback',
-    score: 40,
+    notify: { testinguser: 80 },
     time: new Date(1433856224914),
-    notedata: {} } ], "wrong query for notification of text action");
+    notedata: {},
+    notetype_1: 'reply',
+    notify_1: { testinguser: 60, testuser3: 60 } } ]);
 });
 
 it("notification query test(without notify property)", function() {

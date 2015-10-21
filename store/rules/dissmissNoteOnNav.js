@@ -3,16 +3,22 @@
 module.exports = (core, config, store) => {
 	core.on("setstate", changes => {
 		if (changes.nav.mode || changes.nav.room || "thread" in changes.nav) {
-			let future = store.with(changes),
-				roomId = future.get("nav", "room"),
-				mode = future.get("nav", "mode");
+			const future = store.with(changes);
+			const roomId = future.get("nav", "room");
+			const mode = future.get("nav", "mode");
 
 			if (mode === "chat") {
-				let threadId = future.get("nav", "thread");
+				const threadId = future.get("nav", "thread");
 
 				if (threadId) {
 					core.emit("note-up", {
 						group: roomId + "/" + threadId,
+						dismissTime: Date.now()
+					});
+
+					core.emit("note-up", {
+						noteType: "thread",
+						ref: threadId,
 						dismissTime: Date.now()
 					});
 				} else {
