@@ -107,10 +107,11 @@ module.exports = function(core) {
 				matches = appliedFilters.map(function(re) {
 					return check(text, re);
 				}).filter(function(b)  {return !!b; });
-
 				if (matches.length) {
 					return next(new SbError("Abusive_user_name"));
 				}
+
+				next();
 			}
 
 		}, "antiabuse");
