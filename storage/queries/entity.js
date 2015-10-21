@@ -152,13 +152,13 @@ module.exports = [
 		if (query.location) {
 			fields.push({
 				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance",
-				long: query.location[0],
-				lat: query.location[1]
+				long: query.location.long,
+				lat: query.location.lat
 			});
 			filters.push({
 				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000)",
-				long: query.location[0],
-				lat: query.location[1]
+				long: query.location.long,
+				lat: query.location.lat
 			});
 
 			orderBy = "distance";
@@ -203,7 +203,7 @@ module.exports = [
 					timezone: row.timezone,
 					role: row.role,
 					roleSince: row.roletime,
-					location: row.coordinates ? {longitude: row.coordinates[0], latitude: row.coordinates[1]} : {},
+					location: row.coordinates ? {longitude: parseFloat(row.coordinates[0], 10), latitude: parseFloat(row.coordinates[1], 10)} : {},
 					distance: row.distance
 				};
 
