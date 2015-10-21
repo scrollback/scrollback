@@ -18,8 +18,9 @@ function check (text, re) {
 	return text.toLowerCase()
 		.replace(/[4@]/g, "a")
 		.replace(/[1]/g, "l")
-		.replace(/\$/g, "s")
+		.replace(/\$&/g, "s")
 		.replace(/\0/g, "o")
+		.replace(/\!/g, "i")
 		.replace(/* spaces between single characters: l i k e this */)
 		.match(re);
 }
