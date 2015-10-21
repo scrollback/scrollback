@@ -11,7 +11,8 @@ module.exports = [
 		var type,
 			filters = [],
 			source = "entities",
-			limit, orderBy, startPosition, location = {};
+			fields = [ "*, string_to_array(substring(ST_AsText(location) from '[\\d. ]+'), ' ') as coordinates" ],
+			limit, orderBy, startPosition;
 
 		if (query.type === "getUsers") {
 			type = "user";
@@ -149,15 +150,22 @@ module.exports = [
 		}
 
 		if (query.location) {
-			location.long = query.location[0];
-			location.lat = query.location[1];
-			location.$ = "SELECT *, string_to_array(substring(ST_AsText(location) from '[\\d. ]+'), ' ') as coordinates, ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance from entities WHERE ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 5000) order by distance";
+			fields.push({
+				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance",
+				long: query.location[0],
+				lat: query.location[1]
+			});
+			filters.push({
+				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000)",
+				long: query.location[0],
+				lat: query.location[1]
+			});
 
-			return pg.cat([ location ]);
+			orderBy = "distance";
 		}
 
 		return pg.cat([
-			"SELECT * FROM " + source + " WHERE",
+			"SELECT", pg.cat(fields, ","), " FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
 			{
 				$: (orderBy ? "ORDER BY " + orderBy : "") + (limit ? " LIMIT ${limit}" : ""),
@@ -183,7 +191,6 @@ module.exports = [
 				}
 
 				log.d("row identity", identities, row);
-				log.e(row.coordinates);
 				var entity = {
 					id: isGuest ? "guest-" + row.id : row.id,
 					type: row.type,
@@ -196,7 +203,7 @@ module.exports = [
 					timezone: row.timezone,
 					role: row.role,
 					roleSince: row.roletime,
-					coordinates: row.coordinates,
+					location: row.coordinates ? {longitude: row.coordinates[0], latitude: row.coordinates[1]} : {},
 					distance: row.distance
 				};
 
