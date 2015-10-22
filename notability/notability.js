@@ -33,7 +33,7 @@ module.exports = function(core) {
 		action.note = {};
 		action.notify = {};
 		
-		if(action.tags.indexOf("hidden") > -1 || action.tags.indexOf("thread-hidden") > -1) return next();
+		if((action.tags) && (action.tags.indexOf("hidden") > -1 || action.tags.indexOf("thread-hidden") > -1)) return next();
 		
 		if (action.mentions.length) {
 			action.note.mention = {
