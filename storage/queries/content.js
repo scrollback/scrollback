@@ -112,7 +112,9 @@ module.exports = [
 		ids = rows.map(function (thread) {
 			return thread.id;
 		});
-
+		
+		if(ids.length === 0) return null;
+		
 		return pg.cat([ {
 			$: "SELECT id,text FROM texts WHERE id in ($(ids))",
 			ids: ids
