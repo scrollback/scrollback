@@ -25,7 +25,7 @@ module.exports = function createBulkQuery(core, store, type) {
 		}
 		if (queryCount === 0 && changes[type] && Object.keys(changes[type]).length) {
 			core.emit("setstate", objUtils.clone(changes));
-			changes = {};
+			changes[type] = {};
 		}
 	}
 
