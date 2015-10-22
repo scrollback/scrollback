@@ -65,7 +65,7 @@ module.exports = function(core) {
 					}).filter(function(b)  {return !!b; });
 					
 					if (matches.length) {
-						if (a.id === a.thread) a.tags.push("thread-hidden");
+						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
 						a.tags.push("abusive", "hidden");
 						log(a);
 						return next();

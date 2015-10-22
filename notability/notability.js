@@ -32,7 +32,9 @@ module.exports = function(core) {
 
 		action.note = {};
 		action.notify = {};
-
+		
+		if(action.tags.indexOf("abusive") > -1) return next();
+		
 		if (action.mentions.length) {
 			action.note.mention = {
 				group: action.room.id + "/" + (action.thread ? action.thread : "all"),
