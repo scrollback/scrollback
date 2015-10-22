@@ -23,7 +23,7 @@ module.exports = function createBulkQuery(core, store, type) {
 				items: query.results
 			});
 		}
-		if (queryCount === 0 && Object.keys(changes[type]).length) {
+		if (queryCount === 0 && changes[type] && Object.keys(changes[type]).length) {
 			core.emit("setstate", objUtils.clone(changes));
 			changes = {};
 		}
