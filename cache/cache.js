@@ -5,7 +5,7 @@ module.exports = function(core) {
 	core.on("getUsers", function(query) {
 		var session;
 
-		if (query.ref && query.ref === "me" && !query.memberOf && !query.occupantOf) {
+		if (query.ref && query.ref === "me" && !query.memberOf && !query.occupantOf && !/\*$/.test(query.ref)) {
 			session = sessionCache[query.session];
 			log.d("handling ref query.", query, session);
 			if (session) {
