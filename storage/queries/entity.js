@@ -131,6 +131,21 @@ module.exports = [
 
 		*/
 
+		if (query.location) {
+			fields.push({
+				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance",
+				long: query.location.long,
+				lat: query.location.lat
+			});
+			filters.push({
+				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000)",
+				long: query.location.long,
+				lat: query.location.lat
+			});
+			if (!query.limit || query.limit > 50) query.limit = 50;
+			orderBy = "distance";
+		}
+
 		if (query.after) {
 			limit = query.after;
 			filters.push({
@@ -147,21 +162,6 @@ module.exports = [
 			limit = query.limit;
 		} else {
 			limit = null; // 256;
-		}
-
-		if (query.location) {
-			fields.push({
-				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance",
-				long: query.location.long,
-				lat: query.location.lat
-			});
-			filters.push({
-				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000)",
-				long: query.location.long,
-				lat: query.location.lat
-			});
-
-			orderBy = "distance";
 		}
 
 		return pg.cat([
