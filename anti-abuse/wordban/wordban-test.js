@@ -93,8 +93,8 @@ describe('wordban', function() {
 			id: guid(),
 			to: rs[0].id,
 			room: rs[0]
-		}, function() {
-			console.log("Reply=", JSON.stringify(rs[0]));
+		}, function(e, a) {
+			console.log("Reply=", a.room.params.antiAbuse);
 			assert.equal(rs[0].params.antiAbuse.customPhrases.length, 2, "Not removing empty string from array");
 			done();
 		});
@@ -134,17 +134,6 @@ describe('wordban', function() {
 			console.log("reply:", msg, err);
 			var l = msg.tags.indexOf("abusive") !== -1;
 			assert(l, true, "Not banning custom word cde");
-			done();
-		});
-	});
-
-	it("customPhrases test - 2", function(done) {
-		var msg = copy(message);
-		msg.text += "cde";
-		core.emit("text", msg, function(err) {
-			console.log("reply:", msg, err);
-			var l = msg.tags.indexOf("abusive") !== -1;
-			assert.notEqual(l, true, "Banning substring cde");
 			done();
 		});
 	});

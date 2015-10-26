@@ -89,8 +89,9 @@ module.exports = function(core) {
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					var c = a.room.params.antiAbuse.customPhrases;
-					if (c instanceof Array) {
-						if (c.join(" ").length > limit) {
+					if (Array.isArray(c)) {
+						a.room.params.antiAbuse.customPhrases = c.filter(function (a){return a.trim()});
+						if (a.room.params.antiAbuse.customPhrases.join(" ").length > limit) {
 							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}
 						next();
