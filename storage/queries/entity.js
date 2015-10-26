@@ -41,7 +41,7 @@ module.exports = [
 				});
 			} else if (/\*$/.test(query.ref)) {
 				orderBy = "id";
-				if (!query.limit || query.limit > 10) query.limit = 10;
+				if (!query.limit || query.limit > 50) query.limit = 50;
 				filters.push({
 					$: "entities.id like ${id}",
 					id: query.ref.replace(/\**$/, "%")
