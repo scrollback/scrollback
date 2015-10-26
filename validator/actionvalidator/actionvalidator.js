@@ -13,7 +13,7 @@ module.exports = function(core) {
 	/* list of event that the basic validation function is called for. */
 
 	var events = [ "init", "text", "edit", "join", "part", "away", "back", "admit", "expel", "room", "user" ],
-		queriesAndActions = [ "init", "text", "edit", "join", "par", "away", "back", "admit", "expel", "room", "user", "getTexts", "getThreads", "getRooms", "getUsers" ];
+		queriesAndActions = [ "init", "text", "edit", "join", "part", "away", "back", "admit", "expel", "room", "user", "getTexts", "getThreads", "getRooms", "getUsers" ];
 
 	/* if few more validtion is to be added for to any event add it to this list. eq:
 		var handlers = {
