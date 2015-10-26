@@ -17,7 +17,7 @@ module.exports = function(core) {
 	core.on("getRooms", function(query) {
 		var room;
 
-		if (query.ref && !query.hasMember && !query.hasOccupant) {
+		if (query.ref && !query.hasMember && !query.hasOccupant  && !/\*$/.test(query.ref)) {
 			room = roomCache[query.ref];
 			if (room) {
 				query.results = [ room ];
