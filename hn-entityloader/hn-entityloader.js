@@ -127,7 +127,7 @@ function basicLoad(action, next) {
 		if (err) return done(err);
 
 		if (moderators[action.user.id]) action.user.role = "owner";
-		if (userUtils.isGuest(action.user.id)) action.user.role = "guest";
+		else if (userUtils.isGuest(action.user.id)) action.user.role = "guest";
 		else action.user.role = "registered";
 		done();
 	});
