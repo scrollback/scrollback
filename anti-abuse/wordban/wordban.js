@@ -10,7 +10,9 @@ fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
 	if (filename === "en" || filename === "hi") {
 		filters[filename] = new RegExp("\\b" + fs.readFileSync(
 			__dirname + "/badwords/" + filename
-		).toString("utf-8").trim().toLowerCase().replace(/\n/g, "|") + "\\b");
+		).toString("utf-8").trim().toLowerCase().split("\n").map(function(e) {
+			return "\\b" + e + "\\b";
+		}).join("|") + "\\b");
 	}
 });
 
@@ -32,24 +34,25 @@ module.exports = function(core) {
 	actions.forEach(function(action) {
 		core.on(action, function(a, next) {
 			var text = [
-					(a.id || ""),
+//					(a.id || ""),
 					(a.text || ""),
 					(a.title || ""),
-					(a.to || ""),
-					(a.description || "")
+					(a.to || "")
 				].join(" "),
 				appliedFilters = [],
 				matches;
 
 			if (action === "text" || action === "edit") {
 				var room = a.room;
-				log("Heard \"text\" event");
+				log.i("Heard \"text\" event", a);
 				if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
 
 					if (room.params && room.params.antiAbuse) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
-						if (customPhrases instanceof Array && customPhrases.join("").length !== 0) {
-							filters.custom = new RegExp("\\b" + customPhrases.toString().replace(/,/g, "|") + "\\b");
+						if (customPhrases instanceof Array && customPhrases.length !== 0) {
+							filters.custom = new RegExp("\\b" + customPhrases.map(function(e) {
+								return "\\b" + e + "\\b";
+							}).join("|") + "\\b");
 							appliedFilters.push(filters.custom);
 						}
 					}
@@ -63,11 +66,10 @@ module.exports = function(core) {
 					matches = appliedFilters.map(function(re) {
 						return check(text, re);
 					}).filter(function(b)  {return !!b; });
-					
+					log.i(matches, text);
 					if (matches.length) {
-						if (a.id === a.thread) a.tags.push("thread-hidden");
+						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
 						a.tags.push("abusive", "hidden");
-						log(a);
 						return next();
 					}
 				}
@@ -75,6 +77,7 @@ module.exports = function(core) {
 			}
 
 			if (action === "room") {
+				text = text + " " + a.room.description;
 				appliedFilters.push(filters.en);
 				appliedFilters.push(filters.hi);
 				var limit = 10000;
@@ -89,8 +92,13 @@ module.exports = function(core) {
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					var c = a.room.params.antiAbuse.customPhrases;
-					if (c instanceof Array) {
-						if (c.join(" ").length > limit) {
+
+					if (Array.isArray(c)) {
+						a.room.params.antiAbuse.customPhrases = c.filter(function (b) {
+							return b.trim();
+						});
+
+						if (a.room.params.antiAbuse.customPhrases.join(" ").length > limit) {
 							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}
 						next();
@@ -101,6 +109,7 @@ module.exports = function(core) {
 			}
 
 			if (action === "user") {
+				text = text + " " + a.user.description;
 				appliedFilters.push(filters.en);
 				appliedFilters.push(filters.hi);
 				matches = appliedFilters.map(function(re) {
