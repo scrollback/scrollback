@@ -9,14 +9,14 @@ describe("Action EDIT: ", function() {
 		var socket;
 		beforeEach(function(done) {
 
-			socket = new SockJS(scrollback.host + "/socket");
+			socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 			getConnection(socket, "testinguser");
 			done();
 		});
 
 		it("Editing text tag", function(done) {
 			this.timeout(timeOut);
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var id = uid(),
 					back = {
 						from: "testinguser",
@@ -37,7 +37,7 @@ describe("Action EDIT: ", function() {
 						to: "integration-test",
 						time: new Date().getTime()
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === 'init') {
 					// text.session = msg.session;
@@ -60,12 +60,12 @@ describe("Action EDIT: ", function() {
 				if (msg.message === 'TEXT_NOT_FOUND') assert(msg.type !== 'error', "edit action failed " + msg.message);
 				else assert(msg.type !== 'error', "edit action failed ");
 				done();
-			};
+			});
 		});
 
 		it('Editing text content', function(done) {
 			this.timeout(timeOut);
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var id = uid(),
 
 					back = {
@@ -87,7 +87,7 @@ describe("Action EDIT: ", function() {
 						to: "integration-test",
 						time: new Date().getTime()
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === 'init') {
 					// text.session = msg.session;
@@ -114,12 +114,12 @@ describe("Action EDIT: ", function() {
 				if (msg.message === 'TEXT_NOT_FOUND') assert(msg.type !== 'error', "edit action failed " + msg.message);
 				else assert(msg.type !== 'error', "edit action failed ");
 				done();
-			};
+			});
 		});
 
 		it('Editing text with wrong text id', function(done) {
 			this.timeout(timeOut);
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var id = uid(),
 
 					back = {
@@ -141,7 +141,7 @@ describe("Action EDIT: ", function() {
 						to: "test-room",
 						time: new Date().getTime()
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === 'init') {
 					socket.send(JSON.stringify(back));
@@ -166,7 +166,7 @@ describe("Action EDIT: ", function() {
 				assert(msg.type === 'error', "edited text with another id");
 				assert(msg.message === 'TEXT_NOT_FOUND', "wrong error message");
 				done();
-			};
+			});
 		});
 
 		afterEach(function(done) {
@@ -179,9 +179,9 @@ describe("Action EDIT: ", function() {
 		var socket;
 		it("Edit action from a guest user", function(done) {
 			this.timeout(timeOut);
-			socket = new SockJS(scrollback.host + "/socket");
+			socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 			getConnection(socket, "guest");
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var id = uid(),
 					back = {
 						from: "testinguser",
@@ -200,7 +200,7 @@ describe("Action EDIT: ", function() {
 						type: "edit",
 						to: "test-room"
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === 'init') {
 					// text.session = msg.session;
@@ -227,16 +227,16 @@ describe("Action EDIT: ", function() {
 				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message " + msg.message);
 				socket.close();
 				done();
-			};
+			});
 		});
 	});
 	describe('Unauthorized user', function() {
 		this.timeout(timeOut);
 		var socket;
 		it('Editing action from an unauthorized user', function(done) {
-			socket = new SockJS(scrollback.host + "/socket");
+			socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 			getConnection(socket, "sbtestinguser");
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var id = uid(),
 					back = {
 						from: "sbtestinguser",
@@ -257,7 +257,7 @@ describe("Action EDIT: ", function() {
 						to: "test-room",
 						time: new Date().getTime()
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === 'init') {
 					socket.send(JSON.stringify(back));
@@ -283,7 +283,7 @@ describe("Action EDIT: ", function() {
 				assert(msg.message === 'ERR_NOT_ALLOWED', "wrong error message " + msg.message);
 				socket.close();
 				done();
-			};
+			});
 		});
 	});
 

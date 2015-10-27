@@ -10,19 +10,19 @@ describe("Action AWAY: ", function() {
 		to: "scrollback"
 	};
 	beforeEach(function(done) {
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		getConnection(socket);
 		done();
 	});
 
 	it("away action with all property ", function(done) {
 		this.timeout(timeOut);
-		socket.onmessage = function(message) {
+		socket.on("message", function(message) {
 			var a = {
 				type: "away",
 				to: "scrollback"
 			};
-			message = JSON.parse(message.data);
+			message = JSON.parse(message);
 			console.log(message.type);
 			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
@@ -34,16 +34,16 @@ describe("Action AWAY: ", function() {
 			}
 			assert(message.type !== "error", "away action failed");
 			done();
-		};
+		});
 	});
 
 	it("away action without 'to' property ", function(done) {
 		this.timeout(timeOut);
-		socket.onmessage = function(message) {
+		socket.on("message", function(message) {
 			var a = {
 				type: "away"
 			};
-			message = JSON.parse(message.data);
+			message = JSON.parse(message);
 			console.log(message.type);
 			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
@@ -55,18 +55,18 @@ describe("Action AWAY: ", function() {
 			}
 			assert(message.type === "error", "away action success without 'to' ");
 			done();
-		};
+		});
 	});
 
 	it("away action with a wrong user", function(done) {
 		this.timeout(timeOut);
-		socket.onmessage = function(message) {
+		socket.on("message", function(message) {
 			var a = {
 				type: "away",
 				to: "facebook",
 				from: "testinguser"
 			};
-			message = JSON.parse(message.data);
+			message = JSON.parse(message);
 			console.log(message.type);
 			if (message.type === "init") {
 				socket.send(JSON.stringify(b));
@@ -78,7 +78,7 @@ describe("Action AWAY: ", function() {
 			}
 			assert(message.type === "error", "away action success with wrong user ");
 			done();
-		};
+		});
 	});
 
 	afterEach(function() {
