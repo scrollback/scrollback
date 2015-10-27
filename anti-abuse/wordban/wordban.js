@@ -49,7 +49,7 @@ module.exports = function(core) {
 
 					if (room.params && room.params.antiAbuse) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
-						if (customPhrases instanceof Array) {
+						if (customPhrases instanceof Array && customPhrases.length !== 0) {
 							filters.custom = new RegExp("\\b" + customPhrases.map(function(e) {
 								return "\\b" + e + "\\b";
 							}).join("|") + "\\b");
