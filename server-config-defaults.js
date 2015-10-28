@@ -54,6 +54,8 @@ defaults = {
 		index: "/me" // index URL redirect
 	},
 	email: {
+		appName: "Scrollback",
+		welcomeEmail: {from: "scrollback@scrollback.io"},
 		auth: {
 			"user": "",
 			"pass": ""

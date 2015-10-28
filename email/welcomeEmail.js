@@ -5,7 +5,7 @@ var log = require("../lib/logger.js"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
 	config, defaultTemplate,
-	userUtils = require('../lib/user-utils.js');
+	userUtils = require("../lib/user-utils.js");
 
 /**
  * send welcome mail to user
@@ -24,11 +24,11 @@ function sendWelcomeEmail(user, origin) {
 				break;
 			}
 		}
-		
+
 		log.d("email add", user, emailAdd);
 		if (emailAdd) {
 			log.i("sending welcome email.", emailAdd);
-			send(config.from, emailAdd, "Welcome to Scrollback", emailHtml);
+			send(config.welcomeEmail.from, emailAdd, "Welcome to " + config.appName, emailHtml);
 		}
 	}
 
@@ -51,7 +51,7 @@ function emailRoomListener(action, callback) {
 	if (userUtils.isGuest(action.from)) {
 		sendWelcomeEmail(action.user, action.origin);
 	}
-	
+
 	callback();
 }
 
