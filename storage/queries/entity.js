@@ -133,13 +133,13 @@ module.exports = [
 
 		if (query.location) {
 			fields.push({
-				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')'))) as distance",
-				long: query.location.long,
+				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')'))) as distance",
+				lon: query.location.lon,
 				lat: query.location.lat
 			});
 			filters.push({
-				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${long} || ' ' || ${lat} || ')')), 100000)",
-				long: query.location.long,
+				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')')), 100000)",
+				lon: query.location.lon,
 				lat: query.location.lat
 			});
 			if (!query.limit || query.limit > 50) query.limit = 50;
@@ -203,7 +203,7 @@ module.exports = [
 					timezone: row.timezone,
 					role: row.role,
 					roleSince: row.roletime,
-					location: row.coordinates ? {long: parseFloat(row.coordinates[0], 10), lat: parseFloat(row.coordinates[1], 10)} : {},
+					location: row.coordinates ? {lon: parseFloat(row.coordinates[0], 10), lat: parseFloat(row.coordinates[1], 10)} : {},
 					distance: row.distance
 				};
 
