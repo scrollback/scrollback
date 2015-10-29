@@ -63,10 +63,10 @@ module.exports = function(core) {
 					matches = appliedFilters.map(function(re) {
 						return check(text, re);
 					}).filter(function(b)  {return !!b; });
-					
+
 					if (matches.length) {
 						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
-						a.tags.push("abusive", "hidden");
+						else a.tags.push("abusive", "hidden");
 						log(a);
 						return next();
 					}
