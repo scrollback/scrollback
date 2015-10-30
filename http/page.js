@@ -62,7 +62,7 @@ function init(app) {
 			try {
 				handleRequestInfo(req, function(err, data) {
 					if (err || !data) {
-						log.e("Error retriving info for", req.path, err);
+						log.i("Error retriving info for", req.path, err);
 
 						res.send(404);
 
