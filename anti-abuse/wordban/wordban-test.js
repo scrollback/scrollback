@@ -160,17 +160,4 @@ describe('wordban', function() {
 		});
 	});
 
-	it("customPhrases test - 5", function(done) {
-		var msg = copy(message);
-		msg.text = ":P";
-		msg.room.params.antiAbuse.customPhrases = [""];
-		core.emit("text", msg, function(err, data) {
-			console.log("reply:", data, err);
-			var l = msg.tags.indexOf("abusive") !== -1;
-			console.log(l);
-			assert.equal(!!l, false, "don't match empty string");
-			done();
-		});
-	});
-
 });
