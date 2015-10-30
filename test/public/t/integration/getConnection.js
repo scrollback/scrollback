@@ -1,19 +1,18 @@
-/*global uid*/
-/*jshint unused:false*/
+/* global uid */
+/* jshint unused:false */
 
 function getConnection(socket, user) {
-	var init,
-		sessionId = "web://" + uid();
+	var init;
 	if (user === "guest") {
 		init = {
-			"id": sessionId,
+			"id": uid(),
 			"type": "init",
 			"to": "me",
-			"suggestedNick": user,
 			"session": "web://" + uid(),
 			"resource": uid(),
 			"origin": {
-				host: "scrollback.io",
+				host: "ck.scrollback.io",
+				protocol: "https:",
 				verified: true
 			}
 		};
@@ -22,19 +21,19 @@ function getConnection(socket, user) {
 			"auth": {
 				testauth: user
 			},
-			"id": sessionId,
+			"id": uid(),
 			"type": "init",
 			"to": "me",
-			//"suggestedNick": "testinuser",
 			"session": "web://" + uid(),
 			"resource": uid(),
 			"origin": {
-				host: "scrollback.io",
+				host: "ck.scrollback.io",
+				protocol: "https:",
 				verified: true
 			}
 		};
 	}
-	socket.onopen = function() {
+	socket.on("open", function() {
 		socket.send(JSON.stringify(init));
-	};
+	});
 }

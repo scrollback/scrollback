@@ -1,10 +1,9 @@
-/* global describe it uid assert SockJS scrollback beforeEach afterEach getConnection */ /* eslint no-console: 0, array-bracket-spacing: 0, no-param-reassign: 0 */
-
+/* global describe it uid assert eio scrollback beforeEach afterEach getConnection */ /* eslint no-console: 0, array-bracket-spacing: 0, no-param-reassign: 0 */
 "use strict";
 describe("Action admit/expel: ", function() {
 	var socket;
 	beforeEach(function(done) {
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		done();
 	});
 
@@ -15,7 +14,7 @@ describe("Action admit/expel: ", function() {
 	it("expel an user", function(done) {
 		getConnection(socket, "testinguser");
 		var expel = {
-				to: "private-room3",
+				to: "scrollback",
 				ref: "sbtestinguser",
 				role: "banned",
 				type: "expel",
@@ -25,10 +24,10 @@ describe("Action admit/expel: ", function() {
 			back = {
 				from: "testinguser",
 				type: "back",
-				to: "private-room3"
+				to: "scrollback"
 			};
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
+		socket.on("message", function(message) {
+			message = JSON.parse(message);
 			console.log(message);
 
 			if (message.type === "init") {
@@ -43,7 +42,7 @@ describe("Action admit/expel: ", function() {
 
 			assert(message.type !== "error", "expel action failed ");
 			done();
-		};
+		});
 	});
 
 	it("text action from an expeled user", function(done) {
@@ -51,18 +50,18 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "sbtestinguser",
 				type: "back",
-				to: "private-room3"
+				to: "scrollback"
 			},
 			text = {
 				from: "sbtestinguser",
 				text: "hiding message",
 				id: uid(),
 				type: "text",
-				to: "private-room3",
+				to: "scrollback",
 				time: new Date().getTime()
 			};
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
+		socket.on("message", function(message) {
+			message = JSON.parse(message);
 			console.log(message);
 
 			if (message.type === "init") {
@@ -77,7 +76,7 @@ describe("Action admit/expel: ", function() {
 			assert(message.message === "ERR_NOT_ALLOWED", "wrong error message: " + message.message);
 			assert(message.type === "error", "An expeled user can send message!! ");
 			done();
-		};
+		});
 	});
 	it("admit an user", function(done) {
 
@@ -85,11 +84,11 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "testinguser",
 				type: "back",
-				to: "private-room3"
+				to: "scrollback"
 			},
 
 			admit = {
-				to: "private-room3",
+				to: "scrollback",
 				ref: "sbtestinguser",
 				role: "none",
 				type: "admit",
@@ -97,8 +96,8 @@ describe("Action admit/expel: ", function() {
 			};
 
 
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
+		socket.on("message", function(message) {
+			message = JSON.parse(message);
 			console.log(message);
 
 			if (message.type === "init") {
@@ -112,7 +111,7 @@ describe("Action admit/expel: ", function() {
 			}
 			assert(message.type !== "error", "admit action failed");
 			done();
-		};
+		});
 	});
 
 	it("text action from an unbanned user", function(done) {
@@ -120,18 +119,18 @@ describe("Action admit/expel: ", function() {
 		var back = {
 				from: "sbtestinguser",
 				type: "back",
-				to: "private-room3"
+				to: "scrollback"
 			},
 			text = {
 				from: "sbtestinguser",
 				text: "helo!! m just unbanned",
 				id: uid(),
 				type: "text",
-				to: "private-room3",
+				to: "scrollback",
 				time: new Date().getTime()
 			};
-		socket.onmessage = function(message) {
-			message = JSON.parse(message.data);
+		socket.on("message", function(message) {
+			message = JSON.parse(message);
 			console.log(message);
 
 			if (message.type === "init") {
@@ -143,9 +142,9 @@ describe("Action admit/expel: ", function() {
 				socket.send(JSON.stringify(text));
 				return;
 			}
-			assert(message.type === "error", "An expeled user can send message!! ");
+			assert(message.type !== "error", "An expeled user can send message!! ");
 			done();
-		};
+		});
 	});
 
 

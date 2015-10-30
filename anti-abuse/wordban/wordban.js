@@ -64,10 +64,11 @@ module.exports = function(core) {
 					matches = appliedFilters.map(function(re) {
 						return check(text, re);
 					}).filter(function(b)  {return !!b; });
-					log.i(matches, text);
+
 					if (matches.length) {
 						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
-						a.tags.push("abusive", "hidden");
+						else a.tags.push("abusive", "hidden");
+						log.i(matches, text);
 						return next();
 					}
 				}
