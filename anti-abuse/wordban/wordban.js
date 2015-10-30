@@ -90,12 +90,10 @@ module.exports = function(core) {
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					var c = a.room.params.antiAbuse.customPhrases;
-
 					if (Array.isArray(c)) {
 						a.room.params.antiAbuse.customPhrases = c.filter(function (b) {
 							return b.trim();
 						});
-
 						if (a.room.params.antiAbuse.customPhrases.join(" ").length > limit) {
 							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}
