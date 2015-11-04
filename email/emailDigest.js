@@ -64,6 +64,7 @@ function trySendingToUsers() {
 		log.d("data returned form redis for username "+ username + " " + lastSent  +" , " , error);
 		if (error) return;
 		redis.get("email:" + username + ":isMentioned", function(err, data) {
+			data = null;
 			var ct = new Date().getTime();
 			var interval = waitingTime2;
 			if(err) log.e(err);
