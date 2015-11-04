@@ -2,21 +2,21 @@
 var config;
 var log = require("../lib/logger.js");
 var send;
-var fs=require("fs"),jade = require("jade");
+var fs=require("fs")/*,jade = require("jade")*/;
 var redis;
 var core, digestJade;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
-
+var handlebars = require("handlebars");
 
 /**
  * Read digest,jade
  * And setInterval
  */
 function init() {
-	fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
+	fs.readFile(__dirname + "/views/digest.hbs", "utf8", function(err, data) {
 		if(err) throw err;
-		digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
+		digestJade = handlebars.compile(data.toString());
 		//send mails in next hour
 		var x = new Date().getUTCMinutes();
 		var sub = 90;
