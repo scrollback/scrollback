@@ -23,7 +23,7 @@ function init() {
 		if (x < 30) {
 			sub = 30;
 		}
-		log.d("Init email will send email after ", (sub - x)* 60000, " ms");
+		log.d("Init email will send email after ", (sub - x)* 60000, " ms", digestJade);
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
@@ -179,6 +179,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 									callback(e);
 								}else {
 									var ll = {
+										displayTime: timeUtils.short(thread.startTime),
 										thread: thread ,
 										count : parseInt(count, 10)
 									};
@@ -209,7 +210,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				callback(new Error("NO_DATA"));
 			}
 		}
-		function done( roomObj, mentions) {
+		function done(roomObj, mentions) {
 			log.d("room done......" , room , qc);
 			if(--qc > 0 ) return;
 

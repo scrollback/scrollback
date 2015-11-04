@@ -73,6 +73,7 @@
 									<tr style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
 										<td style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
 
+											{{#each rooms as |room}}
 
 											<div class="column-wrap" style="font-family: 'Open Sans', sans-serif; max-width: 600px !important; margin: 0 auto; padding: 0; border: 1px;">
 
@@ -81,128 +82,29 @@
 														<tr style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
 															<td style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 15px;">
 
-																<h4 style="font-family: 'Open Sans', sans-serif; line-height: 1.1; color: #000; font-weight: 500; font-size: 23px; margin: 0 0 15px; padding: 0;"><strong style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">Bangalore </strong></h4>
+																<h4 style="font-family: 'Open Sans', sans-serif; line-height: 1.1; color: #000; font-weight: 500; font-size: 23px; margin: 0 0 15px; padding: 0;"><strong style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">{room.id} </strong></h4>
 																<div style="height: 200px; font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
+																	{{each room.threads}}
 
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">#Poll: Hey Neighbor badminton meetup on Sunday</p>
+																	<a href="https://heyneighbor.chat/#{{room.id}}/#{{this.thread.id}}" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
+																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">{this.thread.title}</p>
 																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" style="veritcal-align: middle; height: 15px; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
+																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" style="veritcal-align: middle; height: 15px; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> {this.displayTime}
+																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> {this.count} </p>
 																	<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">How many of you would like to have a new pub in BTM?</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle;font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
+
+																	{{/each}}
 
 																</div>
 
-
-
-																<a class="btn" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 2px; background: #fec214; margin: 0 10px 0 0; padding: 10px 16px;">View All</a>
+																<a href="https://heyneighbor.chat/#{{room.id}}" class="btn" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 2px; background: #fec214; margin: 0 10px 0 0; padding: 10px 16px;">View All</a>
 
 															</td>
 														</tr>
 													</table>
 												</div>
 											</div>
-											<div class="column-wrap" style="font-family: 'Open Sans', sans-serif; max-width: 600px !important; margin: 0 auto; padding: 0; border: 1px;">
-
-												<div class="column" style="font-family: 'Open Sans', sans-serif; width: 280px; float: left; height: 320px; border-radius: 2px; min-width: 279px; background: white; margin: 5px; padding: 0; border: 1px solid #c2c2c2;">
-													<table style="font-family: 'Open Sans', sans-serif; width: 100%; margin: 0; padding: 0;">
-														<tr style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-															<td style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 15px;">
-
-																<h4 style="font-family: 'Open Sans', sans-serif; line-height: 1.1; color: #000; font-weight: 500; font-size: 23px; margin: 0 0 15px; padding: 0;"><strong style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">Indiranagar</strong></h4>
-																<div style="height: 200px; font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">#Poll: Hey Neighbor badminton meetup on Sunday</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-																	<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">How many of you would like to have a new pub in BTM?</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-
-																</div>
-
-
-
-																<a class="btn" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 2px; background: #fec214; margin: 0 10px 0 0; padding: 10px 16px;">View All</a>
-
-															</td>
-														</tr>
-													</table>
-												</div>
-											</div>
-
-											<div class="column-wrap" style="font-family: 'Open Sans', sans-serif; max-width: 600px !important; margin: 0 auto; padding: 0; border: 1px;">
-
-												<div class="column" style="font-family: 'Open Sans', sans-serif; width: 280px; float: left; height: 320px; border-radius: 2px; min-width: 279px; background: white; margin: 5px; padding: 0; border: 1px solid #c2c2c2;">
-													<table style="font-family: 'Open Sans', sans-serif; width: 100%; margin: 0; padding: 0;">
-														<tr style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-															<td style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 15px;">
-
-																<h4 style="font-family: 'Open Sans', sans-serif; line-height: 1.1; color: #000; font-weight: 500; font-size: 23px; margin: 0 0 15px; padding: 0;"><strong style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">M G Road</strong></h4>
-																<div style="height: 200px; font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">#Poll: Hey Neighbor badminton meetup on Sunday</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-																	<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">How many of you would like to have a new pub in BTM?</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-
-																</div>
-
-
-																<a class="btn" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 2px; background: #fec214; margin: 0 10px 0 0; padding: 10px 16px;">View All</a>
-
-															</td>
-														</tr>
-													</table>
-												</div>
-											</div>
-											<div class="column-wrap" style="font-family: 'Open Sans', sans-serif; max-width: 600px !important; margin: 0 auto; padding: 0; border: 1px;">
-
-												<div class="column" style="font-family: 'Open Sans', sans-serif; width: 280px; float: left; height: 320px; border-radius: 2px; min-width: 279px; background: white; margin: 5px; padding: 0; border: 1px solid #c2c2c2;">
-													<table style="font-family: 'Open Sans', sans-serif; width: 100%; margin: 0; padding: 0;">
-														<tr style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-															<td style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 15px;">
-
-																<h4 style="font-family: 'Open Sans', sans-serif; line-height: 1.1; color: #000; font-weight: 500; font-size: 23px; margin: 0 0 15px; padding: 0;"><strong style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">Whitefield</strong></h4>
-																<div style="height: 200px; font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;">
-
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">#Poll: Hey Neighbor badminton meetup on Sunday</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle; font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-																	<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />
-																	<a href="shjdh.com" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; margin: 0; padding: 0;">
-																		<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;">How many of you would like to have a new pub in BTM?</p>
-																	</a>
-																	<p style="font-family: 'Open Sans', sans-serif; font-weight: normal; font-size: 14px; line-height: 1.6; margin: 0 0 10px; padding: 0;"><img src="http://web.heyneighbor.chat/assets/time.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 4d
-																		<img src="http://web.heyneighbor.chat/assets/messages.png" height="15px" style="veritcal-align: middle;  font-family: 'Open Sans', sans-serif; max-width: 100%; margin: 0; padding: 0;" /> 27 </p>
-
-																</div>
-																<a class="btn" style="font-family: 'Open Sans', sans-serif; color: black; text-decoration: none; font-weight: bold; text-align: center; cursor: pointer; display: inline-block; border-radius: 2px; background: #fec214; margin: 0 10px 0 0; padding: 10px 16px;">View All</a>
-
-															</td>
-														</tr>
-													</table>
-												</div>
-											</div>
+											{{/each}}
 
 											<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />
 											<br style="font-family: 'Open Sans', sans-serif; margin: 0; padding: 0;" />

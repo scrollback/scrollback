@@ -3,7 +3,7 @@
 "use strict";
 
 var format = require("../../lib/format.js"),
-	friendlyTime = require("../../lib/friendly-time.js"),
+	timeUtils = require("../../lib/time-utils"),
 	userUtils = require("../../lib/user-utils.js"),
 	showMenu = require("../utils/show-menu.js");
 
@@ -71,7 +71,7 @@ module.exports = function(core, config, store) {
 		render: function() {
 			var nav =  store.get("nav"),
 				text = format.mdToHtml(this.props.text.text),
-				time = friendlyTime(this.props.text.time),
+				time = timeUtils.long(this.props.text.time),
 				timeStamp, nick, classNames = "chat-item";
 
 			if (this.props.text.tags) {
