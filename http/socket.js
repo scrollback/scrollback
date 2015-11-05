@@ -192,7 +192,7 @@ module.exports = function(core) {
 
 		if (rConns[action.to]) {
 			rConns[action.to].forEach(function(e) {
-				var note = {}, i;
+				var note = {}, i, noteUser = e.user.replace(/^guest-/,"");
 
 				if (e.session === action.session) {
 					if (action.type === "room") {
@@ -201,11 +201,11 @@ module.exports = function(core) {
 						dispatch(e, myAction);
 					}
 				} else {
+					
 					log.d(outAction.notify, e.user);
-
-					if (outAction.note && outAction.notify && outAction.notify[e.user]) {
-						for (i in outAction.note) {
-							if (outAction.note.hasOwnProperty(i)) {
+					if (outAction.note && outAction.notify && outAction.notify[noteUser]) {
+						for (i in outAction.notify[noteUser]) {
+							if (outAction.notify[noteUser].hasOwnProperty(i)) {
 								note[i] = {};
 
 								for (var j in outAction.note[i]) {
@@ -213,22 +213,12 @@ module.exports = function(core) {
 										note[i][j] = outAction.note[i][j];
 									}
 								}
+								note[i].score = outAction.notify[noteUser][i];
 							}
 						}
 
-
-						log.d(outAction.notify[e.user]);
-
-						for (i in outAction.notify[e.user]) {
-							if (outAction.notify[e.user].hasOwnProperty(i)) {
-								note[i].score = outAction.notify[e.user][i];
-							}
-
-							log.d(i, note);
-						}
-						
-						outAction.note = note;
 					}
+					outAction.note = note;
 					delete outAction.notify;
 
 					log.d("diapatching: ", e.user, outAction);
