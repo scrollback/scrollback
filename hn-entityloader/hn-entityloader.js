@@ -1,7 +1,6 @@
 "use strict";
 var log = require("../lib/logger.js"),
-	generateMentions = require("../entityloader/generateMentions.js"), loadRelatedUser, loadEntity, moderators,
-	userUtils = require('../lib/user-utils.js'),
+	generateMentions = require("../entityloader/generateMentions.js"), loadRelatedUser, loadEntity,
 	core, config, events = [ "text", "edit", "join", "part", "away", "back", "admit", "expel" ], handlers;
 
 function loadMembers(room, callback) {
@@ -122,13 +121,10 @@ function basicLoad(action, next) {
 	}
 
 	queriesCount++;
-	loadMe(action, function(err, result) {
+	loadRelatedUser(action.to, "me", action.session, function(err, result) {
 		log.d(action.id + " loading relatedUser", err, result);
 		if (err) return done(err);
-
-		if (moderators[action.user.id]) action.user.role = "owner";
-		else if (userUtils.isGuest(action.user.id)) action.user.role = "guest";
-		else action.user.role = "registered";
+		action.user = result;
 		done();
 	});
 
@@ -163,7 +159,6 @@ function basicLoad(action, next) {
 module.exports = function(c, conf) {
 	core = c;
 	config = conf;
-	moderators = config.moderators;
 
 	loadRelatedUser = require("../entityloader/relatedUser.js")(core, config);
 	loadEntity = require("../entityloader/entity.js")(core, config);
