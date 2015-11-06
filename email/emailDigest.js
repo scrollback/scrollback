@@ -2,36 +2,36 @@
 var config;
 var log = require("../lib/logger.js");
 var send;
-var fs=require("fs"),jade = require("jade");
+var fs=require("fs")/*,jade = require("jade")*/;
 var redis;
 var core, digestJade;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
-
+var handlebars = require("handlebars");
 
 /**
  * Read digest,jade
  * And setInterval
  */
 function init() {
-	fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
+	fs.readFile(__dirname + "/views/digest.hbs", "utf8", function(err, data) {
 		if(err) throw err;
-		digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
+		digestJade = handlebars.compile(data.toString());
 		//send mails in next hour
 		var x = new Date().getUTCMinutes();
 		var sub = 90;
 		if (x < 30) {
 			sub = 30;
 		}
-		log.d("Init email will send email after ", (sub - x)* 60000, " ms");
+		log.d("Init email will send email after ", (60-x)*600*2, " ms");
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
 		}, (sub-x)*60000);
 		setTimeout(function(){
 			trySendingToUsers();
-			setInterval(trySendingToUsers, 60*60*1000);
-		}, (60-x)*60000);
+			setInterval(trySendingToUsers, /*60*60**/1000);
+		}, (60-x)*600*2/*00*/);
 	});
 }
 
@@ -179,6 +179,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 									callback(e);
 								}else {
 									var ll = {
+										/*displayTime: timeUtils.short(thread.startTime),*/
 										thread: thread ,
 										count : parseInt(count, 10)
 									};
@@ -209,7 +210,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				callback(new Error("NO_DATA"));
 			}
 		}
-		function done( roomObj, mentions) {
+		function done(roomObj, mentions) {
 			log.d("room done......" , room , qc);
 			if(--qc > 0 ) return;
 
@@ -517,7 +518,7 @@ module.exports.init = function (coreObj, conf) {
 	config = conf;
 	core = coreObj;
 	send = require('./sendEmail.js')(config);
-	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
+	waitingTime1 = config.mentionEmailTimeout || /*3 * 60 * 60 **/ 1000; //mention email timeout
 	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
  	redis = require('redis').createClient();
 	redis.select(config.redisDB);
