@@ -262,19 +262,9 @@ Store.prototype.getUserRole = function(userId, roomId) {
 };
 
 Store.prototype.isUserAdmin = function(userId, roomId) {
-	var rel, role;
+	const role = this.getUserRole(userId, roomId);
 
-	userId = (typeof userId === "string") ? userId : this.get("user");
-
-	rel = this.getRelation(roomId, userId);
-
-	if (rel && rel.role && rel.role !== "none") {
-		role = rel.role;
-	} else {
-		role = (!userId || userUtils.isGuest(userId)) ? "guest" : "registered";
-	}
-
-	return role;
+	return permissionWeights[role] >= permissionWeights.moderator;
 };
 
 Store.prototype.isRoomReadable = function(roomId, userId) {
