@@ -52,13 +52,14 @@ function loadRelatedUser(room, user, session, callback) {
 		if (userErr || !data || !data.results || !data.results.length) {
 			return done(new Error("USER_NOT_FOUND"));
 		} else {
+
 			returnValue = data.results[0];
 			if (!room) return done();
 			if (userUtils.isGuest(returnValue.id)) {
 				returnValue.role = "guest";
 				done();
 			} else {
-				if (moderators[returnValue.id]) {
+				if (moderators && moderators[returnValue.id]) {
 					returnValue.role = "owner";
 					return done();
 				}
