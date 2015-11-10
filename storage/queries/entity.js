@@ -164,6 +164,7 @@ module.exports = [
 			orderBy = "distance";
 		}
 
+		if(!sessionUtils.isInternalSession(query.session) && query.type === 'getUsers') limit = 60;
 		return pg.cat([
 			"SELECT", pg.cat(fields, ","), " FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
