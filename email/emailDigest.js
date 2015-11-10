@@ -8,7 +8,7 @@ var core, digestJade;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
 var handlebars = require("handlebars");
-
+var timeUtils = require("../lib/time-utils");
 /**
  * Read digest,jade
  * And setInterval
@@ -23,15 +23,15 @@ function init() {
 		if (x < 30) {
 			sub = 30;
 		}
-		log.d("Init email will send email after ", (60-x)*600*2, " ms");
+		log.d("Init email will send email after ", (sub - x)* 60000, " ms");
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
 		}, (sub-x)*60000);
 		setTimeout(function(){
 			trySendingToUsers();
-			setInterval(trySendingToUsers, /*60*60**/1000);
-		}, (60-x)*600*2/*00*/);
+			setInterval(trySendingToUsers, 60*60*1000);
+		}, (60-x)*60000);
 	});
 }
 
@@ -164,13 +164,21 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				log.d("mentions returned from redis ", room ,mentions, lastSent);
 				var l = "email:thread:" + room + ":threads";
 
-				redis.zrangebyscore(l, lastSent, "+inf",  function(err, threads) {
+				redis.zrangebyscore(l, lastSent, "+inf", "withscores",  function(err, t) {
+					var times=[], threads=[], i;
 					log.d("threads returned from redis" , threads);
 					roomsObj.threads = [];
+					for(i=0;i<t.length;i+=2) {
+						threads.push(t[i]);
+						times.push(t[i+1]);
+					}
+					i = 0;
 					roomsObj.totalCount = threads.length;
 					if (!err) {
 						var isThread = false;
 						threads.forEach(function(thread) {
+							var time = times[i];
+							i++;
 							isThread = true;
 							var lc = "email:thread:" + room + ":" + thread + ":count";
 							qc++;
@@ -178,12 +186,15 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 								if (e) {
 									callback(e);
 								}else {
+									log.e(time, timeUtils.short(time))
 									var ll = {
-										/*displayTime: timeUtils.short(thread.startTime),*/
+										displayTime: timeUtils.short(time),
 										thread: thread ,
 										count : parseInt(count, 10)
 									};
-									roomsObj.threads.push(ll);
+
+									if(roomsObj.threads.length < 2) roomsObj.threads.push(ll);
+
 								}
 								done(roomsObj, mentions);
 							});
@@ -508,17 +519,13 @@ function sendPeriodicMails(){
 		processResults(err, data);
 	});
 
-
-
 }
-
-
 
 module.exports.init = function (coreObj, conf) {
 	config = conf;
 	core = coreObj;
 	send = require('./sendEmail.js')(config);
-	waitingTime1 = config.mentionEmailTimeout || /*3 * 60 * 60 **/ 1000; //mention email timeout
+	waitingTime1 = config.mentionEmailTimeout || 3 * 60 * 60 * 1000; //mention email timeout
 	waitingTime2 = config.regularEmailTimeout || 12 * 60 * 60 *  1000;//regular email timeout
  	redis = require('redis').createClient();
 	redis.select(config.redisDB);
