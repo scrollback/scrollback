@@ -259,7 +259,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 			//TODO use new schema
 			m = JSON.parse(m);
 			var id = m.thread;
-			log.e(m)
 			if(m.tags.indexOf("abusive") > -1) return;
 			m.from = m.from.replace(/guest-/g, "");
 			if(id === thread.thread) {
