@@ -260,7 +260,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 			m = JSON.parse(m);
 			var id = m.thread;
 			m.from = m.from.replace(/guest-/g, "");
-			log.e(m.from);
 			if(id === thread.thread) {
 				log.e(m)
 				thread.interesting.push(m);
@@ -328,7 +327,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 						var msg = JSON.parse(lastMsg);
 
 						msg.from = msg.from.replace(/guest-/g, "");
-						log.e(msg)
 						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
 								isP = false;
