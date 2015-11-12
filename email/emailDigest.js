@@ -186,7 +186,6 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 								if (e) {
 									callback(e);
 								}else {
-									log.e(time, timeUtils.short(time))
 									var ll = {
 										displayTime: timeUtils.short(time),
 										thread: thread ,
@@ -256,10 +255,14 @@ function sortThreads(room, roomObj, mentions,callback) {
 	r.threads = [];
 	roomObj.threads.forEach(function(thread) {
 		thread.interesting = [];
-		mentions.forEach(function(m) {//TODO use new schema
+		mentions.forEach(function(m) {
+			//TODO use new schema
 			m = JSON.parse(m);
 			var id = m.thread;
+			m.from = m.from.replace(/guest-/g, "");
+			log.e(m.from);
 			if(id === thread.thread) {
+				log.e(m)
 				thread.interesting.push(m);
 				thread.title = m.title || "";
 			}
@@ -320,8 +323,12 @@ function sortThreads(room, roomObj, mentions,callback) {
 				if (lastMsgs ) {
 					lastMsgs.reverse();
 					lastMsgs.forEach(function(lastMsg) {
+
 						var isP = true;
 						var msg = JSON.parse(lastMsg);
+
+						msg.from = msg.from.replace(/guest-/g, "");
+						log.e(msg)
 						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
 								isP = false;
