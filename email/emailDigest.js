@@ -259,7 +259,7 @@ function sortThreads(room, roomObj, mentions,callback) {
 			//TODO use new schema
 			m = JSON.parse(m);
 			var id = m.thread;
-			if(m.tags.indexOf("abusive") > -1) return;
+			if(m && m.tags && m.tags.indexOf("abusive") > -1) return;
 			m.from = m.from.replace(/guest-/g, "");
 			if(id === thread.thread) {
 				thread.interesting.push(m);
@@ -325,7 +325,7 @@ function sortThreads(room, roomObj, mentions,callback) {
 
 						var isP = true;
 						var msg = JSON.parse(lastMsg);
-						if(msg.tags.indexOf("abusive") > -1) return; // do not include abusive texts
+						if(msg && msg.tags && msg.tags.indexOf("abusive") > -1) return; // do not include abusive texts
 						msg.from = msg.from.replace(/guest-/g, "");
 						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
