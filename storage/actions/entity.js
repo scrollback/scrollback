@@ -2,6 +2,7 @@
 
 var pg = require("../../lib/pg.js");
 var log = require('./../../lib/logger.js');
+var userUtils = require('./../../lib/user-utils.js');
 
 /*
 	Warning: This does not lock the table or do proper upserts.
@@ -93,6 +94,12 @@ module.exports = function(action) {
 			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
 		});
 	}
-	
+	if (action.type === "user" && userUtils.isGuest(action.old.id) && !userUtils.isGuest(action.user.id)) {
+		query.push(pg.cat([{
+	 		$:"UPDATE entities SET identities='{}' where id=${guest}",
+			guest: action.old.id.replace(/^guest-/, "")
+		}]));
+	}
+
 	return query;
 };

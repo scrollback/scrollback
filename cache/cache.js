@@ -5,7 +5,7 @@ module.exports = function(core) {
 	core.on("getUsers", function(query) {
 		var session;
 
-		if (query.ref && query.ref === "me" && !query.memberOf && !query.occupantOf) {
+		if (query.ref && query.ref === "me" && !query.memberOf && !query.occupantOf && !/\*$/.test(query.ref)) {
 			session = sessionCache[query.session];
 			log.d("handling ref query.", query, session);
 			if (session) {
@@ -14,10 +14,20 @@ module.exports = function(core) {
 		}
 	}, 400);
 
+	core.on("getEntities", function(query) {
+		var result;
+		if (query.ref) {
+			result = roomCache[query.ref];
+			if (result) {
+				query.results = [ result ];
+			}
+		}
+	}, 400);
+
 	core.on("getRooms", function(query) {
 		var room;
 
-		if (query.ref && !query.hasMember && !query.hasOccupant) {
+		if (query.ref && !query.hasMember && !query.hasOccupant  && !/\*$/.test(query.ref)) {
 			room = roomCache[query.ref];
 			if (room) {
 				query.results = [ room ];
@@ -29,6 +39,9 @@ module.exports = function(core) {
 		if (query.ref && !query.hasMember && !query.hasOccupant && query.results && query.results.length) {
 			roomCache[query.ref] = query.results[0];
 		}
+	}, 1);
+	core.on("getEntities", function(query) {
+		if (query.results) roomCache[query.ref] = query.results[0];
 	}, 1);
 
 	core.on("away", function(action) {

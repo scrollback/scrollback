@@ -8,9 +8,11 @@ var SbError = require("../../lib/SbError.js"),
 
 fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
 	if (filename === "en" || filename === "hi") {
-		filters[filename] = new RegExp("\\b(" + fs.readFileSync(
+		filters[filename] = new RegExp("\\b" + fs.readFileSync(
 			__dirname + "/badwords/" + filename
-		).toString("utf-8").trim().toLowerCase().replace(/\n/g, "|") + ")\\b");
+		).toString("utf-8").trim().toLowerCase().split("\n").map(function(e) {
+			return "\\b" + e + "\\b";
+		}).join("|") + "\\b");
 	}
 });
 
@@ -64,11 +66,10 @@ module.exports = function(core) {
 					matches = appliedFilters.map(function(re) {
 						return check(text, re);
 					}).filter(function(b)  {return !!b; });
-
+					log.i(matches, text);
 					if (matches.length) {
 						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
-						else a.tags.push("abusive", "hidden");
-						log.i(matches, text);
+						a.tags.push("abusive", "hidden");
 						return next();
 					}
 				}
@@ -91,10 +92,12 @@ module.exports = function(core) {
 
 				if (a.room.params && a.room.params.antiAbuse) {
 					var c = a.room.params.antiAbuse.customPhrases;
+
 					if (Array.isArray(c)) {
 						a.room.params.antiAbuse.customPhrases = c.filter(function (b) {
 							return b.trim();
 						});
+
 						if (a.room.params.antiAbuse.customPhrases.join(" ").length > limit) {
 							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
 						}

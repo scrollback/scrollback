@@ -41,7 +41,7 @@ module.exports = [
 				});
 			} else if (/\*$/.test(query.ref)) {
 				orderBy = "id";
-				if (!query.limit || query.limit > 50) query.limit = 50;
+				if (!query.limit || query.limit > 10) query.limit = 10;
 				filters.push({
 					$: "entities.id like ${id}",
 					id: query.ref.replace(/\**$/, "%")
@@ -126,25 +126,8 @@ module.exports = [
 		}
 
 		/* else if (query.q) {
-
 		}
-
 		*/
-
-		if (query.location) {
-			fields.push({
-				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')'))) as distance",
-				lon: query.location.lon,
-				lat: query.location.lat
-			});
-			filters.push({
-				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')')), 100000)",
-				lon: query.location.lon,
-				lat: query.location.lat
-			});
-			if (!query.limit || query.limit > 50) query.limit = 50;
-			orderBy = "distance";
-		}
 
 		if (query.after) {
 			limit = query.after;
@@ -164,6 +147,22 @@ module.exports = [
 			limit = null; // 256;
 		}
 
+		if (query.location) {
+			fields.push({
+				$: "ST_Distance(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')'))) as distance",
+				lon: query.location.lon,
+				lat: query.location.lat
+			});
+			filters.push({
+				$: "ST_DWithin(location, (st_GeogFromText('POINT(' || ${lon} || ' ' || ${lat} || ')')), 100000)",
+				lon: query.location.lon,
+				lat: query.location.lat
+			});
+
+			orderBy = "distance";
+		}
+
+		if(!sessionUtils.isInternalSession(query.session) && query.type === 'getUsers') limit = 60;
 		return pg.cat([
 			"SELECT", pg.cat(fields, ","), " FROM " + source + " WHERE",
 			pg.cat(filters, " AND "),
