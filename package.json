@@ -24,7 +24,7 @@
     "node": ">=0.8"
   },
   "dependencies": {
-    "babel-core": "latest",
+    "babel-core": "5.8.25",
     "big-integer": "latest",
     "ebus": "latest",
     "engine.io": "^1.5.4",
@@ -55,7 +55,7 @@
   "optionalDependencies": {},
   "devDependencies": {
     "babel-eslint": "latest",
-    "babel-runtime": "latest",
+    "babel-runtime": "5.8.25",
     "babelify": "latest",
     "bower": "latest",
     "browserify": "latest",
