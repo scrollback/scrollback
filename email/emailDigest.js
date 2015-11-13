@@ -2,9 +2,9 @@
 var config;
 var log = require("../lib/logger.js");
 var send;
-var fs=require("fs")/*,jade = require("jade")*/;
+var fs=require("fs");
 var redis;
-var core, digestJade;
+var core, emailDigest;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
 var handlebars = require("handlebars");
@@ -16,7 +16,8 @@ var timeUtils = require("../lib/time-utils");
 function init() {
 	fs.readFile(__dirname + "/views/digest.hbs", "utf8", function(err, data) {
 		if(err) throw err;
-		digestJade = handlebars.compile(data.toString());
+
+		emailDigest = handlebars.compile(data.toString());
 		//send mails in next hour
 		var x = new Date().getUTCMinutes();
 		var sub = 90;
@@ -259,8 +260,9 @@ function sortThreads(room, roomObj, mentions,callback) {
 			//TODO use new schema
 			m = JSON.parse(m);
 			var id = m.thread;
+
+			if(m && m.tags && m.tags.indexOf("abusive") > -1) return;
 			m.from = m.from.replace(/guest-/g, "");
-			log.e(m.from);
 			if(id === thread.thread) {
 				log.e(m)
 				thread.interesting.push(m);
@@ -326,9 +328,8 @@ function sortThreads(room, roomObj, mentions,callback) {
 
 						var isP = true;
 						var msg = JSON.parse(lastMsg);
-
+						if(msg && msg.tags && msg.tags.indexOf("abusive") > -1) return; // do not include abusive texts
 						msg.from = msg.from.replace(/guest-/g, "");
-						log.e(msg)
 						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
 								isP = false;
@@ -396,7 +397,7 @@ function sendMail(email) {
 					try {
 						email.heading = getHeading(email);
 						log.d("email object" + JSON.stringify(email));
-						html = digestJade(email);
+						html = emailDigest(email);
 					}catch(caughtError) {
 						log.e("Error while rendering email: ", caughtError);
 						return;

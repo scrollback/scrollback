@@ -104,7 +104,9 @@ function initHandler(action, callback) {
 		}
 		
 		if (shouldInitialize()) {
-			return initializerUser(action, function() {
+			return initializerUser(action, function(err) {
+				if(err) return callback(err);
+
 				if (action.suggestedNick) {
 					if(!action.user.params) action.user.params = {};
 					action.user.params.isSuggested = true;

@@ -3,8 +3,8 @@
 
 "use strict";
 
-module.exports = () => {
-	let $alert = $("<div>").html("Scrollback has been updated. <a class='appcache-reload-page'>Restart to use the new version</a>.");
+module.exports = (core, config) => {
+	let $alert = $("<div>").html(config.appName + " has been updated. <a class='appcache-reload-page'>Restart to use the new version</a>.");
 
 	// Check if a new cache is available on page load.
 	if (window.applicationCache) {

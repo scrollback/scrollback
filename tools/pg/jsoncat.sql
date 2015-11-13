@@ -46,4 +46,4 @@ CREATE FUNCTION json_cat (a jsonb, b jsonb) RETURNS jsonb AS $$
     return JSON.stringify(el._);
 $$ LANGUAGE plv8 IMMUTABLE;
 
-CREATE OPERATOR || ( PROCEDURE = json_cat, LVALUE = jsonb, RVALUE = jsonb );
+CREATE OPERATOR || ( PROCEDURE = json_cat, leftarg = jsonb, rightarg = jsonb );

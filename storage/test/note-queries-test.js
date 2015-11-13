@@ -13,7 +13,7 @@ it("note query test", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT "ref", "notetype", "user", "score", "notedata", "group", "time", "count" FROM (SELECT *,COUNT(*) OVER (PARTITION BY "user", "notetype", "group" ) "count",RANK() OVER (PARTITION BY "user", "notetype", "group" ORDER BY "time" DESC) timeRank FROM notes WHERE "user" = ${user} AND dismisstime IS NULL) t WHERE "count" <= 3 OR timeRank = 1;',
+	assert.deepEqual(query, { '$': 'SELECT "ref", "notetype", "score", "notedata", "group", "time", "count" FROM (SELECT "ref", "notetype", "notify"->>${user} "score", "notedata", "group", "time",COUNT(*) OVER (PARTITION BY "notetype", "group" ) "count",RANK() OVER (PARTITION BY "notetype", "group" ORDER BY "time" DESC) timeRank FROM notes WHERE "notify" ? ${user}) t WHERE "count" <= 2 OR timeRank = 1;',
   user: 'userid1' }, "wrong query");
 });
 

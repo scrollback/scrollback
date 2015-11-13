@@ -1,9 +1,7 @@
 "use strict";
 
 var userUtils = require("../lib/user-utils.js"),
-	sessionUtils = require("../lib/session-utils.js");
-
-var core;
+	sessionUtils = require("../lib/session-utils.js"), moderators, core;
 
 function checkPresence(room, user, callback) {
 	if (!room) return callback(false);
@@ -54,12 +52,17 @@ function loadRelatedUser(room, user, session, callback) {
 		if (userErr || !data || !data.results || !data.results.length) {
 			return done(new Error("USER_NOT_FOUND"));
 		} else {
+
 			returnValue = data.results[0];
 			if (!room) return done();
 			if (userUtils.isGuest(returnValue.id)) {
 				returnValue.role = "guest";
 				done();
 			} else {
+				if (moderators && moderators[returnValue.id]) {
+					returnValue.role = "owner";
+					return done();
+				}
 				core.emit("getUsers", {
 					session: "internal-loader",
 					ref: returnValue.id,
@@ -91,9 +94,9 @@ function loadRelatedUser(room, user, session, callback) {
 	});
 }
 
-function exp(c) {
+function exp(c, config) {
 	core = c;
-
+	moderators = config.moderators;
 	return loadRelatedUser;
 }
 

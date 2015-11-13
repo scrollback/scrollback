@@ -7,11 +7,11 @@ describe("Action Join/Part: ", function() {
 	var socket;
 	it("Action JOIN: ", function(done) {
 		this.timeout(timeOut);
-		socket = new SockJS(scrollback.host + "/socket");
-		getConnection(socket, "testinguser");
-		socket.onmessage = function(msg) {
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
+		getConnection(socket, "sbtestinguser");
+		socket.on("message", function(msg) {
 			var back = {
-					from: "testinguser",
+					from: "sbtestinguser",
 					type: "back",
 					to: "scrollback"
 				},
@@ -19,7 +19,7 @@ describe("Action Join/Part: ", function() {
 					to: "scrollback",
 					type: "join"
 				};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				// text.session = msg.session;
@@ -35,14 +35,14 @@ describe("Action Join/Part: ", function() {
 			assert(msg.type !== "error", "join action failed");
 			socket.close();
 			done();
-		};
+		});
 	});
 
 	it("join action from a guest", function(done) {
 		this.timeout(timeOut);
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		getConnection(socket, "guest");
-		socket.onmessage = function(msg) {
+		socket.on("message", function(msg) {
 			var back = {
 					from: "guest",
 					type: "back",
@@ -52,7 +52,7 @@ describe("Action Join/Part: ", function() {
 					to: "scrollback",
 					type: "join"
 				};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				// text.session = msg.session;
@@ -69,16 +69,16 @@ describe("Action Join/Part: ", function() {
 			assert(msg.message === "ERR_NOT_ALLOWED", "wrong error message");
 			socket.close();
 			done();
-		};
+		});
 	});
 
 	it("Action PART: ", function(done) {
 		this.timeout(timeOut);
-		socket = new SockJS(scrollback.host + "/socket");
-		getConnection(socket, "testinguser");
-		socket.onmessage = function(msg) {
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
+		getConnection(socket, "sbtestinguser");
+		socket.on("message", function(msg) {
 			var back = {
-					from: "testinguser",
+					from: "sbtestinguser",
 					type: "back",
 					to: "scrollback"
 				},
@@ -86,7 +86,7 @@ describe("Action Join/Part: ", function() {
 					to: "scrollback",
 					type: "part"
 				};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				// text.session = msg.session;
@@ -102,6 +102,6 @@ describe("Action Join/Part: ", function() {
 			assert(msg.type !== "error", "part action failed");
 			socket.close();
 			done();
-		};
+		});
 	});
 });
