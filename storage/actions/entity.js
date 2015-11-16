@@ -94,7 +94,8 @@ module.exports = function(action) {
 			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
 		});
 	}
-	if (action.type === "user" && userUtils.isGuest(action.old.id) && !userUtils.isGuest(action.user.id)) {
+	if (action.type === "user" && action.old && userUtils.isGuest(action.old.id) &&
+		!userUtils.isGuest(action.user.id)) {
 		query.push(pg.cat([{
 	 		$:"UPDATE entities SET identities='{}' where id=${guest}",
 			guest: action.old.id.replace(/^guest-/, "")
