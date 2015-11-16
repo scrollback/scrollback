@@ -7,7 +7,7 @@ import bower from "bower";
 import browserify from "browserify";
 import watchify from "watchify";
 import optional from "browserify-optional";
-import babel from "babelify";
+import babelify from "babelify";
 import source from "vinyl-source-stream";
 import buffer from "vinyl-buffer";
 import lazypipe from "lazypipe";
@@ -27,14 +27,6 @@ import autoprefixer from "gulp-autoprefixer";
 import minify from "gulp-minify-css";
 import manifest from "gulp-manifest";
 import config from "./server-config-defaults.js";
-
-const babelify = babel.configure({
-	ignore: "**/bower_components/**",
-	optional: [
-		"runtime",
-		"validation.react"
-	]
-});
 
 const debug = !(gutil.env.production || config.env === "production"),
 	errorHandler = notify.onError("Error: <%= error.message %>"),
@@ -110,7 +102,7 @@ function bundle(file, options, cb) {
 
 // Add prefix in an array
 function prefix(str, arr, extra) {
-	let prefixed = [];
+	const prefixed = [];
 
 	if (!(arr && arr instanceof Array)) {
 		return arr;
@@ -155,10 +147,12 @@ gulp.task("postinstall", [ "hooks" ]);
 gulp.task("eslint", () =>
 	gulp.src(files.js)
 	.pipe(plumber({ errorHandler }))
-	.pipe(gitmodified("modified"))
+	.pipe(gitmodified({
+		modes: [ "added", "modified" ]
+	}))
 	.pipe(eslint())
 	.pipe(eslint.format())
-	.pipe(eslint.failOnError())
+	.pipe(eslint.failAfterError())
 );
 
 gulp.task("lint", [ "eslint" ]);
