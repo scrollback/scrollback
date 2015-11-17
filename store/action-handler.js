@@ -3,6 +3,7 @@
 var store, core,
 	entityOps = require("./entity-ops.js"),
 	objUtils = require("../lib/obj-utils.js"),
+	userUtils = require("../lib/user-utils.js"),
 	generate = require("../lib/generate.browser.js"),
 	pendingActions = {},
 	timeAdjustment = 0;
@@ -43,26 +44,67 @@ function threadFromText(text) {
 		to: text.to,
 		startTime: text.time,
 		color: text.color,
-		tags: null,
+		tags: text.tags,
 		title: text.title,
 		updateTime: text.time,
 		updater: text.from
 	};
 }
 
+function addConcerns(text) {
+	if (text.concerns) {
+		if (text.concerns.indexOf(text.from) === -1 && !userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
+
+		if (Array.isArray(text.mentions)) {
+			for (let user of text.mentions) {
+				if (text.concerns.indexOf(user) === -1 && !userUtils.isGuest(text.from)) {
+					text.concerns.push(user);
+				}
+			}
+		}
+	}
+
+	return text;
+}
+
+function onBoot() {
+	core.emit("getRooms", { featured: true }, (err, rooms) => {
+		if (err) {
+			return;
+		}
+
+		let featuredRooms = [],
+			roomObjs = {};
+
+		if (rooms && rooms.results) {
+			rooms.results.forEach(function(e) {
+				if (e) {
+					featuredRooms.push(e.id);
+					roomObjs[e.id] = e;
+				}
+			});
+		}
+
+		core.emit("setstate", {
+			app: { featuredRooms },
+			entities: roomObjs
+		});
+	});
+}
+
 function onInit(init, next) {
 	var entities = {},
 		newstate = {};
 
-	if (init.response) {
-		switch (init.response.message) {
-			case "AUTH:UNREGISTERED":
-				newstate.nav = newstate.nav || {};
-				newstate.nav.dialogState = newstate.nav.dialogState || {};
-				newstate.nav.dialogState.signingup = true;
-
-				break;
-		}
+	if (
+		init.user.identities.filter(ident => ident.split(":")[0] === "mailto").length > 0 &&
+		userUtils.isGuest(init.user.id)
+	) {
+		newstate.nav = newstate.nav || {};
+		newstate.nav.dialogState = newstate.nav.dialogState || {};
+		newstate.nav.dialogState.signingup = true;
 
 		init.user = init.user || {};
 		init.user.type = "user";
@@ -82,33 +124,11 @@ function onInit(init, next) {
 
 	core.emit("setstate", {
 		entities: entities,
-		user: init.user.id
+		user: init.user.id,
+		app:(init.old && init.old.id !== init.user.id)?{listeningRooms : []}:{}
+	}, function(){
+		next();
 	});
-
-	core.emit("getRooms", {
-		featured: true
-	}, function(err, rooms) {
-		var featuredRooms = [],
-			roomObjs = {};
-
-		if (rooms && rooms.results) {
-			rooms.results.forEach(function(e) {
-				if (e) {
-					featuredRooms.push(e.id);
-					roomObjs[e.id] = e;
-				}
-
-
-			});
-		}
-		core.emit("setstate", {
-			app: {
-				featuredRooms: featuredRooms
-			},
-			entities: roomObjs
-		});
-	});
-	next();
 }
 
 function onRoomUser(action, next) {
@@ -126,11 +146,17 @@ function onRoomUser(action, next) {
 			role: "owner"
 		};
 	}
-	core.emit("setstate", changes);
-	next();
+
+	if(action.type === 'user' && action.old && userUtils.isGuest(action.old.id)) {
+		changes.app = {listeningRooms: []};
+		changes.user = action.user.id;
+	}
+	core.emit("setstate", changes, function(){
+		next();
+	});
 }
 
-function onAwayBack(action, next) {
+function onAwayBack(action) {
 	var entities = {},
 		relation;
 
@@ -154,8 +180,6 @@ function onAwayBack(action, next) {
 
 	// TODO: start thread and text ranges in this room with start: current timestamp, end: null, items: []
 	// for each thread already here
-
-	next();
 }
 
 function onTextUp(text) {
@@ -182,8 +206,6 @@ function onTextUp(text) {
 		}];
 	}
 
-	//	next();
-
 	//	Optimistically adding new threads is made complex
 	//	by the unavailability of an id on the text-up.
 	//	if(text.thread === text.id) {
@@ -202,8 +224,8 @@ function onTextUp(text) {
 
 }
 
-function onTextDn(text, next) {
-	var oldRange,
+function onTextDn(text) {
+	let oldRange,
 		currentThreads, currentTexts,
 		oldKey = "",
 		newState = {
@@ -246,21 +268,78 @@ function onTextDn(text, next) {
 	if (text.thread === text.id) {
 		currentThreads = store.get("threads", text.to);
 
+		text.concerns = [];
+
+		if (!userUtils.isGuest(text.from)) {
+			text.concerns.push(text.from);
+		}
+
 		newState.threads = {};
 		newState.threads[text.to] = [{
 			start: text.time,
 			end: (currentThreads && currentThreads.length) ? text.time : null,
-			items: [threadFromText(text)]
+			items: [ threadFromText(text) ]
 		}];
+	} else if (!userUtils.isGuest(text.from) || (text.mentions && text.mentions.length)) {
+		let threadObj = store.get("indexes", "threadsById", text.thread);
+
+		if (threadObj) {
+			let changed;
+
+			if (!userUtils.isGuest(text.from)) {
+				if (Array.isArray(threadObj.concerns)) {
+					if (threadObj.concerns.indexOf(text.from) === -1) {
+						threadObj = objUtils.clone(threadObj);
+
+						threadObj.concerns.push(text.from);
+
+						changed = true;
+					}
+				} else {
+					threadObj = objUtils.clone(threadObj);
+
+					threadObj.concerns = [ text.from ];
+
+					changed = true;
+				}
+			}
+
+			if (text.mentions && text.mentions.length) {
+				threadObj = changed ? threadObj : objUtils.clone(threadObj);
+
+				if (Array.isArray(threadObj.concerns)) {
+					for (const user of text.mentions) {
+						if (threadObj.concerns.indexOf(user) === -1) {
+							threadObj.concerns.push(user);
+
+							changed = true;
+						}
+					}
+				} else {
+					threadObj.concerns = text.mentions.slice(0);
+
+					changed = true;
+				}
+			}
+
+			if (changed) {
+				newState.threads = {
+					[text.to]: [{
+						start: threadObj.startTime,
+						end: threadObj.startTime,
+						items: [ threadObj ]
+					}]
+				};
+			}
+		}
 	}
 
 	// TODO? If text.title exists, change title of thread.
 
 	core.emit("setstate", newState);
-	next();
 }
 
-function onEdit(edit, next) {
+function onEdit(edit) {
 	var text, thread, currentThread, changes = {},
 		pleb = !store.isUserAdmin();
 
@@ -271,9 +350,9 @@ function onEdit(edit, next) {
 			currentThread = store.get("indexes", "threadsById", text.id);
 
 			text.color = currentThread ? currentThread.color : text.color;
-			text.concerns = currentThread ? currentThread.concerns : text.concerns;
+			text.concerns = currentThread ? objUtils.clone(currentThread.concerns) : text.concerns;
 
-			thread = threadFromText(text);
+			thread = threadFromText(addConcerns(text));
 		}
 
 		if (edit.tags) text.tags = edit.tags;
@@ -299,13 +378,12 @@ function onEdit(edit, next) {
 		}];
 	}
 	core.emit("setstate", changes);
-	next();
 }
 
-function onJoinPart(join, next) {
+function onJoinPart(join) {
 	var roomObj = join.room;
 	var userObj = join.user;
-	var relation = {},
+	var relation = objUtils.clone(store.getRelation(roomObj.id, userObj.id) || {}),
 		entities = {};
 
 	relation.user = userObj.id;
@@ -326,7 +404,6 @@ function onJoinPart(join, next) {
 	core.emit("setstate", {
 		entities: entities
 	});
-	return next();
 }
 
 
@@ -365,6 +442,8 @@ module.exports = function(c, conf, s) {
 	store = s;
 	core = c;
 
+	core.on("boot", onBoot, 1);
+
 	core.on("admit-dn", onAdmitDn, 950);
 	core.on("expel-dn", onAdmitDn, 950);
 	core.on("init-dn", onInit, 950);
@@ -378,7 +457,7 @@ module.exports = function(c, conf, s) {
 	core.on("room-dn", onRoomUser, 950);
 	core.on("user-dn", onRoomUser, 950);
 
-	core.on("error-dn", function(error, next) {
+	core.on("error-dn", function(error) {
 		var newState = {
 			texts: {}
 		};
@@ -406,8 +485,6 @@ module.exports = function(c, conf, s) {
 			core.emit("setstate", newState);
 			error.handled = true;
 		}
-
-		next();
 	}, 1000);
 	[
 		"text-up", "edit-up", "back-up", "away-up", "init-up",

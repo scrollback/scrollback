@@ -104,7 +104,9 @@ function initHandler(action, callback) {
 		}
 		
 		if (shouldInitialize()) {
-			return initializerUser(action, function() {
+			return initializerUser(action, function(err) {
+				if(err) return callback(err);
+
 				if (action.suggestedNick) {
 					if(!action.user.params) action.user.params = {};
 					action.user.params.isSuggested = true;
@@ -125,7 +127,10 @@ function initHandler(action, callback) {
 
 function loadProps(action, callback) {
 	var wait = true,
-		userID = action.user.id;
+		userID;
+	
+	if(action.old && action.old.id) userID = action.old.id;
+	else userID = action.user.id;
 	core.emit("getRooms", {
 		hasOccupant: userID,
 		session: "internal-loader"
@@ -138,9 +143,9 @@ function loadProps(action, callback) {
 		if (wait) wait = false;
 		else callback();
 	});
-	if (!userUtils.isGuest(userID)) {
+	if (!userUtils.isGuest(action.user.id)) {
 		core.emit("getRooms", {
-			hasMember: userID,
+			hasMember: action.user.id,
 			session: "internal-loader"
 		}, function(err, rooms) {
 			if (err || !rooms || !rooms.results || !rooms.results.length) {

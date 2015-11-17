@@ -10,6 +10,7 @@ var writeEntity = require("./actions/entity"),
 	readNote = require("./queries/note"),
 	log = require('./../lib/logger.js'),
 	pg = require("../lib/pg"),
+	userUtils = require('./../lib/user-utils.js'),
 	connString;
 
 function handleEntityAction(action, next) {
@@ -17,7 +18,19 @@ function handleEntityAction(action, next) {
 	var sql = writeEntity(action).concat(writeNote(action));
 
 	pg.write(connString, sql, function(err) {
-		log("init: user update done", action);
+		log("init: user update done", action);		
+		
+		if (action.type === "user" && userUtils.isGuest(action.old.id) && !userUtils.isGuest(action.user.id)) {
+			setTimeout(function(){
+				pg.write(connString, [pg.cat([{
+					$: "delete from entities where id=${guest}",
+					guest: action.old.id.replace(/^guest-/,"")
+				}])], function() {
+					log.d("deleting the user.", arguments);
+				});
+			}, 60000);
+		}
+
 		next(err);
 	});
 }
@@ -25,8 +38,10 @@ function handleEntityAction(action, next) {
 
 function handlePresenseAction(action, next) {
 	var sql;
+	log.d("away action:", action);
 	if (action.type === "away" && action.deleteGuestNow) {
 		sql = deleteEntity(action);
+		log.d("delete on away action:", action);
 		pg.write(connString, sql, function(err) {
 			next(err);
 		});
@@ -53,6 +68,7 @@ function handleContentAction(action, next) {
 function runQuery(handlers, query, results, i, callback) {
 	var sql;
 	if (i < handlers.length && (sql = handlers[i](query, results))) {
+		log.d(sql);
 		pg.read(connString, sql, function(err, res) {
 			if (err) return callback(err);
 			runQuery(handlers, query, res, i + 1, callback);

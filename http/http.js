@@ -19,47 +19,45 @@ or write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
 Boston, MA 02111-1307 USA.
 */
 
-var express, socket = require("./socket.js"),
-	plugins, app, config,
-	page;
-	
+function init(core, config) {
+	var express = require("./express.js")(core, config),
+		socket = require("./socket.js")(core, config),
+		plugins = require("./plugins.js")(core, config),
+		page = require("./page.js")(core, config),
+		app = express.init();
 
-var init = function(core) {
-	express = require("./express.js")(core, config);
-	app = express.init();
-	
-	socket.initCore(core);
 	socket.initServer(app.httpServer);
-	if (app.httpsServer) socket.initServer(app.httpsServer, core);
-	
-	plugins = require('./plugins.js')(core, config);
+
+	if (app.httpsServer) {
+		socket.initServer(app.httpsServer);
+	}
+
 	plugins.init(app);
-	
-	page = require("./page.js")(core, config);
 	page.init(app);
+}
 
-};
+module.exports = function(core, config) {
+	init(core, config);
 
-module.exports = function(core, conf) {
-	config = conf;
-	
- 	init(core);
-	
-	core.on("room", function(action, callback) {
-
-		if (action.room.params.http && typeof action.room.params.http.seo !== "boolean") return callback(new Error("ERR_INVAILD_PARAMS"));
-		callback();
-	}, 'appLevelValidation');
-
-	core.on("user", function(action, callback) {
-		if (!action.user.params.notifications) return callback();
-		if (["undefined", "boolean"].indexOf(typeof action.user.params.notifications.sound) === -1) {
-			return callback(new Error("ERR_INVAILD_PARAMS"));
+	core.on("room", function(action, next) {
+		if (action.room.params.http && typeof action.room.params.http.seo !== "boolean") {
+			return next(new Error("ERR_INVAILD_PARAMS"));
 		}
-		
-		if (["undefined", "boolean"].indexOf(typeof action.user.params.notifications.desktop) === -1) {
-			return callback(new Error("ERR_INVAILD_PARAMS"));
+
+		next();
+	}, "appLevelValidation");
+
+	core.on("user", function(action, next) {
+		if (!action.user.params.notifications) return next();
+
+		if ([ "undefined", "boolean" ].indexOf(typeof action.user.params.notifications.sound) === -1) {
+			return next(new Error("ERR_INVAILD_PARAMS"));
 		}
-		callback();
-	}, 'appLevelValidation');
+
+		if ([ "undefined", "boolean" ].indexOf(typeof action.user.params.notifications.desktop) === -1) {
+			return next(new Error("ERR_INVAILD_PARAMS"));
+		}
+
+		next();
+	}, "appLevelValidation");
 };

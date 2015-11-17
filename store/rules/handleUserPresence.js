@@ -1,43 +1,71 @@
 "use strict";
 
-var userUtils = require("./../../lib/user-utils.js");
-var permissionLevels = require("./../../authorizer/permissionWeights.js");
-var core, store;
-var queueBack = [];
+module.exports = function(core, config, store) {
+	var userUtils = require("./../../lib/user-utils.js"),
+		promisedAction = require("../../lib/promised-action.js")(core),
+		permissionLevels = require("./../../authorizer/permissionWeights.js"),
+		queueBack = [];
 
-function enter(roomId) {
-	var room = store.getRoom(roomId),
-		relation = store.getRelation(roomId),
-		role = relation ? relation.role : "none";
+	function enter(roomId) {
+		var room = store.getRoom(roomId),
+			relation = store.getRelation(roomId),
+			role = relation ? relation.role : "none";
 
-	if ((room && room.guides && room.guides.authorizer && (permissionLevels[role] < permissionLevels[room.guides.authorizer.readLevel])) ||
-	   (role === "banned")) {
-		return;
+		if ((room && room.guides && room.guides.authorizer && (permissionLevels[role] < permissionLevels[room.guides.authorizer.readLevel])) ||
+		   (role === "banned")) {
+			return;
+		}
+
+		promisedAction("back", { to: roomId }).then(() => {
+			let listeningRooms = store.get("app", "listeningRooms");
+
+			listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
+
+			if (listeningRooms.indexOf(roomId) === -1) {
+				listeningRooms.push(roomId);
+
+				core.emit("setstate", {
+					app: { listeningRooms }
+				});
+			}
+		}).catch(() => {
+			let listeningRooms = store.get("app", "listeningRooms");
+
+			listeningRooms = Array.isArray(listeningRooms) ? listeningRooms.slice(0) : [];
+
+			let index = listeningRooms.indexOf(roomId);
+
+			if (index > -1) {
+				listeningRooms.splice(index, 1);
+
+				core.emit("setstate", {
+					app: { listeningRooms }
+				});
+			}
+		});
 	}
 
-	core.emit("back-up", { to: roomId });
-}
+	function sendBack(roomId) {
+		var listeningRooms = store.get("app", "listeningRooms");
 
-function sendBack(roomId) {
-	var listeningRooms = store.get("app", "listeningRooms");
-	if (listeningRooms.indexOf(roomId) < 0) {
-		if (store.get("app", "connectionStatus") === "online") {
-			enter(roomId);
-		} else {
-			queueBack.push(roomId);
+		if (listeningRooms.indexOf(roomId) < 0) {
+			if (store.get("app", "connectionStatus") === "online") {
+				enter(roomId);
+			} else {
+				queueBack.push(roomId);
+			}
 		}
 	}
-}
-module.exports = function(c, conf, s) {
 
-	core = c;
-	store = s;
+	core.on("setstate", changes => {
+		if (changes.app && changes.app.connectionStatus === "offline") {
+			changes.app = changes.app || {};
+			changes.app.listeningRooms = [];
+		}
 
-	core.on("setstate", function(changes, next) {
 		if (changes.nav && changes.nav.room) {
 			sendBack(changes.nav.room);
 		}
-		next();
 	}, 998);
 
 	core.on("statechange", function(changes, next) {
@@ -51,9 +79,10 @@ module.exports = function(c, conf, s) {
 
 	core.on("init-dn", function(init, next) {
 		var entities = {};
+
 		init.occupantOf.forEach(function(roomObj) {
-			if(init.old && init.old.id){
-				if(userUtils.isGuest(init.old.id)) {
+			if (init.old && init.old.id) {
+				if (userUtils.isGuest(init.old.id)) {
 					entities[init.old.id] = null;
 					entities[roomObj.id + "_" + init.old.id] = null;
 				}else {
@@ -62,6 +91,7 @@ module.exports = function(c, conf, s) {
 					};
 				}
 			}
+
 			sendBack(roomObj.id);
 		});
 
@@ -70,5 +100,15 @@ module.exports = function(c, conf, s) {
 		});
 
 		next();
+	}, 500);
+
+	core.on("user-dn", function(userDn) {
+		if (userDn.old && userUtils.isGuest(userDn.old.id)) {
+			if (userDn.occupantOf && userDn.occupantOf.length) {
+				userDn.occupantOf.map(function(e) {
+					return e.id;
+				}).forEach(sendBack);
+			}
+		}
 	}, 500);
 };

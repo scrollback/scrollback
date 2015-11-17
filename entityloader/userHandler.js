@@ -2,6 +2,7 @@
 
 var sessionUtils = require('../lib/session-utils.js');
 var userUtils = require('../lib/user-utils.js');
+var log = require('../lib/logger.js');
 var crypto = require('crypto');
 
 var core;
@@ -13,7 +14,7 @@ function userHandler(action, callback) {
 		session: action.session
 	}, function(meErr, response) {
 		function done() {
-			if (action.user.identities) {
+			if (action.user.identities && action.user.identities.length) {
 				if (!action.user.picture) action.user.picture = 'https://gravatar.com/avatar/' + crypto.createHash('md5').update(action.user.identities[0].substring(7)).digest('hex') + '/?d=retro';
 			} else {
 				action.user.picture = 'https://gravatar.com/avatar/default';
@@ -63,14 +64,28 @@ function userHandler(action, callback) {
 	});
 }
 
-
 module.exports = function(c) {
 	core = c;
 	core.on("user", function(action, next) {
+		var userID;
 		userHandler(action, function(err) {
+			if(action.old && action.old.id) userID = action.old.id;
+			else userID = action.user.id;
+			
 			if (err) return next(err);
-			action.user.createTime = action.old.createTime ? action.old.createTime : action.user.createTime;
-			next();
+			core.emit("getRooms", {
+				hasOccupant: userID,
+				session: "internal-loader"
+			}, function(error, rooms) {
+				log.d("user event occupant",error, rooms);
+				if (error || !rooms || !rooms.results || !rooms.results.length) {
+					action.occupantOf = [];
+				} else {
+					action.occupantOf = rooms.results;
+				}
+				action.user.createTime = action.old.createTime ? action.old.createTime : action.user.createTime;
+				next();
+			});
 		});
 	}, "loader");
 };

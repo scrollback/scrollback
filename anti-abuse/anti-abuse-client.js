@@ -24,6 +24,7 @@ module.exports = function(core, config, store) {
 			case "follower":
 			case "none":
 			case "moderator":
+			case "registered":
 				if (senderRole === "moderator" && rel.role !== "owner") break;
 				menu.items.banuser = {
 					prio: 550,
@@ -96,6 +97,7 @@ module.exports = function(core, config, store) {
 	}, 600);
 
 	core.on("conf-save", function(room, next) {
+		room.params = room.params || {};
 		room.params.antiAbuse = {
 			spam: $("#spam-control").is(":checked"),
 			block: {

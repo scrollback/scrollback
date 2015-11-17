@@ -20,10 +20,7 @@ Boston, MA 02111-1307 USA.
 
 "use strict";
 
-var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
-				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
-				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
-				"push-notification", "google", "upload" ],
+var plugins,
 	appPriorities = { // don't override
 		antiflood: 1000,
 		validation: 900,
@@ -35,9 +32,9 @@ var plugins = [ "validator", "browserid-auth", "facebook", "featured", "anti-abu
 		antiabuse: 600,
 		setters: 510,
 		modifier: 500,
-		gateway: 400,
-		cache: 300,
-		storage: 200,
+		cache: 400,
+		storage: 300,
+		gateway: 200,
 		watcher: 100
 	};
 
@@ -47,6 +44,7 @@ var log = require("./lib/logger.js"),
 	config = require("./server-config-defaults.js"),
 	core = new (require("ebus"))(appPriorities);
 
+plugins = config.plugins;
 log.setEmailConfig(config.email);
 
 process.title = config.core.name;

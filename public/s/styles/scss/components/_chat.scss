@@ -91,7 +91,8 @@
             &-entry {
                 @extend %entry;
 
-                border-width: 1px 0 0 0;
+                border-width: 1px 0 0;
+                border-color: rgba(0, 0, 0, .16);
                 border-radius: 0;
                 padding: 1em;
                 padding-right: 4em;
@@ -146,14 +147,6 @@
                 opacity: .7;
 
                 &:focus, &:hover, &:active { opacity: 1; }
-
-                [type="file"] {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    opacity: 0;
-                    pointer-events: none;
-                }
 
                 .loader {
                     position: absolute;

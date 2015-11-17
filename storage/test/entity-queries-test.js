@@ -13,12 +13,12 @@ it("getUsers query test", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} AND entities.identities @> ${identities} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} AND entities.identities @> ${identities} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'user',
   id: 'ahh2h342k3',
   identities: [ 'useridentity' ],
   start: new Date(1434004539231),
-  limit: 234 }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getUsers query test(no identity)", function(){
@@ -29,10 +29,10 @@ it("getUsers query test(no identity)", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} ORDER BY entities.createtime',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'user',
   id: 'ahh2h342k3',
-  limit: null }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getUsers query test(memberof)", function(){
@@ -46,13 +46,13 @@ it("getUsers query test(memberof)", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities LEFT OUTER JOIN relations ON (entities.id=relations.user) WHERE entities.type=${type} AND entities.id=${id} AND relations.room=${room} AND relations.role=${role}\' AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities LEFT OUTER JOIN relations ON (entities.id=relations.user) WHERE entities.type=${type} AND entities.id=${id} AND relations.room=${room} AND relations.role=${role}\' AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'user',
   id: 'ahh2h342k3',
   room: 'scrollback',
   role: 'owner',
   start: new Date(1434004539231),
-  limit: 234 }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getRooms query test", function(){
@@ -65,7 +65,7 @@ it("getRooms query test", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} AND entities.identities @> ${identities} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} AND entities.identities @> ${identities} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'room',
   id: 'ahh2h342k3',
   identities: [ 'roomidentity' ],
@@ -82,7 +82,7 @@ it("getRooms query test(no identity)", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities WHERE entities.type=${type} AND entities.id=${id} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'room',
   id: 'ahh2h342k3',
   start: new Date(1434004539231),
@@ -100,7 +100,7 @@ it("getRooms query test(hasMember)", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT * FROM entities LEFT OUTER JOIN relations ON (entities.id=relations.room) WHERE entities.type=${type} AND entities.id=${id} AND relations.user=${user} AND relations.role=${role}\' AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities LEFT OUTER JOIN relations ON (entities.id=relations.room) WHERE entities.type=${type} AND entities.id=${id} AND relations.user=${user} AND relations.role=${role}\' AND "entities.createtime" >= ${start} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'room',
   id: 'ahh2h342k3',
   user: 'someuser',

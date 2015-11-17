@@ -262,19 +262,9 @@ Store.prototype.getUserRole = function(userId, roomId) {
 };
 
 Store.prototype.isUserAdmin = function(userId, roomId) {
-	var rel, role;
+	const role = this.getUserRole(userId, roomId);
 
-	userId = (typeof userId === "string") ? userId : this.get("user");
-
-	rel = this.getRelation(roomId, userId);
-
-	if (rel && rel.role && rel.role !== "none") {
-		role = rel.role;
-	} else {
-		role = (!userId || userUtils.isGuest(userId)) ? "guest" : "registered";
-	}
-
-	return role;
+	return permissionWeights[role] >= permissionWeights.moderator;
 };
 
 Store.prototype.isRoomReadable = function(roomId, userId) {
@@ -296,9 +286,9 @@ Store.prototype.isRoomWritable = function(roomId, userId) {
 module.exports = function(core, config) {
 	var store = new Store([ state ]);
 
-	require("./state-manager.es6")(core, config, store, state);
+	require("./state-manager.js")(core, config, store, state);
 	require("./action-handler.js")(core, config, store, state);
-	require("./rule-manager.es6")(core, config, store, state);
+	require("./rule-manager.js")(core, config, store, state);
 	require("./socket.js")(core, config, store, state);
 	require("./session-manager.js")(core, config, store, state);
 	require("./guest-params-handler.js")(core, config, store, state);

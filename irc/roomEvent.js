@@ -15,7 +15,7 @@ module.exports = function (core, conf, client, ircUtils, firstMessage) {
 				r.identities = r.identities.filter(function(e){return !/^irc/.test(e);});
 				r.identities.push("irc://" + r.params.irc.server + "/" + r.params.irc.channel);
 			}
-			if (or && or.id && or.params.irc && or.params.irc.error === "ERR_IRC_NOT_CONNECTED" &&
+			if (or && or.params && or.id && or.params.irc && or.params.irc.error === "ERR_IRC_NOT_CONNECTED" &&
 				client.connected()) { //if client is connected then remove not connected error
 				delete or.params.irc;
 			}

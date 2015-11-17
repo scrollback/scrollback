@@ -8,7 +8,7 @@ var objUtils = require("../../lib/obj-utils.js"),
 
 module.exports = function(core, config, store) {
 	var renderSettings = require("../utils/render-settings.js")(core, config, store);
-
+	var userUpSent = false;
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),
 			userObj = objUtils.clone(store.getUser());
@@ -21,7 +21,7 @@ module.exports = function(core, config, store) {
 				user: user
 			}, function() {
 				self.removeClass("working");
-
+				userUpSent = true;
 				core.emit("setstate", {
 					nav: {
 						dialog: null
@@ -32,12 +32,13 @@ module.exports = function(core, config, store) {
 	});
 
 	core.on("user-dn", function(user, next) {
-		if (!userUtils.isGuest(user.user.id) && !userUtils.isGuest(user.old.id)) {
+		if (!userUtils.isGuest(user.user.id) && !userUtils.isGuest(user.old.id) && userUpSent) {
 			$("<div>").html("Your account settings were successfully saved.").
 			alertbar({
 				type: "info",
 				timeout: 1500
 			});
+			userUpSent = false;
 		}
 		next();
 	}, 500);
@@ -99,7 +100,7 @@ module.exports = function(core, config, store) {
 		};
 
 		if (userObj && userUtils.isGuest(userObj.id)) {
-			menu.title = "Sign in to Scrollback with";
+			menu.title = "Sign in to " + config.appName + " with";
 
 			core.emit("auth", menu, function() {
 				next();

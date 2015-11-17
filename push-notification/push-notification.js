@@ -18,7 +18,8 @@ var log = require("../lib/logger.js"),
 	format = require("../lib/format.js"),
 	userUtils = require("../lib/user-utils.js"),
 	gcmNotify = require("./gcm-notify.js"),
-	max = 400, defaultPackageName, keys;
+	max = 400,
+	defaultPackageName, keys;
 
 /*
  * devices : [{ deviceName: device.name, registrationId: registrationId, enabled: true }]
@@ -60,36 +61,34 @@ module.exports = function(core, config) {
 			notesForApps[i] = {};
 		}
 
-		log.d(userList);
+		userList = userList.filter(function(user) {
+			return user && user.params && user.params.pushNotifications && user.params.pushNotifications.devices;
+		});
 
 		userList.forEach(function(userObj) {
 			var devices, packageName;
+			devices = userObj.params.pushNotifications.devices;
 
-			if (userObj && userObj.params && userObj.params.pushNotifications && userObj.params.pushNotifications.devices) {
-				devices = userObj.params.pushNotifications.devices;
+			log.d("devices object: ", devices);
 
-				log.d("devices object: ", devices);
-
-				if (Array.isArray(devices)) {
-					return;
-				}
-
-				log.d("not an array: ", devices);
-
-				Object.keys(devices).forEach(function(uuid) {
-					var device = devices[uuid];
-
-					log.d("device: ", uuid);
-
-					if (device.hasOwnProperty("regId") && device.enabled === true) {
-						packageName = device.packageName || defaultPackageName;
-
-						if (notesForApps[packageName]) {
-							notesForApps[packageName][device.regId] = userObj;
-						}
-					}
-				});
+			//handling old format of devices.
+			if (Array.isArray(devices)) {
+				return;
 			}
+
+			Object.keys(devices).forEach(function(uuid) {
+				var device = devices[uuid];
+
+				log.d("device: ", uuid);
+
+				if (device.hasOwnProperty("regId") && device.enabled === true) {
+					packageName = device.packageName || defaultPackageName;
+
+					if (notesForApps[packageName]) {
+						notesForApps[packageName][device.regId] = userObj;
+					}
+				}
+			});
 		});
 
 		log.d("Got regLists of the room:", notesForApps);
@@ -97,7 +96,7 @@ module.exports = function(core, config) {
 		gcmNotify(notesForApps, payload, core, config);
 	}
 
-	function onMentions(text) {
+	function generateMentionPayload(text) {
 		var payload, body;
 
 		body = format.mdToText(text.text);
@@ -105,68 +104,119 @@ module.exports = function(core, config) {
 		payload = {
 			title: text.to + ": " + userUtils.getNick(text.from) + " mentioned you",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
+			group: text.to + "/" + text.thread,
 			path: url.build({
 				nav: {
 					mode: "chat",
 					room: text.to,
 					thread: text.thread,
-					textRange: { time: text.time }
+					textRange: {
+						time: text.time
+					}
 				}
 			})
 		};
 
-		mapIdsToUsers(text.mentions, function(userList) {
-			notifyUsers(userList, payload);
-		});
+		return payload;
 	}
 
-	function onNewDisscussion(text) {
+	function generateThreadPayload(text) {
 		var payload, body;
 
 		body = format.mdToText(text.title ? text.title + " - " + text.text : text.text);
 
-		if (typeof body !== "string" || !text) {
-			return;
-		}
-
 		payload = {
 			title: text.to + ": " + userUtils.getNick(text.from) + " started a discussion",
 			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
+			group: text.to,
 			path: url.build({
 				nav: {
 					mode: "chat",
 					room: text.to,
 					thread: text.thread,
-					textRange: { time: text.time }
+					textRange: {
+						time: text.time
+					}
 				}
 			})
 		};
 
-		core.emit("getUsers", {
-			memberOf: text.to,
-			session: "internal-push-notifications"
-		}, function(e, d) {
-			var usersList;
 
-			if (!(d && d.results)) {
+		return payload;
+	}
+
+	function generateReplyPayload(text) {
+		var payload, body;
+		body = format.mdToText(text.text);
+		payload = {
+			title: text.to + ": " + userUtils.getNick(text.from) + " replied" + (text.title ? " in " + text.title.slice(0, 160) : ""),
+			text: body.length > max ? body.substring(0, max) + "…" : body,
+			picture: userUtils.getPicture(text.from),
+			group: text.to + "/" + text.thread,
+			path: url.build({
+				nav: {
+					mode: "chat",
+					room: text.to,
+					thread: text.thread,
+					textRange: {
+						time: text.time
+					}
+				}
+			})
+		};
+
+
+		return payload;
+	}
+
+	var payloads = {
+		mention: generateMentionPayload,
+		reply: generateReplyPayload,
+		thread: generateThreadPayload
+	};
+
+
+	core.on("text", function(text) {
+		var userIDs = [],
+			groups, notify = text.notify;
+
+		groups = {
+			mention: [],
+			reply: [],
+			thread: []
+		};
+
+		userIDs = Object.keys(notify);
+
+		if (!userIDs.length) {
+			return;
+		}
+
+		userIDs.forEach(function(userID) {
+			if (notify[userID].mention >= 80) {
+				groups.mention.push(userID);
+			} else if (notify[userID].thread >= 30) {
+				groups.thread.push(userID);
+			} else if (notify[userID].reply > 30) {
+				groups.reply.push(userID);
+			}
+		});
+
+		Object.keys(groups).forEach(function(noteType) {
+			var payload;
+
+			if (!groups[noteType].length) {
 				return;
 			}
 
-			usersList = d.results.filter(function(err) {
-				return (err.id !== text.from);
+			payload = payloads[noteType](text);
+
+			mapIdsToUsers(groups[noteType], function(userList) {
+				notifyUsers(userList, payload);
 			});
-
-			notifyUsers(usersList, payload);
 		});
-	}
-
-	core.on("text", function(text) {
-		if (text.mentions && text.mentions.length) {
-			onMentions(text);
-		}
-
-		if (text.thread === text.id) {
-			onNewDisscussion(text);
-		}
 	}, "gateway");
 };
+

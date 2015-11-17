@@ -7,10 +7,10 @@ describe("Action ROOM: ", function() {
 		rid = uid();
 
 	it("Creating room", function(done) {
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		getConnection(socket, "testinguser");
 		//		this.timeout(timeOut);
-		socket.onmessage = function(msg) {
+		socket.on("message",function(msg) {
 			var roomEvent = {
 				room: {
 					id: roomId,
@@ -22,7 +22,7 @@ describe("Action ROOM: ", function() {
 				id: rid,
 				to: roomId
 			};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				socket.send(JSON.stringify(roomEvent));
@@ -31,14 +31,14 @@ describe("Action ROOM: ", function() {
 			assert(msg.type !== "error", "Room creation failed ");
 			socket.close();
 			done();
-		};
+		});
 	});
 
 	it("Editing room by a registered user", function(done) {
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		getConnection(socket, "sbtestinguser");
 		//		this.timeout(timeOut);
-		socket.onmessage = function(msg) {
+		socket.on("message",function(msg) {
 			var back = {
 					from: "sbtestinguser",
 					to: roomId,
@@ -54,7 +54,7 @@ describe("Action ROOM: ", function() {
 					to: roomId,
 					from: "testinguser"
 				};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				socket.send(JSON.stringify(back));
@@ -69,14 +69,14 @@ describe("Action ROOM: ", function() {
 			assert(msg.message.message === "ERR_NOT_ALLOWED", "wrong error message: " + msg.message);
 			socket.close();
 			done();
-		};
+		});
 	});
 
 	it("Editing room by a guest user", function(done) {
-		socket = new SockJS(scrollback.host + "/socket");
+		socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 		getConnection(socket);
 		//		this.timeout(timeOut);
-		socket.onmessage = function(msg) {
+		socket.on("message", function(msg) {
 			var back = {
 					from: "guest",
 					to: roomId,
@@ -92,7 +92,7 @@ describe("Action ROOM: ", function() {
 					to: roomId,
 					from: "testinguser"
 				};
-			msg = JSON.parse(msg.data);
+			msg = JSON.parse(msg);
 			console.log(msg);
 			if (msg.type === "init") {
 				socket.send(JSON.stringify(back));
@@ -107,12 +107,12 @@ describe("Action ROOM: ", function() {
 			assert(msg.message === "ERR_NOT_ALLOWED", "wrong error message: " + msg.message);
 			socket.close();
 			done();
-		};
+		});
 	});
 
 	describe("Editing room config", function() {
 		beforeEach(function(done) {
-			socket = new SockJS(scrollback.host + "/socket");
+			socket = new eio.Socket(scrollback.host, {jsonp: "createElement" in document});
 			getConnection(socket, "testinguser");
 			done();
 		});
@@ -122,7 +122,7 @@ describe("Action ROOM: ", function() {
 			done();
 		});
 		it("Editing room permission", function(done) {
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var back = {
 						from: "testinguser",
 						to: roomId,
@@ -143,7 +143,7 @@ describe("Action ROOM: ", function() {
 						to: roomId,
 						from: "testinguser"
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === "init") {
 					socket.send(JSON.stringify(back));
@@ -158,11 +158,11 @@ describe("Action ROOM: ", function() {
 				assert(msg.room.guides.authorizer.readLevel === "follower", "room editing failed for read permission!!");
 				assert(msg.room.guides.authorizer.writeLevel === "follower", "room editing failed for write permission!!");
 				done();
-			};
+			});
 		});
 
 		it("Editing room description", function(done) {
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var back = {
 						from: "testinguser",
 						to: roomId,
@@ -179,7 +179,7 @@ describe("Action ROOM: ", function() {
 						to: roomId,
 						from: "testinguser"
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === "init") {
 					socket.send(JSON.stringify(back));
@@ -193,11 +193,11 @@ describe("Action ROOM: ", function() {
 				assert(msg.type !== "error", "Room saving failed ");
 				assert(msg.room.description === "The room description is edited by test script", "room editing failed for description!!");
 				done();
-			};
+			});
 		});
 
 		it("Editing spam control", function(done) {
-			socket.onmessage = function(msg) {
+			socket.on("message", function(msg) {
 				var back = {
 						from: "testinguser",
 						to: roomId,
@@ -221,7 +221,7 @@ describe("Action ROOM: ", function() {
 						to: roomId,
 						from: "testinguser"
 					};
-				msg = JSON.parse(msg.data);
+				msg = JSON.parse(msg);
 				console.log(msg);
 				if (msg.type === "init") {
 					socket.send(JSON.stringify(back));
@@ -237,7 +237,7 @@ describe("Action ROOM: ", function() {
 				assert(msg.room.params.antiAbuse.block.english === true, "spam control saving failed!!");
 				assert(msg.room.params.antiAbuse.customPhrases[0] === "fawk", "spam control saving failed!!");
 				done();
-			};
+			});
 		});
 
 	});

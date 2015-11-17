@@ -2,21 +2,21 @@
 var config;
 var log = require("../lib/logger.js");
 var send;
-var fs=require("fs"),jade = require("jade");
+var fs=require("fs");
 var redis;
-var core, digestJade;
+var core, emailDigest;
 var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
-
-
+var handlebars = require("handlebars");
+var timeUtils = require("../lib/time-utils");
 /**
  * Read digest,jade
  * And setInterval
  */
 function init() {
-	fs.readFile(__dirname + "/views/digest.jade", "utf8", function(err, data) {
+	fs.readFile(__dirname + "/views/digest.hbs", "utf8", function(err, data) {
 		if(err) throw err;
-		digestJade = jade.compile(data,  {basedir: __dirname + "/views/" });
+		emailDigest = handlebars.compile(data.toString());
 		//send mails in next hour
 		var x = new Date().getUTCMinutes();
 		var sub = 90;
@@ -164,13 +164,21 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				log.d("mentions returned from redis ", room ,mentions, lastSent);
 				var l = "email:thread:" + room + ":threads";
 
-				redis.zrangebyscore(l, lastSent, "+inf",  function(err, threads) {
+				redis.zrangebyscore(l, lastSent, "+inf", "withscores",  function(err, t) {
+					var times=[], threads=[], i;
 					log.d("threads returned from redis" , threads);
 					roomsObj.threads = [];
+					for(i=0;i<t.length;i+=2) {
+						threads.push(t[i]);
+						times.push(t[i+1]);
+					}
+					i = 0;
 					roomsObj.totalCount = threads.length;
 					if (!err) {
 						var isThread = false;
 						threads.forEach(function(thread) {
+							var time = times[i];
+							i++;
 							isThread = true;
 							var lc = "email:thread:" + room + ":" + thread + ":count";
 							qc++;
@@ -179,10 +187,13 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 									callback(e);
 								}else {
 									var ll = {
+										displayTime: timeUtils.short(time),
 										thread: thread ,
 										count : parseInt(count, 10)
 									};
-									roomsObj.threads.push(ll);
+
+									if(roomsObj.threads.length < 2) roomsObj.threads.push(ll);
+
 								}
 								done(roomsObj, mentions);
 							});
@@ -209,7 +220,7 @@ function prepareEmailObject(username ,rooms, lastSent, callback) {
 				callback(new Error("NO_DATA"));
 			}
 		}
-		function done( roomObj, mentions) {
+		function done(roomObj, mentions) {
 			log.d("room done......" , room , qc);
 			if(--qc > 0 ) return;
 
@@ -244,9 +255,12 @@ function sortThreads(room, roomObj, mentions,callback) {
 	r.threads = [];
 	roomObj.threads.forEach(function(thread) {
 		thread.interesting = [];
-		mentions.forEach(function(m) {//TODO use new schema
+		mentions.forEach(function(m) {
+			//TODO use new schema
 			m = JSON.parse(m);
 			var id = m.thread;
+			if(m && m.tags && m.tags.indexOf("abusive") > -1) return;
+			m.from = m.from.replace(/guest-/g, "");
 			if(id === thread.thread) {
 				thread.interesting.push(m);
 				thread.title = m.title || "";
@@ -308,8 +322,11 @@ function sortThreads(room, roomObj, mentions,callback) {
 				if (lastMsgs ) {
 					lastMsgs.reverse();
 					lastMsgs.forEach(function(lastMsg) {
+
 						var isP = true;
 						var msg = JSON.parse(lastMsg);
+						if(msg && msg.tags && msg.tags.indexOf("abusive") > -1) return; // do not include abusive texts
+						msg.from = msg.from.replace(/guest-/g, "");
 						thread.interesting.forEach(function(m) {
 							if(m.id === msg.id) {
 								isP = false;
@@ -377,7 +394,7 @@ function sendMail(email) {
 					try {
 						email.heading = getHeading(email);
 						log.d("email object" + JSON.stringify(email));
-						html = digestJade(email);
+						html = emailDigest(email);
 					}catch(caughtError) {
 						log.e("Error while rendering email: ", caughtError);
 						return;
@@ -507,11 +524,7 @@ function sendPeriodicMails(){
 		processResults(err, data);
 	});
 
-
-
 }
-
-
 
 module.exports.init = function (coreObj, conf) {
 	config = conf;

@@ -1,9 +1,14 @@
 /* eslint-env browser */
-/* global SockJS*/
 
 "use strict";
 
-var generate = require("../lib/generate.browser.js"),
+if (!window.navigator.userAgent) {
+	// Fix socket.io check
+	window.navigator.userAgent = "react-native";
+}
+
+var eio = require("engine.io-client/engine.io"),
+	generate = require("../lib/generate.browser.js"),
 	userUtils = require("../lib/user-utils.js"),
 	objUtils = require("../lib/obj-utils.js"),
 	pending = require("../lib/pendingQueries.js"),
@@ -57,12 +62,16 @@ function receiveMessage(event) {
 	var data, note, userId;
 
 	try {
-		data = JSON.parse(event.data);
+		data = JSON.parse(event);
 	} catch (err) {
 		core.emit("error", err);
 	}
 
-	if (["getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error"].indexOf(data.type) !== -1) {
+	if (!data) {
+		return;
+	}
+
+	if ([ "getTexts", "getThreads", "getUsers", "getRooms", "getSessions", "getEntities", "upload/getPolicy", "getNotes", "error" ].indexOf(data.type) !== -1) {
 		if (pendingQueries[data.id]) {
 			if (data.results) { pendingQueries[data.id].query.results = data.results; }
 			if (data.response) { pendingQueries[data.id].query.response = data.response; }
@@ -77,8 +86,8 @@ function receiveMessage(event) {
 		}
 	}
 
-	if (["text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note-dn", "error"].indexOf(data.type) !== -1) {
-		//data is an action
+	if ([ "text", "edit", "back", "away", "join", "part", "admit", "expel", "user", "room", "init", "note", "error" ].indexOf(data.type) !== -1) {
+		// data is an action
 		if (pendingActions[data.id]) {
 			pendingActions[data.id](data);
 			delete pendingActions[data.id];
@@ -134,15 +143,19 @@ function disconnected() {
 function connect() {
 	if (!navigator.onLine) return disconnected();
 
-	client = new SockJS(config.server.protocol + "//" + config.server.apiHost + "/socket");
-	client.onclose = disconnected;
+	client = new eio.Socket((config.server.protocol === "https:" ? "wss:" : "ws:") + "//" + config.server.apiHost, {
+		jsonp: "createElement" in document // Disable JSONP in non-web environments, e.g.- react-native
+	});
 
-	client.onopen = function() {
+	client.on("close", disconnected);
+
+	client.on("open", function() {
 		backOff = 1;
-		sendInit();
-	};
 
-	client.onmessage = receiveMessage;
+		sendInit();
+	});
+
+	client.on("message", receiveMessage);
 }
 
 window.addEventListener("offline", disconnected);

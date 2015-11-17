@@ -1,137 +1,127 @@
-var log = require("../../lib/logger.js"),
-	config, SbError = require("../../lib/SbError.js"),
+/* eslint complexity: 0*/
+
+"use strict";
+var SbError = require("../../lib/SbError.js"),
+	log = require("../../lib/logger.js"),
 	fs = require("fs"),
-	blockWords = {},
-	longest = 0,
-	search = require('./searchPattern'),
-	suffixArray = require('./suffixArray.js'),
-	separators = /[ \t,\:\.]/;
+	filters = {};
 
-module.exports = function(core, conf) {
-	config = conf;
-	init();
-	core.on('text', function(message, callback) {
-		var room = message.room,
-			text, customPhrases, textMessage, textArray;
-		log("Heard \"text\" event");
-		text = message.text;
-		if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
-			if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
-				message.tags = Array.isArray(message.tags) ? message.tags : [];
-				if (rejectable(text)) {
-					message.tags.push("abusive", "hidden");
-					log(message);
-					return callback();
-				}
-			}
+fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
+	if (filename === "en" || filename === "hi") {
+		filters[filename] = new RegExp("\\b" + fs.readFileSync(
+			__dirname + "/badwords/" + filename
+		).toString("utf-8").trim().toLowerCase().split("\n").map(function(e) {
+			return "\\b" + e + "\\b";
+		}).join("|") + "\\b");
+	}
+});
 
-			if (message.room.params.antiAbuse.customPhrases) {
-				customPhrases = message.room.params.antiAbuse.customPhrases;
-				textMessage = message.text.toLowerCase();
-				textArray = suffixArray(textMessage);
-				for (var i = 0; i < customPhrases.length; i++) {
-					var phrase = customPhrases[i];
-					if (phrase) { //phrase can not be empty string.
-						var r = search(textMessage, textArray, phrase);
-						if (r >= 0 && isSeparated(text, r, r + phrase.length - 1)) {
-							message.tags = Array.isArray(message.tags) ? message.tags : [];
-							log.d("Found phrase: ", phrase);
-							message.tags.push("abusive", "hidden");
-							return callback();
+function check (text, re) {
+	return text.toLowerCase()
+		.replace(/[4@]/g, "a")
+		.replace(/[1]/g, "l")
+		.replace(/\$&/g, "s")
+		.replace(/\0/g, "o")
+		.replace(/\!/g, "i")
+//		.replace(/* spaces between single characters: l i k e this */)
+		.match(re);
+}
+
+module.exports = function(core) {
+
+	var actions = [ "text", "user", "room", "edit" ];
+
+	actions.forEach(function(action) {
+		core.on(action, function(a, next) {
+			var text = [
+//					(a.id || ""),
+					(a.text || ""),
+					(a.title || ""),
+					(a.to || "")
+				].join(" "),
+				appliedFilters = [],
+				matches;
+
+			if (action === "text" || action === "edit") {
+				var room = a.room;
+				log.i("Heard \"text\" event", a);
+				if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
+
+					if (room.params && room.params.antiAbuse) {
+						var customPhrases = room.params.antiAbuse.customPhrases;
+						if (customPhrases instanceof Array && customPhrases.length !== 0) {
+							filters.custom = new RegExp("\\b" + customPhrases.map(function(e) {
+								return "\\b" + e + "\\b";
+							}).join("|") + "\\b");
+							appliedFilters.push(filters.custom);
 						}
 					}
-				}
-			}
-		}
-		return callback();
-	}, "antiabuse");
 
-	function isSeparated(text, in1, in2) {
-		log.d("Sep:", text, in1, in2);
-		var r1 = in1 === 0;
-		var r2 = in2 === text.length - 1;
-		if (!r1) r1 = separators.test(text.charAt(in1 - 1));
-		if (!r2) r2 = separators.test(text.charAt(in2 + 1));
-		log.d("Return:", (r1 && r2));
-		return r1 && r2;
-	}
-
-	core.on("room", function(action, callback) {
-		var room = action.room;
-		var text = room.id + (room.description ? (" " + room.description) : "");
-		if (rejectable(text)) return callback(new SbError("Abusive_room_name"));
-		callback();
-	}, "antiabuse");
-
-	core.on("room", function(action, callback) {
-		var limit = 10000;
-		log.d("room action:", action);
-		if (action.room.params && action.room.params.antiAbuse) {
-			var a = action.room.params.antiAbuse.customPhrases;
-			var l = 0;
-			if (a instanceof Array) {
-				for (var i = 0; i < a.length; i++) {
-					var sentance = a[i];
-					if (!sentance) {
-						a.splice(i, 1);
-						i--;
+					if (room.params.antiAbuse.block && room.params.antiAbuse.block.english) {
+						appliedFilters.push(filters.en);
+						appliedFilters.push(filters.hi);
 					}
-					l += sentance.length;
-					if (l > limit) {
-						return callback(new Error("ERR_LIMIT_NOT_ALLOWED"));
+
+					a.tags = Array.isArray(a.tags) ? a.tags : [];
+					matches = appliedFilters.map(function(re) {
+						return check(text, re);
+					}).filter(function(b)  {return !!b; });
+					log.i(matches, text);
+					if (matches.length) {
+						if (a.id === a.thread) a.tags.push("abusive", "thread-hidden");
+						a.tags.push("abusive", "hidden");
+						return next();
 					}
 				}
-				callback();
-			} else {
-				callback(new Error("INVALID_WORDBLOCK"));
+				return next();
 			}
-		} else callback();
-	}, "appLevelValidation");
-};
 
-var init = function() {
-	fs.readFile(__dirname + "/blockedWords.txt", "utf-8", function(err, data) {
-		if (err) throw err;
+			if (action === "room") {
+				text = text + " " + a.room.description;
+				appliedFilters.push(filters.en);
+				appliedFilters.push(filters.hi);
+				var limit = 10000;
+				log.d("room action:", a);
+				matches = appliedFilters.map(function(re) {
+					return check(text, re);
+				}).filter(function(b)  {return !!b; });
 
-		data.split("\n").forEach(function(word) {
-			if (word) {
-				word.replace(/\@/g, 'a');
-				word.replace(/\$/g, 's');
-
-				word = word.replace(/\W+/, ' ').toLowerCase().trim();
-				if (word.length === 0) {
-					return;
+				if (matches.length) {
+					return next(new SbError("Abusive_room_name"));
 				}
-				if (word.length > longest) {
-					longest = word.length;
-				}
-				blockWords[word] = true;
+
+				if (a.room.params && a.room.params.antiAbuse) {
+					var c = a.room.params.antiAbuse.customPhrases;
+
+					if (Array.isArray(c)) {
+						a.room.params.antiAbuse.customPhrases = c.filter(function (b) {
+							return b.trim();
+						});
+
+						if (a.room.params.antiAbuse.customPhrases.join(" ").length > limit) {
+							return next(new Error("ERR_LIMIT_NOT_ALLOWED"));
+						}
+						next();
+					} else {
+						next(new Error("INVALID_WORDBLOCK"));
+					}
+				} else next();
 			}
-		});
+
+			if (action === "user") {
+				text = text + " " + a.user.description;
+				appliedFilters.push(filters.en);
+				appliedFilters.push(filters.hi);
+				matches = appliedFilters.map(function(re) {
+					return check(text, re);
+				}).filter(function(b)  {return !!b; });
+				if (matches.length) {
+					return next(new SbError("Abusive_user_name"));
+				}
+
+				next();
+			}
+
+		}, "antiabuse");
 	});
-
-};
-
-var rejectable = function(text) {
-	log.d("text:", text);
-	var i, l, j, words, phrase;
-	words = text.replace(/\@/g, 'a').replace(/\$/g, 's');
-	words = words.toLowerCase().split(/\W+/);
-
-	for (i = 0, l = words.length - 1; i < l; i++) {
-		phrase = words[i];
-		for (j = i + 1; j <= l; j++) {
-			phrase = phrase + ' ' + words[j];
-			if (phrase.length <= longest) {
-				words.push(phrase);
-			}
-		}
-	}
-
-	for (i = 0, l = words.length; i < l; i++) {
-		if (blockWords[words[i]]) {
-			log("found the word " + words[i] + "---");
-			return true;
-		}
-	}
 };
