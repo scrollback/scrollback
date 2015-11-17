@@ -264,7 +264,6 @@ function sortThreads(room, roomObj, mentions,callback) {
 			if(m && m.tags && m.tags.indexOf("abusive") > -1) return;
 			m.from = m.from.replace(/guest-/g, "");
 			if(id === thread.thread) {
-				log.e(m)
 				thread.interesting.push(m);
 				thread.title = m.title || "";
 			}
