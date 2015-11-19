@@ -30,7 +30,7 @@ function onAway(action, callback) {
 			if (!data) {
 				occupantDB.del("user:{{" + action.from + "}}:occupantOf");
 				if (userOps.isGuest(action.user.id)) action.deleteGuestNow = true;
-				else action.leftLastRoom = false;
+				else action.leftLastRoom = true;
 			}
 			callback();
 		});

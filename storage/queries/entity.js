@@ -162,10 +162,10 @@ module.exports = [
 			orderBy = "distance";
 		}
 		
-		if(query.memberOf) {
+/*		if(query.memberOf) {
 			orderBy = 'entities.lastseentime';
 			limit = 5000;
-		}
+		}*/
 
 		if(!sessionUtils.isInternalSession(query.session) && query.type === 'getUsers') limit = 60;
 		return pg.cat([
