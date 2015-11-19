@@ -5,6 +5,7 @@ var writeEntity = require("./actions/entity"),
 	writeContent = require("./actions/content"),
 	writeNote = require("./actions/note"),
 	deleteEntity = require("./actions/deleteUser.js"),
+	presence = require("./actions/presence.js"),
 	readEntity = require("./queries/entity"),
 	readContent = require("./queries/content"),
 	readNote = require("./queries/note"),
@@ -39,12 +40,20 @@ function handleEntityAction(action, next) {
 function handlePresenseAction(action, next) {
 	var sql;
 	log.d("away action:", action);
-	if (action.type === "away" && action.deleteGuestNow) {
-		sql = deleteEntity(action);
-		log.d("delete on away action:", action);
-		pg.write(connString, sql, function(err) {
-			next(err);
-		});
+	if (action.type === "away") {
+		if(action.deleteGuestNow) {
+			sql = deleteEntity(action);
+			log.d("delete on away action:", action);
+			pg.write(connString, sql, function(err) {
+				next(err);
+			});
+		} else if(action.leftLastRoom) {
+			sql = presence(action);
+			log.d("presence on away action:", action);
+			pg.write(connString, sql, function(err) {
+				next(err);
+			});
+		}
 	} else {
 		next();
 	}
@@ -64,6 +73,7 @@ function handleContentAction(action, next) {
 		next(err);
 	});
 }
+
 
 function runQuery(handlers, query, results, i, callback) {
 	var sql;
