@@ -1,5 +1,6 @@
 CREATE FUNCTION json_cat (a jsonb, b jsonb) RETURNS jsonb AS $$
-	a = JSON.parse(a); b = JSON.parse(b);
+	if(typeof a !== 'object') a = JSON.parse(a);
+	if(typeof b !== 'object') b = JSON.parse(b);
     
 	var i, j, el = { _: a }, stacka = [el], stackb = [{ _: b }];
 	// Wrapping inputs because ONLY objects may be pushed into the stacks
