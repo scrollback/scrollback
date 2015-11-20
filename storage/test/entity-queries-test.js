@@ -18,7 +18,7 @@ it("getUsers query test", function(){
   id: 'ahh2h342k3',
   identities: [ 'useridentity' ],
   start: new Date(1434004539231),
-  limit: 234 }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getUsers query test(no identity)", function(){
@@ -29,10 +29,10 @@ it("getUsers query test(no identity)", function(){
 	});
 	
 	console.log(query);
-	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} ORDER BY entities.createtime',
+	assert.deepEqual(query, { '$': 'SELECT *, string_to_array(substring(ST_AsText(location) from \'[\\d. ]+\'), \' \') as coordinates  FROM entities WHERE entities.type=${type} AND entities.id=${id} ORDER BY entities.createtime LIMIT ${limit}',
   type: 'user',
   id: 'ahh2h342k3',
-  limit: null }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getUsers query test(memberof)", function(){
@@ -52,7 +52,7 @@ it("getUsers query test(memberof)", function(){
   room: 'scrollback',
   role: 'owner',
   start: new Date(1434004539231),
-  limit: 234 }, "wrong query for getUsers");
+  limit: 60 }, "wrong query for getUsers");
 });
 
 it("getRooms query test", function(){
