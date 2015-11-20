@@ -60,11 +60,8 @@ module.exports = function(action) {
 		}
 	}
 
-
-	query.push(pg.lock([insertObject.id]));
+	query.push(pg.lock(insertObject.id));
 	log.d("to insert: ", insertObject);
-
-
 
 	updateObject = pg.cat([
 	 "UPDATE entities SET",
@@ -76,7 +73,7 @@ module.exports = function(action) {
 	 "WHERE",
 	 pg.nameValues(whereObject, " AND ")
 	]);
-	
+
 	query.push(updateObject);
 	insertObject.$ = "INSERT INTO entities" +
 		"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
