@@ -192,7 +192,10 @@ module.exports = function(core) {
 
 		if (rConns[action.to]) {
 			rConns[action.to].forEach(function(e) {
-				var note = {}, i, noteUser = e.user.replace(/^guest-/,"");
+				var note = {}, i, noteUser = e.user;
+
+				if(!noteUser) return; // temp fix. findout why e.user is undefined.
+				noteUser = noteUser.replace(/^guest-/,"");
 
 				if (e.session === action.session) {
 					if (action.type === "room") {
