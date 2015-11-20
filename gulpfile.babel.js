@@ -1,5 +1,7 @@
 "use strict";
 
+require("babel-polyfill");
+
 // Load plugins and declare constants
 import gulp from "gulp";
 import del from "del";
