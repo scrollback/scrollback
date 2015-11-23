@@ -60,8 +60,11 @@ module.exports = function(action) {
 		}
 	}
 
+
 	query.push(pg.lock(insertObject.id));
 	log.d("to insert: ", insertObject);
+
+
 
 	updateObject = pg.cat([
 	 "UPDATE entities SET",
@@ -73,7 +76,7 @@ module.exports = function(action) {
 	 "WHERE",
 	 pg.nameValues(whereObject, " AND ")
 	]);
-
+	
 	query.push(updateObject);
 	insertObject.$ = "INSERT INTO entities" +
 		"(id, identities, type, description, color, picture, createtime, timezone, locale, params, guides, terms) " +
@@ -91,8 +94,7 @@ module.exports = function(action) {
 			values: [action.room.id, action.user.id, "owner", new Date(action.time)]
 		});
 	}
-	if (action.type === "user" && action.old && userUtils.isGuest(action.old.id) &&
-		!userUtils.isGuest(action.user.id)) {
+	if (action.type === "user" && userUtils.isGuest(action.old.id) && !userUtils.isGuest(action.user.id)) {
 		query.push(pg.cat([{
 	 		$:"UPDATE entities SET identities='{}' where id=${guest}",
 			guest: action.old.id.replace(/^guest-/, "")
