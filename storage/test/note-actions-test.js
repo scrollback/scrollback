@@ -6,7 +6,7 @@ var note = require("../actions/note.js"),
 	util = require("util"),
 	assert = require("assert");
 
-it("notification query test", function() {
+it("notification query test(should not update notes)", function() {
 	var query = note({
 		type: "note",
 		action: "text",
@@ -22,12 +22,7 @@ it("notification query test", function() {
 	console.log(util.inspect(query, {
 		depth: 4
 	}));
-	assert.deepEqual(query, [ { '$': 'UPDATE "notes" SET "notify" = "notify" || ${notify} WHERE "notify" ? ${user} AND "ref"=${ref} AND "group"=${group} AND "notetype"=${notetype}',
-    notify: { user1: null },
-    user: 'user1',
-    ref: '4egwqyt326gewe23',
-    group: 'scrollback',
-    notetype: 'mention' } ]);
+	assert.deepEqual(query, []);
 });
 
 it("notification query test(type text)", function() {

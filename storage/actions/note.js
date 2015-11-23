@@ -8,6 +8,9 @@ module.exports = function (action) {
 		var notifyObject = {},
 			whereObject = {};
 
+		if (action.ref || action.group || action.noteType) return [];
+		// a flood of these are crashing the server
+
 		if (action.ref) { whereObject.ref = action.ref; }
 		if (action.group) { whereObject.group = action.group; }
 		if (action.noteType) { whereObject.notetype = action.noteType; }
