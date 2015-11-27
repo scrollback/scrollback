@@ -9,23 +9,70 @@ You can even [embed Scrollback room](https://github.com/scrollback/scrollback/wi
 
 ## Install
 
-To run Scrollback locally on your computer, run `wget https://raw.githubusercontent.com/scrollback/scrollback/master/tools/install.sh -O install.sh && chmod +x install.sh && ./install.sh`.
+### 1. Install dependencies
+- Node.js (0.12 or higher)
+- Postgres (9.4 or higher)
+- Redis
+- Gulp (globally)
 
-This is a Bash 4.x only script that installs missing system and application dependencies from your default package manager, creates the required databases, builds client-side JS and style and starts Scrollback for you at `http://localhost:7528`.
+### 2. Create Postgres db and user for scrollback (recommended)
 
-The install script requires __root__ priviledges for these cases:
+If you skip this step, configure Scrollback to use an existing user and database using the Configure step below.
 
-1. If you are missing system depdencies (nodejs, npm, git, redis and postgres)
-2. If you have a Debian system, you are almost most certainly would be missing Postgres 9.4 and so we would need to add Postgres' source to your `/etc/apt/sources.list.d/` dir because Postgres 9.4 is a strict dependency, without which Scrollback won't be able to run.
-3. If your `/usr/local/bin/` and `/usr/local/lib/` dirs are not writable, we won't able to install nodejs modules that require to be on system paths (gulp and bower).
+Sign into `psql` as the administrator account (`postgres` in Linux, the user who installed PostgreSQL in OSX)
 
-### Configure
+```sql
+CREATE USER scrollback PASSWORD scrollback;
+CREATE DATABASE scrollback;
+\c scrollback
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO scrollback;
+```
 
-If you have or want custom server and/or client configuration, you can override the defaults by creating `server-config.js` and/or `client-config.js`. For sample config files take a look at [`server-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/server-config-defaults.js) and [`client-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/client-config-defaults.js).
+### 3. Create scrollback tables
+```sh
+psql -U scrollback < tools/pg/sbentity.sql
+psql -U scrollback < tools/pg/sbcontent.sql
+psql -U scrollback < tools/pg/sbnotes.sql
+```
+
+### 4. Install npm dependencies
+```sh
+npm install
+```
+
+### 5. Build the client
+```sh
+gulp
+```
+You must rebuild the client every time you change client configuration or modify any of the client code.
+
+### 6. Run Scrollback
+```sh
+node index.js
+```
+Scrollback will print warnings about newrelic (a performance monitoring service) not being configured and about not being able to connect to the IRC and Threader processes. You can ignore them.
+
+If you wish to connect to IRC, run the Scrollback IRC bouncer as root:
+```sh
+node ircClient/server.js
+```
+Running as root is necessary because it needs to listen on port 113 (identd) which is required by some IRC networks.
+
+### Configure (optional)
+
+Creating `server-config.js` and `client-config.js` files where you can override values from [`server-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/server-config-defaults.js) and [`client-config-defaults.js`](https://github.com/scrollback/scrollback/blob/master/client-config-defaults.js). Example:
+
+```
+module.exports = {
+	core: {
+		name: "scrollback"
+	}
+}
+```
 
 ## Contribute to Scrollback
 
-Want to hack on Scrollback? Awesome! We maintain a [wiki](https://github.com/scrollback/scrollback/wiki) that explains Scrollback architecture. It's a work-in-progress so please let us know if there are gaps in the content. Better yet, feel free to send us a Pull Request to make it better.
+We maintain a [wiki](https://github.com/scrollback/scrollback/wiki) that explains Scrollback architecture. It's a work-in-progress so please let us know if there are gaps in the content. Better yet, feel free to send us a Pull Request to make it better.
 
 ## License
 
