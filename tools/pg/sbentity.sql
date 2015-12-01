@@ -54,6 +54,7 @@ CREATE INDEX ON entities (type);
 CREATE INDEX ON entities USING GIN (identities);
 CREATE INDEX ON entities (timezone);
 CREATE INDEX ON entities USING GIN (terms);
+CREATE INDEX ON entities (id text_pattern_ops);
 
 CREATE INDEX ON relations ("room");
 CREATE INDEX ON relations ("user");

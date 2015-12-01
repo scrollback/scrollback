@@ -51,7 +51,7 @@ module.exports = function(core) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
 						if (customPhrases instanceof Array && customPhrases.length !== 0) {
 							filters.custom = new RegExp("\\b" + customPhrases.map(function(e) {
-								return "\\b" + e + "\\b";
+								return "\\b" + e.replace("*", "/*") + "\\b";
 							}).join("|") + "\\b");
 							appliedFilters.push(filters.custom);
 						}

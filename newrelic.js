@@ -15,7 +15,15 @@ if(config.core.newrelic.key) exports.config = {
 	},
 	rules: {
 		ignore: [
-			'^/socket/\\*',
+			'^/engine.io',
+		],
+		name: [
+			{ pattern: "/me",   name: "/me"  },
+			{ pattern: "/i/.*", name: "/i/*" },
+			{ pattern: "/s/.*", name: "/s/*" },
+			{ pattern: "/r/.*", name: "/r/*" },
+			{ pattern: "/[\w\-]*/.*", name: "/:room/:discussion" },
+			{ pattern: "/[\w\-]*(/?|\?|$)", name: "/:room" }
 		]
 	}
 };
