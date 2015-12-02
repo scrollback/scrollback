@@ -34,7 +34,7 @@ describe("Insert Query: ", function() {
 
 		assert.deepEqual(query, [{
 				'$': 'SELECT pg_advisory_xact_lock(${hash})',
-				hash: '0'
+				hash: '32210671712691249'
 			},
 			{
 				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
@@ -97,7 +97,7 @@ describe("Insert Query: ", function() {
 		console.log(query);
 		assert.deepEqual(query, [{
 				'$': 'SELECT pg_advisory_xact_lock(${hash})',
-				hash: '0'
+				hash: '524202301509174021'
 			},
 			{
 				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
@@ -160,7 +160,7 @@ describe("Update Query: ", function() {
 		}));
 		assert.deepEqual(query, [{
 				'$': 'SELECT pg_advisory_xact_lock(${hash})',
-				hash: '0'
+				hash: '33059451823547441'
 			},
 			{
 				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
@@ -230,7 +230,7 @@ describe("Update Query: ", function() {
 		}));
 		assert.deepEqual(query, [{
 				'$': 'SELECT pg_advisory_xact_lock(${hash})',
-				hash: '0'
+				hash: '33059451823547445'
 			},
 			{
 				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
@@ -300,7 +300,7 @@ describe("Update Query: ", function() {
 		}));
 		assert.deepEqual(query, [{
 				'$': 'SELECT pg_advisory_xact_lock(${hash})',
-				hash: '0'
+				hash: '33059451823547445'
 			},
 			{
 				'$': "UPDATE entities SET \"type\"=${type}, \"description\"=${description}, \"identities\"=${identities}, \"color\"=${color}, \"picture\"=${picture}, \"timezone\"=${timezone}, \"locale\"=${locale}, \"params\"=${params}, \"guides\"=${guides} , \"terms\"=to_tsvector('english', ${terms}) WHERE \"id\"=${id}",
