@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-branch=$(ssh ubuntu@direct.stage.scrollback.io /home/ubuntu/scrollback/tools/create-release-branch.sh)
+branch=$(ssh ubuntu@direct.stage.scrollback.io /home/ubuntu/scrollback/tools/create-hnbr-release-branch.sh)
 if [[ $branch = "ERR_NOT_MASTER" ]]; then
    echo "A release branch was not created because the staging server is not running master."
    exit
