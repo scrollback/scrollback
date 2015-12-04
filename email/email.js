@@ -93,7 +93,7 @@ module.exports = function(coreObject, conf) {
 	config = conf;
 	core = coreObject;
 	emailDigest = require('./emailDigest.js');
-    initMailSending = emailDigest.initMailSending;//function
+	initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
 
