@@ -4,6 +4,7 @@ var config;
 var log = require("../lib/logger.js");
 var redis;
 var emailDigest;
+var unsubscribe; 
 var initMailSending;
 var sendPeriodicMails;
 var trySendingToUsers;
@@ -88,11 +89,14 @@ function addMessage(message){
 }
 
 
-module.exports = function(coreObject, conf) {
+module.exports = function(coreObject, conf) 
+{
 	config = conf;
 	core = coreObject;
 	emailDigest = require('./emailDigest.js');
-	initMailSending = emailDigest.initMailSending;//function
+	require('./unsubscribe.js')(core, config);
+	
+    initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
 

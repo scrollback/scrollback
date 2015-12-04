@@ -9,6 +9,8 @@ var timeout = 30 * 1000;//for debuging only
 var waitingTime1, waitingTime2;
 var handlebars = require("handlebars");
 var timeUtils = require("../lib/time-utils");
+var secret = require("../server-config.js").unsubscribe.secret;
+var jwt = require("jsonwebtoken");
 /**
  * Read digest,jade
  * And setInterval
@@ -393,6 +395,7 @@ function sendMail(email) {
 					var html;
 					try {
 						email.heading = getHeading(email);
+						email.token = jwt.sign({ email: email.emailId }, secret, {expiresIn: "5 days"});
 						log.d("email object" + JSON.stringify(email));
 						html = emailDigest(email);
 					}catch(caughtError) {
