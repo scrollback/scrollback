@@ -28,7 +28,7 @@ defaults = {
 	plugins: [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
-				"push-notification", "google", "upload" ],
+				"push-notification", "google", "upload"],
 	global: {
 		appName: "Scrollback",
 		host: "localhost",
@@ -138,6 +138,7 @@ defaults = {
 		signatureVersion: "aws4_request",
 		algorithm: "AWS4-HMAC-SHA256"
 	},
+	
 	jws: {
 		keys: {
 			"localhost:7528": [ "XGuySQ0dH5Dt+5pc7sDwSrG3Qx679h57h9dt6GAiNGh0MyOJuuaAnXTym6duXJYVeqyuV2D/hXLzwVZHr/UyDXJDClIRk5wSeyqfX9keiTI6OZzZ0flK8Gd9/hX4sSZYsd9eKK5LGfzJxki95r46W7Y626aq/Ii3sZgIk9WCZMg=" ]

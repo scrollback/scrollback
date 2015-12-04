@@ -1,11 +1,14 @@
 "use strict";
-
-var log = require("../lib/logger.js"),
+var secret = require("../server-config.js").unsubscribe.secret,
+    log = require("../lib/logger.js"),
 	send = require("./sendEmail.js"),
+	jwt = require("jsonwebtoken"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
 	config, defaultTemplate,
 	userUtils = require('../lib/user-utils.js');
+
+	
 
 /**
  * send welcome mail to user
@@ -14,7 +17,7 @@ var log = require("../lib/logger.js"),
 
 function sendWelcomeEmail(user, origin) {
 	function useTemplate(template) {
-		var emailHtml = template(user);
+
 		var emailAdd = false,
 			i;
 
@@ -24,6 +27,12 @@ function sendWelcomeEmail(user, origin) {
 				break;
 			}
 		}
+
+		var emailHtml = template({
+			id: user.id,
+			email: encodeURIComponent(emailAdd),
+			token: jwt.sign({ email: emailAdd }, secret, {expiresIn: "5 days"})
+		});
 		
 		log.d("email add", user, emailAdd);
 		if (emailAdd) {
