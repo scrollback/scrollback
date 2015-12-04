@@ -1,13 +1,8 @@
 var fs = require("fs"),
 	jwt = require("jsonwebtoken"),
-	log = require("../lib/logger"),
-	html;
+	log = require("../lib/logger");
 
 module.exports = function (core, config) {
-	fs.readFile(__dirname + "/views/unsub.html", function(err, data) {
-		html = data.toString();
-	});
-
 	core.on("http/init", function (payload) {
 
 		payload.push({
@@ -63,7 +58,7 @@ module.exports = function (core, config) {
 					return;
 				}
 				res.header('Content-Type', 'text/html');
-				res.end(html);
+				res.end(fs.readFileSync(__dirname + "/views/unsub.html", "utf8"));
 			});
 		});
 	};

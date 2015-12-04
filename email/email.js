@@ -89,13 +89,10 @@ function addMessage(message){
 }
 
 
-module.exports = function(coreObject, conf) 
-{
+module.exports = function(coreObject, conf) {
 	config = conf;
 	core = coreObject;
 	emailDigest = require('./emailDigest.js');
-	require('./unsubscribe.js')(core, config);
-	
     initMailSending = emailDigest.initMailSending;//function
 	sendPeriodicMails = emailDigest.sendPeriodicMails;//function
 	trySendingToUsers = emailDigest.trySendingToUsers;//function.
@@ -103,6 +100,7 @@ module.exports = function(coreObject, conf)
 	redis = require('redis').createClient();
 	redis.select(config.redisDB);
 
+	require('./unsubscribe.js')(core, config);
 	require('./welcomeEmail.js')(core, conf);
     emailDigest.init(core, config);
 	if (config.auth) {

@@ -14,9 +14,7 @@ var log = require("../lib/logger.js"),
 
 function sendWelcomeEmail(user, origin) {
 	function useTemplate(template) {
-
-		var emailAdd = false,
-			i;
+		var emailAdd = false, i;
 
 		for (i = 0; i < user.identities.length; i++) {
 			if (user.identities[i].indexOf("mailto:") === 0) {
@@ -24,7 +22,6 @@ function sendWelcomeEmail(user, origin) {
 				break;
 			}
 		}
-
 		var emailHtml = template({
 			id: user.id,
 			email: encodeURIComponent(emailAdd),
