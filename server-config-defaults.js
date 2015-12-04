@@ -54,6 +54,8 @@ defaults = {
 		index: "/me" // index URL redirect
 	},
 	email: {
+		secret: "",
+		domain: "localhost:7528",
 		auth: {
 			"user": "",
 			"pass": ""

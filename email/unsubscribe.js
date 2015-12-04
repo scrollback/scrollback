@@ -1,18 +1,13 @@
-var jwt = require("jsonwebtoken"),
-	log = require("../lib/logger");
+var fs = require("fs"),
+	jwt = require("jsonwebtoken"),
+	log = require("../lib/logger"),
+	html;
 
-module.exports = function (core, config)
+module.exports = function (core, config) {
+	fs.readFile(__dirname + "/views/unsub.html", function(err, data) {
+		html = data.toString();
+	});
 
- {
-	/*
-		1. Receive the request
-		2. Extract the email address from the request.
-		3. Search the database and find that user.
-		4. Change their settings so that their email notifications is "Never" and save to database.
-		5. Show a message to the user saying they have been unsubscribed.
-	*/
-
-	// When the server is starting up...
 	core.on("http/init", function (payload) {
 
 		payload.push({
@@ -52,8 +47,7 @@ module.exports = function (core, config)
 			// Received the user from the database! Changing the settings...
 			var user = query.results[0];
 			
-			user.params.email=user.params.email || {};
-
+			user.params.email = user.params.email || {};
 			user.params.email.frequency = "never";
 			user.params.email.notifications = false;
 			
@@ -68,7 +62,8 @@ module.exports = function (core, config)
 					res.end("Sorry, an internal server error prevented you from being unsubscribed.");
 					return;
 				}
-				res.end("You have been unsubscribed.");
+				res.header('Content-Type', 'text/html');
+				res.end(html);
 			});
 		});
 	};
