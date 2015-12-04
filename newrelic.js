@@ -24,7 +24,7 @@ if(config.core.newrelic.key) {
 					{ pattern: "/s/.*", name: "/s/*" },
 					{ pattern: "/r/.*", name: "/r/*" },
 					{ pattern: /^\/([\w\-]{3,32})\/.*/, name: "/:room/:discussion" },
-					{ pattern: /^\/([\w\-]{3,32})?$/, name: "/:room" }
+					{ pattern: /^\/([\w\-]{3,32})$/, name: "/:room" }
 				]
 			}
 		};
