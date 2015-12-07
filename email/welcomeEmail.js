@@ -1,7 +1,7 @@
 "use strict";
-
 var log = require("../lib/logger.js"),
 	send = require("./sendEmail.js"),
+	jwt = require("jsonwebtoken"),
 	fs = require("fs"),
 	handlebars = require("handlebars"),
 	config, defaultTemplate,
@@ -14,9 +14,7 @@ var log = require("../lib/logger.js"),
 
 function sendWelcomeEmail(user, origin) {
 	function useTemplate(template) {
-		var emailHtml = template(user);
-		var emailAdd = false,
-			i;
+		var emailAdd = false, i;
 
 		for (i = 0; i < user.identities.length; i++) {
 			if (user.identities[i].indexOf("mailto:") === 0) {
@@ -24,6 +22,12 @@ function sendWelcomeEmail(user, origin) {
 				break;
 			}
 		}
+		var emailHtml = template({
+			id: user.id,
+			email: encodeURIComponent(emailAdd),
+			domain: config.domain,
+			token: jwt.sign({ email: emailAdd }, config.secret, {expiresIn: "2 days"})
+		});
 		
 		log.d("email add", user, emailAdd);
 		if (emailAdd) {

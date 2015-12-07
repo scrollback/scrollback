@@ -1,14 +1,11 @@
 "use strict";
-var config;
-var log = require("../lib/logger.js");
-var send;
-var fs=require("fs");
-var redis;
-var core, emailDigest;
-var timeout = 30 * 1000;//for debuging only
-var waitingTime1, waitingTime2;
-var handlebars = require("handlebars");
-var timeUtils = require("../lib/time-utils");
+var config, send, redis, core, emailDigest, waitingTime1, waitingTime2,
+	log = require("../lib/logger.js"),
+	fs=require("fs"),
+	timeout = 30 * 1000,//for debuging only
+	handlebars = require("handlebars"),
+	timeUtils = require("../lib/time-utils"),
+	jwt = require("jsonwebtoken");
 /**
  * Read digest,jade
  * And setInterval
@@ -393,6 +390,8 @@ function sendMail(email) {
 					var html;
 					try {
 						email.heading = getHeading(email);
+						email.token = jwt.sign({ email: email.emailId }, config.secret, {expiresIn: "5 days"});
+						email.domain = config.domain;
 						log.d("email object" + JSON.stringify(email));
 						html = emailDigest(email);
 					}catch(caughtError) {
