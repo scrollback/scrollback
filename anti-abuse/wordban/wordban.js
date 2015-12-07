@@ -3,6 +3,7 @@
 "use strict";
 var SbError = require("../../lib/SbError.js"),
 	log = require("../../lib/logger.js"),
+	regReplace = require("../../lib/regex-utils.js"),
 	fs = require("fs"),
 	filters = {};
 
@@ -51,7 +52,7 @@ module.exports = function(core) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
 						if (customPhrases instanceof Array && customPhrases.length !== 0) {
 							filters.custom = new RegExp("\\b" + customPhrases.map(function(e) {
-								return "\\b" + e + "\\b";
+								return "\\b" + regReplace.escape(e) + "\\b";
 							}).join("|") + "\\b");
 							appliedFilters.push(filters.custom);
 						}

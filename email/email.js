@@ -4,6 +4,7 @@ var config;
 var log = require("../lib/logger.js");
 var redis;
 var emailDigest;
+var unsubscribe; 
 var initMailSending;
 var sendPeriodicMails;
 var trySendingToUsers;
@@ -99,6 +100,7 @@ module.exports = function(coreObject, conf) {
 	redis = require('redis').createClient();
 	redis.select(config.redisDB);
 
+	require('./unsubscribe.js')(core, config);
 	require('./welcomeEmail.js')(core, conf);
     emailDigest.init(core, config);
 	if (config.auth) {
