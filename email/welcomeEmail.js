@@ -26,7 +26,7 @@ function sendWelcomeEmail(user, origin) {
 			id: user.id,
 			email: encodeURIComponent(emailAdd),
 			domain: config.domain,
-			token: jwt.sign({ email: emailAdd }, config.secret, {expiresIn: "5 days"})
+			token: jwt.sign({ email: emailAdd }, config.secret, {expiresIn: "2 days"})
 		});
 		
 		log.d("email add", user, emailAdd);
