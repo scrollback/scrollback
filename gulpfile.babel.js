@@ -17,9 +17,6 @@ import plumber from "gulp-plumber";
 import notify from "gulp-notify";
 import gutil from "gulp-util";
 import sourcemaps from "gulp-sourcemaps";
-import eslint from "gulp-eslint";
-import gitmodified from "gulp-gitmodified";
-import symlink from "gulp-sym";
 import striplogs from "gulp-strip-debug";
 import uglify from "gulp-uglify";
 import rename from "gulp-rename";
@@ -130,34 +127,6 @@ const buildscripts = lazypipe()
 	.pipe(plumber, { errorHandler })
 	.pipe(!debug ? uglify : gutil.noop)
 	.pipe(!debug ? striplogs : gutil.noop);
-
-// Install the GIT hooks
-gulp.task("hooks", () => {
-	const hooks = [ "pre-commit", "post-merge" ];
-
-	return gulp.src(prefix(".git-hooks/", hooks))
-	.pipe(symlink(prefix(".git/hooks/", hooks), {
-		relative: true,
-		force: true
-	}));
-});
-
-// npm postinstall hooks
-gulp.task("postinstall", [ "hooks" ]);
-
-// Lint JavaScript files
-gulp.task("eslint", () =>
-	gulp.src(files.js)
-	.pipe(plumber({ errorHandler }))
-	.pipe(gitmodified({
-		modes: [ "added", "modified" ]
-	}))
-	.pipe(eslint())
-	.pipe(eslint.format())
-	.pipe(eslint.failAfterError())
-);
-
-gulp.task("lint", [ "eslint" ]);
 
 // Install and copy third-party libraries
 gulp.task("bower", () =>
@@ -273,4 +242,4 @@ gulp.task("watch", [ "scripts:watch", "styles:watch" ]);
 gulp.task("build", [ "scripts", "styles" ], () => gulp.start("manifest"));
 
 // Default Task
-gulp.task("default", [ "clean", "lint", "bower" ], () => gulp.start("build"));
+gulp.task("default", [ "clean", "bower" ], () => gulp.start("build"));

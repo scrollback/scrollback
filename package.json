@@ -18,6 +18,7 @@
   "scripts": {
     "start": "node index",
     "test": "node_modules/.bin/mocha test/test.js",
+    "build": "./node_modules/webpack/bin/webpack.js",
     "postinstall": "ln -sf ../../.git-hooks/pre-commit  .git/hooks/pre-commit"
   },
   "engines": {
