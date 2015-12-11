@@ -10,14 +10,14 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loaders: [ "eslint-loader" ],
-				exclude: /(node_modules|bower_components)/
+				exclude: /node_modules/
 			}
 		],
 		loaders: [
 			{
 				test: /\.js$/,
 				loaders: __DEV__ ? [ "react-hot", "babel" ] : [ "babel" ],
-				exclude: /(node_modules|bower_components)/
+				exclude: /node_modules/
 			},
 			{
 				test: /\.json$/,
