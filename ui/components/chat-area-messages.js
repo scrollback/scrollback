@@ -5,7 +5,7 @@
 module.exports = function(core, config, store) {
 	const React = require("react"),
 		  ChatItem = require("./chat-item.js")(core, config, store),
-		  Endless = require("../../bower_components/endless/endless.js"),
+		  Endless = require("endless"),
 		  rangeOps = require("../../lib/range-ops.js");
 
 	let ChatAreaMessages = React.createClass({

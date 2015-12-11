@@ -3,12 +3,12 @@ const config = require("./webpack-common.config");
 
 module.exports = Object.assign({}, config, {
 	entry: [
-		"./ui/app"
+		"./widget/sdk/v1"
 	],
 	output: {
-		path: path.resolve(__dirname, "public/s/dist/scripts/"),
+		path: path.resolve(__dirname, "public/"),
 		publicPath: "/public/",
-		filename: "app.bundle.min.js",
-		sourceMapFilename: "app.bundle.min.js.map"
+		filename: "client.min.js",
+		sourceMapFilename: "client.min.js.map"
 	}
 });

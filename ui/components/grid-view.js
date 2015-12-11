@@ -2,7 +2,7 @@
 
 module.exports = function() {
 	var React = require("react"),
-		Endless = require("../../bower_components/endless/endless.js"),
+		Endless = require("endless"),
 		GridView;
 
 	/**
