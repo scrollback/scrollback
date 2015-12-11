@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 module.exports = function(core, config, store) {
 	"use strict";

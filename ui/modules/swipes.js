@@ -3,7 +3,7 @@
 
 "use strict";
 
-require("../../lib/swipe-events.js");
+require("../../lib/swipe-events");
 
 module.exports = function(core, config, store) {
 	// Handle swipe gestures

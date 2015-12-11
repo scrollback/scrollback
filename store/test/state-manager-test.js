@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var assert = require('assert');
 var core, config, store;
 

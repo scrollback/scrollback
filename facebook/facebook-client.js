@@ -1,4 +1,4 @@
-/* jshint browser:true */
+/* eslint-env browser */
 /* eslint no-shadow: 0*/
 /* eslint no-undef: 0*/
 "use strict";

@@ -1,5 +1,5 @@
 /* global it */
-/*jshint strict: true */
+
 
 var assert = require('assert');
 

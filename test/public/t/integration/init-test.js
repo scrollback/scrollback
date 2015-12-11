@@ -1,6 +1,6 @@
 /* global SockJS, scrollback, uid, assert, FB, gapi, error, navigator */
-/* jshint mocha: true */
-/* jshint node: true */
+/* eslint-env mocha */
+
 
 describe("Action: INIT:", function(){
 	var socket;

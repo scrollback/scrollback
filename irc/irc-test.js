@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var config = require("../server-config-defaults.js");
 var core = new (require('ebus'))();
 var ircSb = require("./irc.js");

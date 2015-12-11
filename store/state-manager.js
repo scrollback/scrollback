@@ -1,4 +1,4 @@
-/* jshint esnext: true, browser: true */
+/* eslint-disable no-use-before-define */
 
 "use strict";
 

@@ -214,8 +214,8 @@ module.exports = function(core, config, store) {
 
 									<Loader status={this.state.uploadStatus} />
 
-								</FileUpload>
-								: null
+								</FileUpload> :
+								null
 							}
 							<div className="chat-area-input-action chat-area-input-send" onClick={this.sendMessage}></div>
 						</div>

@@ -1,5 +1,4 @@
 /* global uid */
-/* jshint unused:false */
 
 function getConnection(socket, user) {
 	var init;

@@ -101,7 +101,7 @@ module.exports = function(type, menu) {
 		$list.appendTo($popover);
 	}
 
-	return $popover.addClass("menu menu-" + type).popover({
+	return $popover.addClass("menu menu-" + type).popover({ // eslint-disable-line consistent-return
 		arrow: !!(menu.arrow),
 		origin: menu.origin
 	});

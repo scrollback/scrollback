@@ -1,5 +1,5 @@
-/* jshint mocha: true */
-/*jshint strict: true*/
+/* eslint-env mocha */
+
 var	crypto = require('crypto'),
 	generate = require("../../lib/generate.js"),
 	r = {},

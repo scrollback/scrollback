@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var config = require("./../server-config-defaults.js");
 var coreLevelDB = new (require('ebus'))();
 var coreStorage = new (require('ebus'))();

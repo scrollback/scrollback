@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var assert = require('assert');
 var generate = require("../../lib/generate.js");
 

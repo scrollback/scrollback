@@ -1,5 +1,6 @@
-/* jshint browser: true */
+/* eslint-env browser */
 /* global $ */
+
 "use strict";
 
 var formField = require("../ui/utils/form-field.js"),
@@ -165,9 +166,9 @@ module.exports = function(core, config, store) {
 		if (!room.guides) {
 			room.guides = {};
 		}
-		
+
 		room.guides.allowedDomains = [];
-		
+
 		domains = domains.split("\n");
 	    domains.forEach(function(e) {
 	        if (e.trim()) {

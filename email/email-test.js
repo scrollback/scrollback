@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var config  = require('../server-config-defaults.js');
 var core = require("../test/mock-core.js")();
 var email = require("./email.js")(config.email);

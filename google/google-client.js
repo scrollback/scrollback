@@ -1,4 +1,4 @@
-/* jshint browser: true */
+/* eslint-env browser */
 
 module.exports = function(core, config, store) {
 	var login;
@@ -20,14 +20,14 @@ module.exports = function(core, config, store) {
 	};
 
 	core.on("boot", function(state, next) {
-		core.on('auth', function(auth, next) {
+		core.on('auth', function(auth, n) {
 			auth.buttons.google = {
 				text: 'Google',
 				prio: 100,
 				action: login[store.get("context", "env") || "web"]
 			};
 
-			next();
+			n();
 		}, 700);
 
 		next();

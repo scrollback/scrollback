@@ -1,6 +1,6 @@
 /* global assert, createConnection, error, socket, SockJS, scrollback, uid, FB, gapi, navigator */
-/* jshint mocha: true */
-/* jshint node: true */
+/* eslint-env mocha */
+
 
 // Locally only Persona login works
 // Creating account (first sign-in) is different from logging back to already created account.

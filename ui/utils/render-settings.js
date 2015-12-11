@@ -3,7 +3,7 @@
 
 "use strict";
 
-var objUtils = require("../../lib/obj-utils.js");
+var objUtils = require("../../lib/obj-utils");
 
 module.exports = function(core, config, store) {
 	function addErrors($dialog, room) {

@@ -19,7 +19,6 @@
 */
 
 /* global localStorage */
-/* jshint -W088 */
 
 var lzString = require('lz-string');
 

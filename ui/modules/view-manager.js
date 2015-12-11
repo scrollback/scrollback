@@ -81,7 +81,7 @@ module.exports = (core, config, store) => {
 			currentClassName = document.body.className;
 
 			for (let j = 0, k = types.length; j < k; j++) {
-				currentClassName = currentClassName.replace(new RegExp("\\b" + types[j] + "-" + "\\S+", "g"), "").trim();
+				currentClassName = currentClassName.replace(new RegExp("\\b" + types[j] + "-\\S+", "g"), "").trim();
 			}
 
 			document.body.className = newClassName + " " + currentClassName;

@@ -1,4 +1,4 @@
-/* jslint browser: true */
+/* eslint-env browser */
 /* global $ */
 
 var Translator = function(cdata) {

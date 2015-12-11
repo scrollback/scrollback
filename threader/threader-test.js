@@ -1,6 +1,6 @@
-/* jshint node: true */
+
 /* global it, before, describe */
-/*jshint strict: true*/
+
 var assert = require("assert");
 var core = new (require("ebus"))();
 var threader = require("./threader.js");

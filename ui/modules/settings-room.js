@@ -3,10 +3,10 @@
 
 "use strict";
 
-var objUtils = require("../../lib/obj-utils.js");
+var objUtils = require("../../lib/obj-utils");
 
 module.exports = function(core, config, store) {
-	var renderSettings = require("../utils/render-settings.js")(core, config, store),
+	var renderSettings = require("../utils/render-settings")(core, config, store),
 		saveInProgress = false;
 
 	$(document).on("click", ".js-conf-save", function() {

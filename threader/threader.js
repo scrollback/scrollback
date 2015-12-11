@@ -1,7 +1,7 @@
 "use strict";
 
-/* jshint mocha: true */
-/*jshint: true*/
+/* eslint-env mocha */
+
 var log = require("../lib/logger.js"),
 	config, net = require('net'), timeout = 60 * 1000,
 	client, pendingCallbacks = {}, core,

@@ -3,11 +3,11 @@
 
 "use strict";
 
-var objUtils = require("../../lib/obj-utils.js"),
-	userUtils = require("../../lib/user-utils.js");
+var objUtils = require("../../lib/obj-utils"),
+	userUtils = require("../../lib/user-utils");
 
 module.exports = function(core, config, store) {
-	var renderSettings = require("../utils/render-settings.js")(core, config, store);
+	var renderSettings = require("../utils/render-settings")(core, config, store);
 	var userUpSent = false;
 	$(document).on("click", ".js-pref-save", function() {
 		var self = $(this),

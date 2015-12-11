@@ -1,4 +1,4 @@
-/* jshint esnext: true, browser: true */
+/* eslint-env browser */
 
 "use strict";
 

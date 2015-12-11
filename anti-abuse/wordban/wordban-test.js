@@ -1,4 +1,4 @@
-/* jshint mocha: true */
+/* eslint-env mocha */
 var assert = require("assert");
 var core = new (require('ebus'))();
 var wordban = require("./wordban.js");

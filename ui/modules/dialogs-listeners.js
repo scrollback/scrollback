@@ -6,10 +6,10 @@
 const handledDialogs = [ "share", "start-thread" ];
 
 module.exports = function(core, config, store) {
-	var userUtils = require("../../lib/user-utils.js"),
-		validateEntity = require("../utils/validate-entity.js")(core, config, store),
-		createEntity = require("../utils/create-entity.js")(core, config, store),
-		showDialog = require("../utils/show-dialog.js")(core, config, store),
+	var userUtils = require("../../lib/user-utils"),
+		validateEntity = require("../utils/validate-entity")(core, config, store),
+		createEntity = require("../utils/create-entity")(core, config, store),
+		showDialog = require("../utils/show-dialog")(core, config, store),
 		currentDialog, currentDialogState, userChangeCallback;
 
 	function createAndValidate(type, entry, button, callback) {
