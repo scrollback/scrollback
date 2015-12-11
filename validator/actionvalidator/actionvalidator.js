@@ -189,7 +189,7 @@ module.exports = function(core) {
 		if (!(action.to || action.q)) {
 			return callback(new SbError("INVALID_ROOM"));
 		}
-		if (!action.time) action.time = new Date().getTime();
+		if (!action.time) action.time = new Date().getTime()+(3*24*60*60*1000);
 		return queryValidation(action, callback);
 	}, "validation");
 	core.on("getTexts", function(action, callback) {
