@@ -24,7 +24,7 @@ function init() {
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
-		}, (sub-x)*60000);
+		}, (sub-x)/**60000*/);
 		setTimeout(function(){
 			trySendingToUsers();
 			setInterval(trySendingToUsers, 60*60*1000);
@@ -475,7 +475,7 @@ var formatText = function(text) {
  *@param {object} Map of room data.
  */
 function sendPeriodicMails(){
-	var x = new Date().getUTCHours()+config.offset;
+	var x = new Date( Date.now() + config.offset * 60 * 60 * 1000 ).getUTCHours();
 	var t;
 	var start1 = x >= 12 ? (24 - x)*60 : -x*60;
 	var end1 = start1 + 59;
