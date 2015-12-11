@@ -18,7 +18,7 @@
   "scripts": {
     "start": "node index",
     "test": "node_modules/.bin/mocha test/test.js",
-    "postinstall": "gulp postinstall"
+    "postinstall": "ln -sf ../../.git-hooks/pre-commit  .git/hooks/pre-commit"
   },
   "engines": {
     "node": ">=0.8"

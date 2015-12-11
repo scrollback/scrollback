@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-# Check if any .js file changed
-git diff --cached --name-only --diff-filter=ACM | grep '.\(js\|jsx\|es6\)$' >/dev/null 2>&1
-
-if [[ $? == 0 ]]; then
-	[[ `command -v gulp` ]] && gulp lint
-fi
+# Pass any changed js files through eslint
+git diff --cached --name-only --diff-filter=ACM | grep '.js$' | xargs node node_modules/eslint/bin/eslint.js
 
 exit $?
