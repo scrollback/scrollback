@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 # Pass any changed js files through eslint
-git diff --cached --name-only --diff-filter=ACM | grep '.js$' | xargs node node_modules/eslint/bin/eslint.js
+git diff --cached --name-only --diff-filter=ACM | grep '.js$' | xargs node node_modules/eslint/bin/eslint.js --quiet
 
 exit $?
