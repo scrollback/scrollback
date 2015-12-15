@@ -475,7 +475,7 @@ var formatText = function(text) {
  *@param {object} Map of room data.
  */
 function sendPeriodicMails(){
-	var x = new Date().getUTCHours();
+	var x = new Date( Date.now() + config.offset * 60 * 60 * 1000 ).getUTCHours();
 	var t;
 	var start1 = x >= 12 ? (24 - x)*60 : -x*60;
 	var end1 = start1 + 59;
