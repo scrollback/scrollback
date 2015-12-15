@@ -24,7 +24,7 @@ function init() {
 		setTimeout(function(){
 			sendPeriodicMails();
 			setInterval(sendPeriodicMails, 60*60*1000);//TODO move these numbers to myConfig
-		}, (sub-x)/**60000*/);
+		}, (sub-x)*60000);
 		setTimeout(function(){
 			trySendingToUsers();
 			setInterval(trySendingToUsers, 60*60*1000);
