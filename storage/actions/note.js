@@ -2,7 +2,7 @@
 var pg = require("../../lib/pg.js");
 
 module.exports = function (action) {
-	var noteType, emptyObject = {}, insertObjects = [], insertIndex = {}, user;
+	var noteType, emptyObject = {}, insertObjects = [], insertIndex = {}, user, update = [];
 //	log.d("Note action: ", action);
 	if (action.type === "note" || action.type === "noted") {
 		var notifyObject = {},
@@ -21,12 +21,15 @@ module.exports = function (action) {
 //		if(!(Object.keys(updateObject).length)) return [];
 
 		notifyObject[action.user.id] = null;
-
-		return [ pg.cat([
+		update.push(pg.lock("note-update"));
+		update.push(pg.cat([
 			{ $: "UPDATE \"notes\" SET \"notify\" = \"notify\" || ${notify} WHERE \"notify\" ? ${user}",
 			  notify: notifyObject, user: action.user.id },
 			pg.nameValues(whereObject, " AND ")
-		], " AND ") ];
+		], " AND ") );
+		
+		console.log(update)
+		return update;
 	} else {
 		if (!action.notify) { return []; }
 
