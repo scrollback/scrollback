@@ -55,6 +55,7 @@ defaults = {
 	},
 	email: {
 		welcomeEmailSub: "Welcome to Scrollback",
+		offset: 0,
 		secret: "",
 		domain: "localhost:7528",
 		auth: {
