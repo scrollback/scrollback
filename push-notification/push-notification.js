@@ -34,7 +34,10 @@ module.exports = function(core, config) {
 	defaultPackageName = config.defaultPackageName;
 	keys = config.keys;
 
-	function mapIdsToUsers(idList, cb) {
+	
+	
+	function mapIdsToUsersFromDb(idList, cb) {
+		log.i("making getUser query with ref as array of " + idList.length + " elements");
 		core.emit("getUsers", {
 			session: "internal-push-notifications",
 			ref: idList
@@ -47,7 +50,8 @@ module.exports = function(core, config) {
 			cb(query.results);
 		});
 	}
-
+	
+	
 	function notifyUsers(userList, payload) {
 
 		/*
@@ -180,7 +184,7 @@ module.exports = function(core, config) {
 
 	core.on("text", function(text) {
 		var userIDs = [],
-			groups, notify = text.notify;
+			groups, notify = text.notify, userMap = {};
 
 		groups = {
 			mention: [],
@@ -203,6 +207,22 @@ module.exports = function(core, config) {
 				groups.reply.push(userID);
 			}
 		});
+		
+		text.memberOf.forEach(function(u) {
+			userMap[u.id] = u;
+		});
+		
+		text.occupantOf.forEach(function(u) {
+			userMap[u.id] = u;
+		});
+		
+		function mapIdsToUsers(idList, cb) {
+			var result = [];
+			idList.forEach(function(id) {
+				if (userMap[id]) result.push(userMap[id]);
+			});
+			cb(result);
+		}
 
 		Object.keys(groups).forEach(function(noteType) {
 			var payload;
@@ -212,8 +232,7 @@ module.exports = function(core, config) {
 			}
 
 			payload = payloads[noteType](text);
-
-			mapIdsToUsers(groups[noteType], function(userList) {
+			(group === "mention" ? mapIdsToUsersFromDb: mapIdsToUsers)(groups[noteType], function(userList) {
 				notifyUsers(userList, payload);
 			});
 		});
