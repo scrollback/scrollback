@@ -208,11 +208,11 @@ module.exports = function(core, config) {
 			}
 		});
 		
-		text.memberOf.forEach(function(u) {
+		text.members.forEach(function(u) {
 			userMap[u.id] = u;
 		});
 		
-		text.occupantOf.forEach(function(u) {
+		text.occupants.forEach(function(u) {
 			userMap[u.id] = u;
 		});
 		
@@ -232,7 +232,7 @@ module.exports = function(core, config) {
 			}
 
 			payload = payloads[noteType](text);
-			(group === "mention" ? mapIdsToUsersFromDb: mapIdsToUsers)(groups[noteType], function(userList) {
+			(noteType === "mention" ? mapIdsToUsersFromDb: mapIdsToUsers)(groups[noteType], function(userList) {
 				notifyUsers(userList, payload);
 			});
 		});
