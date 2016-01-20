@@ -35,7 +35,7 @@ module.exports = (core, config, store) => {
 								className="button wide block googleplus">Google+</a>
 
 							<a
-								href={`https://twitter.com/intent/tweet?via=Scrollbackio&amp;url=${url}${text ? `&amp;text=${text}` : ""}`}
+								href={`https://twitter.com/intent/tweet?via=HeyNeighborChat&amp;url=${url}${text ? `&amp;text=${text}` : ""}`}
 								target="_blank"
 								className="button wide block twitter">Twitter</a>
 						</p>
