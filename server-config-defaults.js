@@ -32,7 +32,8 @@ defaults = {
 	global: {
 		appName: "Scrollback",
 		host: "localhost",
-		su: {}
+		su: {},
+		bannedUsers: []
 	},
 	core: {
 		name: "scrollback",

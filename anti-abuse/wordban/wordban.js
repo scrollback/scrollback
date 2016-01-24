@@ -4,7 +4,7 @@
 var SbError = require("../../lib/SbError.js"),
 	log = require("../../lib/logger.js"),
 	regReplace = require("../../lib/regex-utils.js"),
-	fs = require("fs"),
+	fs = require("fs"), bannedUsers,
 	filters = {};
 
 fs.readdirSync(__dirname + "/badwords").forEach(function(filename) {
@@ -28,14 +28,15 @@ function check (text, re) {
 		.match(re);
 }
 
-module.exports = function(core) {
-
+module.exports = function(core, config) {
+	bannedUsers = config.global.bannedUsers;
 	var actions = [ "text", "user", "room", "edit" ];
 
 	actions.forEach(function(action) {
 		core.on(action, function(a, next) {
 			var text = [
 //					(a.id || ""),
+					(a.from || ""),
 					(a.text || ""),
 					(a.title || ""),
 					(a.to || "")
@@ -47,7 +48,13 @@ module.exports = function(core) {
 				var room = a.room;
 				log.i("Heard \"text\" event", a);
 				if (room.params && room.params.antiAbuse && room.params.antiAbuse.spam) {
-
+					if (bannedUsers) {
+						filters.bannedUsers = new RegExp("\\b" + bannedUsers.map(function (e){
+							return "\\b" + e + "\\b";
+						}).join("|") + "\\b");
+						appliedFilters.push(filters.bannedUsers);	
+					}
+					
 					if (room.params && room.params.antiAbuse) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
 						if (customPhrases instanceof Array && customPhrases.length !== 0) {
