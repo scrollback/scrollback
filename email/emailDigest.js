@@ -391,7 +391,7 @@ function sendMail(email) {
 					email.emailId = e.substring(7);
 					var html;
 					try {
-						email.heading = getHeading(email);
+						email.heading = config.digestEmailSub || getHeading(email);
 						email.token = jwt.sign({ email: email.emailId }, config.secret, {expiresIn: "5 days"});
 						email.domain = config.domain;
 						log.d("email object" + JSON.stringify(email));
