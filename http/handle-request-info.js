@@ -61,6 +61,7 @@ module.exports = function(core) {
 				entity = res.results[0];
 
 				delete entity.params;
+				delete entity.identities;
 
 				cb(null, {
 					type: "json",
