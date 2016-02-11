@@ -52,9 +52,9 @@ module.exports = function(core, config) {
 						filters.bannedUsers = new RegExp("\\b" + bannedUsers.map(function (e){
 							return "\\b" + e + "\\b";
 						}).join("|") + "\\b");
-						appliedFilters.push(filters.bannedUsers);	
+						appliedFilters.push(filters.bannedUsers);
 					}
-					
+
 					if (room.params && room.params.antiAbuse) {
 						var customPhrases = room.params.antiAbuse.customPhrases;
 						if (customPhrases instanceof Array && customPhrases.length !== 0) {

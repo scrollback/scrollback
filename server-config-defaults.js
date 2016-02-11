@@ -28,7 +28,7 @@ defaults = {
 	plugins: [ "validator", "browserid-auth", "facebook", "featured", "anti-abuse",
 				"threader", "thread-color", "notability", "authorizer", "redis-storage", "storage",
 				"entityloader", "irc", "twitter", "jws", "censor", "email", "superuser", "sitemap",
-				"push-notification", "google", "upload"],
+				"push-notification", "google", "upload", "cache"],
 	global: {
 		appName: "Scrollback",
 		host: "localhost",

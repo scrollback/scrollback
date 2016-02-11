@@ -1,6 +1,6 @@
 "use strict";
 var log = require("../lib/logger.js"), sessionCache = {}, roomCache = {};
-
+var objectUtils = require("../lib/obj-utils.js");
 module.exports = function(core) {
 	core.on("getUsers", function(query) {
 		var session;
@@ -9,7 +9,7 @@ module.exports = function(core) {
 			session = sessionCache[query.session];
 			log.d("handling ref query.", query, session);
 			if (session) {
-				query.results = [ session ];
+				query.results = [ objectUtils.clone(session) ];
 			}
 		}
 	}, 400);
@@ -19,7 +19,7 @@ module.exports = function(core) {
 		if (query.ref) {
 			result = roomCache[query.ref];
 			if (result) {
-				query.results = [ result ];
+				query.results = [ objectUtils.clone(result) ];
 			}
 		}
 	}, 400);
@@ -30,19 +30,19 @@ module.exports = function(core) {
 		if (query.ref && !query.hasMember && !query.hasOccupant  && !/\*$/.test(query.ref)) {
 			room = roomCache[query.ref];
 			if (room) {
-				query.results = [ room ];
+				query.results = [ objectUtils.clone(room) ];
 			}
 		}
 	}, 400);
 
 	core.on("getRooms", function(query) {
 		if (query.ref && !query.hasMember && !query.hasOccupant && query.results && query.results.length) {
-			roomCache[query.ref] = query.results[0];
+			roomCache[query.ref] = objectUtils.clone(query.results[0]);
 		}
-	}, 1);
+	}, 200);
 	core.on("getEntities", function(query) {
-		if (query.results) roomCache[query.ref] = query.results[0];
-	}, 1);
+		if (query.results) roomCache[query.ref] = objectUtils.clone(query.results[0]);
+	}, 200);
 
 	core.on("away", function(action) {
 		setTimeout(function() {
@@ -54,7 +54,7 @@ module.exports = function(core) {
 	[ "init", "user" ].forEach(function(event) {
 		core.on(event, function (action) {
 			log.d("cache update: session", action.session);
-			if (action.session) sessionCache[action.session] = action.user;
-		}, 1);
+			if (action.session) sessionCache[action.session] = objectUtils.clone(action.user);
+		}, 200);
 	});
 };
