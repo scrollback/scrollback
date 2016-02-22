@@ -244,6 +244,12 @@ function basicValidation(action, callback) {
 	if (!(action.type === "init" || action.type === "user") && !(new Validator(action.to).isValid())) {
 		return callback(new SbError("INVALID_ROOM"));
 	}
+	if (action.type === "user") {
+		var error = new Validator(action.to).error || new Validator(action.user.id).error;
+		if (error) {
+			return callback(new SbError(error));
+		}
+	}
 	if (action.from) action.from = action.from.toLowerCase();
 	action.to = action.to.toLowerCase();
 	if (!action.session) return callback(new SbError("NO_SESSION_ID"));
