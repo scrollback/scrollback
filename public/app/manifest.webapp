@@ -1,0 +1,17 @@
+{
+    "version": "0.0.1",
+    "name": "Scrollback",
+    "description": "Scrollback - Where communities hang out",
+    "launch_path": "/app",
+    "icons": {
+        "30": "/img/logo/fxos-30.png",
+        "60": "/img/logo/fxos-60.png",
+        "128": "/img/logo/fxos-128.png"
+    },
+    "developer": {
+        "name": "Applait",
+        "url": "http://applait.io"
+    },
+    "installs_allowed_from": ["*"],
+    "default_locale": "en"
+}

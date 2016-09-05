@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta name="description" content="Scrollback is a beautiful, open source text chat service designed for communities. Scrollback chat rooms can be embedded in websites, linked with Twitter hashtags or with IRC channels." />
+
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Scrollback - Where communities hang out" />
+        <meta name="twitter:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta name="twitter:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <meta property="og:type" content="website"/>
+        <meta property="og:url" content="http://scrollback.io" />
+        <meta property="og:title" content="Scrollback - Where communities hang out" />
+        <meta property="og:description" content="Scrollback is a beautiful, open source text chat service designed for communities." />
+        <meta property="og:image" content="http://scrollback.io/s/img/scrollback.png" />
+
+        <title>Scrollback - Where communities hang out</title>
+
+        <link rel="shortcut icon" href="/s/img/favicon.png" type="image/x-icon" />
+        <link rel="image_src" href="/s/img/scrollback.png" />
+        <link rel="author" href="http://plus.google.com/118029978978376563753" />
+
+        <link rel="stylesheet" type="text/css"  media="screen" href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />
+        <link rel="stylesheet" type="text/css" media="screen" href="/s/styles/css/stylesheet.css" />
+        <link rel="stylesheet" type="text/css" media="screen and (min-width:0\0)" href="/s/styles/css/ie.css" />
+
+        <link rel="stylesheet" type="text/css"  media="print" href="/s/styles/css/print.css" />
+
+        <script>
+            var css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".nojs { display: none; }";
+            document.getElementsByTagName("head")[0].appendChild(css);
+        </script>
+
+        <style>
+            #branding {
+                width: 100%;
+                height: 128px;
+                padding: 36px;
+                display: block;
+                background: #333;
+                text-align: center;
+            }
+            footer {
+                bottom: 0;
+                width: 100%;
+                position: fixed;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!--[if IE]>
+        <div class="ie warning">
+        <h2>You are using an outdated browser!</h2>
+        <p>Please <a href="http://browsehappy.com">upgrade</a> to a modern browser.</p>
+        </div>
+        <![endif]-->
+        <div class="nojs warning">
+        <h2>Javascript is disabled in your browser!</h2>
+        <p>Please enable Javascript for the website to work.</p>
+        </div>
+        <div id="branding">
+            <img class="large-logo" src="http://scrollback.io/s/img/scrollback-large.svg" alt="scrollback" />
+        </div>
+        <section>
+            <h2>Create or visit a room </h2>
+            <p>Type the name of the room you want</p>
+            <form id="create-field">
+                <label for="create-text" class="linked">scrollback.io/</label><input type="entry" autocomplete="off" id="create-text" placeholder="my-community" class="linked" /><input type="submit" disabled="true" value="Go" class="linked" />
+                <p class="error"></p>
+            </form>
+        </section>
+        <footer>
+            <p>
+                Scrollback is a product of Askabt Pte. Ltd.<br />
+                We respect your <a href="/privacy.html">privacy</a>.<br />
+                Copyright Askabt Pte. Ltd.
+            </p>
+        </footer>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>
+            var manifest = location.href + "manifest.webapp"
+            ,   check = navigator.mozApps.checkInstalled(manifest);
+
+            check.onsuccess = function (event) {
+                if (!check.result) {
+                    var install = navigator.mozApps.install(manifest);
+                    install.onerror = function () {
+                        alert('Installation Failed. Error: ' + this.error.name);
+                    }
+                }
+            }
+        </script>
+        <script src="/s/js/main.js"></script>
+    </body>
+
+</html>
